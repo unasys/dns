@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<svg width="317" height="317" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <style type="text/css">.st0{fill:url(#SVGID_1_);}
+	.st1{fill:none;}
+	.st2{fill:url(#SVGID_2_);}
+	.st3{fill:url(#SVGID_3_);}
+	.st4{fill:url(#SVGID_4_);}</style>
+ <g class="layer">
+  <title>Layer 1</title>
+  <g id="svg_1">
+   <linearGradient gradientUnits="userSpaceOnUse" id="SVGID_1_" x1="42.6922" x2="219.5748" y1="159.0655" y2="159.0655">
+    <stop offset="0" stop-color="#194B77"/>
+    <stop offset="1" stop-color="#194B77"/>
+   </linearGradient>
+   <g id="svg_3">
+    <linearGradient gradientUnits="userSpaceOnUse" id="SVGID_2_" x1="161.8625" x2="263.197" y1="49.7411" y2="49.7411">
+     <stop offset="0" stop-color="#194B77"/>
+     <stop offset="1" stop-color="#54BBB4"/>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" id="SVGID_3_" x1="161.8625" x2="263.197" y1="266.8236" y2="266.8236">
+     <stop offset="0" stop-color="#194B77"/>
+     <stop offset="1" stop-color="#54BBB4"/>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" id="SVGID_4_" x1="0" x2="101.3345" y1="192.4163" y2="192.4163">
+     <stop offset="0" stop-color="#194B77"/>
+     <stop offset="1" stop-color="#54BBB4"/>
+    </linearGradient>
+   </g>
+  </g>
+  <g id="svg_10">
+   <path class="st0" d="m240.050006,274.2c-1.7,0 -3.4,-0.7 -4.7,-2l-64.4,-68.2l-95.4,-5.4c-2.6,-0.1 -4.9,-1.9 -5.7,-4.3c-0.8,-2.5 -0.1,-5.2 1.9,-6.9l164.1,-141.9c1.9,-1.6 4.6,-2 6.8,-1c2.3,1 3.7,3.3 3.7,5.8l0,217.5c0,2.6 -1.6,5 -4,5.9c-0.7,0.3 -1.5,0.5 -2.3,0.5zm-148,-87.6l82.2,4.7c1.6,0.1 3.2,0.8 4.3,2l55.1,58.4l0,-187.4l-141.6,122.3z" fill="black" id="svg_2"/>
+   <path class="st1" d="m227.150006,230.1c-1.2,0.4 -2.4,0.9 -3.6,1.4l3.6,3.8l0,-5.2z" id="svg_4"/>
+   <path class="st1" d="m227.150006,78.5l-6.1,5.3c1.9,1.1 4,2 6.1,2.7l0,-8z" id="svg_5"/>
+   <path class="st1" d="m108.450006,181.1l5.3,0.3c-0.4,-1.3 -0.8,-2.5 -1.3,-3.7l-4,3.4z" id="svg_6"/>
+   <path class="st2" d="m201.550006,50.7c0,-20.9 17,-37.9 37.9,-37.9s37.9,17 37.9,37.9c0,16.1 -10.1,29.9 -24.3,35.4l0,13.4c21.4,-5.9 37.1,-25.6 37.1,-48.8c0,-27.9 -22.7,-50.7 -50.7,-50.7c-27.9,0 -50.7,22.7 -50.7,50.7c0,8.1 1.9,15.7 5.3,22.4l10.1,-8.7c-1.7,-4.3 -2.6,-8.9 -2.6,-13.7z" id="svg_7"/>
+   <path class="st3" d="m252.950006,217.1l0,13.4c14.2,5.5 24.3,19.3 24.3,35.4c0,20.9 -17,37.9 -37.9,37.9s-37.9,-17 -37.9,-37.9c0,-5.8 1.3,-11.3 3.7,-16.3l-9.2,-9.8c-4.6,7.6 -7.2,16.5 -7.2,26.1c0,27.9 22.7,50.7 50.7,50.7c27.9,0 50.7,-22.7 50.7,-50.7c-0.1,-23.3 -15.8,-42.9 -37.2,-48.8z" id="svg_8"/>
+   <path class="st4" d="m77.550006,230.3c-20.9,0 -37.9,-17 -37.9,-37.9c0,-20.9 17,-37.9 37.9,-37.9c6.2,0 12.1,1.5 17.3,4.2l10.2,-8.8c-7.9,-5.2 -17.4,-8.2 -27.5,-8.2c-28,0 -50.7,22.8 -50.7,50.7c0,27.9 22.7,50.7 50.7,50.7c22.5,0 41.7,-14.8 48.2,-35.2l-13.3,-0.8c-5.8,13.6 -19.3,23.2 -34.9,23.2z" id="svg_9"/>
+  </g>
+ </g>
+</svg>

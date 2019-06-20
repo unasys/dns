@@ -1,0 +1,32 @@
+.add-module-container {
+    background:white;
+    padding:20px;
+    .close-button-container {
+        display:flex;
+        justify-content: flex-end;
+        width:100%;
+        padding-right:20px;
+    }
+}
+
+.facilities-container {
+        max-height:200px;   
+        margin-top:10px;     
+        border:1px solid rgb(224, 224, 224); 
+        overflow-y:scroll;
+        border-radius:4px;
+        .dropdown-item {
+            border-bottom:1px solid #eeeeee; 
+            &.selected {
+                background: #409DF1;
+                color:white;
+                &:hover {
+                    background: rgb(58, 145, 221);
+                    color:white;
+                }
+            }
+        }
+    }
+    div.is-danger {
+        border-color: #ff3860;
+    }

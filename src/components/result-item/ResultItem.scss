@@ -1,0 +1,86 @@
+.result-item-container {
+    padding: 0 24px;
+    transition: background-color 0.1s ease-out;
+    &.selected,&:hover {
+        background:rgba(182,231,115,.15);
+       .result-item
+       .result-item-content {
+            color: #FFCE2F;
+        }
+    }
+    .result-item {
+        display:flex;
+        flex-direction:column;
+        justify-content: center;
+        height:32px;
+        border-bottom:1px solid #666973;
+        &.large {
+            height:50px;
+        }
+        .result-item-content {
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-right:5px;
+            font-size:14px;
+            font-weight:200;
+            color: #ccc;
+            .text {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow:hidden;
+                margin-right:10px;
+            }
+            .properties-container {
+                display:flex;
+                align-items:center;
+                .small-icon {
+                    font-size:12px;
+                } 
+                .xs-padding-right {
+                    padding-right:4px;
+                }
+                i {
+                    cursor: pointer;
+                }
+                .count {
+                    padding-right:7px;
+                }
+            }
+        }
+    }
+}
+
+.result-item-container {
+    &.selected,&:hover {
+        .cog, .tag.active .cog {
+            animation-name: status;
+            animation-duration: 10s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            transform-origin: 50% 50%;
+        }
+
+        .arrow, .tag.active .arrow {
+            animation-name: status;
+            animation-duration: 5s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            transform-origin: 50% 50%;
+        }
+    }
+}
+
+.document-result-item {
+    display:flex;
+    flex-direction: column;
+}
+
+@keyframes status {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}

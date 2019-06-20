@@ -1,0 +1,48 @@
+.weights-and-materials-container {
+    position: absolute;
+    display: grid;
+    overflow-y:scroll;
+    .left-column {
+        grid-column-start:1;
+        grid-column-end:2;
+    }
+    .right-column {
+        grid-column-start:2;
+        grid-column-end:3;    
+    }
+    z-index:1;
+    width:100%;
+    height:100%;
+    background-color: rgba(4, 28, 41, 0.459);
+    color:white;
+    .reset-chart-button-container {
+        text-align:center;
+        i {
+            padding-right:5px;
+        }
+    }
+    .breakdown-title {
+        color:white;
+        text-align:center;
+        font-size:2.2em;
+        padding-top:10px;
+    }
+    .breakdown-subtitle {
+        color:white;
+        text-align:center;
+        font-size:1.1em;
+        padding-top:10px;
+    }
+    .legend-wrapper {
+        padding-top:25px;
+        height:200px;
+        overflow-x:none;
+        overflow-y:scroll;
+    }
+    .chart {
+        width:100%;
+        height:600px;
+    }
+
+}
+

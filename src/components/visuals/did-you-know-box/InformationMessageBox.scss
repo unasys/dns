@@ -1,0 +1,19 @@
+.information-box-container {
+    position: absolute;
+    display:flex;
+    justify-content: center;
+    top: 85%;
+    width:100%;
+    z-index: 1;
+    pointer-events: none;
+    .information-box {
+        padding:10px;
+        background: #0000008c;
+        color:white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        pointer-events: auto;
+    }
+}

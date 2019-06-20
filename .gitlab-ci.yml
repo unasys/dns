@@ -1,0 +1,27 @@
+image: node:latest
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  before_script:
+    - apt-get update -y 
+    - apt-get install -y zip 
+  script:
+    - yarn install
+    - CI=false yarn run build
+    - cd build 
+    - zip -r ../public.zip * 
+  artifacts:
+    paths:
+      - public.zip
+
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - curl -X POST -u '$dns-web':$dnswebpassword --data-binary "@public.zip" https://dns-web.scm.azurewebsites.net/api/zipdeploy
+  only:
+    - master

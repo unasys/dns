@@ -1,0 +1,21 @@
+.content-container {
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+}
+
+.app-container {
+    position:relative;
+    display:flex;
+    flex-direction: column;
+    height:100%;
+}
+
+.flippy-front {
+    box-shadow: none !important;
+}
+
+.flippy-back {
+    box-shadow: none !important;
+}

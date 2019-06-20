@@ -1,0 +1,81 @@
+.title-container {
+    background-color:rgb(0, 0, 0);
+    text-align:center;
+    .tag-title {
+        padding-top:15px;
+        padding-bottom:15px;
+        margin:0px;
+        color: #FFCE2F;
+        font-weight:400;
+        font-size:1em;
+        font-family: 'Roboto', sans-serif;
+        margin: 0px 0px 0px 0px;
+    }
+}
+
+.overview-thumbnail {
+    font-size: 0px;
+    img {
+        clip:rect(0px, 0px, 50px, 0px);
+        margin-left: 0px;
+        padding-left: 0px;
+        height:200px;
+        width:100%;
+    }
+}
+
+.overview-container {
+    width:100%;
+    background-color: #2f484859;
+    display:flex;
+    justify-content: space-between;
+    padding: 6px 0px;
+    .overview-heading {
+        display:flex;
+        align-items:center;
+        text-align:left;
+        font-size: 12px;
+        color: #fff;
+        margin-left:20px;
+    }
+    .dropdown-icon {
+        margin-right:15px;
+        display:flex;
+        align-items: center;
+        i {
+            color:#fff;
+            font-size:14px;
+        }
+    }
+}
+    .activity-steps-box {
+        padding-left:25px;
+        position: absolute;
+        top:5%;
+        z-index:1;
+        left:35%;
+        width:60%;
+        background: rgba(65, 68, 80, 0.318);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow-y: scroll;
+        height:85%;
+        .title-bar {
+            display:flex;
+            justify-content: space-between;
+            padding-right:25px;
+            padding-top:10px;
+            color:#A9A9AA;
+        .title {
+            padding-top:15px;
+            padding-bottom:5px;
+            margin-bottom:0;
+            color:white;
+            font-size:11px;
+            text-transform: uppercase;
+        }
+    }
+    .narrative {
+        color:white;
+        padding:20px;
+    }
+}

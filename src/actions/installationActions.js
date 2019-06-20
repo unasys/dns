@@ -1,0 +1,22 @@
+export const CHANGE_CURRENT_INSTALLATION = "CHANGE_CURRENT_INSTALLATION";
+export const SET_CESIUM_INSTALLATIONS = "SET_CESIUM_INSTALLATIONS";
+export const CHANGE_INSTALLATION_FILTER_TYPE = "CHANGE_INSTALLATION_FILTER_TYPE"
+export const INSTALLATION_FILTER_TYPES = {
+    OilAndGas: 1,
+    WasteToEnergy: 2,
+    OffshoreWind: 3,
+    MyProjects: 4,
+    Property: 5
+}
+
+export function changeCurrentInstallation(currentInstallation) {
+    return { type: CHANGE_CURRENT_INSTALLATION, currentInstallation };
+}
+
+export function setCesiumInstallations(installations) {
+    return { type: SET_CESIUM_INSTALLATIONS, installations }
+}
+
+export function changeInstallationFilterType(filterType, propertyName, filterOn) {
+    return { type: CHANGE_INSTALLATION_FILTER_TYPE, filterType, propertyName, filterOn }
+}

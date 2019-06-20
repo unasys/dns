@@ -1,0 +1,61 @@
+import React from 'react';
+import ModuleSelector from '../../../../../../selectors/ModuleSelector';
+import AreaPanel from './AreasPanel';
+
+class ModulesPanel extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            moduleSelected: null,
+            breadcrumbName: '',
+            breadcrumbTitle: 'Module'
+        }
+
+        this.onModuleSelected = this.onModuleSelected.bind(this);
+        this.clearModuleSelected = this.clearModuleSelected.bind(this);
+
+        this.props.addToBreadcrumbs({ name: this.state.breadcrumbName, title: this.state.breadcrumbTitle, onClick: this.clearModuleSelected });
+    }
+
+    onModuleSelected(moduleParam) {
+        let newBreadcrumbName = `Module(${moduleParam.name})`;
+        this.props.updateBreadcrumbName(this.state.breadcrumbName, newBreadcrumbName);
+        this.setState({
+            moduleSelected: moduleParam,
+            breadcrumbName: newBreadcrumbName
+        })
+        this.props.onEntityClick(moduleParam.id);
+    }
+
+    clearModuleSelected() {
+        this.setState({
+            moduleSelected: null,
+            breadcrumbName: ''
+        })
+    }
+
+    render() {
+        return (this.state.moduleSelected === null ?
+            <ModuleSelector
+                docCount={true}
+                urlParams={{ facilityId: this.props.facility.id }}
+                onModuleSelected={this.onModuleSelected}
+                projectId={this.props.projectId}>
+            </ModuleSelector>
+            :
+            <AreaPanel
+                module={this.state.moduleSelected}
+                documentType={this.props.documentType}
+                projectId={this.props.projectId}
+                selectedDocument={this.props.selectedDocument}
+                addToBreadcrumbs={this.props.addToBreadcrumbs}
+                updateBreadcrumbName={this.props.updateBreadcrumbName}
+                onDocumentClick={this.props.onDocumentClick}
+                onEntityClick={this.props.onEntityClick}>
+            </AreaPanel>
+        )
+    }
+}
+
+export default ModulesPanel;

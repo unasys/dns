@@ -1,0 +1,25 @@
+.tab-container {
+    margin-right:5px;
+    padding:10px;
+    color:#fff;
+    font-size:14px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    &.active {
+        border-bottom: 4px solid #fff;
+        color:white;
+        padding-bottom:4px;
+    }
+}
+[class="tab-container "]:hover {
+    background: black;    
+    .tab {
+        color: #fff;
+    }
+}
+
+.project-title {
+    color:white;
+    font-size:14px;
+}

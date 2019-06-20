@@ -1,0 +1,44 @@
+.file-viewer-window {
+    position: absolute;
+    z-index:2;
+    left:50%;
+    margin-left:-435px;
+    padding-top:50px;
+    .action-bar {
+        display:flex;
+        justify-content: flex-end;
+        width:100%;
+        background-color: black;
+        i {
+            font-size:20px;
+        }
+    }
+    .page-controls {
+        color:white;
+        background-color: black;
+        display:flex;
+        justify-content: center;
+        i {
+            padding: 5px;
+        }
+    }
+}
+
+.jpg-viewer-container {
+    position:absolute;
+    z-index:4;
+    top:10%;
+    left:30%;
+    .action-bar {
+        display:flex;
+        justify-content: flex-end;
+        width:100%;
+        background-color: black;
+        i {
+            font-size:20px;
+        }
+    }
+    .jpg-viewer {
+        width:800px;
+    }
+}
