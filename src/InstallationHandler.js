@@ -2,9 +2,7 @@ import React from 'react';
 import { setCesiumInstallations } from './actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchInstallations } from './api/Installations';
-import jwt_decode from 'jwt-decode';
 import axios from 'axios';
-import auth0Client from './auth/auth';
 
 const CancelToken = axios.CancelToken;
 
@@ -17,12 +15,6 @@ class InstallationHandler extends React.Component {
         this.source = CancelToken.source();
         this.fetchInstallations = this.fetchInstallations.bind(this);
         this.attemptedRetry = false;
-    }
-
-    componentDidMount() {
-        let accessToken = auth0Client.getAccessToken();
-        let organisationId = accessToken ? jwt_decode(accessToken)['https://epm.unasys.com/organisation'] : null
-        this.fetchInstallations(organisationId);
     }
 
     componentWillUnmount() {

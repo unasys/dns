@@ -11,9 +11,7 @@ import { changeWalkthroughSrc } from '../../actions/walkthroughActions';
 import { changeCurrentInstallation, changeInstallationFilterType } from '../../actions/installationActions';
 import DigitalNorthSeaLogo from '../../assets/DigitalNorthSeaLogo';
 import { INSTALLATION_FILTER_TYPES } from '../../actions/installationActions';
-import Search from '../search/Search';
 import DataroomDropdowns from './DataroomDropdowns';
-import eiderDropdown from '../../assets/eider-circle-dropdown.png'
 
 export const initialTabState = { name: 'Oil & Gas', id: 0 };
 
@@ -262,23 +260,12 @@ class Header extends Component {
           <DigitalNorthSeaLogo></DigitalNorthSeaLogo>
         </div>
 
-        {this.props.projectId &&
-          <Search
-            projectId={this.props.projectId}
-            isDataRoom={this.state.activeTab.id === 7}>
-          </Search>
-        }
-
-
         {tabs}
 
         {hasFacilityName ?
 
           <div className="selected-installation-box">
             <img className="installation-thumbnail" src={`https://epmdata.blob.core.windows.net/assets/images/${this.state.projectConfig["Image ID"]}.jpg`} alt="overview-thumbnail" onClick={this.toggleHighLevelShowing}></img>
-            {this.state.highlevelShowing && <div className="installation-highlevel-view">
-                <img src={eiderDropdown}></img>
-            </div>}
             {<i className="fas fa-times close-button" onClick={this.clearCurrentProject}></i>}
           </div> : <div className="spacer" />}
       </div>

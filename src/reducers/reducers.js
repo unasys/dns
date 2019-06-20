@@ -4,7 +4,6 @@ import InstallationReducer from '../reducers/installationReducer';
 import SketchfabReducer from '../reducers/sketchfabReducer';
 import WalkthroughReducer from '../reducers/walkthroughReducer';
 import BathymetryReducer from '../reducers/bathymetryReducer';
-import DataRoomReducer from '../reducers/dataroomReducer';
 import { connectRouter } from 'connected-react-router';
 
 export default (history) => combineReducers({
@@ -13,6 +12,5 @@ export default (history) => combineReducers({
     InstallationReducer,
     SketchfabReducer,
     WalkthroughReducer,
-    BathymetryReducer,
-    DataRoomReducer
+    BathymetryReducer
 })
