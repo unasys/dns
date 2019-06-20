@@ -30,7 +30,7 @@ class OilandGas extends React.Component {
     componentDidMount() {
         fetchFact(this.source.token).then(res => {
             this.setState({
-                didYouKnowMessage: res.data
+                didYouKnowMessage: res.data[Math.floor(Math.random()*res.data.length)]
             })
             setTimeout(this.clearDidYouKnowMessage, 6000);
         })
