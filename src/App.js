@@ -10,8 +10,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createReducers from './reducers/reducers';
 import { routerMiddleware } from 'connected-react-router';
 import { ConnectedRouter } from 'connected-react-router';
-import Walkthrough from './components/visuals/walkthrough/Walkthrough';
-import SketchfabWalkthrough from './components/visuals/sketchfab-walkthrough/SketchfabWalkthrough';
 import Bathymetry from './components/pages/bathymetry/Bathymetry';
 
 const store = createStore(
@@ -26,8 +24,6 @@ const store = createStore(
 
 let mainContent = [
   <Map></Map>,
-  <SketchfabWalkthrough sketchFabInitialMaximised={true}></SketchfabWalkthrough>,
-  <Walkthrough></Walkthrough>
 ]
 
 class App extends Component {

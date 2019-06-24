@@ -6,13 +6,11 @@ import StatusPassive from './status-icons/status-passive';
 import StatusRedundant from './status-icons/status-redundant';
 import StatusRemoved from './status-icons/status-removed';
 import StatusShutdown from './status-icons/status-shutdown';
-import { getContentForDocument } from '../../api/Documents';
 
 class ResultItem extends React.Component {
 
     constructor(props) {
         super(props);
-        this.openExternalLink = this.openExternalLink.bind(this);
         this.downloadOnClick = this.downloadOnClick.bind(this);
     }
 
@@ -39,14 +37,6 @@ class ResultItem extends React.Component {
         if (this.props.status !== undefined) {
             return this.getStatusIcon(this.props.status);
         }
-    }
-
-    openExternalLink(e) {
-        e.stopPropagation()
-        var newWindow = window.open();
-        getContentForDocument(this.props.externalLinkSrc).then(res => {
-            newWindow.location = res.data;
-        })
     }
 
     downloadOnClick(e) {

@@ -46,15 +46,6 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 return <CollapsibleHeading key={heading.name} heading={heading.name} items={heading.items}></CollapsibleHeading>
             })
 
-        let navigationHeadings =
-            this.props.projectId && !this.props.entityId &&
-            (<>
-                <NavigationHeading heading={'Asset Integrity'} onClick={() => history.push(`/projects/${this.props.projectId}/assetintegrity`)}></NavigationHeading>
-                {/* <NavigationHeading heading={'Definition & Status'} onClick={() => history.push(`/projects/${this.props.projectId}/definitionandstatus`)}></NavigationHeading>
-                <NavigationHeading heading={'Data Room'} onClick={() => history.push(`/projects/${this.props.projectId}/data-room`)}></NavigationHeading> */}
-                <NavigationHeading heading={'Admin'} onClick={() => history.push(`/projects/${this.props.projectId}/admin`)}></NavigationHeading>
-            </>)
-
         let installationSelection =
             this.props.installationSelectorComponent &&
             <div>
@@ -75,15 +66,10 @@ class ConfigInstallationDetailsPanel extends React.Component {
             <>
                 {installationSelection}
                 {collapsibleHeadings}
-                {navigationHeadings}
             </>
 
         let imageId;
         let imageAndHeader;
-        // let facilityName = "";
-        // if (this.props.installationDetails.OverviewName) {
-        //     facilityName = this.props.installationDetails.OverviewName;
-        // }
 
         let panel;
 
