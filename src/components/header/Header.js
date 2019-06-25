@@ -3,7 +3,7 @@ import './Header.scss';
 import Tab from '../tabs/Tab';
 import { connect } from 'react-redux';
 import history from '../../history';
-import DropdownTab from '../tabs/DropdownTab';
+//import DropdownTab from '../tabs/DropdownTab';
 import { changeInstallationFilterType } from '../../actions/installationActions';
 import DigitalNorthSeaLogo from '../../assets/DigitalNorthSeaLogo';
 import { INSTALLATION_FILTER_TYPES } from '../../actions/installationActions';
@@ -23,21 +23,29 @@ class Header extends Component {
     this.state = {
       tabs: [
         {
-          name: 'Oil & Gas', id: 0, route: () => this.getHomeRoute(), onClick: this.oilAndGasOnClick, onMainClick: () => {
+          name: 'Oil & Gas', 
+          id: 0, 
+          route: () => this.getHomeRoute(), 
+          //onClick: this.oilAndGasOnClick, 
+          onMainClick: () => {
             history.push(this.getHomeRoute())
-            this.setActiveTab(0)
+            //this.setActiveTab(0)
           }
         },
         { 
-          name: 'Offshore Wind', id: 1, route: () => this.getHomeRoute(), onClick: this.offshoreWindOnClick, onMainClick: () => {
+          name: 'Offshore Wind', 
+          id: 1, 
+          route: () => this.getHomeRoute(), 
+          //onClick: this.offshoreWindOnClick, 
+          onMainClick: () => {
            history.push(this.getHomeRoute())
-           this.setActiveTab(1)
+           //this.setActiveTab(1)
           }
         },
         { 
           name: 'Bathymetry', id: 2, route: () => this.getBathymetryRoute(), onMainClick: () => {
            history.push(this.getBathymetryRoute())
-           this.setActiveTab(2) 
+           //this.setActiveTab(2) 
           }
         }
       ],
@@ -65,7 +73,7 @@ class Header extends Component {
     this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OilAndGas);
   }
   offshoreWindOnClick() {
-    this.setActiveTab(0);
+    this.setActiveTab(1);
     this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OffshoreWind);
   }
   
@@ -87,9 +95,9 @@ class Header extends Component {
   }
 
   // handles browser refresh, if the current route is in the list of active tabs, set this tab as active.
-  componentDidMount() {
-    this.makeRouteTabActive();
-  }
+  // componentDidMount() {
+  //   this.makeRouteTabActive();
+  // }
 
   redirectToRoute(tab) {
     if (tab.route !== null && tab.route !== undefined) {
@@ -116,24 +124,23 @@ class Header extends Component {
   render() {
     let tabs = (<div className="navigation-tabs">
       {this.state.tabs.map(tab => {
-        if (tab.isDropdown) {
-          return <DropdownTab
-            initialName={tab.name}
-            dropdowns={tab.dropdowns}
-            isActive={this.state.activeTab.id === tab.id}
-            key={tab.name}
-            onMainClick={tab.onMainClick}
-            changeNameOnDropdownClick={tab.changeNameOnDropdownClick}>
-          </DropdownTab>
-        } else {
-          return <Tab
+        // if (tab.isDropdown) {
+        //   return <DropdownTab
+        //     initialName={tab.name}
+        //     dropdowns={tab.dropdowns}
+        //     isActive={this.state.activeTab.id === tab.id}
+        //     key={tab.name}
+        //     onMainClick={tab.onMainClick}>
+        //   </DropdownTab>
+        // } else {
+        return <Tab
             name={tab.name}
             key={tab.id}
             isActive={this.state.activeTab.id === tab.id}
             onClick={this.setActiveTab}
             id={tab.id}>
           </Tab>
-        }
+        //}
       })}
     </div>);
 
@@ -150,6 +157,7 @@ class Header extends Component {
         </div>
         <div className="spacer">
         </div>
+        
       </div>
     );
   }
