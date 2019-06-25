@@ -3,8 +3,8 @@ import '../Panels.scss';
 import CollapsibleHeading from './CollapsibleHeading';
 import axios from 'axios';
 import { getAuxiliaryDataImage } from '../../../../api/Entities';
-import NavigationHeading from './NavigationHeading';
-import history from '../../../../history.js'
+//import NavigationHeading from './NavigationHeading';
+//import history from '../../../../history.js'
 import InstallationFilterSelector from '../../../pages/oil&gas/InstallationFilterSelector';
 import { Collapse } from 'react-collapse';
 

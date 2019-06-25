@@ -35,11 +35,10 @@ class Header extends Component {
     this.setState({
       activeTab: newActiveTab
     });
-    
     // lets other components know what the currently active tab is.
     this.props.changeActiveTab(newActiveTab);
   }
-
+  
   // finds tab by id, sets it as the current active tab in state, and redirects user to the tab's route.
   onTabClick(id) {
     //manage header state (set active tab) 
@@ -47,14 +46,11 @@ class Header extends Component {
     if (!newActiveTab) {
       return;
     }
-
     this.setActiveTab(newActiveTab);
-
     //change map/filter
     if (newActiveTab.filter) {
       this.props.changeInstallationFilterType(newActiveTab.filter);
     }
-    
     //set route/url
     if (newActiveTab.route !== undefined) {
       history.push(newActiveTab.route);
