@@ -26,7 +26,6 @@ class Header extends Component {
           name: 'Oil & Gas', 
           id: 0, 
           route: () => this.getHomeRoute(), 
-          //onClick: this.oilAndGasOnClick, 
           onMainClick: () => {
             history.push(this.getHomeRoute())
             //this.setActiveTab(0)
@@ -35,10 +34,9 @@ class Header extends Component {
         { 
           name: 'Offshore Wind', 
           id: 1, 
-          route: () => this.getHomeRoute(), 
-          //onClick: this.offshoreWindOnClick, 
+          route: () => this.getThisRoute(), 
           onMainClick: () => {
-           history.push(this.getHomeRoute())
+           history.push(this.getThisRoute())
            //this.setActiveTab(1)
           }
         },
@@ -62,6 +60,15 @@ class Header extends Component {
   }
 
   getHomeRoute() {
+    //this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OilAndGas);
+    if (this.props.projectId) {
+      return `/projects/${this.props.projectId}`;
+    }
+    return '/';
+  }
+
+  getThisRoute(){
+    //this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OffshoreWind);
     if (this.props.projectId) {
       return `/projects/${this.props.projectId}`;
     }
@@ -152,12 +159,12 @@ class Header extends Component {
         }}>
           <DigitalNorthSeaLogo></DigitalNorthSeaLogo>
         </div>
-        <div className="tab-container">
+        <>
           {tabs}
-        </div>
+        </>
         <div className="spacer">
         </div>
-        
+
       </div>
     );
   }
