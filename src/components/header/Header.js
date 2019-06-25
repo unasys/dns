@@ -14,37 +14,16 @@ export const initialTabState = { name: 'Oil& Gas', id: 0};
 class Header extends Component {
   constructor(props) {
     super(props);
-
-    this.oilAndGasOnClick = this.oilAndGasOnClick.bind(this);
-    this.offshoreWindOnClick = this.offshoreWindOnClick.bind(this);
-    this.makeRouteTabActive = this.makeRouteTabActive.bind(this);
-    
-
     this.state = {
       tabs: [
         {
-          name: 'Oil & Gas', 
-          id: 0, 
-          route: () => this.getHomeRoute(), 
-          onMainClick: () => {
-            history.push(this.getHomeRoute())
-            //this.setActiveTab(0)
-          }
+          name: 'Oil & Gas', id: 0, filter: "INSTALLATION_FILTER_TYPES.OilAndGas", route: () => this.getMapRoute(), 
         },
         { 
-          name: 'Offshore Wind', 
-          id: 1, 
-          route: () => this.getThisRoute(), 
-          onMainClick: () => {
-           history.push(this.getThisRoute())
-           //this.setActiveTab(1)
-          }
+          name: 'Offshore Wind', id: 1, filter: "INSTALLATION_FILTER_TYPES.OffShoreWind", route: () => this.getMapRoute()
         },
         { 
-          name: 'Bathymetry', id: 2, route: () => this.getBathymetryRoute(), onMainClick: () => {
-           history.push(this.getBathymetryRoute())
-           //this.setActiveTab(2) 
-          }
+          name: 'Bathymetry', id: 2, route: () => this.getBathymetryRoute()
         }
       ],
       activeTab: initialTabState,
@@ -54,81 +33,56 @@ class Header extends Component {
     this.setActiveTab = this.setActiveTab.bind(this);
     this.toggleHighLevelShowing = this.toggleHighLevelShowing.bind(this);
   }
-
   getBathymetryRoute() {
     return '/bathymetry';
   }
-
-  getHomeRoute() {
-    //this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OilAndGas);
+  getMapRoute() {
     if (this.props.projectId) {
       return `/projects/${this.props.projectId}`;
     }
     return '/';
   }
-
-  getThisRoute(){
-    //this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OffshoreWind);
-    if (this.props.projectId) {
-      return `/projects/${this.props.projectId}`;
-    }
-    return '/';
-  }
-
-  oilAndGasOnClick() {
-    this.setActiveTab(0);
-    this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OilAndGas);
-  }
-  offshoreWindOnClick() {
-    this.setActiveTab(1);
-    this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OffshoreWind);
-  }
-  
   toggleHighLevelShowing() {
     this.setState({
       highlevelShowing: !this.state.highlevelShowing
     })
   }
-
-  makeRouteTabActive() {
-    let currentPathname = this.props.location.pathname;
-    let noRedirect = false;
-    let tabMatchingRoute = (this.state.tabs.find(function (tab) {
-      return tab.route() === (currentPathname);
-    }));
-    if (tabMatchingRoute !== undefined) {
-      this.setActiveTab(tabMatchingRoute.id, noRedirect);
-    }
-  }
-
-  // handles browser refresh, if the current route is in the list of active tabs, set this tab as active.
-  // componentDidMount() {
-  //   this.makeRouteTabActive();
-  // }
-
-  redirectToRoute(tab) {
-    if (tab.route !== null && tab.route !== undefined) {
-      history.push(tab.route());
-    }
-  }
-
   // finds tab by id, sets it as the current active tab in state, and redirects user to the tab's route.
-  setActiveTab(id, noRedirect) {    
-    let activeTab = this.state.tabs.find(function (tab) {
-      return tab.id === id;
-    });
+  setActiveTab(id) {  
+
+    //manage header state (set active tab) 
+    let activeTab = this.state.tabs.find(function (tab) {return tab.id === id;});
     if (activeTab !== undefined) {
       this.setState({
         activeTab: activeTab
       });
-      this.props.changeActiveTab(activeTab);
-      if (!noRedirect) {
-        this.redirectToRoute(activeTab);
+    this.props.changeActiveTab(activeTab);
+    console.log(activeTab);
+    console.log(activeTab.id);
+    //set route/url
+    //change map/filter
+    if (activeTab.id === 0){
+      console.log(activeTab.filter);
+      this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OilAndGas);
+      //.getMapRoute()
+    }
+    if (activeTab.id === 1){
+      console.log(activeTab.filter);
+      this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OffshoreWind);
+      //.getMapRoute()
+    }    
+
+      if (activeTab.route !== null && activeTab.route !== undefined) {
+        history.push(activeTab.route()); 
+        console.log(activeTab.route());
       }
     }
+
   }
 
   render() {
+    //this.state.tabs.map( tab => tab.tabOnClick(tab)) 
+
     let tabs = (<div className="navigation-tabs">
       {this.state.tabs.map(tab => {
         // if (tab.isDropdown) {
@@ -154,7 +108,7 @@ class Header extends Component {
     return (
       <div className="header-container">
         <div className="logo-container" onClick={() => {
-          history.push(this.getHomeRoute())
+          history.push(this.getMapRoute())
           this.setActiveTab(0)
         }}>
           <DigitalNorthSeaLogo></DigitalNorthSeaLogo>
