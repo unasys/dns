@@ -9,33 +9,37 @@ import DigitalNorthSeaLogo from '../../assets/DigitalNorthSeaLogo';
 import { INSTALLATION_FILTER_TYPES } from '../../actions/installationActions';
 import { changeActiveTab } from '../../actions/headerActions';
 
-export const initialTabState = { name: 'Oil & Gas', id: 0 };
+export const initialTabState = { name: 'Oil& Gas', id: 0};
 
 class Header extends Component {
   constructor(props) {
     super(props);
 
     this.oilAndGasOnClick = this.oilAndGasOnClick.bind(this);
-    this.wasteToEnergyOnClick = this.wasteToEnergyOnClick.bind(this);
     this.offshoreWindOnClick = this.offshoreWindOnClick.bind(this);
     this.makeRouteTabActive = this.makeRouteTabActive.bind(this);
-
-    const oilAndGasDropdowns = [
-      { name: 'Oil & Gas', onClick: this.oilAndGasOnClick },
-      { name: 'Offshore Wind', onClick: this.offshoreWindOnClick },
-      { name: 'Waste to Energy', onClick: this.wasteToEnergyOnClick }
-    ]
+    
 
     this.state = {
       tabs: [
         {
-          name: 'Oil & Gas', id: 0, isDropdown: true, changeNameOnDropdownClick: true, dropdowns: oilAndGasDropdowns, route: () => this.getHomeRoute(), onMainClick: () => {
+          name: 'Oil & Gas', id: 0, route: () => this.getHomeRoute(), onClick: this.oilAndGasOnClick, onMainClick: () => {
             history.push(this.getHomeRoute())
             this.setActiveTab(0)
           }
         },
-
-        { name: 'Bathymetry', id: 1, route: () => this.getBathymetryRoute() }
+        { 
+          name: 'Offshore Wind', id: 1, route: () => this.getHomeRoute(), onClick: this.offshoreWindOnClick, onMainClick: () => {
+           history.push(this.getHomeRoute())
+           this.setActiveTab(1)
+          }
+        },
+        { 
+          name: 'Bathymetry', id: 2, route: () => this.getBathymetryRoute(), onMainClick: () => {
+           history.push(this.getBathymetryRoute())
+           this.setActiveTab(2) 
+          }
+        }
       ],
       activeTab: initialTabState,
       highlevelShowing: false
@@ -59,10 +63,6 @@ class Header extends Component {
   oilAndGasOnClick() {
     this.setActiveTab(0);
     this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OilAndGas);
-  }
-  wasteToEnergyOnClick() {
-    this.setActiveTab(0);
-    this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.WasteToEnergy);
   }
   offshoreWindOnClick() {
     this.setActiveTab(0);
