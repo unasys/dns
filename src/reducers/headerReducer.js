@@ -1,8 +1,8 @@
 import { CHANGE_ACTIVE_TAB } from '../actions/headerActions';
-import { initialTabState }  from '../components/header/Header';
+import { initialTabId }  from '../components/header/Header';
 
 const initialState = {
-    activeTab: initialTabState
+    activeTab: initialTabId
 }
 
 export default function(state = initialState, action) {

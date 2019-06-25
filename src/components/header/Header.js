@@ -3,13 +3,12 @@ import './Header.scss';
 import Tab from '../tabs/Tab';
 import { connect } from 'react-redux';
 import history from '../../history';
-//import DropdownTab from '../tabs/DropdownTab';
 import { changeInstallationFilterType } from '../../actions/installationActions';
 import DigitalNorthSeaLogo from '../../assets/DigitalNorthSeaLogo';
 import { INSTALLATION_FILTER_TYPES } from '../../actions/installationActions';
 import { changeActiveTab } from '../../actions/headerActions';
 
-export const initialTabState = { name: 'Oil& Gas', id: 0};
+export const initialTabId = { id: 0 };
 
 class Header extends Component {
   constructor(props) {
@@ -17,99 +16,69 @@ class Header extends Component {
     this.state = {
       tabs: [
         {
-          name: 'Oil & Gas', id: 0, filter: "INSTALLATION_FILTER_TYPES.OilAndGas", route: () => this.getMapRoute(), 
+          name: 'Oil & Gas', id: 0, filter: INSTALLATION_FILTER_TYPES.OilAndGas, route: ""
         },
-        { 
-          name: 'Offshore Wind', id: 1, filter: "INSTALLATION_FILTER_TYPES.OffShoreWind", route: () => this.getMapRoute()
+        {
+          name: 'Offshore Wind', id: 1, filter: INSTALLATION_FILTER_TYPES.OffshoreWind, route: ""
         },
-        { 
-          name: 'Bathymetry', id: 2, route: () => this.getBathymetryRoute()
+        {
+          name: 'Bathymetry', id: 2, route: "bathymetry"
         }
       ],
-      activeTab: initialTabState,
-      highlevelShowing: false
+      activeTab: initialTabId,
     }
 
-    this.setActiveTab = this.setActiveTab.bind(this);
-    this.toggleHighLevelShowing = this.toggleHighLevelShowing.bind(this);
+    this.onTabClick = this.onTabClick.bind(this);
   }
-  getBathymetryRoute() {
-    return '/bathymetry';
-  }
-  getMapRoute() {
-    if (this.props.projectId) {
-      return `/projects/${this.props.projectId}`;
-    }
-    return '/';
-  }
-  toggleHighLevelShowing() {
+
+  setActiveTab(newActiveTab) {
     this.setState({
-      highlevelShowing: !this.state.highlevelShowing
-    })
+      activeTab: newActiveTab
+    });
+    
+    // lets other components know what the currently active tab is.
+    this.props.changeActiveTab(newActiveTab);
   }
+
   // finds tab by id, sets it as the current active tab in state, and redirects user to the tab's route.
-  setActiveTab(id) {  
-
+  onTabClick(id) {
     //manage header state (set active tab) 
-    let activeTab = this.state.tabs.find(function (tab) {return tab.id === id;});
-    if (activeTab !== undefined) {
-      this.setState({
-        activeTab: activeTab
-      });
-    this.props.changeActiveTab(activeTab);
-    console.log(activeTab);
-    console.log(activeTab.id);
-    //set route/url
+    let newActiveTab = this.state.tabs.find(function (tab) { return tab.id === id; });
+    if (!newActiveTab) {
+      return;
+    }
+
+    this.setActiveTab(newActiveTab);
+
     //change map/filter
-    if (activeTab.id === 0){
-      console.log(activeTab.filter);
-      this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OilAndGas);
-      //.getMapRoute()
+    if (newActiveTab.filter) {
+      this.props.changeInstallationFilterType(newActiveTab.filter);
     }
-    if (activeTab.id === 1){
-      console.log(activeTab.filter);
-      this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.OffshoreWind);
-      //.getMapRoute()
-    }    
-
-      if (activeTab.route !== null && activeTab.route !== undefined) {
-        history.push(activeTab.route()); 
-        console.log(activeTab.route());
-      }
+    
+    //set route/url
+    if (newActiveTab.route !== undefined) {
+      history.push(newActiveTab.route);
     }
-
   }
 
   render() {
-    //this.state.tabs.map( tab => tab.tabOnClick(tab)) 
-
     let tabs = (<div className="navigation-tabs">
       {this.state.tabs.map(tab => {
-        // if (tab.isDropdown) {
-        //   return <DropdownTab
-        //     initialName={tab.name}
-        //     dropdowns={tab.dropdowns}
-        //     isActive={this.state.activeTab.id === tab.id}
-        //     key={tab.name}
-        //     onMainClick={tab.onMainClick}>
-        //   </DropdownTab>
-        // } else {
         return <Tab
-            name={tab.name}
-            key={tab.id}
-            isActive={this.state.activeTab.id === tab.id}
-            onClick={this.setActiveTab}
-            id={tab.id}>
-          </Tab>
-        //}
+          name={tab.name}
+          key={tab.id}
+          isActive={this.state.activeTab.id === tab.id}
+          onClick={this.onTabClick}
+          id={tab.id}>
+        </Tab>
       })}
     </div>);
 
     return (
       <div className="header-container">
         <div className="logo-container" onClick={() => {
-          history.push(this.getMapRoute())
-          this.setActiveTab(0)
+          history.push("")
+          this.onTabClick(0)
         }}>
           <DigitalNorthSeaLogo></DigitalNorthSeaLogo>
         </div>
@@ -118,7 +87,6 @@ class Header extends Component {
         </>
         <div className="spacer">
         </div>
-
       </div>
     );
   }
