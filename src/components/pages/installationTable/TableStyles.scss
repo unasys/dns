@@ -1,0 +1,38 @@
+.ReactTable-container {
+    width:100%;
+    display:flex;
+    justify-content: center;
+}
+
+.ReactTable {
+    padding-top:5%;
+    width:80%;
+    .rt-table { 
+        color:white;
+        background-color:rgba(65,68,80,.65);
+    }
+    .rt-thead {
+        border-bottom: 1px solid #666973;
+        padding:5px 0;
+    }
+    .rt-tbody {
+        .rt-tr-group {
+            border-bottom: 1px solid #666973;
+            margin:0px 20px;
+            padding:10px 0px;
+            .rt-tr {
+                .rt-td {                    
+                    text-transform: capitalize;
+                    text-align:center;
+                }
+            }
+        }
+    }
+    .-pagination {
+        background-color:rgba(65,68,80,.65);
+        color:white;
+        .-btn {
+            color:white;
+        }
+    }
+}

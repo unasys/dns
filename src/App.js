@@ -11,6 +11,7 @@ import createReducers from './reducers/reducers';
 import { routerMiddleware } from 'connected-react-router';
 import { ConnectedRouter } from 'connected-react-router';
 import Bathymetry from './components/pages/bathymetry/Bathymetry';
+import InstallationTable from './components/pages/installationTable/InstallationTable';
 
 const store = createStore(
   createReducers(history),
@@ -60,18 +61,24 @@ class App extends Component {
             <div className="content-container">
               {this.getMainPanelContent()}
               <Switch>          
+                <Route path="/installations" render={(props) => {
+                  return (
+                    <InstallationTable {...props} installations={this.state.installations} ></InstallationTable>
+                  )
+                }} />
                 <Route path="/bathymetry" exact={true} render={(props) => {
                   return (
                     <Bathymetry {...props}></Bathymetry>
                   )
                 }} />
 
+              </Switch>
+
                 <Route path="/" render={(props) => {
                   return (
                     <OilandGas {...props} installations={this.state.installations} changeMainContent={this.changeMainContentIndex}></OilandGas>
                   )
                 }} />
-              </Switch>
             </div>
           </div>
         </ConnectedRouter>
