@@ -11,9 +11,12 @@
         display:flex;
         justify-content: flex-end;
         width:370px;
+                
         &:hover > .close-button{
             visibility: visible;
+            
         }
+
         .close-button {         
             visibility: hidden;   
             padding-left:5px;
