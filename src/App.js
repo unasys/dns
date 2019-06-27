@@ -71,14 +71,13 @@ class App extends Component {
                     <Bathymetry {...props}></Bathymetry>
                   )
                 }} />
-
-              </Switch>
-
                 <Route path="/" render={(props) => {
                   return (
                     <OilandGas {...props} installations={this.state.installations} changeMainContent={this.changeMainContentIndex}></OilandGas>
                   )
                 }} />
+              </Switch>
+
             </div>
           </div>
         </ConnectedRouter>

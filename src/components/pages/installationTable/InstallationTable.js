@@ -3,6 +3,7 @@ import Page from '../Page.js';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import './TableStyles.scss';
+import history from '../../../history';
 
 const sampleTableData = [
     {
@@ -11370,11 +11371,26 @@ class InstallationTable extends Component {
         {
             Header: 'Lat/Long',
             id: 'Lat/Long',
-            accessor: row => (row["X Long"] + "/" +  row["Y Lat"]),
+            accessor: row => (parseFloat(Math.round(row["X Long"] * 100) / 100).toFixed(2)  + "/" +   parseFloat(Math.round(row["Y Lat"] * 100) / 100).toFixed(2)),
         },
         {
             Header: 'Status',
-            accessor: 'Status'
+            id: 'Status',
+            accessor: row => {
+              switch (row["Status"].toLowerCase()) {
+              case "active": {
+                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'green'}} title='active'></div>
+              }
+              case "removed": {
+                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'red'}}title='removed'></div>
+              }
+              case "abandoned": {
+                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'grey'}}title='abandoned'></div>
+              }
+              default: 
+                return row["Status"]
+            }
+          }
         },
         {
             Header: 'Age',
@@ -11391,7 +11407,8 @@ class InstallationTable extends Component {
         },
         {
             Header: 'Water Depth',
-            accessor: 'Water Depth'
+            id: 'Water Depth',
+            accessor: row => { if (row["Water Depth"]) { return row["Water Depth"] + 'm'} },
         },
         {
             Header: 'Block #',
@@ -11401,8 +11418,12 @@ class InstallationTable extends Component {
      
       return (
         <Page>
+            <div><i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i></div>
             <div className="ReactTable-container">
                 <ReactTable
+                    filterable
+                    defaultFilterMethod={(filter, row) =>
+                      String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())}
                     data={data}
                     columns={columns}
                     defaultPageSize={10}
