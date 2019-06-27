@@ -1,57 +1,77 @@
-.header-container {
-    background: #252B38;
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    width:100%;
-    flex: 0 1 60px;
-    border-bottom: 1px solid rgba(243, 201, 201, 0.11);
-    z-index:4;
-    .selected-installation-box {
-        display:flex;
-        justify-content: flex-end;
-        width:370px;
-                
-        &:hover > .close-button{
-            visibility: visible;
-            
-        }
 
-        .close-button {         
-            visibility: hidden;   
-            padding-left:5px;
-            color: rgba(255, 255, 255, 0.404);
-            display:flex;
-            align-items:center;
-        }
-        .installation-highlevel-view {
-            position: absolute;
-            top:57px;
-        }
+
+
+.header-container {
+  background: #252b38;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex: 0 1 60px;
+  border-bottom: 1px solid rgba(243, 201, 201, 0.11);
+  z-index: 4;
+  .selected-installation-box {
+    display: flex;
+    justify-content: flex-end;
+    width: 370px;
+
+    &:hover > .close-button {
+      visibility: visible;
     }
-    .installation-thumbnail {
-        display:flex;
-        align-items: center;
-        border-radius:50%;
-        height:50px;
-        width:50px;
+
+    .close-button {
+      visibility: hidden;
+      padding-left: 5px;
+      color: rgba(255, 255, 255, 0.404);
+      display: flex;
+      align-items: center;
     }
-    .logo-container {
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        width: 370px;
-        padding-left:25px;
-        cursor: pointer;
-        svg {
-            width:100%;
-        }
+    .installation-highlevel-view {
+      position: absolute;
+      top: 57px;
     }
-    .navigation-tabs {
-        display:flex;
-        justify-content: center;
+  }
+  .installation-thumbnail {
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+  }
+  .logo-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 370px;
+    padding-left: 25px;
+    cursor: pointer;
+    svg {
+      width: 100%;
     }
-    .spacer {
-        width:370px;
+  }
+  .navigation-tabs {
+    display: flex;
+    justify-content: center;
+  }
+  .spacer {
+    width: 370px;
+  }
+  .button {
+    position: absolute;
+  }
+  .dd-menu {
+    align-items: stretch;
+
+    ul {
+      position: absolute;
+      background: #252b38;
+      color: white;
     }
+    .dd-menu-items {
+      li {
+        position: relative;
+        color: white;
+      }
+    }
+  }
 }
