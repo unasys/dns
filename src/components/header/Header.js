@@ -9,6 +9,7 @@ import DigitalNorthSeaLogo from '../../assets/DigitalNorthSeaLogo';
 import { INSTALLATION_FILTER_TYPES } from '../../actions/installationActions';
 import { changeActiveTab } from '../../actions/headerActions';
 import DropdownMenu, { NestedDropdownMenu } from 'react-dd-menu';
+import '../../../node_modules/react-dd-menu/src/scss/react-dd-menu.scss';
 export const initialTabId = { id: 0 };
 
 class Header extends Component {
@@ -24,6 +25,9 @@ class Header extends Component {
         },
         {
           name: 'Bathymetry', id: 2, route: "bathymetry"
+        },
+        {
+          name: 'Test Tab', id: 3, route: "test"
         }
       ],
       isDropOpen: false,
@@ -95,19 +99,24 @@ class Header extends Component {
       })}
     </div>);
 
+//toggle: <Tab name="Testing Tab" onClick={this.toggle}></Tab>,
     const menuOptions = {
       isOpen: this.state.isDropOpen,
       close: this.close,
-      toggle: <Tab name="Testing Tab" onClick={this.toggle}></Tab>,
-
-      
+      //toggle:<div onClick={this.toggle}>shh</div>,
+      size: "xl",
+      animAlign: 'left',
+      align: 'center'
     };
     const nestedProps = {
-      toggle: <Tab name="Peek a Boo"></Tab>,
+      //toggle: <li name="Peek a Boo">hi</li>,
       animate: true,
-
-
+      animAlign: 'left',
+      inverse: true,
+      align: 'right',
+      size: "xl"
     };
+    //<li role="separator" className="separator" />
 
     return (
       <div className="header-container">
@@ -120,13 +129,18 @@ class Header extends Component {
         
           {tabs}
         
-        <div className="dd-menu">
-        <DropdownMenu {...menuOptions}>
-            <Tab name="Example 1"></Tab>
-            <Tab name="Example 2"onClick={this.onTabClick}></Tab>
-            <li role="separator" className="separator" />
-            <NestedDropdownMenu toggle={<Tab name="Multi-Level Menu"><span className="fa fa-chevron-right" nested="right" animAlign="left" /></Tab>}>
-              <Tab name="Still in a list" animAlign="left">I am in a Nested Menu!</Tab>
+        <div className="dd-menu dd-menu-left dd-menu-inverse ">
+        <DropdownMenu {...menuOptions}
+          >
+            <li name="Example 1"><button type="button"> Example 1 </button> </li>
+            <li name="Example 2"onClick={this.onTabClick}><button type="button"> Example 2 </button></li>
+            
+            <NestedDropdownMenu 
+              className="nested-dd-menu nested-reverse"
+              //{...nestedProps}
+              toggle={<div> Dropdown   <span className="fa fa-chevron-right" /></div>}
+              >
+              <li name="Still in a list" nested="left" align="right"><button type="button"> I am in a Nested Menu!</button> </li>
             </NestedDropdownMenu>
         </DropdownMenu>
         

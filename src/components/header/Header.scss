@@ -60,17 +60,20 @@
     position: absolute;
   }
   .dd-menu {
-    align-items: stretch;
-
+    align-items: center;
+    justify-content: center;
+    
     ul {
       position: absolute;
-      background: #252b38;
-      color: white;
+     // background: #252b38;
+      //color: white;
+      
     }
     .dd-menu-items {
+      
       li {
-        position: relative;
-        color: white;
+        //position: absolute;
+        //color: white;
       }
     }
   }
