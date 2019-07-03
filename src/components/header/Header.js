@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import './Header.scss';
+import '../../components/tabs/Tab.js';
 import Tab from '../tabs/Tab';
 import { connect } from 'react-redux';
 import history from '../../history';
@@ -7,7 +8,7 @@ import { changeInstallationFilterType } from '../../actions/installationActions'
 import DigitalNorthSeaLogo from '../../assets/DigitalNorthSeaLogo';
 import { INSTALLATION_FILTER_TYPES } from '../../actions/installationActions';
 import { changeActiveTab } from '../../actions/headerActions';
-
+import '../../../node_modules/react-dd-menu/src/scss/react-dd-menu.scss';
 export const initialTabId = { id: 0 };
 
 class Header extends Component {
@@ -25,12 +26,13 @@ class Header extends Component {
           name: 'Bathymetry', id: 2, route: "bathymetry"
         }
       ],
+      isDropOpen: false,
+
       activeTab: initialTabId,
     }
-
     this.onTabClick = this.onTabClick.bind(this);
+    this.onDropClick = this.onTabClick.bind(this);
   }
-
   setActiveTab(newActiveTab) {
     this.setState({
       activeTab: newActiveTab
@@ -38,7 +40,6 @@ class Header extends Component {
     // lets other components know what the currently active tab is.
     this.props.changeActiveTab(newActiveTab);
   }
-  
   // finds tab by id, sets it as the current active tab in state, and redirects user to the tab's route.
   onTabClick(id) {
     //manage header state (set active tab) 
@@ -56,7 +57,6 @@ class Header extends Component {
       history.push(newActiveTab.route);
     }
   }
-
   render() {
     let tabs = (<div className="navigation-tabs">
       {this.state.tabs.map(tab => {
@@ -69,7 +69,6 @@ class Header extends Component {
         </Tab>
       })}
     </div>);
-
     return (
       <div className="header-container">
         <div className="logo-container" onClick={() => {
@@ -78,16 +77,14 @@ class Header extends Component {
         }}>
           <DigitalNorthSeaLogo></DigitalNorthSeaLogo>
         </div>
-        <>
-          {tabs}
-        </>
+        {tabs}
         <div className="spacer">
         </div>
       </div>
+
     );
   }
 }
-
 function mapDispatchToProps(dispatch) {
   return {
     changeActiveTab: (activeTab) => {
@@ -98,5 +95,4 @@ function mapDispatchToProps(dispatch) {
     }
   }
 }
-
 export default connect(null, mapDispatchToProps)(Header)
