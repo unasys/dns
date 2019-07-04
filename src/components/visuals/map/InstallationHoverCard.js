@@ -17,11 +17,11 @@ class InstallationHoverCard extends Component {
                     </div>
                 </div>
                 <div className="installation-hover-card-body">
-                    <div className="image-block-container">
-                        <div className="image">
-                            <div style={{ height: '50px', width: '50px', backgroundColor: 'yellow', borderRadius: '10px' }}>
-                            </div>
-                        </div>
+                    <div className="image-block-container">                    
+                        {hoveredInstallation["Image ID"] &&
+                            <div className="image">
+                                    <img src={`https://epmdata.blob.core.windows.net/assets/images/${hoveredInstallation["Image ID"]}.jpg`} alt="overview-thumbnail" ></img>
+                            </div>}
                         <div className="text-block">
                             <div className="installation-text-value">
                                 <div className="installation-hover-card-heading">Installation Name</div>
@@ -40,10 +40,10 @@ class InstallationHoverCard extends Component {
                         </div>
                     </div>
                     <div className="image-block-container">
-                        <div className="image">
+                        {/* <div className="image">
                             <div style={{ height: '50px', width: '50px', backgroundColor: 'yellow', borderRadius: '10px' }}>
                             </div>
-                        </div>
+                        </div> */}
                         <div className="text-block">
                             <div className="installation-text-value">
                                 <div className="installation-hover-card-heading">Area</div>

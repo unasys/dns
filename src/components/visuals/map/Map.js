@@ -463,9 +463,9 @@ class Map extends Component {
                 previousPickedEntity.point.color = window.Cesium.Color.GOLD;
             }
             if (self.state.lastHoveredInstallation) {
-                self.setState({
-                    lastHoveredInstallation: null
-                })
+                // self.setState({
+                //     lastHoveredInstallation: null
+                // })
             }
 
             // Highlight the currently picked entity
