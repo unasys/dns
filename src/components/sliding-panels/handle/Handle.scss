@@ -11,6 +11,7 @@
     align-items: center;
     justify-content: center;
     border: solid #ffffff6b 1px;
+    pointer-events: auto;
     &.left {
         border-left:none;
         border-radius: 0px 8px 8px 0px;

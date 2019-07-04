@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 class InstallationHoverCard extends Component {
     render() {
         const { hoveredInstallation } = this.props;
-        console.log(this.props);
 
         if (!hoveredInstallation) {
             return <div></div>;

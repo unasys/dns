@@ -462,8 +462,7 @@ class Map extends Component {
             if (window.Cesium.defined(previousPickedEntity)) {
                 previousPickedEntity.point.color = window.Cesium.Color.GOLD;
             }
-            if (window.Cesium.defined(previousLabel)) {
-                previousLabel.show = false;
+            if (self.state.lastHoveredInstallation) {
                 self.setState({
                     lastHoveredInstallation: null
                 })
@@ -477,22 +476,22 @@ class Map extends Component {
                 self.setState({
                     lastHoveredInstallation: pickedEntity.installation
                 })
-                previousLabel = viewer.entities.add({
-                    position: window.Cesium.Cartesian3.fromDegrees(pickedEntity.installation.X, pickedEntity.installation.Y),
-                    label: {
-                        text: pickedEntity.installation["Facility Name"],
-                        font: '18px Helvetica',
-                        fillColor: window.Cesium.Color.WHITE,
-                        horizontalOrigin: window.Cesium.HorizontalOrigin.CENTER,
-                        verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-                        eyeOffset: new window.Cesium.Cartesian3(0, 0, -5),
-                        pixelOffset: new window.Cesium.Cartesian2(200, 0),
-                        show: true,
-                        style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                        outlineColor: window.Cesium.Color.BLACK,
-                        outlineWidth: 3
-                    }
-                })
+                // previousLabel = viewer.entities.add({
+                //     position: window.Cesium.Cartesian3.fromDegrees(pickedEntity.installation.X, pickedEntity.installation.Y),
+                //     label: {
+                //         text: pickedEntity.installation["Facility Name"],
+                //         font: '18px Helvetica',
+                //         fillColor: window.Cesium.Color.WHITE,
+                //         horizontalOrigin: window.Cesium.HorizontalOrigin.CENTER,
+                //         verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                //         eyeOffset: new window.Cesium.Cartesian3(0, 0, -5),
+                //         pixelOffset: new window.Cesium.Cartesian2(200, 0),
+                //         show: true,
+                //         style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                //         outlineColor: window.Cesium.Color.BLACK,
+                //         outlineWidth: 3
+                //     }
+                // })
             }
         }, window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }
@@ -744,7 +743,7 @@ class Map extends Component {
             pointerEvents: 'auto'
         };
         let hoveredInstallation = this.state.lastHoveredInstallation;
-        console.log(hoveredInstallation);
+        
         return (
             <>
             <ReactCursorPosition style={{width:'100%', pointerEvents:'none'}}>
