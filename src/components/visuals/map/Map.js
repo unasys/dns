@@ -5,6 +5,8 @@ import { changeCurrentInstallation, INSTALLATION_FILTER_TYPES } from '../../../a
 import history from '../../../history';
 import { updatePositions } from '../../../actions/bathymetryActions';
 import axios from 'axios';
+import ReactCursorPosition from 'react-cursor-position';
+import InstallationHoverCard from './InstallationHoverCard';
 
 const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
 const baseWMSUrl = baseUrl + '/arcgis/services'
@@ -462,6 +464,9 @@ class Map extends Component {
             }
             if (window.Cesium.defined(previousLabel)) {
                 previousLabel.show = false;
+                self.setState({
+                    lastHoveredInstallation: null
+                })
             }
 
             // Highlight the currently picked entity
@@ -736,66 +741,17 @@ class Map extends Component {
             width: '100%',
             height: '100%',
             zIndex: 1,
+            pointerEvents: 'auto'
         };
         let hoveredInstallation = this.state.lastHoveredInstallation;
-        console.log(hoveredInstallation)
-
+        console.log(hoveredInstallation);
         return (
             <>
+            <ReactCursorPosition style={{width:'100%', pointerEvents:'none'}}>
                 <div id="cesiumContainer" style={divStyle} >
-                    <div className="installation-hover-card">
-                        <div className="installation-hover-card-title">
-                            <div className="installation-text-value">
-                                <div className="installation-hover-card-heading">Field Type</div>
-                                <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Type of Fluid"]}</div>
-                            </div>
-                        </div>
-                        <div className="installation-hover-card-body">
-                        <div className="image-block-container">
-                            <div className="image">
-                                <div style={{height:'50px', width:'50px', backgroundColor:'yellow', borderRadius: '10px'}}>
-                                </div>
-                            </div>
-                            <div className="text-block">
-                                <div className="installation-text-value">
-                                    <div className="installation-hover-card-heading">Installation Name</div>
-                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Facility Name"]}</div>
-                                </div>
-                                <div className="installation-text-value">
-                                    <div className="installation-hover-card-heading">Quadrant Number</div>
-                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Quadrant Number"]}</div>      
-                                </div>
-                            </div>
-                        </div>
-                        <div className="text-block-container">
-                            <div className="installation-text-value">
-                                <div className="installation-hover-card-heading">Installation Type</div>
-                                <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Facility Type Description"]}</div>
-                            </div>
-                        </div>
-                        <div className="image-block-container">
-                            <div className="image">
-                                <div style={{height:'50px', width:'50px', backgroundColor:'yellow', borderRadius: '10px'}}>
-                                </div>
-                            </div>
-                            <div className="text-block">
-                                <div className="installation-text-value">
-                                    <div className="installation-hover-card-heading">Area</div>
-                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Area"]}</div>
-                                </div>
-                                <div className="installation-text-value">
-                                    <div className="installation-hover-card-heading">First Oil/Gas Date</div>
-                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["First Oil/Gas Date"]}</div>      
-                                </div>
-                                <div className="installation-text-value">
-                                    <div className="installation-hover-card-heading">Manned or NUI</div>
-                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Manned or NUI"]}</div>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
                 </div>
+                    <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
+                </ReactCursorPosition>
             </>
         );
     }

@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import './Header.scss';
 import '../../components/tabs/Tab.js';
 import Tab from '../tabs/Tab';
