@@ -12,7 +12,6 @@ const baseRESTUrl = baseUrl + '/arcgis/rest/services'
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain'
 const CancelToken = axios.CancelToken;
 
-
 class Map extends Component {
     constructor(props) {
         super(props)
@@ -36,7 +35,8 @@ class Map extends Component {
             isHidden: false,
             positions: [],
             installations: [],
-            currentInstallationFilter: null
+            currentInstallationFilter: null,
+            lastHoveredInstallation: null
         }
 
         this.state.installations = this.props.cesiumInstallations;
@@ -74,6 +74,9 @@ class Map extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.lastHoveredInstallation !== nextState.lastHoveredInstallation) {
+            return true;
+        }
         if (this.state.viewer != null) {
             this.sortLayers(nextProps);
             if (this.installationPoints !== undefined) {
@@ -447,6 +450,7 @@ class Map extends Component {
         var previousPickedEntity = undefined;
         var previousLabel = undefined;
         const viewer = this.state.viewer;
+        let self = this;
         // If the mouse is over a point of interest, change the entity billboard scale and color
         handler.setInputAction(function (movement) {
             var pickedPrimitive = viewer.scene.pick(movement.endPosition);
@@ -465,6 +469,9 @@ class Map extends Component {
                 viewer.scene.requestRender();
                 pickedEntity.point.color = window.Cesium.Color.AZURE;
                 previousPickedEntity = pickedEntity;
+                self.setState({
+                    lastHoveredInstallation: pickedEntity.installation
+                })
                 previousLabel = viewer.entities.add({
                     position: window.Cesium.Cartesian3.fromDegrees(pickedEntity.installation.X, pickedEntity.installation.Y),
                     label: {
@@ -675,127 +682,6 @@ class Map extends Component {
         this.addBathymetryHandlers();
     }
 
-    // setUpCinemaMode(x) {
-    //     console.log(x);
-    //     ////// cinema mode start
-    //     var scene = x.scene;
-    //     var canvas = x.canvas;
-    //     canvas.setAttribute('tabindex', '0'); // needed to put focus on the canvas
-    //     canvas.onclick = function () {
-    //         canvas.focus();
-    //     };
-    //     var ellipsoid = scene.globe.ellipsoid;
-
-    //     // disable the default event handlers
-    //     scene.screenSpaceCameraController.enableRotate = false;
-    //     scene.screenSpaceCameraController.enableTranslate = false;
-    //     scene.screenSpaceCameraController.enableZoom = false;
-    //     scene.screenSpaceCameraController.enableTilt = false;
-    //     scene.screenSpaceCameraController.enableLook = false;
-
-    //     var startMousePosition;
-    //     var mousePosition;
-    //     var flags = {
-    //         looking: false,
-    //         moveForward: false,
-    //         moveBackward: false,
-    //         moveUp: false,
-    //         moveDown: false,
-    //         moveLeft: false,
-    //         moveRight: false
-    //     };
-
-    //     var handler = new window.Cesium.ScreenSpaceEventHandler(canvas);
-
-    //     handler.setInputAction(function (movement) {
-    //         flags.looking = true;
-    //         mousePosition = startMousePosition = window.Cesium.Cartesian3.clone(movement.position);
-    //     }, window.Cesium.ScreenSpaceEventType.LEFT_DOWN);
-
-    //     handler.setInputAction(function (movement) {
-    //         mousePosition = movement.endPosition;
-    //     }, window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
-    //     handler.setInputAction(function (position) {
-    //         flags.looking = false;
-    //     }, window.Cesium.ScreenSpaceEventType.LEFT_UP);
-
-    //     function getFlagForKeyCode(keyCode) {
-    //         switch (keyCode) {
-    //             case 'W'.charCodeAt(0):
-    //                 return 'moveForward';
-    //             case 'S'.charCodeAt(0):
-    //                 return 'moveBackward';
-    //             case 'Q'.charCodeAt(0):
-    //                 return 'moveUp';
-    //             case 'E'.charCodeAt(0):
-    //                 return 'moveDown';
-    //             case 'D'.charCodeAt(0):
-    //                 return 'moveRight';
-    //             case 'A'.charCodeAt(0):
-    //                 return 'moveLeft';
-    //             default:
-    //                 return undefined;
-    //         }
-    //     }
-
-    //     document.addEventListener('keydown', function (e) {
-    //         var flagName = getFlagForKeyCode(e.keyCode);
-    //         if (typeof flagName !== 'undefined') {
-    //             flags[flagName] = true;
-    //         }
-    //     }, false);
-
-    //     document.addEventListener('keyup', function (e) {
-    //         var flagName = getFlagForKeyCode(e.keyCode);
-    //         if (typeof flagName !== 'undefined') {
-    //             flags[flagName] = false;
-    //         }
-    //     }, false);
-
-    //     let camera = x.camera;
-    //     x.clock.onTick.addEventListener(function (clock) {
-    //         //var camera = x.camera;
-
-    //         if (flags.looking) {
-    //             var width = canvas.clientWidth;
-    //             var height = canvas.clientHeight;
-
-    //             // Coordinate (0.0, 0.0) will be where the mouse was clicked.
-    //             var x = (mousePosition.x - startMousePosition.x) / width;
-    //             var y = -(mousePosition.y - startMousePosition.y) / height;
-
-    //             var lookFactor = 0.05;
-    //             camera.lookRight(x * lookFactor);
-    //             camera.lookUp(y * lookFactor);
-    //         }
-
-    //         // Change movement speed based on the distance of the camera to the surface of the ellipsoid.
-    //         var cameraHeight = ellipsoid.cartesianToCartographic(camera.position).height;
-    //         var moveRate = cameraHeight / 100.0;
-
-    //         if (flags.moveForward) {
-    //             camera.moveForward(moveRate);
-    //         }
-    //         if (flags.moveBackward) {
-    //             camera.moveBackward(moveRate);
-    //         }
-    //         if (flags.moveUp) {
-    //             camera.moveUp(moveRate);
-    //         }
-    //         if (flags.moveDown) {
-    //             camera.moveDown(moveRate);
-    //         }
-    //         if (flags.moveLeft) {
-    //             camera.moveLeft(moveRate);
-    //         }
-    //         if (flags.moveRight) {
-    //             camera.moveRight(moveRate);
-    //         }
-    //     });
-    //     ///////// cinema mode end
-    // }
-
     loadUpInstallations(nextProps) {
         this.state.viewer.screenSpaceEventHandler.setInputAction(this.mouseEvent, window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         var installationPoints = [];
@@ -851,11 +737,64 @@ class Map extends Component {
             height: '100%',
             zIndex: 1,
         };
-
+        let hoveredInstallation = this.state.lastHoveredInstallation;
+        console.log(hoveredInstallation)
 
         return (
             <>
                 <div id="cesiumContainer" style={divStyle} >
+                    <div className="installation-hover-card">
+                        <div className="installation-hover-card-title">
+                            <div className="installation-text-value">
+                                <div className="installation-hover-card-heading">Field Type</div>
+                                <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Type of Fluid"]}</div>
+                            </div>
+                        </div>
+                        <div className="installation-hover-card-body">
+                        <div className="image-block-container">
+                            <div className="image">
+                                <div style={{height:'50px', width:'50px', backgroundColor:'yellow', borderRadius: '10px'}}>
+                                </div>
+                            </div>
+                            <div className="text-block">
+                                <div className="installation-text-value">
+                                    <div className="installation-hover-card-heading">Installation Name</div>
+                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Facility Name"]}</div>
+                                </div>
+                                <div className="installation-text-value">
+                                    <div className="installation-hover-card-heading">Quadrant Number</div>
+                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Quadrant Number"]}</div>      
+                                </div>
+                            </div>
+                        </div>
+                        <div className="text-block-container">
+                            <div className="installation-text-value">
+                                <div className="installation-hover-card-heading">Installation Type</div>
+                                <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Facility Type Description"]}</div>
+                            </div>
+                        </div>
+                        <div className="image-block-container">
+                            <div className="image">
+                                <div style={{height:'50px', width:'50px', backgroundColor:'yellow', borderRadius: '10px'}}>
+                                </div>
+                            </div>
+                            <div className="text-block">
+                                <div className="installation-text-value">
+                                    <div className="installation-hover-card-heading">Area</div>
+                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Area"]}</div>
+                                </div>
+                                <div className="installation-text-value">
+                                    <div className="installation-hover-card-heading">First Oil/Gas Date</div>
+                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["First Oil/Gas Date"]}</div>      
+                                </div>
+                                <div className="installation-text-value">
+                                    <div className="installation-hover-card-heading">Manned or NUI</div>
+                                    <div className="installation-hover-card-value">{hoveredInstallation && hoveredInstallation["Manned or NUI"]}</div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 </div>
             </>
         );

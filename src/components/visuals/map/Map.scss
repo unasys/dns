@@ -1,42 +1,93 @@
 #cesiumContainer {
-    width:100%;
-    height:100%;
-    z-index:1;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  .installation-hover-card {
+    position: absolute;
+    z-index: 1;
+    border-radius: 20px;
+    width: 300px;
+    border: 2px solid white;
+    left: calc(100% - 300px); 
+    top: calc(40%);
+    font-family: "Roboto", sans-serif;
+    color: white;
+
+    .installation-text-value {
+      display: flex;
+      padding-right: 10px;
+      .installation-hover-card-heading {
+        padding-right: 7px;
+      }
+      .installation-hover-card-value {
+        font-weight: 200;
+      }
+    }
+
+    .installation-hover-card-title {
+      display: flex;
+      border-bottom: 2px solid white;
+      padding-top: 5px;
+      padding-left: 20px;
+      margin-bottom: 15px;
+    }
+    .installation-hover-card-body {
+      padding: 0px 20px;
+
+      .image-block-container {
+        display: flex;
+        border-bottom: 1px dotted white;
+        padding-bottom: 10px;
+        .image {
+        }
+        .text-block {
+          padding-left: 20px;
+        }
+      }
+      .text-block-container {
+        display: flex;
+        border-bottom: 1px dotted white;
+        margin-bottom: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+    }
+  }
 }
 
 .cesium-viewer-bottom {
-    text-align:center;
+  text-align: center;
 }
 
 .balmoral-button {
-    position: absolute;
-    z-index:3;
-    top:50%;
-    left:50%;
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
 }
 
 .iog-button {
-    position: absolute;
-    z-index:3;
-    top:54%;
-    left:50%;
+  position: absolute;
+  z-index: 3;
+  top: 54%;
+  left: 50%;
 }
 
 .d18-button {
-    position: absolute;
-    z-index:3;
-    top:58%;
-    left:50%;
+  position: absolute;
+  z-index: 3;
+  top: 58%;
+  left: 50%;
 }
 .trep-button {
-    position: absolute;
-    z-index:3;
-    top:62%;
-    left:50%;
+  position: absolute;
+  z-index: 3;
+  top: 62%;
+  left: 50%;
 }
 .eider-button {
-    position: absolute;
-    z-index:3;
-    top:66%;
-    left:50%;
+  position: absolute;
+  z-index: 3;
+  top: 66%;
+  left: 50%;
 }
