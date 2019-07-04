@@ -745,13 +745,13 @@ class Map extends Component {
         let hoveredInstallation = this.state.lastHoveredInstallation;
         
         return (
-            <>
-            <ReactCursorPosition style={{width:'100%', pointerEvents:'none'}}>
+            <div style={{height:'100%', width:'100%'}}>
+            <ReactCursorPosition style={{width:'100%', height:'100%', pointerEvents:'none'}}>
                 <div id="cesiumContainer" style={divStyle} >
                 </div>
-                    <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
-                </ReactCursorPosition>
-            </>
+                <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
+            </ReactCursorPosition>
+            </div>
         );
     }
 }

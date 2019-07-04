@@ -3,10 +3,10 @@ import '../Panels.scss';
 import CollapsibleHeading from './CollapsibleHeading';
 import axios from 'axios';
 import { getAuxiliaryDataImage } from '../../../../api/Entities';
-//import NavigationHeading from './NavigationHeading';
-//import history from '../../../../history.js'
+import history from '../../../../history.js'
 import InstallationFilterSelector from '../../../pages/oil&gas/InstallationFilterSelector';
 import { Collapse } from 'react-collapse';
+import NavigationHeading from './NavigationHeading';
 
 const CancelToken = axios.CancelToken;
 
@@ -46,6 +46,11 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 return <CollapsibleHeading key={heading.name} heading={heading.name} items={heading.items}></CollapsibleHeading>
             })
 
+        let navigationHeadings =
+            (<>
+                <NavigationHeading heading={'View in EPM'} onClick={()=> window.open(`https://epm.unasys.com/projects/${this.props.projectId}/`, "_blank")}></NavigationHeading>
+            </>)
+
         let installationSelection =
             this.props.installationSelectorComponent &&
             <div>
@@ -66,6 +71,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
             <>
                 {installationSelection}
                 {collapsibleHeadings}
+                {navigationHeadings}
             </>
 
         let imageId;
