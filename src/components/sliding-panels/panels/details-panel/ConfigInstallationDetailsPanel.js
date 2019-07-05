@@ -47,7 +47,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
             })
 
         let navigationHeadings =
-            (<>
+            (this.props.projectId && <>
                 <NavigationHeading heading={'View in EPM'} onClick={()=> window.open(`https://epm.unasys.com/projects/${this.props.projectId}/`, "_blank")}></NavigationHeading>
             </>)
 

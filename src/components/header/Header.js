@@ -27,7 +27,6 @@ class Header extends Component {
         }
       ],
       isDropOpen: false,
-
       activeTab: initialTabId,
     }
     this.onTabClick = this.onTabClick.bind(this);

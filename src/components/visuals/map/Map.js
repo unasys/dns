@@ -463,9 +463,9 @@ class Map extends Component {
                 previousPickedEntity.point.color = window.Cesium.Color.GOLD;
             }
             if (self.state.lastHoveredInstallation) {
-                // self.setState({
-                //     lastHoveredInstallation: null
-                // })
+                self.setState({
+                    lastHoveredInstallation: null
+                })
             }
 
             // Highlight the currently picked entity
@@ -563,6 +563,8 @@ class Map extends Component {
                 this.props.changeCurrentInstallation(id.installation);
                 if (id.installation.ProjectId) { // unselect if no project id is selected.
                     history.push(`/projects/${id.installation.ProjectId}`);
+                } else {
+                    history.push(`/projects/`)
                 }
 
                 if (id.installation.CesiumId) {
