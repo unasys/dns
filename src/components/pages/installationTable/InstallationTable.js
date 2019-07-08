@@ -4,6 +4,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import './TableStyles.scss';
 import history from '../../../history';
+import ColumnSelector from './ColumnSelector.js';
 
 const sampleTableData = [
     {
@@ -11348,7 +11349,35 @@ const sampleTableData = [
     }
   ]
 
+const availableColumns = ['Type', 'Field Type', 'Lat/Long', 'Status', 'Age', 'Operator', 'Discovery Well', 'Water Depth', 'Block #']
+
 class InstallationTable extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        shownColumns: ['Name']
+      }
+      this.addToShownColumns = this.addToShownColumns.bind(this);
+      this.removeFromShownColumns = this.removeFromShownColumns.bind(this);
+    }
+
+    addToShownColumns(additionalColumn) {
+      let shownColumns = this.state.shownColumns;
+      this.setState({
+        shownColumns: shownColumns.concat(additionalColumn)
+      })
+    }
+
+    removeFromShownColumns(columnToRemove) {
+      console.log(shownColumns);
+      let shownColumns = this.state.shownColumns;
+      var index = shownColumns.indexOf(columnToRemove);
+      if (index !== -1) shownColumns.splice(index, 1);
+      this.setState({
+        shownColumns: shownColumns
+      })
+    }
+
     render() {
       const data = sampleTableData
      
@@ -11357,21 +11386,25 @@ class InstallationTable extends Component {
             Header: 'Name',
             id: 'Name',
             accessor: row => { if (row.Name) { return row.Name.toLowerCase()} },
-            style: {color: '#FFCE2F', fontSize:'12px'}
+            style: {color: '#FFCE2F', fontSize:'12px'},
+            show: this.state.shownColumns.includes('Name')
         },
         {
             Header: 'Type',
             id: 'Type',
             accessor: row => { if (row.Type) { return row.Type.toLowerCase()} },
+            show: this.state.shownColumns.includes('Type')
         },
         {
             Header: 'Field Type',
-            accessor: "Field Type"
+            accessor: "Field Type",
+            show: this.state.shownColumns.includes('Field Type')
         },
         {
             Header: 'Lat/Long',
             id: 'Lat/Long',
             accessor: row => (parseFloat(Math.round(row["X Long"] * 100) / 100).toFixed(2)  + "/" +   parseFloat(Math.round(row["Y Lat"] * 100) / 100).toFixed(2)),
+            show: this.state.shownColumns.includes('Lat/Long')
         },
         {
             Header: 'Status',
@@ -11382,43 +11415,59 @@ class InstallationTable extends Component {
                 return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'green'}} title='active'></div>
               }
               case "removed": {
-                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'red'}}title='removed'></div>
+                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'red'}} title='removed'></div>
               }
               case "abandoned": {
-                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'grey'}}title='abandoned'></div>
+                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'grey'}} title='abandoned'></div>
               }
               default: 
                 return row["Status"]
             }
-          }
+          },
+            filterMethod: (filter, row) => {
+              let title = row.Status.props && row.Status.props.title
+              if (title) {
+                return title.includes(filter.value);
+              } else {
+                return false;
+              }
+            },
+
+          show: this.state.shownColumns.includes('Status')
         },
         {
             Header: 'Age',
-            accessor: 'Age'
+            accessor: 'Age',
+            show: this.state.shownColumns.includes('Age')
         },
         {
             Header: 'Operator',
             id: 'Operator',
             accessor: row => { if (row["Operator"]) { return row["Operator"].toLowerCase()} },
+            show: this.state.shownColumns.includes('Operator')
         },
         {
             Header: 'Discovery Well',
-            accessor: 'Discovery Well'
+            accessor: 'Discovery Well',
+            show: this.state.shownColumns.includes('Discovery Well')
         },
         {
             Header: 'Water Depth',
             id: 'Water Depth',
             accessor: row => { if (row["Water Depth"]) { return row["Water Depth"] + 'm'} },
+            show: this.state.shownColumns.includes('Water Depth')
         },
         {
             Header: 'Block #',
-            accessor: 'Block #'
+            accessor: 'Block #',
+            show: this.state.shownColumns.includes('Block #')
         },
     ]
      
       return (
         <Page>
             <div><i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i></div>
+            <ColumnSelector seedColumns={availableColumns} addToShownColumns={this.addToShownColumns} removeFromShownColumns={this.removeFromShownColumns}></ColumnSelector>
             <div className="ReactTable-container">
                 <ReactTable
                     filterable
@@ -11429,7 +11478,8 @@ class InstallationTable extends Component {
                     defaultPageSize={10}
                 />
             </div>
-        </Page>);
+        </Page>
+      );
     }
 }
 
