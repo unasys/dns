@@ -12073,29 +12073,8 @@ class InstallationTable extends Component {
             Header: 'Status',
             id: 'Status',
             accessor: row => {
-              switch (row["Status"].toLowerCase()) {
-              case "active": {
-                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'green'}} title='active'></div>
-              }
-              case "removed": {
-                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'red'}} title='removed'></div>
-              }
-              case "abandoned": {
-                return <div style={{width:'10px', height:'10px', borderRadius:'10px', background:'grey'}} title='abandoned'></div>
-              }
-              default: 
-                return row["Status"]
-            }
-          },
-            filterMethod: (filter, row) => {
-              let title = row.Status.props && row.Status.props.title
-              if (title) {
-                return title.includes(filter.value);
-              } else {
-                return false;
-              }
+                return row["Status"].toLowerCase()
             },
-
           show: this.state.shownColumns.includes('Status')
         },
         {
