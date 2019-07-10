@@ -5,6 +5,9 @@ import 'react-table/react-table.css';
 import './TableStyles.scss';
 import history from '../../../history';
 import ColumnSelector from './ColumnSelector.js';
+import { Range } from 'rc-slider';
+import 'rc-slider/assets/index.css';
+import 'rc-tooltip/assets/bootstrap.css';
 
 const sampleTableData = [
     {
@@ -12098,7 +12101,17 @@ class InstallationTable extends Component {
         {
             Header: 'Age',
             accessor: 'Age',
-            show: this.state.shownColumns.includes('Age')
+            show: this.state.shownColumns.includes('Age'),
+            filterMethod: (filter, row) => {
+              console.log(filter);
+              let startValue = filter.value[0]
+              let endValue = filter.value[1]
+              return row.Age < endValue && row.Age > startValue
+            },
+            Filter: ({ filter, onChange }) => 
+              <div>
+                <Range allowCross={false} defaultValue={[0, 100]} onChange={onChange} />
+              </div>
         },
         {
             Header: 'Operator',

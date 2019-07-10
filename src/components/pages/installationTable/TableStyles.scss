@@ -44,6 +44,19 @@
                background: rgba(160, 149, 149, 0.301);
                color:white;
            } 
+           .rc-slider {
+               .rc-slider-track {
+                   background-color: #1b7aa0;
+               }
+            .rc-slider-handle-1 {
+                background-color: #d6d6d6;
+                border-color: #1b7aa0;
+            }
+            .rc-slider-handle-2 {
+                background-color: #d6d6d6;
+                border-color: #1b7aa0
+            }
+           }
         }
     }
     .rt-tbody {
