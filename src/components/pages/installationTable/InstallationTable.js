@@ -12000,7 +12000,7 @@ const sampleTableData = [
     }
    ]
 
-const availableColumns = ['Type', 'Field Type', 'Lat/Long', 'Status', 'Age', 'Operator', 'Discovery Well', 'Water Depth', 'Block #']
+const availableColumns = ['Type', 'Field Type', 'Lat/Long', 'Status', 'Age', 'Operator', 'Discovery Well', 'Water Depth', 'Block #', 'Planned COP', 'Weight']
 
 class InstallationTable extends Component {
     constructor(props) {
@@ -12113,7 +12113,46 @@ class InstallationTable extends Component {
             Header: 'Block #',
             accessor: 'Block #',
             show: this.state.shownColumns.includes('Block #')
+        },   
+        {
+          Header: 'Planned COP',
+          accessor: 'PlannedCOP',
+          show: this.state.shownColumns.includes('Planned COP'),
+          filterMethod: (filter, row) => {
+            let plannedCOP = row.PlannedCOP && new Date(row.PlannedCOP);
+            if (!plannedCOP) return false;
+            let startValue = filter.value[0]
+            let endValue = filter.value[1]
+            let year = plannedCOP.getFullYear();
+            return year < endValue && year > startValue
+          },
+          Filter: ({ filter, onChange }) => 
+          <div>
+            <Range allowCross={false} min={2000} max={2100} defaultValue={[2000, 2100]} onChange={onChange} />
+          </div> 
+      },
+      {
+        Header: 'Weight',
+        id: 'Weight',
+        accessor: row => { 
+          console.log(row);
+          let topsideWeight = row.TopsideWeight
+          let substructureWeight = row["SubStructure Weight"]
+          console.log(topsideWeight)
+          console.log(substructureWeight)
+          let totalWeight = (topsideWeight && topsideWeight) + (substructureWeight && substructureWeight);
+          return totalWeight + 't'},
+        show: this.state.shownColumns.includes('Weight'),
+        filterMethod: (filter, row) => {
+          let startValue = filter.value[0]
+          let endValue = filter.value[1]
+          return row.Weight < endValue && row.Weight > startValue
         },
+        Filter: ({ filter, onChange }) => 
+        <div>
+          <Range allowCross={false} min={0} max={2100} defaultValue={[0, 2100]} onChange={onChange} />
+        </div> 
+    },
     ]
      
       return (
