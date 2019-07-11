@@ -12173,7 +12173,8 @@ class InstallationTable extends Component {
                       String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())}
                     data={data}
                     columns={columns}
-                    defaultPageSize={10}
+                    showPagination={false}
+                    defaultPageSize={data.length}
                 />
             </div>
         </Page>
