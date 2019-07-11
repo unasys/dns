@@ -9,6 +9,7 @@ import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import Circle01 from '../../../assets/installationTable/circle01.js';
+import Circle02 from '../../../assets/installationTable/circle02.js';
 
 const sampleTableData = [
     {
@@ -12001,7 +12002,7 @@ const sampleTableData = [
     }
    ]
 
-const availableColumns = ['Type', 'Field Type', 'Lat/Long', 'Status', 'Age', 'Operator', 'Discovery Well', 'Water Depth', 'Block #', 'Planned COP', 'Weight']
+const availableColumns = ['Type', 'Field Type', 'Lat/Long', 'Status', 'Age', 'Operator', 'Discovery Well', 'Water Depth', 'Block #', 'Planned COP', 'Weight', 'Producing']
 
 class InstallationTable extends Component {
     constructor(props) {
@@ -12051,7 +12052,7 @@ class InstallationTable extends Component {
               </>
             ),
             style: {color: '#fff', fontSize:'15px'},
-            show: this.state.shownColumns.includes('Name')
+            show: this.state.shownColumns.includes('Name'),
         },
         {
             Header: 'Type',
@@ -12078,6 +12079,14 @@ class InstallationTable extends Component {
                 return row["Status"].toLowerCase()
             },
           show: this.state.shownColumns.includes('Status')
+        },
+        {
+          Header: 'Producing',
+          id: 'Producing',
+          accessor: row => {
+              return row["Status"].toLowerCase() === 'active' ? <Circle01 size='30px' text={'Y'}></Circle01> : <Circle02 size='30px' text={'N'}></Circle02>
+          },
+        show: this.state.shownColumns.includes('Producing')
         },
         {
             Header: 'Age',

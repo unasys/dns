@@ -10,7 +10,12 @@
     align-items:center;
     justify-content: space-between;
     .table-installation-image {
-        width:75px;
+        img {
+            min-width:75px;
+            max-width:75px;
+            height:75px;
+            object-fit: cover;
+        }
     }
     p {
         padding-left:15px;
@@ -45,16 +50,19 @@
                color:white;
            } 
            .rc-slider {
+               .rc-slider-rail {
+                   background-color: #8a8a8a;
+               }
                .rc-slider-track {
-                   background-color: #1b7aa0;
+                   background-color: rgba(32, 38, 87, 0.753);
                }
             .rc-slider-handle-1 {
-                background-color: #d6d6d6;
-                border-color: #1b7aa0;
+                background-color:#cacaca;
+                border-color:rgba(32, 38, 87, 0.753);;
             }
             .rc-slider-handle-2 {
-                background-color: #d6d6d6;
-                border-color: #1b7aa0
+                background-color: #cacaca;
+                border-color: rgba(32, 38, 87, 0.753);
             }
            }
         }
