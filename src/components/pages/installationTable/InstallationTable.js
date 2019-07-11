@@ -8,6 +8,7 @@ import ColumnSelector from './ColumnSelector.js';
 import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
+import Circle01 from '../../../assets/installationTable/circle01.js';
 
 const sampleTableData = [
     {
@@ -12060,7 +12061,8 @@ class InstallationTable extends Component {
         },
         {
             Header: 'Field Type',
-            accessor: "Field Type",
+            id : 'Field Type',
+            accessor: row => { return <Circle01 size='30px' text={row["FieldType"]}></Circle01> },
             show: this.state.shownColumns.includes('Field Type')
         },
         {
@@ -12082,7 +12084,6 @@ class InstallationTable extends Component {
             accessor: 'Age',
             show: this.state.shownColumns.includes('Age'),
             filterMethod: (filter, row) => {
-              console.log(filter);
               let startValue = filter.value[0]
               let endValue = filter.value[1]
               return row.Age < endValue && row.Age > startValue
@@ -12135,11 +12136,8 @@ class InstallationTable extends Component {
         Header: 'Weight',
         id: 'Weight',
         accessor: row => { 
-          console.log(row);
           let topsideWeight = row.TopsideWeight
           let substructureWeight = row["SubStructure Weight"]
-          console.log(topsideWeight)
-          console.log(substructureWeight)
           let totalWeight = (topsideWeight && topsideWeight) + (substructureWeight && substructureWeight);
           return totalWeight + 't'},
         show: this.state.shownColumns.includes('Weight'),
