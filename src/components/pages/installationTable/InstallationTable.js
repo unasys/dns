@@ -12002,16 +12002,16 @@ const sampleTableData = [
     }
    ]
 
-const availableColumns = ['Type', 'Field Type', 'Lat/Long', 'Status', 'Age', 'Operator', 'Discovery Well', 'Water Depth', 'Block #', 'Planned COP', 'Weight', 'Producing']
-
 class InstallationTable extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        shownColumns: ['Name']
+        shownColumns: ['Name'],
+        expandedLevel: 0
       }
       this.addToShownColumns = this.addToShownColumns.bind(this);
       this.removeFromShownColumns = this.removeFromShownColumns.bind(this);
+      this.expandColumns = this.expandColumns.bind(this);
     }
 
     addToShownColumns(additionalColumn) {
@@ -12028,6 +12028,28 @@ class InstallationTable extends Component {
       this.setState({
         shownColumns: shownColumns
       })
+    }
+
+    expandColumns() {
+      if (this.state.shownColumns.length === 1) {
+        this.addToShownColumns(['Age', 'Field Type', 'Status']);
+      }
+      if (this.state.shownColumns.length === 4) {
+        this.addToShownColumns(['Operator', 'Producing', 'Planned COP', 'Weight'])
+      }
+    }
+
+    collapseColumns() {
+      if (this.state.shownColumns.length === 8) {
+        this.removeFromShownColumns('Operator')
+        this.removeFromShownColumns('Producing')
+        this.removeFromShownColumns('Planned COP')
+        this.removeFromShownColumns('Weight')
+      } else if (this.state.shownColumns.length === 4) {
+        this.removeFromShownColumns('Age')
+        this.removeFromShownColumns('Field Type')
+        this.removeFromShownColumns('Status')
+      }
     }
 
     render() {
@@ -12055,40 +12077,6 @@ class InstallationTable extends Component {
             show: this.state.shownColumns.includes('Name'),
         },
         {
-            Header: 'Type',
-            id: 'Type',
-            accessor: row => { if (row.Type) { return row.Type.toLowerCase()} },
-            show: this.state.shownColumns.includes('Type')
-        },
-        {
-            Header: 'Field Type',
-            id : 'Field Type',
-            accessor: row => { return <Circle01 size='30px' text={row["FieldType"]}></Circle01> },
-            show: this.state.shownColumns.includes('Field Type')
-        },
-        {
-            Header: 'Lat/Long',
-            id: 'Lat/Long',
-            accessor: row => (parseFloat(Math.round(row["X Long"] * 100) / 100).toFixed(2)  + "/" +   parseFloat(Math.round(row["Y Lat"] * 100) / 100).toFixed(2)),
-            show: this.state.shownColumns.includes('Lat/Long')
-        },
-        {
-            Header: 'Status',
-            id: 'Status',
-            accessor: row => {
-                return row["Status"].toLowerCase()
-            },
-          show: this.state.shownColumns.includes('Status')
-        },
-        {
-          Header: 'Producing',
-          id: 'Producing',
-          accessor: row => {
-              return row["Status"].toLowerCase() === 'active' ? <Circle01 size='30px' text={'Y'}></Circle01> : <Circle02 size='30px' text={'N'}></Circle02>
-          },
-        show: this.state.shownColumns.includes('Producing')
-        },
-        {
             Header: 'Age',
             accessor: 'Age',
             show: this.state.shownColumns.includes('Age'),
@@ -12103,27 +12091,33 @@ class InstallationTable extends Component {
               </div>
         },
         {
+            Header: 'Status',
+            id: 'Status',
+            accessor: row => {
+                return row["Status"].toLowerCase()
+            },
+          show: this.state.shownColumns.includes('Status')
+        },
+        {
+            Header: 'Field Type',
+            id : 'Field Type',
+            accessor: row => { return <Circle01 size='30px' text={row["FieldType"]}></Circle01> },
+            show: this.state.shownColumns.includes('Field Type')
+        },
+        {
             Header: 'Operator',
             id: 'Operator',
             accessor: row => { if (row["Operator"]) { return row["Operator"].toLowerCase()} },
             show: this.state.shownColumns.includes('Operator')
         },
         {
-            Header: 'Discovery Well',
-            accessor: 'Discovery Well',
-            show: this.state.shownColumns.includes('Discovery Well')
+          Header: 'Producing',
+          id: 'Producing',
+          accessor: row => {
+              return row["Status"].toLowerCase() === 'active' ? <Circle01 size='30px' text={'Y'}></Circle01> : <Circle02 size='30px' text={'N'}></Circle02>
+          },
+        show: this.state.shownColumns.includes('Producing')
         },
-        {
-            Header: 'Water Depth',
-            id: 'Water Depth',
-            accessor: row => { if (row["Water Depth"]) { return row["Water Depth"] + 'm'} },
-            show: this.state.shownColumns.includes('Water Depth')
-        },
-        {
-            Header: 'Block #',
-            accessor: 'Block #',
-            show: this.state.shownColumns.includes('Block #')
-        },   
         {
           Header: 'Planned COP',
           accessor: 'PlannedCOP',
@@ -12160,12 +12154,49 @@ class InstallationTable extends Component {
           <Range allowCross={false} min={0} max={2100} defaultValue={[0, 2100]} onChange={onChange} />
         </div> 
     },
+        {
+            Header: 'Type',
+            id: 'Type',
+            accessor: row => { if (row.Type) { return row.Type.toLowerCase()} },
+            show: this.state.shownColumns.includes('Type')
+        },
+        {
+            Header: 'Lat/Long',
+            id: 'Lat/Long',
+            accessor: row => (parseFloat(Math.round(row["X Long"] * 100) / 100).toFixed(2)  + "/" +   parseFloat(Math.round(row["Y Lat"] * 100) / 100).toFixed(2)),
+            show: this.state.shownColumns.includes('Lat/Long')
+        },
+        {
+            Header: 'Discovery Well',
+            accessor: 'Discovery Well',
+            show: this.state.shownColumns.includes('Discovery Well')
+        },
+        {
+            Header: 'Water Depth',
+            id: 'Water Depth',
+            accessor: row => { if (row["Water Depth"]) { return row["Water Depth"] + 'm'} },
+            show: this.state.shownColumns.includes('Water Depth')
+        },
+        {
+            Header: 'Block #',
+            accessor: 'Block #',
+            show: this.state.shownColumns.includes('Block #')
+        },   
     ]
      
       return (
-        <Page>
-            <div><i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i></div>
-            <ColumnSelector seedColumns={availableColumns} addToShownColumns={this.addToShownColumns} removeFromShownColumns={this.removeFromShownColumns}></ColumnSelector>
+        <>
+            <div className="button-bar">
+              <div>
+                <i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i>
+              </div>
+              <div className="outward-handle" onClick={() => this.expandColumns()}>
+                <i className="fas fa-caret-right"></i>
+              </div>
+              <div className="outward-handle" onClick={() => this.collapseColumns()}>
+                <i className="fas fa-caret-left"></i>
+              </div>
+            </div>
             <div className="ReactTable-container">
                 <ReactTable
                     filterable
@@ -12177,7 +12208,7 @@ class InstallationTable extends Component {
                     defaultPageSize={data.length}
                 />
             </div>
-        </Page>
+        </>
       );
     }
 }

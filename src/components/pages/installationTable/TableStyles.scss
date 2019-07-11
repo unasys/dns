@@ -29,7 +29,7 @@
 
 .ReactTable {
     padding-top:1%;
-    width:80%;
+    min-width:300px;
     .rt-table { 
         color:white;
         background-color:#252B38;
@@ -92,7 +92,20 @@
     }
 }
 
-.backbutton { 
-    color:white;
+
+.button-bar {
+    display:flex;
     padding:25px;
+
+    .backbutton { 
+        color:white;
+        padding-right:25px;
+        padding-top:6px;
+    }
+
+    .outward-handle {
+        color:white;
+        padding-right:25px;
+        font-size:20px;
+    }
 }
