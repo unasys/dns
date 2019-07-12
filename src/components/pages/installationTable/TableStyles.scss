@@ -79,6 +79,7 @@
                     text-align:center;
                     display:flex;
                     justify-content: center;
+                    align-items:center;
                 }
             }
         }
@@ -105,7 +106,6 @@
     background:#262B38;
     border: 1px solid rgba(243, 201, 201, 0.11);
     border-top:none;
-    border-left:none;
     height:130px;
     border-bottom-right-radius: 20px;
     .backbutton { 

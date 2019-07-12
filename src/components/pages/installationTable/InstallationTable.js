@@ -12107,7 +12107,12 @@ class InstallationTable extends Component {
         Header: 'Field Type',
         id: 'Field Type',
         accessor: row => { return <Circle01 size='30px' text={row["FieldType"]}></Circle01> },
-        show: this.state.shownColumns.includes('Field Type')
+        show: this.state.shownColumns.includes('Field Type'),
+        filterMethod: (filter, row) => {
+          console.log(filter);
+          console.log(row);
+          return row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase())
+        },
       },
       {
         Header: 'Operator',

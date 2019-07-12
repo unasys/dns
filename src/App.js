@@ -65,13 +65,6 @@ class App extends Component {
               <Switch>          
                 <Route path="/installations" render={(props) => {
                   return (
-                    <Page>
-                      <InstallationTable {...props} installations={this.state.installations} ></InstallationTable>
-                    </Page>
-                  )
-                }} />
-                <Route path="/installations-table" render={(props) => {
-                  return (
                     <DynamicWidthPage>
                       <InstallationTable {...props} installations={this.state.installations} ></InstallationTable>
                     </DynamicWidthPage>
