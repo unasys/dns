@@ -12071,7 +12071,7 @@ class InstallationTable extends Component {
                 {row.original.ImageID && <img src={`https://epmdata.blob.core.windows.net/assets/imagesv1/${row.original.ImageID}`} alt="overview-thumbnail" ></img>}
               </div>
               <p>
-                {row.value.toLowerCase()}
+                {row.original.ePMID ? (<div style={{cursor:'pointer'}} onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}>{row.value.toLowerCase()}</div>) : row.value.toLowerCase()}
               </p>
               <i className="fas fa-chevron-down icon"></i>
             </div>
