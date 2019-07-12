@@ -17,10 +17,8 @@ class ConfigInstallationDetailsPanel extends React.Component {
         super(props);
         this.state = {
             auxiliaryDataImage: null,
-            installationDropdownIsOpen: false
         }
         this.source = CancelToken.source();
-        this.toggleInstallationDropdownOpen = this.toggleInstallationDropdownOpen.bind(this);
     }
 
     componentDidMount() {
@@ -32,12 +30,6 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 })
             })
         }
-    }
-
-    toggleInstallationDropdownOpen() {
-        this.setState({
-            installationDropdownIsOpen: !this.state.installationDropdownIsOpen
-        })
     }
 
     render() {
@@ -54,17 +46,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
         let installationSelection =
             this.props.installationSelectorComponent &&
             <div>
-                <div className="overview-container" onClick={this.toggleInstallationDropdownOpen}>
-                    <div className="overview-heading">
-                        Installations
-                    </div>
-                    <div className="dropdown-icon">
-                        {this.state.installationDropdownIsOpen ? <i className="fas fa-chevron-up icon"></i> : <i className="fas fa-chevron-down icon"></i>}
-                    </div>
-                </div>
-                <Collapse isOpened={this.state.installationDropdownIsOpen}>
-                    <InstallationFilterSelector onFilterClick={this.props.onInstallationFilterClick}> </InstallationFilterSelector>
-                </Collapse>
+                <NavigationHeading heading={'Installations'} onClick={()=> history.push('installations')}></NavigationHeading>
             </div>
 
         let content =
