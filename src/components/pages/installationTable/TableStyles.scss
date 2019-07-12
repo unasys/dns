@@ -28,8 +28,8 @@
 }
 
 .ReactTable {
-    padding-top:1%;
     min-width:300px;
+    border:none;
     .rt-table { 
         color:white;
         background-color:#252B38;
@@ -95,17 +95,26 @@
 
 .button-bar {
     display:flex;
-    padding:25px;
-
+    flex-direction: column;
+    justify-content: space-between;
+    align-items:center;
+    padding-left:10px;
+    padding-right:15px;
+    padding-top:15px;
+    padding-bottom:15px;
+    background:#262B38;
+    border: 1px solid rgba(243, 201, 201, 0.11);
+    border-top:none;
+    border-left:none;
+    height:130px;
+    border-bottom-right-radius: 20px;
     .backbutton { 
         color:white;
-        padding-right:25px;
-        padding-top:6px;
+        padding-bottom:10px;
     }
 
     .outward-handle {
         color:white;
-        padding-right:25px;
         font-size:20px;
     }
 }
