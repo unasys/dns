@@ -12109,8 +12109,6 @@ class InstallationTable extends Component {
         accessor: row => { return <Circle01 size='30px' text={row["FieldType"]}></Circle01> },
         show: this.state.shownColumns.includes('Field Type'),
         filterMethod: (filter, row) => {
-          console.log(filter);
-          console.log(row);
           return row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase())
         },
       },
@@ -12125,6 +12123,10 @@ class InstallationTable extends Component {
         id: 'Producing',
         accessor: row => {
           return row["Status"].toLowerCase() === 'active' ? <Circle01 size='30px' text={'Y'}></Circle01> : <Circle02 size='30px' text={'N'}></Circle02>
+        },
+        filterMethod: (filter, row) => {
+          let isProducing = row["Status"].toLowerCase() === 'active' ? 'yes' : 'no'
+          return isProducing.includes(filter.value.toLowerCase())
         },
         show: this.state.shownColumns.includes('Producing')
       },
