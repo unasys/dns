@@ -8,12 +8,11 @@
     width:100%;
     display:flex;
     align-items:center;
-    justify-content: space-between;
     .table-installation-image {
         img {
             min-width:75px;
             max-width:75px;
-            height:75px;
+            height:40px;
             object-fit: cover;
         }
     }
@@ -24,6 +23,7 @@
     i {
         font-size:18px;
         color: #5B5963;
+        margin-left:auto;
     }
 }
 
