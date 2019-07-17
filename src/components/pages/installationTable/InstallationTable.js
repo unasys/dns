@@ -12117,7 +12117,8 @@ class InstallationTable extends Component {
         Header: 'Operator',
         id: 'Operator',
         accessor: row => { if (row["Operator"]) { return row["Operator"].toLowerCase() } },
-        show: this.state.shownColumns.includes('Operator')
+        show: this.state.shownColumns.includes('Operator'),
+        width: 185
       },
       {
         Header: 'Producing',
