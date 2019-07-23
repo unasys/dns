@@ -44,29 +44,29 @@ class Map extends Component {
         this.state.installations = this.props.cesiumInstallations;
     }
 
-    filterInstallations(filterObject) {
-        if (filterObject.type === INSTALLATION_FILTER_TYPES.WasteToEnergy) {
-            let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "WasteToEnergy" }) }
-            this.setState({
-                currentInstallationFilter: newFilter
-            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-        } else if (filterObject.type === INSTALLATION_FILTER_TYPES.Property) {
-            let newFilter = (installations) => { return installations.filter(installation => { return installation[filterObject.propertyName] === filterObject.on }) };
-            this.setState({
-                currentInstallationFilter: newFilter
-            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-        } else if (filterObject.type === INSTALLATION_FILTER_TYPES.OffshoreWind) {
-            let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OffshoreWind" }) };
-            this.setState({
-                currentInstallationFilter: newFilter
-            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-        } else {
-            let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OilAndGas" }) }
-            this.setState({
-                currentInstallationFilter: newFilter
-            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-        }
-    }
+    // filterInstallations(filterObject) {
+    //     if (filterObject.type === INSTALLATION_FILTER_TYPES.WasteToEnergy) {
+    //         let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "WasteToEnergy" }) }
+    //         this.setState({
+    //             currentInstallationFilter: newFilter
+    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+    //     } else if (filterObject.type === INSTALLATION_FILTER_TYPES.Property) {
+    //         let newFilter = (installations) => { return installations.filter(installation => { return installation[filterObject.propertyName] === filterObject.on }) };
+    //         this.setState({
+    //             currentInstallationFilter: newFilter
+    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+    //     } else if (filterObject.type === INSTALLATION_FILTER_TYPES.OffshoreWind) {
+    //         let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OffshoreWind" }) };
+    //         this.setState({
+    //             currentInstallationFilter: newFilter
+    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+    //     } else {
+    //         let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OilAndGas" }) }
+    //         this.setState({
+    //             currentInstallationFilter: newFilter
+    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+    //     }
+    // }
 
     updatePositions(positions) {
         this.setState({
@@ -91,10 +91,10 @@ class Map extends Component {
             } else if (this.props.activeTab.name === "Bathymetry" && nextProps.activeTab.name !== "Bathymetry") {
                 this.clearBathymetry();
             }
-            if (this.props.installationFilter !== nextProps.installationFilter) {
-                this.filterInstallations(nextProps.installationFilter);
-                return true;
-            }
+            // if (this.props.installationFilter !== nextProps.installationFilter) {
+            //     this.filterInstallations(nextProps.installationFilter);
+            //     return true;
+            // }
 
             if (this.props.activeTab !== nextProps.activeTab || this.state.installations !== nextState.installations) {
                 return true;
@@ -136,7 +136,7 @@ class Map extends Component {
                 terrainExaggeration: 5,
                 requestRenderMode: true
             })
-        this.filterInstallations(this.props.installationFilter);
+        //this.filterInstallations(this.props.installationFilter);
     }
 
     setMousePosition(p) {
@@ -692,20 +692,22 @@ class Map extends Component {
         this.state.viewer.screenSpaceEventHandler.setInputAction(this.mouseEvent, window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         var installationPoints = [];
         let installations;
-
+        
         if (nextProps.cesiumInstallations.length === 0) {
-            installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
+            //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
+            installations = this.state.installations;
         } else {
-            installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
+            //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
+            installations = nextProps.cesiumInstallations;
         }
-
+        
         for (var i = 0; i < installations.length; i++) {
             var installation = installations[i];
             if (installation.id === "world-map") { continue; }
 
             var point = this.state.viewer.entities.add({
                 name: installation["Facility Name"],
-                position: window.Cesium.Cartesian3.fromDegrees(installation.X, installation.Y),
+                position: window.Cesium.Cartesian3.fromDegrees(installation.Longitude, installation.Latitude),
                 point: {
                     pixelSize: 10,
                     color: window.Cesium.Color.GOLD,

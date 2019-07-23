@@ -13,30 +13,29 @@ class InstallationHoverCard extends Component {
                 <div className="installation-hover-card-title">
                     <div className="installation-text-value">
                         <div className="installation-hover-card-heading">Field Type</div>
-                        <div className="installation-hover-card-value">{hoveredInstallation["Type of Fluid"]}</div>
+                        <div className="installation-hover-card-value">{hoveredInstallation["FieldType"]}</div>
                     </div>
                 </div>
                 <div className="installation-hover-card-body">
                     <div className="image-block-container">                    
-                        {hoveredInstallation["Image ID"] &&
                             <div className="image">
-                                    <img src={`https://epmdata.blob.core.windows.net/assets/images/${hoveredInstallation["Image ID"]}.jpg`} alt="overview-thumbnail" ></img>
-                            </div>}
+                                    {hoveredInstallation["ImageID"] ? <img src={`https://epmdata.blob.core.windows.net/assets/imagesv1/${hoveredInstallation["ImageID"]}`} alt="overview-thumbnail" ></img> : <img src={`https://epmdata.blob.core.windows.net/assets/imagesv1/-1.jpg`} alt="overview-thumbnail" ></img>}
+                            </div>
                         <div className="text-block">
                             <div className="installation-text-value">
                                 <div className="installation-hover-card-heading">Installation Name</div>
-                                <div className="installation-hover-card-value">{hoveredInstallation["Facility Name"]}</div>
+                                <div className="installation-hover-card-value">{hoveredInstallation["Name"]}</div>
                             </div>
                             <div className="installation-text-value">
-                                <div className="installation-hover-card-heading">Quadrant Number</div>
-                                <div className="installation-hover-card-value">{hoveredInstallation["Quadrant Number"]}</div>
+                                <div className="installation-hover-card-heading">Block Number</div>
+                                <div className="installation-hover-card-value">{hoveredInstallation["Block"]}</div>
                             </div>
                         </div>
                     </div>
                     <div className="text-block-container">
                         <div className="installation-text-value">
                             <div className="installation-hover-card-heading">Installation Type</div>
-                            <div className="installation-hover-card-value">{hoveredInstallation["Facility Type Description"]}</div>
+                            <div className="installation-hover-card-value">{hoveredInstallation["Type"]}</div>
                         </div>
                     </div>
                     <div className="image-block-container">
@@ -51,11 +50,7 @@ class InstallationHoverCard extends Component {
                             </div>
                             <div className="installation-text-value">
                                 <div className="installation-hover-card-heading">First Oil/Gas Date</div>
-                                <div className="installation-hover-card-value">{hoveredInstallation["First Oil/Gas Date"]}</div>
-                            </div>
-                            <div className="installation-text-value">
-                                <div className="installation-hover-card-heading">Manned or NUI</div>
-                                <div className="installation-hover-card-value">{hoveredInstallation["Manned or NUI"]}</div>
+                                <div className="installation-hover-card-value">{hoveredInstallation["StartDate"]}</div>
                             </div>
                         </div>
                     </div>
