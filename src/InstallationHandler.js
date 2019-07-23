@@ -34,7 +34,6 @@ class InstallationHandler extends React.Component {
                 });
                 
                 this.props.setCesiumInstallations(payload.data);
-                console.log(payload.data);
 
                 if (payload.status === 401 && !this.attemptedRetry) {
                     this.attemptedRetry = true;

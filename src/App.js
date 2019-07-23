@@ -12,7 +12,6 @@ import { routerMiddleware } from 'connected-react-router';
 import { ConnectedRouter } from 'connected-react-router';
 import Bathymetry from './components/pages/bathymetry/Bathymetry';
 import InstallationTable from './components/pages/installationTable/InstallationTable';
-import Page from './components/pages/Page';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 const store = createStore(
@@ -33,8 +32,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mainContentIndex: 0,
-      installations: []
+      mainContentIndex: 0
     }
     this.changeMainContentIndex = this.changeMainContentIndex.bind(this);
   }  
@@ -66,7 +64,7 @@ class App extends Component {
                 <Route path="/installations" render={(props) => {
                   return (
                     <DynamicWidthPage>
-                      <InstallationTable {...props} installations={this.state.installations} ></InstallationTable>
+                      <InstallationTable {...props}></InstallationTable>
                     </DynamicWidthPage>
                   )
                 }} />
@@ -77,7 +75,7 @@ class App extends Component {
                 }} />
                 <Route path="/" render={(props) => {
                   return (
-                    <OilandGas {...props} installations={this.state.installations} changeMainContent={this.changeMainContentIndex}></OilandGas>
+                    <OilandGas {...props} changeMainContent={this.changeMainContentIndex}></OilandGas>
                   )
                 }} />
               </Switch>
