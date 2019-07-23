@@ -1,6 +1,7 @@
 export const CHANGE_CURRENT_INSTALLATION = "CHANGE_CURRENT_INSTALLATION";
 export const SET_CESIUM_INSTALLATIONS = "SET_CESIUM_INSTALLATIONS";
-export const CHANGE_INSTALLATION_FILTER_TYPE = "CHANGE_INSTALLATION_FILTER_TYPE"
+export const CHANGE_INSTALLATION_FILTER_TYPE = "CHANGE_INSTALLATION_FILTER_TYPE";
+export const SET_CESIUM_DECOMYARDS = "SET_CESIUM_DECOMYARDS";
 export const INSTALLATION_FILTER_TYPES = {
     OilAndGas: 1,
     WasteToEnergy: 2,
@@ -15,6 +16,10 @@ export function changeCurrentInstallation(currentInstallation) {
 
 export function setCesiumInstallations(installations) {
     return { type: SET_CESIUM_INSTALLATIONS, installations }
+}
+
+export function setCesiumDecomyards(decomyards) {
+    return { type: SET_CESIUM_DECOMYARDS, decomyards }
 }
 
 export function changeInstallationFilterType(filterType, propertyName, filterOn) {

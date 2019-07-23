@@ -7,6 +7,7 @@ import { updatePositions } from '../../../actions/bathymetryActions';
 import axios from 'axios';
 import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
+import DecomyardHoverCard from './DecomyardHoverCard';
 
 const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
 const baseWMSUrl = baseUrl + '/arcgis/services'
@@ -37,8 +38,10 @@ class Map extends Component {
             isHidden: false,
             positions: [],
             installations: [],
+            decomyards: [],
             currentInstallationFilter: null,
-            lastHoveredInstallation: null
+            lastHoveredInstallation: null,
+            lastHoveredDecomyard: null
         }
 
         this.state.installations = this.props.cesiumInstallations;
@@ -79,12 +82,16 @@ class Map extends Component {
         if (this.state.lastHoveredInstallation !== nextState.lastHoveredInstallation) {
             return true;
         }
+        if (this.state.lastHoveredDecomyard !== nextState.lastHoveredDecomyard) {
+            return true;
+        }
         if (this.state.viewer != null) {
             this.sortLayers(nextProps);
             if (this.installationPoints !== undefined) {
                 this.clearInstallations();
             }
             this.installationPoints = this.loadUpInstallations(nextProps);
+            this.decomyardsPoints = this.loadUpDecomyards(nextProps);
             if (this.props.activeTab.name !== "Bathymetry" && nextProps.activeTab.name === "Bathymetry") {
                 this.setUpBathymetry();
 
@@ -460,13 +467,25 @@ class Map extends Component {
 
             // Unhighlight the previously picked entity
             if (window.Cesium.defined(previousPickedEntity)) {
-                previousPickedEntity.point.color = window.Cesium.Color.GOLD;
+                let color;
+                if (previousPickedEntity.installation) {
+                    color=window.Cesium.Color.GOLD
+                } else {
+                    color=window.Cesium.Color.AQUA
+                }
+                previousPickedEntity.point.color = color;
             }
-            if (self.state.lastHoveredInstallation) {
+            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard) {
                 self.setState({
-                    lastHoveredInstallation: null
+                    lastHoveredInstallation: null,
+                    lastHoveredDecomyard: null
                 })
             }
+            // if (self.state.lastHoveredDecomyard) {
+            //     self.setState({
+            //         lastHoveredDecomyard: null
+            //     })
+            // }
 
             // Highlight the currently picked entity
             if (window.Cesium.defined(pickedEntity) && window.Cesium.defined(pickedEntity.point)) {
@@ -475,6 +494,9 @@ class Map extends Component {
                 previousPickedEntity = pickedEntity;
                 self.setState({
                     lastHoveredInstallation: pickedEntity.installation
+                })
+                self.setState({
+                    lastHoveredDecomyard: pickedEntity.decomyard
                 })
                 // previousLabel = viewer.entities.add({
                 //     position: window.Cesium.Cartesian3.fromDegrees(pickedEntity.installation.X, pickedEntity.installation.Y),
@@ -739,6 +761,41 @@ class Map extends Component {
         return installationPoints;
     }
 
+    loadUpDecomyards(nextProps) {
+        // this.state.viewer.screenSpaceEventHandler.setInputAction(this.mouseEvent, window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        var decomyardsPoints = [];
+        let decomyards;
+        
+        if (nextProps.cesiumDecomyards.length === 0) {
+            //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
+            decomyards = this.state.decomyards;
+        } else {
+            //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
+            decomyards = nextProps.cesiumDecomyards;
+        }
+        
+        for (var i = 0; i < decomyards.length; i++) {
+            var decomyard = decomyards[i];
+
+            var point = this.state.viewer.entities.add({
+                name: decomyard["Name"],
+                position: window.Cesium.Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat),
+                point: {
+                    pixelSize: 10,
+                    color: window.Cesium.Color.AQUA,
+                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01)
+                }
+            });
+            point.decomyard = decomyard;
+            decomyardsPoints.push(point);
+        }
+        this.decomyardsPoints = decomyardsPoints;
+        return decomyardsPoints;
+    }
+
+
     render() {
         const divStyle = {
             width: '100%',
@@ -747,6 +804,7 @@ class Map extends Component {
             pointerEvents: 'auto'
         };
         let hoveredInstallation = this.state.lastHoveredInstallation;
+        let hoveredDecomyard = this.state.lastHoveredDecomyard;
         
         return (
             <div style={{height:'100%', width:'100%'}}>
@@ -754,6 +812,7 @@ class Map extends Component {
                 <div id="cesiumContainer" style={divStyle} >
                 </div>
                 <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
+                <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
             </ReactCursorPosition>
             </div>
         );
@@ -778,6 +837,7 @@ const mapStateToProps = (state) => {
         activeTab: state.HeaderReducer.activeTab,
         currentInstallation: state.InstallationReducer.currentInstallation,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
+        cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
         installationFilter: filterType,
         fieldState: state.BathymetryReducer.ogaFieldsSwitched,
         quadrantsState: state.BathymetryReducer.ogaQuadrantsSwitched,

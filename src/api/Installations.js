@@ -9,7 +9,7 @@ export function fetchInstallations(token) {
 }
 
 export function fetchDecomyards(token) {
-    let url = `https://epmdata.blob.core.windows.net/dnsfiles/decomyards.json`;
+    let url = `https://epmdata.blob.core.windows.net/dnsfiles/decomyards/decomyards.json`;
 
     return axios.get(url, {
         cancelToken: token

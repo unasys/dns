@@ -19,9 +19,9 @@ class Header extends Component {
         {
           name: 'Oil & Gas', id: 0, filter: INSTALLATION_FILTER_TYPES.OilAndGas, route: ""
         },
-        {
-          name: 'Offshore Wind', id: 1, filter: INSTALLATION_FILTER_TYPES.OffshoreWind, route: ""
-        },
+        // {
+        //   name: 'Offshore Wind', id: 1, filter: INSTALLATION_FILTER_TYPES.OffshoreWind, route: ""
+        // },
         {
           name: 'Bathymetry', id: 2, route: "bathymetry"
         }

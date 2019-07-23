@@ -7,6 +7,7 @@ import { setCesiumInstallations } from '../../../actions/installationActions';
 import InformationMessageBox from '../../visuals/did-you-know-box/InformationMessageBox';
 import { fetchFact } from '../../../api/RandomFact';
 import InstallationHandler from '../../../InstallationHandler';
+import DecomyardHandler from '../../../DecomyardHandler';
 
 const defaultFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OilAndGas" }) }
 const CancelToken = axios.CancelToken;
@@ -74,6 +75,7 @@ class OilandGas extends React.Component {
                 </InstallationPanel>
 
                 <InstallationHandler></InstallationHandler>
+                <DecomyardHandler></DecomyardHandler>
             </>
         );
     }
