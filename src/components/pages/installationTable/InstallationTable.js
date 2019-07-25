@@ -76,22 +76,24 @@ class InstallationTable extends Component {
 
   expandColumns() {
     if (this.state.shownColumns.length === 1) {
-      this.addToShownColumns(['Age', 'Field Type', 'Status']);
+      this.addToShownColumns(['Age', 'Field Type', 'Status', 'Area', 'Type']);
     }
-    if (this.state.shownColumns.length === 4) {
+    if (this.state.shownColumns.length === 6) {
       this.addToShownColumns(['Operator', 'Producing', 'Planned COP', 'Weight'])
     }
   }
 
   collapseColumns() {
-    if (this.state.shownColumns.length === 8) {
+    if (this.state.shownColumns.length === 10) {
       this.removeFromShownColumns('Operator')
       this.removeFromShownColumns('Producing')
       this.removeFromShownColumns('Planned COP')
       this.removeFromShownColumns('Weight')
-    } else if (this.state.shownColumns.length === 4) {
+    } else if (this.state.shownColumns.length === 6) {
       this.removeFromShownColumns('Age')
+      this.removeFromShownColumns('Area')
       this.removeFromShownColumns('Field Type')
+      this.removeFromShownColumns('Type')
       this.removeFromShownColumns('Status')
     }
   }
@@ -145,7 +147,8 @@ class InstallationTable extends Component {
         accessor: row => {
           return row["Status"].toLowerCase()
         },
-        show: this.state.shownColumns.includes('Status')
+        show: this.state.shownColumns.includes('Status'),
+        minWidth: 150
       },
       {
         Header: 'Field Type',
@@ -193,14 +196,14 @@ class InstallationTable extends Component {
           </div>
       },
       {
-        Header: 'Weight',
+        Header: 'Weight (t)',
         id: 'Weight',
         accessor: row => {
           let topsideWeight = row.TopsideWeight ? row.TopsideWeight : 0
           let substructureWeight = row["SubStructureWeight"] ? row["SubStructureWeight"] : 0
           if (substructureWeight === "N/A") substructureWeight = 0
           let totalWeight = parseInt(topsideWeight) + parseInt(substructureWeight);
-          return totalWeight + 't'
+          return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
         sortMethod: (a, b) => {
           return parseInt(a.substring(0, a.length - 1)) >= parseInt(b.substring(0, b.length - 1)) ? 1 : -1;
@@ -225,6 +228,12 @@ class InstallationTable extends Component {
         id: 'Type',
         accessor: row => { if (row.Type) { return row.Type.toLowerCase() } },
         show: this.state.shownColumns.includes('Type')
+      },
+      {
+        Header: 'Area',
+        id: 'Area',
+        accessor: row => { if (row.Area) { return row.Area.toLowerCase() } },
+        show: this.state.shownColumns.includes('Area')
       },
       {
         Header: 'Lat/Long',
