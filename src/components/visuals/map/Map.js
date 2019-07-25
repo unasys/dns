@@ -766,7 +766,7 @@ class Map extends Component {
         var decomyardsPoints = [];
         let decomyards;
         
-        if (nextProps.cesiumDecomyards.length === 0) {
+        if (nextProps.cesiumDecomyards && nextProps.cesiumDecomyards.length === 0) {
             //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
             decomyards = this.state.decomyards;
         } else {

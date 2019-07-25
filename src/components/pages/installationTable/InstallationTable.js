@@ -79,16 +79,17 @@ class InstallationTable extends Component {
       this.addToShownColumns(['Age', 'Field Type', 'Status', 'Area', 'Type']);
     }
     if (this.state.shownColumns.length === 6) {
-      this.addToShownColumns(['Operator', 'Producing', 'Planned COP', 'Weight'])
+      this.addToShownColumns(['Operator', 'Producing', 'Planned COP', 'SubStructureWeight', 'TopsideWeight'])
     }
   }
 
   collapseColumns() {
-    if (this.state.shownColumns.length === 10) {
+    if (this.state.shownColumns.length === 11) {
       this.removeFromShownColumns('Operator')
       this.removeFromShownColumns('Producing')
       this.removeFromShownColumns('Planned COP')
-      this.removeFromShownColumns('Weight')
+      this.removeFromShownColumns('SubStructureWeight')
+      this.removeFromShownColumns('TopsideWeight')
     } else if (this.state.shownColumns.length === 6) {
       this.removeFromShownColumns('Age')
       this.removeFromShownColumns('Area')
@@ -196,26 +197,48 @@ class InstallationTable extends Component {
           </div>
       },
       {
-        Header: 'Weight (t)',
-        id: 'Weight',
+        Header: 'Topside Weight (t)',
+        id: 'Topside Weight',
         accessor: row => {
           let topsideWeight = row.TopsideWeight ? row.TopsideWeight : 0
-          let substructureWeight = row["SubStructureWeight"] ? row["SubStructureWeight"] : 0
-          if (substructureWeight === "N/A") substructureWeight = 0
-          let totalWeight = parseInt(topsideWeight) + parseInt(substructureWeight);
+          let totalWeight = parseInt(topsideWeight);
           return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
         sortMethod: (a, b) => {
-          return parseInt(a.substring(0, a.length - 1)) >= parseInt(b.substring(0, b.length - 1)) ? 1 : -1;
+
+          return parseInt(a) >= parseInt(b) ? 1 : -1;
         },
-        show: this.state.shownColumns.includes('Weight'),
+        show: this.state.shownColumns.includes('TopsideWeight'),
         filterMethod: (filter, row) => {
           let startValue = filter.value[0]
           let endValue = filter.value[1]
           let topsideWeight = row._original.TopsideWeight ? row._original.TopsideWeight : 0
+          let totalWeight = parseInt(topsideWeight) 
+          return totalWeight < endValue && totalWeight >= startValue
+        },
+        Filter: ({ filter, onChange }) =>
+          <div>
+            <Range allowCross={false} min={0} max={600000} defaultValue={[0, 600000]} onChange={onChange} />
+          </div>
+      },
+      {
+        Header: 'Substructure Weight (t)',
+        id: 'Substructure Weight',
+        accessor: row => {
+          let substructureWeight = row["SubStructureWeight"] ? row["SubStructureWeight"] : "-"
+          let totalWeight = substructureWeight;
+          return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
+        sortMethod: (a, b) => {
+          return parseInt(a) >= parseInt(b) ? 1 : -1;
+        },
+        show: this.state.shownColumns.includes('SubStructureWeight'),
+        filterMethod: (filter, row) => {
+          let startValue = filter.value[0]
+          let endValue = filter.value[1]
           let substructureWeight = row._original["SubStructureWeight"] ? row._original["SubStructureWeight"] : 0
           if (substructureWeight === "N/A") substructureWeight = 0
-          let totalWeight = parseInt(topsideWeight) + parseInt(substructureWeight);
+          let totalWeight = parseInt(substructureWeight);
           return totalWeight < endValue && totalWeight >= startValue
         },
         Filter: ({ filter, onChange }) =>
