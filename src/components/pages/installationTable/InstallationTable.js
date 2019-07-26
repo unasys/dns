@@ -114,8 +114,6 @@ class InstallationTable extends Component {
   }
 
   render() {
-    console.log(this.state.installations);
-    console.log(this.state.installations.length);
     const columns = [
       {
         Header: 'Name',
@@ -144,7 +142,10 @@ class InstallationTable extends Component {
       },
       {
         Header: 'Age',
-        accessor: 'Age',
+        accessor: row => {
+          return row.Age || "-"
+        },
+        id: 'Age',
         show: this.state.shownColumns.includes('Age'),
         filterMethod: (filter, row) => {
           let startValue = filter.value[0]
@@ -205,7 +206,10 @@ class InstallationTable extends Component {
       },
       {
         Header: 'Planned COP',
-        accessor: 'PlannedCOP',
+        accessor: row => {
+          return row.PlannedCOP || "-"
+        },
+        id: 'PlannedCOP',
         show: this.state.shownColumns.includes('Planned COP'),
         filterMethod: (filter, row) => {
           let plannedCOP = row.PlannedCOP && new Date(row.PlannedCOP);
