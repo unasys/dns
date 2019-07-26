@@ -68,6 +68,8 @@ class App extends Component {
                     </DynamicWidthPage>
                   )
                 }} />
+              </Switch>
+              <Switch>
                 <Route path="/bathymetry" exact={true} render={(props) => {
                   return (
                     <Bathymetry {...props}></Bathymetry>
@@ -79,7 +81,6 @@ class App extends Component {
                   )
                 }} />
               </Switch>
-
             </div>
           </div>
         </ConnectedRouter>

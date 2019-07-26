@@ -47,29 +47,30 @@ class Map extends Component {
         this.state.installations = this.props.cesiumInstallations;
     }
 
-    // filterInstallations(filterObject) {
-    //     if (filterObject.type === INSTALLATION_FILTER_TYPES.WasteToEnergy) {
-    //         let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "WasteToEnergy" }) }
-    //         this.setState({
-    //             currentInstallationFilter: newFilter
-    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-    //     } else if (filterObject.type === INSTALLATION_FILTER_TYPES.Property) {
-    //         let newFilter = (installations) => { return installations.filter(installation => { return installation[filterObject.propertyName] === filterObject.on }) };
-    //         this.setState({
-    //             currentInstallationFilter: newFilter
-    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-    //     } else if (filterObject.type === INSTALLATION_FILTER_TYPES.OffshoreWind) {
-    //         let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OffshoreWind" }) };
-    //         this.setState({
-    //             currentInstallationFilter: newFilter
-    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-    //     } else {
-    //         let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OilAndGas" }) }
-    //         this.setState({
-    //             currentInstallationFilter: newFilter
-    //         }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-    //     }
-    // }
+    filterInstallations(filterObject) {
+        if (filterObject.type === INSTALLATION_FILTER_TYPES.WasteToEnergy) {
+            let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "WasteToEnergy" }) }
+            this.setState({
+                currentInstallationFilter: newFilter
+            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+        } else if (filterObject.type === INSTALLATION_FILTER_TYPES.Property) {
+            let newFilter = (installations) => { return installations.filter(installation => { return installation[filterObject.propertyName] === filterObject.on }) };
+            this.setState({
+                currentInstallationFilter: newFilter
+            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+        } else if (filterObject.type === INSTALLATION_FILTER_TYPES.OffshoreWind) {
+            let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OffshoreWind" }) };
+            this.setState({
+                currentInstallationFilter: newFilter
+            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+        }
+        // } else {
+        //     let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OilAndGas" }) }
+        //     this.setState({
+        //         currentInstallationFilter: newFilter
+        //     }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
+        // }
+    }
 
     updatePositions(positions) {
         this.setState({
@@ -98,10 +99,10 @@ class Map extends Component {
             } else if (this.props.activeTab.name === "Bathymetry" && nextProps.activeTab.name !== "Bathymetry") {
                 this.clearBathymetry();
             }
-            // if (this.props.installationFilter !== nextProps.installationFilter) {
-            //     this.filterInstallations(nextProps.installationFilter);
-            //     return true;
-            // }
+            if (this.props.installationFilter !== nextProps.installationFilter) {
+                this.filterInstallations(nextProps.installationFilter);
+                return true;
+            }
 
             if (this.props.activeTab !== nextProps.activeTab || this.state.installations !== nextState.installations) {
                 return true;
@@ -716,11 +717,11 @@ class Map extends Component {
         let installations;
         
         if (nextProps.cesiumInstallations.length === 0) {
-            //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
-            installations = this.state.installations;
+            installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
+            //installations = this.state.installations;
         } else {
-            //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
-            installations = nextProps.cesiumInstallations;
+            installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
+            //installations = nextProps.cesiumInstallations;
         }
         
         for (var i = 0; i < installations.length; i++) {
@@ -773,6 +774,8 @@ class Map extends Component {
             //installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
             decomyards = nextProps.cesiumDecomyards;
         }
+
+        if (!decomyards) return;
         
         for (var i = 0; i < decomyards.length; i++) {
             var decomyard = decomyards[i];
@@ -797,6 +800,7 @@ class Map extends Component {
 
 
     render() {
+        console.log(this.props.installationFilter);
         const divStyle = {
             width: '100%',
             height: '100%',

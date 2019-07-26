@@ -10,6 +10,8 @@ import Circle01 from '../../../assets/installationTable/circle01.js';
 import Circle02 from '../../../assets/installationTable/circle02.js';
 import { fetchInstallations } from '../../../api/Installations.js';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { changeInstallationFilterType, INSTALLATION_FILTER_TYPES, setCesiumInstallations } from '../../../actions/installationActions';
 
 const CancelToken = axios.CancelToken;
 
@@ -21,10 +23,12 @@ class InstallationTable extends Component {
       expandedLevel: 0,
       installations: []
     }
+    this.reactTable = React.createRef();
     this.addToShownColumns = this.addToShownColumns.bind(this);
     this.removeFromShownColumns = this.removeFromShownColumns.bind(this);
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchInstallations = this.fetchInstallations.bind(this);
+    this.onTableViewChange = this.onTableViewChange.bind(this);
     this.source = CancelToken.source();
   }
   
@@ -99,6 +103,16 @@ class InstallationTable extends Component {
     }
   }
 
+  onTableViewChange() {
+    if (this.reactTable.current) {
+      let currentInstallations = this.reactTable.current.getResolvedState().sortedData
+      let mappedInstallations = currentInstallations.map(installation => {
+        return installation._original;
+      })
+      this.props.setCesiumInstallations(mappedInstallations);
+    }
+  }
+
   render() {
     console.log(this.state.installations);
     console.log(this.state.installations.length);
@@ -157,6 +171,16 @@ class InstallationTable extends Component {
         accessor: row => { return <Circle01 size='30px' text={row["FieldType"]}></Circle01> },
         show: this.state.shownColumns.includes('Field Type'),
         filterMethod: (filter, row) => {
+          let filterType;
+          if (filter.value.toLowerCase() === "o")  {
+            filterType = "Oil";
+          } else if (filter.value.toLowerCase() === "c") {
+            filterType = "Condensate"
+          }else if (filter.value.toLowerCase() === "g") {
+            filterType = "Gas"
+          }
+          if (filterType) this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.Property, "FieldType", filterType);
+          console.log('filtering by '  + filterType);
           return row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase())
         },
       },
@@ -290,9 +314,11 @@ class InstallationTable extends Component {
             defaultFilterMethod={(filter, row) =>
               String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())}
             data={this.state.installations}
+            ref={this.reactTable}
             columns={columns}
             showPagination={false}
             pageSize={this.state.installations.length}
+            onFilteredChange={this.onTableViewChange}
           />
           <div className="button-bar">
               <i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i>
@@ -309,4 +335,14 @@ class InstallationTable extends Component {
   }
 }
 
-export default InstallationTable; 
+function mapDispatchToProps(dispatch) {
+  return {
+      changeInstallationFilterType: (filterType, propertyName, filterOn) => {
+          dispatch(changeInstallationFilterType(filterType, propertyName, filterOn))
+      },
+      setCesiumInstallations: (installations) => {
+        dispatch(setCesiumInstallations(installations))
+    }
+  }
+}
+export default connect(null, mapDispatchToProps)(InstallationTable)
