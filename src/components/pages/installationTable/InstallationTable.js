@@ -63,7 +63,6 @@ class InstallationTable extends Component {
           })
   }
 
-
   addToShownColumns(additionalColumn) {
     let shownColumns = this.state.shownColumns;
     this.setState({
@@ -105,13 +104,19 @@ class InstallationTable extends Component {
     }
   }
 
+
   onTableViewChange() {
     if (this.reactTable.current) {
       let currentInstallations = this.reactTable.current.getResolvedState().sortedData
-      this.setState({
-        currentInstallationLength: currentInstallations.length
-      })
-      let mappedInstallations = currentInstallations.map(installation => {
+      
+      // this.setState({
+      //   currentInstallationLength: currentInstallations.length
+      // })
+
+      console.log(currentInstallations.length);
+      this.currentPageSize = currentInstallations.length
+
+        let mappedInstallations = currentInstallations.map(installation => {
         return installation._original;
       })
       this.props.setCesiumInstallations(mappedInstallations);
@@ -162,10 +167,12 @@ class InstallationTable extends Component {
           let endValue = filter.value[1]
           return row.Age < endValue && row.Age > startValue
         },
-        Filter: ({ filter, onChange }) =>
-          <div>
-            <Range allowCross={false} defaultValue={[0, 100]} onChange={onChange} />
-          </div>
+        Filter: ({ filter, onChange }) => {
+          return (<div>
+            <Range allowCross={false} defaultValue={[0, 100]} 
+              onChange={onChange}/>
+          </div>)
+        }
       },
       {
         Header: 'Status',
@@ -191,7 +198,6 @@ class InstallationTable extends Component {
             filterType = "Gas"
           }
           if (filterType) this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.Property, "FieldType", filterType);
-          console.log('filtering by '  + filterType);
           return row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase())
         },
       },
@@ -229,10 +235,11 @@ class InstallationTable extends Component {
           let year = plannedCOP.getFullYear();
           return year < endValue && year > startValue
         },
-        Filter: ({ filter, onChange }) =>
-          <div>
+        Filter: ({ filter, onChange }) => {
+          return (<div>
             <Range allowCross={false} min={2000} max={2100} defaultValue={[2000, 2100]} onChange={onChange} />
-          </div>
+          </div>)
+        }
       },
       {
         Header: 'Topside Weight (t)',
@@ -262,7 +269,7 @@ class InstallationTable extends Component {
           return totalWeight < endValue && totalWeight >= startValue
         },
         Filter: ({ filter, onChange }) =>
-          <div>
+          <div onMouseUp={this.filterMouseUp}>
             <Range allowCross={false} min={0} max={600000} defaultValue={[0, 600000]} onChange={onChange} />
           </div>
       },
@@ -335,8 +342,6 @@ class InstallationTable extends Component {
       },
     ]
 
-    console.log(this.reactTable.current && this.reactTable.current.getResolvedState().sortedData.length);
-
     return (
       <>
         <div className="ReactTable-container">
@@ -348,7 +353,8 @@ class InstallationTable extends Component {
             ref={this.reactTable}
             columns={columns}
             showPagination={false}
-            pageSize={this.state.currentInstallationLength}
+            minRows={0}
+            pageSize={this.state.installations.length}
             onFilteredChange={this.onTableViewChange}
           />
           <div className="button-bar">
