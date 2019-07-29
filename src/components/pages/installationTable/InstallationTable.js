@@ -108,14 +108,6 @@ class InstallationTable extends Component {
   onTableViewChange() {
     if (this.reactTable.current) {
       let currentInstallations = this.reactTable.current.getResolvedState().sortedData
-      
-      // this.setState({
-      //   currentInstallationLength: currentInstallations.length
-      // })
-
-      console.log(currentInstallations.length);
-      this.currentPageSize = currentInstallations.length
-
         let mappedInstallations = currentInstallations.map(installation => {
         return installation._original;
       })
