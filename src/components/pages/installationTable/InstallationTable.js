@@ -21,7 +21,8 @@ class InstallationTable extends Component {
     this.state = {
       shownColumns: ['Name'],
       expandedLevel: 0,
-      installations: []
+      installations: [],
+      currentInstallationLength: 0
     }
     this.reactTable = React.createRef();
     this.addToShownColumns = this.addToShownColumns.bind(this);
@@ -46,7 +47,8 @@ class InstallationTable extends Component {
           .then(payload => {
               //Here we need to assign a type to OilAndGas if it doesn't exists in the response. This is to further help the other components to filter the data.
               this.setState({
-                  installations: payload.data
+                  installations: payload.data,
+                  currentInstallationLength: payload.data.length
               });
               
               if (payload.status === 401 && !this.attemptedRetry) {
@@ -106,6 +108,9 @@ class InstallationTable extends Component {
   onTableViewChange() {
     if (this.reactTable.current) {
       let currentInstallations = this.reactTable.current.getResolvedState().sortedData
+      this.setState({
+        currentInstallationLength: currentInstallations.length
+      })
       let mappedInstallations = currentInstallations.map(installation => {
         return installation._original;
       })
@@ -136,6 +141,11 @@ class InstallationTable extends Component {
             </div>
           </>
         ),
+        Footer: (_) => {
+          return (<span>
+            Totals:
+          </span>)
+        },
         style: { color: '#fff', fontSize: '15px' },
         show: this.state.shownColumns.includes('Name'),
         minWidth: 300
@@ -233,14 +243,21 @@ class InstallationTable extends Component {
           return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
         sortMethod: (a, b) => {
-
           return parseInt(a) >= parseInt(b) ? 1 : -1;
+        },
+        Footer: (row) => {
+          let total = row.data.reduce((acc, installation) => {
+            let weightToAdd = parseInt(installation._original["TopsideWeight"]) || 0
+            return acc + weightToAdd}, 0)
+          return (<span>
+            {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "t"}
+          </span>)
         },
         show: this.state.shownColumns.includes('TopsideWeight'),
         filterMethod: (filter, row) => {
           let startValue = filter.value[0]
-          let endValue = filter.value[1]
-          let topsideWeight = row._original.TopsideWeight ? row._original.TopsideWeight : 0
+          let endValue = filter.value[1] 
+          let topsideWeight = row.TopsideWeight ? row._original.TopsideWeight : 0
           let totalWeight = parseInt(topsideWeight) 
           return totalWeight < endValue && totalWeight >= startValue
         },
@@ -256,6 +273,14 @@ class InstallationTable extends Component {
           let substructureWeight = row["SubStructureWeight"] ? row["SubStructureWeight"] : "-"
           let totalWeight = substructureWeight;
           return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
+        Footer: (row) => {
+          let total = row.data.reduce((acc, installation) => {
+            let weightToAdd = parseInt(installation._original["SubStructureWeight"]) || 0;
+            return acc + weightToAdd}, 0)
+          return (<span>
+            {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "t"}
+          </span>)
         },
         sortMethod: (a, b) => {
           return parseInt(a) >= parseInt(b) ? 1 : -1;
@@ -310,6 +335,8 @@ class InstallationTable extends Component {
       },
     ]
 
+    console.log(this.reactTable.current && this.reactTable.current.getResolvedState().sortedData.length);
+
     return (
       <>
         <div className="ReactTable-container">
@@ -321,7 +348,7 @@ class InstallationTable extends Component {
             ref={this.reactTable}
             columns={columns}
             showPagination={false}
-            pageSize={this.state.installations.length}
+            pageSize={this.state.currentInstallationLength}
             onFilteredChange={this.onTableViewChange}
           />
           <div className="button-bar">

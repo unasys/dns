@@ -65,6 +65,7 @@ class OilandGas extends React.Component {
         return (
             <>
                 {this.state.didYouKnowMessage && <InformationMessageBox message={this.state.didYouKnowMessage} clearMessage={this.clearDidYouKnowMessage}></InformationMessageBox>}
+                {!this.props.hideSidePanel &&
                 <InstallationPanel
                     breadcrumbs={this.state.breadcrumbs}
                     addToBreadcrumbs={this.addToBreadcrumbs}
@@ -72,7 +73,7 @@ class OilandGas extends React.Component {
                     installations={this.props.cesiumInstallations}
                     setCesiumInstallations={this.props.setCesiumInstallations}
                     changeMainContent={this.props.changeMainContent}>
-                </InstallationPanel>
+                </InstallationPanel>}
 
                 <InstallationHandler></InstallationHandler>
                 <DecomyardHandler></DecomyardHandler>

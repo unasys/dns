@@ -63,7 +63,7 @@ class App extends Component {
               <Switch>          
                 <Route path="/installations" render={(props) => {
                   return (
-                    <DynamicWidthPage>
+                    <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
                       <InstallationTable {...props}></InstallationTable>
                     </DynamicWidthPage>
                   )
@@ -73,6 +73,11 @@ class App extends Component {
                 <Route path="/bathymetry" exact={true} render={(props) => {
                   return (
                     <Bathymetry {...props}></Bathymetry>
+                  )
+                }} />
+                <Route path="/installations" render={(props) => {
+                  return (
+                    <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>
                   )
                 }} />
                 <Route path="/" render={(props) => {
