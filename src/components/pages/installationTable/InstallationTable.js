@@ -26,7 +26,9 @@ class InstallationTable extends Component {
       expandedLevel: 0,
       installations: [],
       currentInstallationLength: 0,
-      maxAgeInData: 0
+      maxAgeInData: 0,
+      minCOPInData: new Date(-8640000000000000),
+      maxCOPInData: new Date(8640000000000000)
     }
     this.reactTable = React.createRef();
     this.addToShownColumns = this.addToShownColumns.bind(this);
@@ -49,11 +51,31 @@ class InstallationTable extends Component {
   fetchInstallations() {
       fetchInstallations(this.source.token)
           .then(payload => {
-              //Here we need to assign a type to OilAndGas if it doesn't exists in the response. This is to further help the other components to filter the data.
+              
+              let datesAsEpoch = (
+                payload.data.filter(installation => {
+                  if (!installation.PlannedCOP) return false
+                  let date = new Date(installation.PlannedCOP)
+                  return date != "Invalid Date"                
+                }).map(installation => {
+                  let epochTime = Math.round(((new Date(installation.PlannedCOP)).getTime()) / 1000) // seconds since epoch.
+                  return epochTime
+                }
+                )
+              )
+              
+              let maxDateTime = Math.max(...datesAsEpoch);
+              let minDateTime = Math.min(...datesAsEpoch);
+            
+              let maxDateCOP = new Date(maxDateTime * 1000)
+              let minDateCOP = new Date(minDateTime * 1000)
+
               this.setState({
                   installations: payload.data,
                   currentInstallationLength: payload.data.length,
-                  maxAgeInData: Math.max(...payload.data.map(installation => parseInt(installation.Age) || 0))
+                  maxAgeInData: Math.max(...payload.data.map(installation => parseInt(installation.Age) || 0)),
+                  maxCOPInData: maxDateCOP,
+                  minCOPInData: minDateCOP
               });
                           
               
@@ -229,12 +251,21 @@ class InstallationTable extends Component {
           if (!plannedCOP) return false;
           let startValue = filter.value[0]
           let endValue = filter.value[1]
-          let year = plannedCOP.getFullYear();
-          return year < endValue && year > startValue
+          let msSinceEpoch = plannedCOP;
+          return msSinceEpoch <= endValue && msSinceEpoch >= startValue
         },
         Filter: ({ filter, onChange }) => {
           return (<div>
-            <Range allowCross={false} min={2000} max={2100} defaultValue={[2000, 2100]} onChange={onChange} />
+            <Range 
+              allowCross={false} 
+              min={this.state.minCOPInData.getTime()} 
+              max={this.state.maxCOPInData.getTime()} 
+              defaultValue={[this.state.minCOPInData.getTime(), this.state.maxCOPInData.getTime()]}
+              onChange={onChange}
+              tipFormatter={value => {
+                let date = new Date(value);
+                return `${date.toLocaleDateString()}`
+              }} />
           </div>)
         }
       },
