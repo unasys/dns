@@ -28,7 +28,9 @@ class InstallationTable extends Component {
       currentInstallationLength: 0,
       maxAgeInData: 0,
       minCOPInData: new Date(-8640000000000000),
-      maxCOPInData: new Date(8640000000000000)
+      maxCOPInData: new Date(8640000000000000),
+      maxTopsideWeightInData: 0,
+      maxSubstructureWeightInData: 0
     }
     this.reactTable = React.createRef();
     this.addToShownColumns = this.addToShownColumns.bind(this);
@@ -75,7 +77,9 @@ class InstallationTable extends Component {
                   currentInstallationLength: payload.data.length,
                   maxAgeInData: Math.max(...payload.data.map(installation => parseInt(installation.Age) || 0)),
                   maxCOPInData: maxDateCOP,
-                  minCOPInData: minDateCOP
+                  minCOPInData: minDateCOP,
+                  maxTopsideWeightInData: Math.max(...payload.data.map(installation => parseInt(installation.TopsideWeight) || 0)),
+                  maxSubstructureWeightInData: Math.max(...payload.data.map(installation => parseInt(installation.SubStructureWeight) || 0)),
               });
                           
               
@@ -182,14 +186,21 @@ class InstallationTable extends Component {
         },
         id: 'Age',
         show: this.state.shownColumns.includes('Age'),
+        sortMethod: (a, b) => {
+          let formattedA = a;
+          let formattedB = b;
+          if (a == "-") formattedA = -1
+          if (b == "-") formattedB = -1
+          return parseInt(formattedA) >= parseInt(formattedB) ? 1 : -1;
+        },
         filterMethod: (filter, row) => {
           let startValue = filter.value[0]
           let endValue = filter.value[1]
-          return row.Age < endValue && row.Age > startValue
+          return row.Age <= endValue && row.Age >= startValue
         },
         Filter: ({ filter, onChange }) => {
           return (<div>
-            <Range style={{zIndex: 5}} allowCross={false} min={0} max={this.state.maxAgeInData + 1} defaultValue={[0, (this.state.maxAgeInData + 1)]} onChange={onChange}/>
+            <Range style={{zIndex: 5}} allowCross={false} min={0} max={this.state.maxAgeInData} defaultValue={[0, (this.state.maxAgeInData)]} onChange={onChange}/>
           </div>)
         }
       },
@@ -254,6 +265,16 @@ class InstallationTable extends Component {
           let msSinceEpoch = plannedCOP;
           return msSinceEpoch <= endValue && msSinceEpoch >= startValue
         },
+        sortMethod: (a, b) => {
+          console.log(a)
+          let formattedA = a;
+          let formattedB = b;
+          let aDate = new Date(formattedA);
+          let bDate = new Date(formattedB)
+          if (aDate == "Invalid Date") aDate = new Date(-8640000000000000)
+          if (bDate == "Invalid Date") bDate = new Date(-8640000000000000)
+          return aDate >= bDate ? 1 : -1;
+        },
         Filter: ({ filter, onChange }) => {
           return (<div>
             <Range 
@@ -278,7 +299,7 @@ class InstallationTable extends Component {
           return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
         sortMethod: (a, b) => {
-          return parseInt(a) >= parseInt(b) ? 1 : -1;
+          return parseInt(a.replace(',', '')) >= parseInt(b.replace(',', '')) ? 1 : -1;
         },
         Footer: (row) => {
           let total = row.data.reduce((acc, installation) => {
@@ -292,13 +313,20 @@ class InstallationTable extends Component {
         filterMethod: (filter, row) => {
           let startValue = filter.value[0]
           let endValue = filter.value[1] 
-          let topsideWeight = row.TopsideWeight ? row._original.TopsideWeight : 0
-          let totalWeight = parseInt(topsideWeight) 
-          return totalWeight < endValue && totalWeight >= startValue
+          let topsideWeight = row._original.TopsideWeight ? row._original.TopsideWeight : 0
+          return topsideWeight <= endValue && topsideWeight >= startValue
         },
         Filter: ({ filter, onChange }) =>
           <div onMouseUp={this.filterMouseUp}>
-            <Range allowCross={false} min={0} max={600000} defaultValue={[0, 600000]} onChange={onChange} />
+            <Range 
+              allowCross={false} 
+              min={0} 
+              max={this.state.maxTopsideWeightInData} 
+              defaultValue={[0, (this.state.maxTopsideWeightInData)]} 
+              onChange={onChange} 
+              tipFormatter={value => {
+                return `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}t`
+              }}/>
           </div>
       },
       {
@@ -318,21 +346,36 @@ class InstallationTable extends Component {
           </span>)
         },
         sortMethod: (a, b) => {
-          return parseInt(a) >= parseInt(b) ? 1 : -1;
+          let formattedA = a
+          if (a == "N/A") formattedA = "-2"
+          if (a == "-") formattedA = "-1"
+
+          let formattedB = b
+          if (b == "N/A") formattedB = "-2"
+          if (b == "-") formattedB = "-1"
+
+          return parseInt(formattedA.replace(',', '')) >= parseInt(formattedB.replace(',', '')) ? 1 : -1;
         },
         show: this.state.shownColumns.includes('SubStructureWeight'),
         filterMethod: (filter, row) => {
           let startValue = filter.value[0]
           let endValue = filter.value[1]
           let substructureWeight = row._original["SubStructureWeight"] ? row._original["SubStructureWeight"] : 0
-          if (substructureWeight === "N/A") substructureWeight = 0
-          let totalWeight = parseInt(substructureWeight);
-          return totalWeight < endValue && totalWeight >= startValue
+          if (substructureWeight == "N/A" || substructureWeight == "-") substructureWeight = 0
+          return substructureWeight <= endValue && substructureWeight >= startValue
         },
         Filter: ({ filter, onChange }) =>
           <div>
-            <Range allowCross={false} min={0} max={600000} defaultValue={[0, 600000]} onChange={onChange} />
-          </div>
+        <Range 
+              allowCross={false} 
+              min={0} 
+              max={this.state.maxSubstructureWeightInData} 
+              defaultValue={[0, (this.state.maxSubstructureWeightInData)]} 
+              onChange={onChange} 
+              tipFormatter={value => {
+                return `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}t`
+              }}/>
+          </div>         
       },
       {
         Header: 'Type',
