@@ -3,9 +3,9 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import './TableStyles.scss';
 import history from '../../../history';
-import { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
+import Tooltip from 'rc-tooltip';
 import Circle01 from '../../../assets/installationTable/circle01.js';
 import Circle02 from '../../../assets/installationTable/circle02.js';
 import { fetchInstallations } from '../../../api/Installations.js';
@@ -14,6 +14,9 @@ import { connect } from 'react-redux';
 import { changeInstallationFilterType, INSTALLATION_FILTER_TYPES, setCesiumInstallations } from '../../../actions/installationActions';
 
 const CancelToken = axios.CancelToken;
+const Slider = require('rc-slider');
+const createSliderWithTooltip = Slider.createSliderWithTooltip;
+const Range = createSliderWithTooltip(Slider.Range);
 
 class InstallationTable extends Component {
   constructor(props) {
@@ -22,7 +25,8 @@ class InstallationTable extends Component {
       shownColumns: ['Name'],
       expandedLevel: 0,
       installations: [],
-      currentInstallationLength: 0
+      currentInstallationLength: 0,
+      maxAgeInData: 0
     }
     this.reactTable = React.createRef();
     this.addToShownColumns = this.addToShownColumns.bind(this);
@@ -48,8 +52,10 @@ class InstallationTable extends Component {
               //Here we need to assign a type to OilAndGas if it doesn't exists in the response. This is to further help the other components to filter the data.
               this.setState({
                   installations: payload.data,
-                  currentInstallationLength: payload.data.length
+                  currentInstallationLength: payload.data.length,
+                  maxAgeInData: Math.max(...payload.data.map(installation => parseInt(installation.Age) || 0))
               });
+                          
               
               if (payload.status === 401 && !this.attemptedRetry) {
                   this.attemptedRetry = true;
@@ -161,8 +167,7 @@ class InstallationTable extends Component {
         },
         Filter: ({ filter, onChange }) => {
           return (<div>
-            <Range allowCross={false} defaultValue={[0, 100]} 
-              onChange={onChange}/>
+            <Range style={{zIndex: 5}} allowCross={false} min={0} max={this.state.maxAgeInData + 1} defaultValue={[0, (this.state.maxAgeInData + 1)]} onChange={onChange}/>
           </div>)
         }
       },
@@ -249,7 +254,7 @@ class InstallationTable extends Component {
             let weightToAdd = parseInt(installation._original["TopsideWeight"]) || 0
             return acc + weightToAdd}, 0)
           return (<span>
-            {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "t"}
+            {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </span>)
         },
         show: this.state.shownColumns.includes('TopsideWeight'),
@@ -278,7 +283,7 @@ class InstallationTable extends Component {
             let weightToAdd = parseInt(installation._original["SubStructureWeight"]) || 0;
             return acc + weightToAdd}, 0)
           return (<span>
-            {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "t"}
+            {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </span>)
         },
         sortMethod: (a, b) => {

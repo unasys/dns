@@ -29,6 +29,10 @@
     }
 }
 
+.rc-tooltip, .rc-slider-tooltip {
+    z-index: 5;
+}
+
 .ReactTable {
     min-width:300px;
     border:none;
