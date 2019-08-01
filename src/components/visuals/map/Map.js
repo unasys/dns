@@ -13,6 +13,8 @@ const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthori
 const baseWMSUrl = baseUrl + '/arcgis/services'
 const baseRESTUrl = baseUrl + '/arcgis/rest/services'
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain'
+const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/v9/wms'
+
 const CancelToken = axios.CancelToken;
 
 class Map extends Component {
@@ -120,10 +122,15 @@ class Map extends Component {
     }
 
     initialiseViewer() {
-        window.Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NTA1NWNhOS0zZTM0LTRjMGQtYWZiOS1jMmVjNGEzMmIyYjYiLCJpZCI6MTcxMiwiaWF0IjoxNTI5NjcyOTkyfQ.myp1Pd92hNwkYb4boUV2eFu8EKBgWsFxDU_flX1TpX4';
+        //window.Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NTA1NWNhOS0zZTM0LTRjMGQtYWZiOS1jMmVjNGEzMmIyYjYiLCJpZCI6MTcxMiwiaWF0IjoxNTI5NjcyOTkyfQ.myp1Pd92hNwkYb4boUV2eFu8EKBgWsFxDU_flX1TpX4';
         var terrainProvider = new window.Cesium.CesiumTerrainProvider({
             url: bathymetryBaseUrl,
+            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
         });
+        var osm = window.Cesium.createOpenStreetMapImageryProvider({
+            url : 'https://a.tile.openstreetmap.org/'
+        });
+        
         this.terrainIsOn = true;
         //eslint-disable-next-line
         this.state.viewer =
@@ -141,8 +148,18 @@ class Map extends Component {
                 navigationHelpButton: false,
                 terrainProvider: terrainProvider,
                 terrainExaggeration: 5,
-                requestRenderMode: true
-            })
+                requestRenderMode: true,
+                imageryProvider : osm
+            });
+
+            var provider = new window.Cesium.WebMapServiceImageryProvider({
+                url : emodnetBaseUrl,
+                layers : 'contours',
+                parameters:{transparent:true,format:"image/png"}
+            });
+            
+            this.state.viewer.imageryLayers.addImageryProvider(provider);
+        
         //this.filterInstallations(this.props.installationFilter);
     }
 
