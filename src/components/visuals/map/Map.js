@@ -10,11 +10,34 @@ import InstallationHoverCard from './InstallationHoverCard';
 import DecomyardHoverCard from './DecomyardHoverCard';
 
 const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
-const baseWMSUrl = baseUrl + '/arcgis/services'
-const baseRESTUrl = baseUrl + '/arcgis/rest/services'
-const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain'
-const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/v9/wms'
+const baseWMSUrl = baseUrl + '/arcgis/services';
+const baseRESTUrl = baseUrl + '/arcgis/rest/services';
+const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
+const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/v9/wms';
 
+const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
+let iconModels = {
+    "FPSO":window.Cesium.Model.fromGltf({
+        url : assetsBaseUrl+"/models/platform-types/FPSO/lp_fpsoplat.gltf",
+        scale : 200.0
+    }),
+    "FPU":window.Cesium.Model.fromGltf({
+        url : assetsBaseUrl+"/models/platform-types/FPU/fpu_lowpoly.gltf",
+        scale : 200.0
+    }),
+    "FPV":window.Cesium.Model.fromGltf({
+        url : assetsBaseUrl+"/models/platform-types/FPV/lp_fpsoplat.gltf",
+        scale : 200.0
+    }),
+    "GravBase":window.Cesium.Model.fromGltf({
+        url : assetsBaseUrl+"/models/platform-types/GravBase/lp_gravbase.gltf",
+        scale : 200.0
+    }),
+    "Jacket":window.Cesium.Model.fromGltf({
+        url : assetsBaseUrl+"/models/platform-types/Jacket/lp_jacket.gltf",
+        scale : 200.0
+    })
+};
 const CancelToken = axios.CancelToken;
 
 class Map extends Component {
@@ -572,7 +595,6 @@ class Map extends Component {
     }
 
     loadCesiumModelOntoMap(assetId) {
-        console.log('loading sketchfab model...');
         if (this.cesiumSketchfabModel) {
             this.state.viewer.scene.primitives.remove(this.cesiumSketchfabModel)
         }
@@ -744,6 +766,7 @@ class Map extends Component {
         for (var i = 0; i < installations.length; i++) {
             var installation = installations[i];
             if (installation.id === "world-map") { continue; }
+            var model = iconModels[installation.Type];
 
             var point = this.state.viewer.entities.add({
                 name: installation["Facility Name"],
@@ -754,7 +777,8 @@ class Map extends Component {
                     eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                     translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01)
-                }
+                },
+                model:model
             });
             point.installation = installation;
             installationPoints.push(point);
@@ -817,7 +841,6 @@ class Map extends Component {
 
 
     render() {
-        console.log(this.props.installationFilter);
         const divStyle = {
             width: '100%',
             height: '100%',
