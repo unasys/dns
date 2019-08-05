@@ -226,23 +226,6 @@ class Map extends Component {
         }
     }
 
-    refreshInstallations() {
-        for (var i = 0; i < this.installationPoints.length; i++) {
-            let point = this.installationPoints[i];
-            this.state.viewer.entities.add({
-                name: point.installation["Facility Name"],
-                position: window.Cesium.Cartesian3.fromDegrees(point.installation.X, point.installation.Y),
-                point: {
-                    pixelSize: 10,
-                    color: window.Cesium.Color.GOLD,
-                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 5),
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01)
-                }
-            });
-        }
-    }
-
     removeBathymetryHandlers() {
         if (this.bathymetryHandler != null) {
             this.bathymetryHandler.destroy();
