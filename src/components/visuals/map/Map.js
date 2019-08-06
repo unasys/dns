@@ -13,7 +13,7 @@ const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthori
 const baseWMSUrl = baseUrl + '/arcgis/services';
 const baseRESTUrl = baseUrl + '/arcgis/rest/services';
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
-const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/v9/wms';
+const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/wms';
 
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
@@ -131,8 +131,7 @@ class Map extends Component {
     initialiseViewer() {
         var terrainProvider = new window.Cesium.CesiumTerrainProvider({
             url: bathymetryBaseUrl,
-            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)",
-            parameters:{cors:window.location.href}
+            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
         });
         var osm = window.Cesium.createOpenStreetMapImageryProvider({
             url : 'https://a.tile.openstreetmap.org/'
