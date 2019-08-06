@@ -166,13 +166,13 @@ class InstallationTable extends Component {
               <p>
                 {row.original.ePMID ? (<div style={{cursor:'pointer'}} onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}>{row.value.toLowerCase()}</div>) : row.value.toLowerCase()}
               </p>
-              <i className="fas fa-chevron-down icon"></i>
             </div>
           </>
         ),
-        Footer: (_) => {
+        Footer: (row) => {
+          let total = row.data.length;
           return (<span>
-            Totals:
+            Totals:  {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </span>)
         },
         style: { color: '#fff', fontSize: '15px' },

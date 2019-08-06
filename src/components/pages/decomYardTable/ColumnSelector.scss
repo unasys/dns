@@ -1,0 +1,15 @@
+.column-selector-checkbox-container {
+    display:flex;
+    justify-content: center;
+    .checkbox-container {
+        display:flex;
+        align-items: center;
+        padding-left:10px;
+        input {
+            margin-right:5px;
+        }
+        .text {
+            color:white;
+        }
+    }
+}
