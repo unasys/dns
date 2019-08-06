@@ -131,7 +131,8 @@ class Map extends Component {
     initialiseViewer() {
         var terrainProvider = new window.Cesium.CesiumTerrainProvider({
             url: bathymetryBaseUrl,
-            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
+            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)",
+            parameters:{cors:window.location.href}
         });
         var osm = window.Cesium.createOpenStreetMapImageryProvider({
             url : 'https://a.tile.openstreetmap.org/'
@@ -164,7 +165,7 @@ class Map extends Component {
             var provider = new window.Cesium.WebMapServiceImageryProvider({
                 url : emodnetBaseUrl,
                 layers : 'contours',
-                parameters:{transparent:true,format:"image/png"}
+                parameters:{transparent:true,format:"image/png",cors:window.location.href }
             });
             
             viewer.imageryLayers.addImageryProvider(provider);

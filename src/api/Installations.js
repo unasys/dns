@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
+
 export function fetchInstallations(token) {
-    let url = `https://assets.digitalnorthsea.com/data/installations.json`;
+    let url = assetsBaseUrl+`/data/installations.json`;
 
     return axios.get(url, {
         cancelToken: token
@@ -9,7 +11,7 @@ export function fetchInstallations(token) {
 }
 
 export function fetchDecomyards(token) {
-    let url = `https://assets.digitalnorthsea.com/data/decomyards/decomyards.json`;
+    let url = assetsBaseUrl+`/data/decomyards/decomyards.json`;
 
     return axios.get(url, {
         cancelToken: token
