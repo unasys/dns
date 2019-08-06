@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export function fetchFact(token) {
-    let url = `https://epmdata.blob.core.windows.net/dnsfiles/homescreenfacts.json`;
+    let url = `https://assets.digitalnorthsea.com/data/homescreenfacts.json`;
 
     return axios.get(url, {
         cancelToken: token

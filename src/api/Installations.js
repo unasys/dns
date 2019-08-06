@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export function fetchInstallations(token) {
-    let url = `https://epmdata.blob.core.windows.net/dnsfiles/installationsv1.json`;
+    let url = `https://assets.digitalnorthsea.com/data/installations.json`;
 
     return axios.get(url, {
         cancelToken: token
@@ -9,7 +9,7 @@ export function fetchInstallations(token) {
 }
 
 export function fetchDecomyards(token) {
-    let url = `https://epmdata.blob.core.windows.net/dnsfiles/decomyards/decomyards.json`;
+    let url = `https://assets.digitalnorthsea.com/data/decomyards/decomyards.json`;
 
     return axios.get(url, {
         cancelToken: token

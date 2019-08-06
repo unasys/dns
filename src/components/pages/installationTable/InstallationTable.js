@@ -161,7 +161,7 @@ class InstallationTable extends Component {
           <>
             <div className="table-installation-title">
               <div className="table-installation-image">
-                {row.original.ImageID ? <img src={`https://epmdata.blob.core.windows.net/assets/imagesv1/${row.original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://epmdata.blob.core.windows.net/assets/imagesv1/-1.jpg`} alt="overview-thumbnail" ></img>}
+                {row.original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${row.original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
               </div>
               <p>
                 {row.original.ePMID ? (<div style={{cursor:'pointer'}} onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}>{row.value.toLowerCase()}</div>) : row.value.toLowerCase()}

@@ -148,7 +148,6 @@ class TagDetailsPanel extends React.Component {
             return "";
         }
     }
-    //<img src={`https://epmdatadev.blob.core.windows.net/assets/images/well.jpg`}
     render() {
         let content = (
             <div>

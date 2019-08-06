@@ -65,7 +65,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
             imageId = this.props.installationDetails["Image ID"];
             imageAndHeader = (<>
                 <div className="overview-thumbnail">
-                    <img src={`https://epmdata.blob.core.windows.net/assets/images/${imageId}.jpg`} alt="overview-thumbnail" ></img>
+                    <img src={`https://assets.digitalnorthsea.com/images/installations/${imageId}.jpg`} alt="overview-thumbnail" ></img>
                 </div>
             </>)
             panel = <>
