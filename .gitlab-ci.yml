@@ -2,6 +2,7 @@ image: node:latest
 stages:
   - build
   - deploy
+  - deploy-dev
 
 build:
   stage: build
@@ -25,3 +26,12 @@ deploy:
     - curl -X POST -u '$dns-web':$dnswebpassword --data-binary "@public.zip" https://dns-web.scm.azurewebsites.net/api/zipdeploy
   only:
     - master
+
+deploy-dev:
+  stage: deploy-dev
+  dependencies:
+    - build
+  script:
+    - curl -X POST -u '$dns-web-dev':$dnswebdevpassword --data-binary "@public.zip" https://dns-web-dev.scm.azurewebsites.net/api/zipdeploy
+  only:
+    - develop
