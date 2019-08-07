@@ -1,9 +1,5 @@
 import React from 'react';
 import SlidingPanel from '../../sliding-panels/SlidingPanel';
-import OperatorPanel from './operator/OperatorPanel';
-import InstallationTypePanel from './installationtype/InstallationTypePanel';
-import AreaPanel from './areaofnorthsea/AreaPanel';
-import MannedPanel from './mannedunmanned/MannedPanel';
 import Breadcrumbs from '../../breadcrumbs/Breadcrumbs';
 import history from '../../../history';
 import { connect } from 'react-redux';
@@ -46,41 +42,6 @@ class InstallationPanel extends React.Component {
             history.push(`/projects/${installation.ProjectId}`);
         }
         this.props.changeMainContent(0);
-    }
-
-    getFilterTypeComponent(filterType) {
-        switch (filterType) {
-            case 'Operator':
-                return <OperatorPanel
-                    installations={this.props.installations}
-                    addToBreadcrumbs={this.props.addToBreadcrumbs}
-                    onInstallationClick={this.onInstallationClick}
-                    setCesiumInstallations={this.props.setCesiumInstallations}>
-                </OperatorPanel>;
-            case 'Installation Type':
-                return <InstallationTypePanel
-                    installations={this.props.installations}
-                    addToBreadcrumbs={this.props.addToBreadcrumbs}
-                    onInstallationClick={this.onInstallationClick}
-                    setCesiumInstallations={this.props.setCesiumInstallations}>
-                </InstallationTypePanel>;
-            case 'Area of the North Sea':
-                return <AreaPanel
-                    installations={this.props.installations}
-                    addToBreadcrumbs={this.props.addToBreadcrumbs}
-                    onInstallationClick={this.onInstallationClick}
-                    setCesiumInstallations={this.props.setCesiumInstallations}>
-                </AreaPanel>;
-            case 'Manned/Unmanned':
-                return <MannedPanel
-                    installations={this.props.installations}
-                    addToBreadcrumbs={this.props.addToBreadcrumbs}
-                    onInstallationClick={this.onInstallationClick}
-                    setCesiumInstallations={this.props.setCesiumInstallations}>
-                </MannedPanel>
-            default:
-                return <div>Could not filter on unsupported property</div>;
-        }
     }
 
     onFilterClick(filter) {

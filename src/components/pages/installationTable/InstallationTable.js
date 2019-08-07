@@ -5,7 +5,6 @@ import './TableStyles.scss';
 import history from '../../../history';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import Tooltip from 'rc-tooltip';
 import Circle01 from '../../../assets/installationTable/circle01.js';
 import Circle02 from '../../../assets/installationTable/circle02.js';
 import { fetchInstallations } from '../../../api/Installations.js';
@@ -58,7 +57,7 @@ class InstallationTable extends Component {
                 payload.data.filter(installation => {
                   if (!installation.PlannedCOP) return false
                   let date = new Date(installation.PlannedCOP)
-                  return date != "Invalid Date"                
+                  return date !== "Invalid Date"                
                 }).map(installation => {
                   let epochTime = Math.round(((new Date(installation.PlannedCOP)).getTime()) / 1000) // seconds since epoch.
                   return epochTime
@@ -166,13 +165,13 @@ class InstallationTable extends Component {
               <p>
                 {row.original.ePMID ? (<div style={{cursor:'pointer'}} onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}>{row.value.toLowerCase()}</div>) : row.value.toLowerCase()}
               </p>
-              <i className="fas fa-chevron-down icon"></i>
             </div>
           </>
         ),
-        Footer: (_) => {
+        Footer: (row) => {
+          let total = row.data.length;
           return (<span>
-            Totals:
+            Totals:  {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </span>)
         },
         style: { color: '#fff', fontSize: '15px' },
@@ -189,8 +188,8 @@ class InstallationTable extends Component {
         sortMethod: (a, b) => {
           let formattedA = a;
           let formattedB = b;
-          if (a == "-") formattedA = -1
-          if (b == "-") formattedB = -1
+          if (a === "-") formattedA = -1
+          if (b === "-") formattedB = -1
           return parseInt(formattedA) >= parseInt(formattedB) ? 1 : -1;
         },
         filterMethod: (filter, row) => {
@@ -271,8 +270,8 @@ class InstallationTable extends Component {
           let formattedB = b;
           let aDate = new Date(formattedA);
           let bDate = new Date(formattedB)
-          if (aDate == "Invalid Date") aDate = new Date(-8640000000000000)
-          if (bDate == "Invalid Date") bDate = new Date(-8640000000000000)
+          if (aDate === "Invalid Date") aDate = new Date(-8640000000000000)
+          if (bDate === "Invalid Date") bDate = new Date(-8640000000000000)
           return aDate >= bDate ? 1 : -1;
         },
         Filter: ({ filter, onChange }) => {
@@ -347,12 +346,12 @@ class InstallationTable extends Component {
         },
         sortMethod: (a, b) => {
           let formattedA = a
-          if (a == "N/A") formattedA = "-2"
-          if (a == "-") formattedA = "-1"
+          if (a === "N/A") formattedA = "-2"
+          if (a === "-") formattedA = "-1"
 
           let formattedB = b
-          if (b == "N/A") formattedB = "-2"
-          if (b == "-") formattedB = "-1"
+          if (b === "N/A") formattedB = "-2"
+          if (b === "-") formattedB = "-1"
 
           return parseInt(formattedA.replace(',', '')) >= parseInt(formattedB.replace(',', '')) ? 1 : -1;
         },
@@ -361,7 +360,7 @@ class InstallationTable extends Component {
           let startValue = filter.value[0]
           let endValue = filter.value[1]
           let substructureWeight = row._original["SubStructureWeight"] ? row._original["SubStructureWeight"] : 0
-          if (substructureWeight == "N/A" || substructureWeight == "-") substructureWeight = 0
+          if (substructureWeight === "N/A" || substructureWeight === "-") substructureWeight = 0
           return substructureWeight <= endValue && substructureWeight >= startValue
         },
         Filter: ({ filter, onChange }) =>

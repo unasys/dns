@@ -12,6 +12,7 @@ import { routerMiddleware } from 'connected-react-router';
 import { ConnectedRouter } from 'connected-react-router';
 import Bathymetry from './components/pages/bathymetry/Bathymetry';
 import InstallationTable from './components/pages/installationTable/InstallationTable';
+import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 const store = createStore(
@@ -68,16 +69,18 @@ class App extends Component {
                     </DynamicWidthPage>
                   )
                 }} />
+              <Route path="/decomyards" render={(props) => {
+                  return (
+                    <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
+                      <DecomYardTable {...props}></DecomYardTable>
+                    </DynamicWidthPage>
+                  )
+                }} />
               </Switch>
               <Switch>
                 <Route path="/bathymetry" exact={true} render={(props) => {
                   return (
                     <Bathymetry {...props}></Bathymetry>
-                  )
-                }} />
-                <Route path="/installations" render={(props) => {
-                  return (
-                    <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>
                   )
                 }} />
                 <Route path="/" render={(props) => {

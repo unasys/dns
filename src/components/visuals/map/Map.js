@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './Map.scss';
-import { changeCurrentInstallation, INSTALLATION_FILTER_TYPES } from '../../../actions/installationActions';
+import { changeCurrentInstallation } from '../../../actions/installationActions';
 import history from '../../../history';
 import { updatePositions } from '../../../actions/bathymetryActions';
 import axios from 'axios';
@@ -14,14 +14,13 @@ const baseWMSUrl = baseUrl + '/arcgis/services';
 const baseRESTUrl = baseUrl + '/arcgis/rest/services';
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/wms';
-
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
 let iconModels = {
-    "FPSO":assetsBaseUrl+"/models/platform-types/FPSO/lp_fpsoplat.gltf"    ,
-    "FPU": assetsBaseUrl+"/models/platform-types/FPU/fpu_lowpoly.gltf"    ,
-    "FPV":assetsBaseUrl+"/models/platform-types/FPV/lp_fpsoplat.gltf"    ,
-    "GravBase": assetsBaseUrl+"/models/platform-types/GravBase/lp_gravbase.gltf"    ,
+    "FPSO":assetsBaseUrl+"/models/platform-types/FPSO/lp_fpsoplat.gltf",
+    "FPU": assetsBaseUrl+"/models/platform-types/FPU/fpu_lowpoly.gltf",
+    "FPV":assetsBaseUrl+"/models/platform-types/FPV/lp_fpsoplat.gltf",
+    "GravBase": assetsBaseUrl+"/models/platform-types/GravBase/lp_gravbase.gltf",
     "Jacket": assetsBaseUrl+"/models/platform-types/Jacket/lp_jacket.gltf",
     "Platform": assetsBaseUrl+"/models/platform-types/Jacket/lp_jacket.gltf",
     "FSO":assetsBaseUrl+"/models/platform-types/FPU/fpu_lowpoly.gltf"
@@ -54,30 +53,13 @@ class Map extends Component {
             installations: [],
             decomyards: [],
             currentInstallationFilter: null,
+            currentDecomYardFilter: null,
             lastHoveredInstallation: null,
             lastHoveredDecomyard: null
         }
 
         this.state.installations = this.props.cesiumInstallations;
-    }
-
-    filterInstallations(filterObject) {
-        if (filterObject.type === INSTALLATION_FILTER_TYPES.WasteToEnergy) {
-            let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "WasteToEnergy" }) }
-            this.setState({
-                currentInstallationFilter: newFilter
-            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-        } else if (filterObject.type === INSTALLATION_FILTER_TYPES.Property) {
-            let newFilter = (installations) => { return installations.filter(installation => { return installation[filterObject.propertyName] === filterObject.on }) };
-            this.setState({
-                currentInstallationFilter: newFilter
-            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-        } else if (filterObject.type === INSTALLATION_FILTER_TYPES.OffshoreWind) {
-            let newFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OffshoreWind" }) };
-            this.setState({
-                currentInstallationFilter: newFilter
-            }, () => { this.clearInstallations(); this.loadUpInstallations(this.props); })
-        }
+        this.state.decomyards = this.props.cesiumDecomyards;
     }
 
     updatePositions(positions) {
@@ -96,9 +78,9 @@ class Map extends Component {
         }
         if (this.state.viewer != null) {
             this.sortLayers(nextProps);
-            if (this.installationPoints !== undefined) {
-                this.clearInstallations();
-            }
+            this.clearInstallations();
+            this.clearDecomYards();            
+
             this.installationPoints = this.loadUpInstallations(nextProps);
             this.decomyardsPoints = this.loadUpDecomyards(nextProps);
             if (this.props.activeTab.name !== "Bathymetry" && nextProps.activeTab.name === "Bathymetry") {
@@ -109,6 +91,11 @@ class Map extends Component {
             }
             if (this.props.installationFilter !== nextProps.installationFilter) {
                 this.filterInstallations(nextProps.installationFilter);
+                return true;
+            }
+
+            if (this.props.decomYardFilter !== nextProps.decomYardFilter) {
+                this.filterDecomYards(nextProps.decomYardFilter);
                 return true;
             }
 
@@ -168,6 +155,7 @@ class Map extends Component {
             });
             
             viewer.imageryLayers.addImageryProvider(provider);
+            //eslint-disable-next-line
             this.state.viewer = viewer;
     }
 
@@ -221,8 +209,18 @@ class Map extends Component {
     }
 
     clearInstallations() {
-        for (var i = 0; i < this.installationPoints.length; i++) {
-            this.state.viewer.entities.remove(this.installationPoints[i]);
+        if(this.installationPoints!== undefined){
+           for (var i = 0; i < this.installationPoints.length; i++) {
+                this.state.viewer.entities.remove(this.installationPoints[i]);
+            }
+        }
+    }
+
+    clearDecomYards() {
+        if(this.decomyardsPoints!== undefined){
+            for (var i = 0; i < this.decomyardsPoints.length; i++) {
+                this.state.viewer.entities.remove(this.decomyardsPoints[i]);
+            }
         }
     }
 
@@ -702,10 +700,8 @@ class Map extends Component {
         
         if (nextProps.cesiumInstallations.length === 0) {
             installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
-            //installations = this.state.installations;
         } else {
             installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
-            //installations = nextProps.cesiumInstallations;
         }
         
         for (var i = 0; i < installations.length; i++) {
@@ -754,16 +750,13 @@ class Map extends Component {
     }
 
     loadUpDecomyards(nextProps) {
-
         var decomyardsPoints = [];
         let decomyards;
         
-        if (nextProps.cesiumDecomyards && nextProps.cesiumDecomyards.length === 0) {
-
-            decomyards = this.state.decomyards;
+        if (nextProps.cesiumDecomyards.length === 0) {
+            decomyards = this.state.currentDecomYardFilter ? this.state.currentDecomYardFilter(this.state.decomyards) : this.state.decomyards;
         } else {
-
-            decomyards = nextProps.cesiumDecomyards;
+            decomyards = this.state.currentDecomYardFilter ? this.state.currentDecomYardFilter(nextProps.cesiumDecomyards) : nextProps.cesiumDecomyards;
         }
 
         if (!decomyards) return;
@@ -842,12 +835,14 @@ function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
     let filterType = state.InstallationReducer.installationFilter
+    let decomYardFilterType = state.InstallationReducer.decomYardFilterType
     return {
         activeTab: state.HeaderReducer.activeTab,
         currentInstallation: state.InstallationReducer.currentInstallation,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
         cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
         installationFilter: filterType,
+        decomYardFilter: decomYardFilterType,
         fieldState: state.BathymetryReducer.ogaFieldsSwitched,
         quadrantsState: state.BathymetryReducer.ogaQuadrantsSwitched,
         wellState: state.BathymetryReducer.ogaWellsSwitched,
