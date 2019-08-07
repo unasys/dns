@@ -83,10 +83,13 @@ class OilandGas extends React.Component {
 }
 
 function mapStateToProps(state) {
-    let filterType = state.InstallationReducer.installationFilter
+    let filterType = state.InstallationReducer.installationFilter;
+    let decomYardFilterType = state.InstallationReducer.decomYardFilterType;
     return {
         installationFilter: filterType,
+        decomYardFilter: decomYardFilterType,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
+        cesiumDecomyards: state.InstallationReducer.cesiumDecomyard
     }
 }
 
