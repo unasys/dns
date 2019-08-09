@@ -17,3 +17,11 @@ export function fetchDecomyards(token) {
         cancelToken: token
     })
 }
+
+export function fetchPipelines(token) {
+    let url = assetsBaseUrl+`/data/pipelines/pipelines.json`;
+
+    return axios.get(url, {
+        cancelToken: token
+    })
+}

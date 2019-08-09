@@ -52,14 +52,21 @@ class Map extends Component {
             positions: [],
             installations: [],
             decomyards: [],
+            pipelines:[],
             currentInstallationFilter: null,
             currentDecomYardFilter: null,
+            currentPipelineFilter: null,
             lastHoveredInstallation: null,
             lastHoveredDecomyard: null
         }
-
+        
         this.state.installations = this.props.cesiumInstallations;
-        this.state.decomyards = this.props.cesiumDecomyards;
+        if(this.props.cesiumDecomyards){
+            this.state.decomyards = this.props.cesiumDecomyards;
+        }
+        if(this.props.cesiumPipelines){        
+            this.state.pipelines = this.props.cesiumPipelines;
+        }
     }
 
     updatePositions(positions) {
@@ -80,9 +87,11 @@ class Map extends Component {
             this.sortLayers(nextProps);
             this.clearInstallations();
             this.clearDecomYards();            
+            this.clearPipelines();            
 
             this.installationPoints = this.loadUpInstallations(nextProps);
             this.decomyardsPoints = this.loadUpDecomyards(nextProps);
+            this.pipelinePoints = this.loadUpPipelines(nextProps);
             if (this.props.activeTab.name !== "Bathymetry" && nextProps.activeTab.name === "Bathymetry") {
                 this.setUpBathymetry();
 
@@ -96,6 +105,11 @@ class Map extends Component {
 
             if (this.props.decomYardFilter !== nextProps.decomYardFilter) {
                 this.filterDecomYards(nextProps.decomYardFilter);
+                return true;
+            }
+
+            if (this.props.pipelineFilter !== nextProps.pipelineFilter) {
+                this.filterDecomYards(nextProps.pipelineFilter);
                 return true;
             }
 
@@ -220,6 +234,14 @@ class Map extends Component {
         if(this.decomyardsPoints!== undefined){
             for (var i = 0; i < this.decomyardsPoints.length; i++) {
                 this.state.viewer.entities.remove(this.decomyardsPoints[i]);
+            }
+        }
+    }
+
+    clearPipelines() {
+        if(this.pipelinePoints!== undefined){
+            for (var i = 0; i < this.pipelinePoints.length; i++) {
+                this.state.viewer.entities.remove(this.pipelinePoints[i]);
             }
         }
     }
@@ -797,6 +819,94 @@ class Map extends Component {
         return decomyardsPoints;
     }
 
+    computeCircle(radius) {
+        var positions = [];
+        for (var i = 0; i < 360; i++) {
+            var radians = window.Cesium.Math.toRadians(i);
+            positions.push(new window.Cesium.Cartesian2(radius * Math.cos(radians), radius * Math.sin(radians)));
+        }
+        return positions;
+    }
+
+    loadUpPipelines(nextProps) {
+        var pipelinePolys = [];
+        let pipelines;
+        if (!nextProps.cesiumPipelines || nextProps.cesiumPipelines.length === 0) {
+            pipelines = this.state.currentPipelineFilter ? this.state.currentPipelineFilter(this.state.pipelines) : this.state.pipelines;
+        } else {
+            pipelines = this.state.currentPipelineFilter ? this.state.currentPipelineFilter(nextProps.cesiumPipelines) : nextProps.cesiumPipelines;
+        }
+        
+        if (!pipelines) return;
+        var shape = this.computeCircle(40.0);
+        var errors = [];
+        for (var i = 0; i < pipelines.length; i++) {
+            var pipeline = pipelines[i];
+            var coordinates = pipeline.Coordinates;
+            if(Array.isArray(coordinates) && coordinates.length > 0){
+                if(Array.isArray(coordinates[0])){
+                    if(coordinates[0].length >0 && Array.isArray(coordinates[0][0])){
+                        console.log("multi line here");
+                    }
+                    else{
+                        try{
+                        let flatCoordinates = coordinates.flat();
+                        
+                        var poly =this.state.viewer.entities.add({
+                            name: pipeline["Pipeline Name"],
+                            position: window.Cesium.Cartesian3.fromDegrees(flatCoordinates[Math.floor((flatCoordinates.length - 1) / 2)]),
+                            // polylineVolume : {
+                            //     positions : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                            //     shape : shape,
+                            //     material : window.Cesium.Color.RED,
+                            //     heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND ,
+                            //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 10000),
+                            // },
+                            polyline:{
+                                positions : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                                material : window.Cesium.Color.RED,
+                                heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND ,
+                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(100000, 50000000),
+                            },
+                            label:{
+                                text:pipeline["Pipeline Name"],
+                                fillColor:window.Cesium.Color.WHITE,
+                                style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                                outlineColor : window.Cesium.Color.BLACK,
+                                outlineWidth: 1.5,
+                                pixelOffset: new  window.Cesium.Cartesian2(25, 0),
+                                verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
+                                horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
+                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                                heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                            }
+                        });
+                        poly.manualUpdate = true;
+                        poly.forceUpdate = true;
+                        poly.pipeline = pipeline;
+                      
+                        pipelinePolys.push(poly);
+                    }
+                    catch(error){
+                        errors.push({error:error, coordinates:coordinates.flat()});
+                    }
+                        
+                    
+                    }
+                }
+
+            }
+        }
+        if(errors.length > 0 ){
+            console.error(errors);
+        }
+            
+        
+        this.pipelinePoints = pipelinePolys;
+        return pipelinePolys;
+    }
+
+
 
     render() {
         const divStyle = {
@@ -836,13 +946,16 @@ function mapDispatchToProps(dispatch) {
 const mapStateToProps = (state) => {
     let filterType = state.InstallationReducer.installationFilter
     let decomYardFilterType = state.InstallationReducer.decomYardFilterType
+    let pipelineFilterType = state.InstallationReducer.pipelineFilterType
     return {
         activeTab: state.HeaderReducer.activeTab,
         currentInstallation: state.InstallationReducer.currentInstallation,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
         cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
+        cesiumPipelines: state.InstallationReducer.cesiumPipelines,
         installationFilter: filterType,
         decomYardFilter: decomYardFilterType,
+        pipelineFilterType: pipelineFilterType,
         fieldState: state.BathymetryReducer.ogaFieldsSwitched,
         quadrantsState: state.BathymetryReducer.ogaQuadrantsSwitched,
         wellState: state.BathymetryReducer.ogaWellsSwitched,

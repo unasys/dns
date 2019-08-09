@@ -13,6 +13,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import Bathymetry from './components/pages/bathymetry/Bathymetry';
 import InstallationTable from './components/pages/installationTable/InstallationTable';
 import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
+import PipelineTable from './components/pages/pipelineTable/PipelineTable';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 const store = createStore(
@@ -73,6 +74,13 @@ class App extends Component {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
                       <DecomYardTable {...props}></DecomYardTable>
+                    </DynamicWidthPage>
+                  )
+                }} />
+                <Route path="/pipelines" render={(props) => {
+                  return (
+                    <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
+                      <PipelineTable {...props}></PipelineTable>
                     </DynamicWidthPage>
                   )
                 }} />
