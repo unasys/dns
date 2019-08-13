@@ -379,13 +379,13 @@ class InstallationTable extends Component {
       {
         Header: 'Type',
         id: 'Type',
-        accessor: row => { if (row.Type) { return row.Type.toLowerCase() } },
+        accessor: row => { if (row.Type) { return row.Type } },
         show: this.state.shownColumns.includes('Type')
       },
       {
         Header: 'Area',
         id: 'Area',
-        accessor: row => { if (row.Area) { return row.Area.toLowerCase() } },
+        accessor: row => { if (row.Area) { return row.Area } },
         show: this.state.shownColumns.includes('Area')
       },
       {
