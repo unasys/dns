@@ -19,7 +19,11 @@ function KeaneScreen(props) {
         console.log(props);
 
         let titleBar = (
-            <TitleBar title={props.installationDetails && props.installationDetails.Name} subtitle={"Operator " + props.installationDetails && props.installationDetails.Operator}></TitleBar>
+            <TitleBar 
+                title={props.installationDetails && props.installationDetails.Name} 
+                subtitle={"Operator " + props.installationDetails && props.installationDetails.Operator}
+                installationtype={props.installationDetails && props.installationDetails.FieldType}>
+            </TitleBar>
         )
 
         let doubleWidth = (
@@ -42,7 +46,7 @@ function KeaneScreen(props) {
             </EntryContainer>
             <EntryContainer borderBottom>
                 <Entry icon={<i class="fas fa-dot-circle"></i>} title={"Manned"}></Entry>
-                <Entry icon={<i className="fas fa-cog"></i>} title={"Operational"}></Entry>
+                <Entry icon={<i className="fas fa-cog"></i>} title={props.installationDetails && props.installationDetails.Status }></Entry>
                 <Entry icon={<i className="fas fa-male"></i>} title={"POB"} subtitle={props.installationDetails && props.installationDetails.PersonsOnBoard}></Entry>
             </EntryContainer>
             <EntryContainer>
@@ -82,12 +86,12 @@ function KeaneScreen(props) {
                 </>
         } else {
             content = 
-            <>
+            <div style={{margin:'10px'}}>
                 {titleBar}
                 {doubleWidth}
                 {props.installationDetails && props.installationDetails.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${props.installationDetails.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
                 {timeLine}
-                </>
+            </div>
         }
 
         return (

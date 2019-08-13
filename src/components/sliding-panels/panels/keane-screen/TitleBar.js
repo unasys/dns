@@ -13,7 +13,7 @@ function TitleBar(props) {
                 </div>
             </div>
             <div className="title-bar-icons">
-
+                {props.installationtype}
             </div>
         </div>
     )
