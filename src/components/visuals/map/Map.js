@@ -89,10 +89,10 @@ class Map extends Component {
             } else if (this.props.activeTab.name === "Bathymetry" && nextProps.activeTab.name !== "Bathymetry") {
                 this.clearBathymetry();
             }
-            if (this.props.installationFilter !== nextProps.installationFilter) {
-                this.filterInstallations(nextProps.installationFilter);
-                return true;
-            }
+            // if (this.props.installationFilter !== nextProps.installationFilter) {
+            //     this.filterInstallations(nextProps.installationFilter);
+            //     return true;
+            // }
 
             if (this.props.decomYardFilter !== nextProps.decomYardFilter) {
                 this.filterDecomYards(nextProps.decomYardFilter);
@@ -566,11 +566,11 @@ class Map extends Component {
 
                 // dot has been clicked.
                 this.props.changeCurrentInstallation(id.installation);
-                if (id.installation.ProjectId) { // unselect if no project id is selected.
-                    history.push(`/projects/${id.installation.ProjectId}`);
-                } else {
-                    history.push(`/projects/`)
-                }
+                // if (id.installation.ProjectId) { // unselect if no project id is selected.
+                //     history.push(`/projects/${id.installation.ProjectId}`);
+                // } else {
+                //     history.push(`/projects/`)
+                // }
 
                 if (id.installation.CesiumId) {
                     this.loadCesiumModelOntoMap(id.installation.CesiumId)
