@@ -4,6 +4,7 @@ export const CHANGE_INSTALLATION_FILTER_TYPE = "CHANGE_INSTALLATION_FILTER_TYPE"
 export const SET_CESIUM_DECOMYARDS = "SET_CESIUM_DECOMYARDS";
 export const SET_CESIUM_WINDFARMS = "SET_CESIUM_WINDFARMS";
 export const CHANGE_DECOMYARD_FILTER_TYPE = "CHANGE_DECOMYARD_FILTER_TYPE";
+export const CHANGE_WINDFARM_FILTER_TYPE = "CHANGE_WINDFARM_FILTER_TYPE";
 
 export const INSTALLATION_FILTER_TYPES = {
     OilAndGas: 1,
@@ -32,6 +33,10 @@ export function setCesiumWindfarms(windfarms) {
 
 export function changeDecomYardFilterType(filterType, propertyName, filterOn) {
     return { type: CHANGE_DECOMYARD_FILTER_TYPE, filterType, propertyName, filterOn }
+}
+
+export function changeWindfarmFilterType(filterType, propertyName, filterOn) {
+    return { type: CHANGE_WINDFARM_FILTER_TYPE, filterType, propertyName, filterOn }
 }
 
 export function changeInstallationFilterType(filterType, propertyName, filterOn) {

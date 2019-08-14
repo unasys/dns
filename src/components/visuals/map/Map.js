@@ -8,6 +8,8 @@ import axios from 'axios';
 import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
 import DecomyardHoverCard from './DecomyardHoverCard';
+import WindfarmHoverCard from './WindfarmHoverCard';
+
 
 const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
 const baseWMSUrl = baseUrl + '/arcgis/services';
@@ -57,7 +59,8 @@ class Map extends Component {
             currentDecomYardFilter: null,
             currentWindfarmFilter: null,
             lastHoveredInstallation: null,
-            lastHoveredDecomyard: null
+            lastHoveredDecomyard: null,
+            lastHoveredWindfarm: null,
         }
 
         this.state.installations = this.props.cesiumInstallations;
@@ -76,6 +79,9 @@ class Map extends Component {
             return true;
         }
         if (this.state.lastHoveredDecomyard !== nextState.lastHoveredDecomyard) {
+            return true;
+        }
+        if (this.state.lastHoveredWindfarm !== nextState.lastHoveredWindfarm) {
             return true;
         }
         if (this.state.viewer != null) {
@@ -493,10 +499,11 @@ class Map extends Component {
                 }
                 previousPickedEntity.point.color = color;
             }
-            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard) {
+            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm) {
                 self.setState({
                     lastHoveredInstallation: null,
-                    lastHoveredDecomyard: null
+                    lastHoveredDecomyard: null,
+                    lastHoveredWindfarm: null 
                 })
             }
 
@@ -510,6 +517,9 @@ class Map extends Component {
                 })
                 self.setState({
                     lastHoveredDecomyard: pickedEntity.decomyard
+                })
+                self.setState({
+                    lastHoveredWindfarm: pickedEntity.windfarm
                 })
 
             }
@@ -812,7 +822,6 @@ class Map extends Component {
     }
 
     loadUpWindfarms(nextProps) {
-        console.log('loading windfarms :D');
         var windfarmsPoints = [];
         let windfarms;
         
@@ -871,6 +880,7 @@ class Map extends Component {
         };
         let hoveredInstallation = this.state.lastHoveredInstallation;
         let hoveredDecomyard = this.state.lastHoveredDecomyard;
+        let hoveredWindfarm = this.state.lastHoveredWindfarm;
         
         return (
             <div style={{height:'100%', width:'100%'}}>
@@ -879,6 +889,7 @@ class Map extends Component {
                 </div>
                 <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
                 <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
+                <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
             </ReactCursorPosition>
             </div>
         );
@@ -900,6 +911,7 @@ function mapDispatchToProps(dispatch) {
 const mapStateToProps = (state) => {
     let filterType = state.InstallationReducer.installationFilter
     let decomYardFilterType = state.InstallationReducer.decomYardFilterType
+    let windfarmFilterType = state.InstallationReducer.windfarmFilterType
     return {
         activeTab: state.HeaderReducer.activeTab,
         currentInstallation: state.InstallationReducer.currentInstallation,
@@ -908,6 +920,7 @@ const mapStateToProps = (state) => {
         cesiumWindfarms: state.InstallationReducer.cesiumWindfarms,
         installationFilter: filterType,
         decomYardFilter: decomYardFilterType,
+        windfarmFilter: windfarmFilterType,
         fieldState: state.BathymetryReducer.ogaFieldsSwitched,
         quadrantsState: state.BathymetryReducer.ogaQuadrantsSwitched,
         wellState: state.BathymetryReducer.ogaWellsSwitched,

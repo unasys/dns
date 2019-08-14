@@ -55,10 +55,18 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 <NavigationHeading heading={'Decom Yards'} onClick={()=> history.push('decomyards')}></NavigationHeading>
             </div>
 
+        let windfarmSelection =
+            this.props.installationSelectorComponent &&
+            <div>
+                <NavigationHeading heading={'Windfarms'} onClick={()=> history.push('windfarms')}></NavigationHeading>
+            </div>
+
+
         let content =
             <>
                 {installationSelection}
                 {decomYardSelection}
+                {windfarmSelection}
                 {collapsibleHeadings}
                 {navigationHeadings}
             </>
