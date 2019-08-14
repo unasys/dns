@@ -494,8 +494,10 @@ class Map extends Component {
                 let color;
                 if (previousPickedEntity.installation) {
                     color=window.Cesium.Color.GOLD
-                } else {
+                } else if (previousPickedEntity.decomyard) {
                     color=window.Cesium.Color.AQUA
+                } else {
+                    color=window.Cesium.Color.WHITE
                 }
                 previousPickedEntity.point.color = color;
             }

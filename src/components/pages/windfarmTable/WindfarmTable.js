@@ -130,6 +130,34 @@ class WindfarmTable extends Component {
         Header: 'MW Cap',
         accessor: 'MW CAP'
       },
+      {
+        Header: 'Turbines',
+        accessor: 'TURBINES'
+      },
+      {
+        Header: 'Capacity Factor',
+        accessor: 'CAPACITY FACTOR'
+      },
+      {
+        Header: 'Depth (M)',
+        accessor: 'DEPTH'
+      },
+      {
+        Header: 'Status',
+        accessor: 'STATUS'
+      },
+      {
+        Header: 'DEPTH (M)',
+        accessor: 'DEPTH'
+      },
+      {
+        Header: 'First Power',
+        accessor: 'First Power'
+      },
+      {
+        Header: 'Area (km2)',
+        accessor: 'Area (km2)'
+      },
     ]
 
     return (
