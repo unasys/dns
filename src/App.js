@@ -69,6 +69,13 @@ class App extends Component {
                     </DynamicWidthPage>
                   )
                 }} />
+                  <Route path="/decomyards" render={(props) => {
+                  return (
+                    <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
+                      <DecomYardTable {...props}></DecomYardTable>
+                    </DynamicWidthPage>
+                  )
+                }} />
               </Switch>
               <Switch>
                 <Route path="/bathymetry" exact={true} render={(props) => {
@@ -76,7 +83,7 @@ class App extends Component {
                     <Bathymetry {...props}></Bathymetry>
                   )
                 }} />
-                <Route path="/installations" render={(props) => {
+                <Route path="/(installations|decomyards)" render={(props) => {
                   return (
                     <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>
                   )

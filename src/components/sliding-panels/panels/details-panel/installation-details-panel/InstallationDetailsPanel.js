@@ -58,13 +58,10 @@ function KeaneScreen(props) {
         let timeLineDates = [];
         if (props.installationDetails) {
             if (props.installationDetails.StartDate) { 
-                console.log(formatToAmericanDate(props.installationDetails.StartDate));
                 timeLineDates.push(formatToAmericanDate(props.installationDetails.StartDate))
             }
             
             if (props.installationDetails.PlannedCOP) {
-                console.log(props.installationDetails.PlannedCOP);
-                console.log(formatToAmericanDate(props.installationDetails.PlannedCOP));
                 timeLineDates.push(formatToAmericanDate(props.installationDetails.PlannedCOP))  
             } 
         }

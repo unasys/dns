@@ -52,8 +52,10 @@ class Map extends Component {
             positions: [],
             installations: [],
             decomyards: [],
+            windfarms: [],
             currentInstallationFilter: null,
             currentDecomYardFilter: null,
+            currentWindfarmFilter: null,
             lastHoveredInstallation: null,
             lastHoveredDecomyard: null
         }
@@ -79,10 +81,13 @@ class Map extends Component {
         if (this.state.viewer != null) {
             this.sortLayers(nextProps);
             this.clearInstallations();
-            this.clearDecomYards();            
+            this.clearDecomYards();     
+            this.clearWindfarms();
 
             this.installationPoints = this.loadUpInstallations(nextProps);
             this.decomyardsPoints = this.loadUpDecomyards(nextProps);
+            this.windfarmPoints = this.loadUpWindfarms(nextProps);
+
             if (this.props.activeTab.name !== "Bathymetry" && nextProps.activeTab.name === "Bathymetry") {
                 this.setUpBathymetry();
 
@@ -220,6 +225,15 @@ class Map extends Component {
         if(this.decomyardsPoints!== undefined){
             for (var i = 0; i < this.decomyardsPoints.length; i++) {
                 this.state.viewer.entities.remove(this.decomyardsPoints[i]);
+            }
+        }
+    }
+
+    
+    clearWindfarms() {
+        if(this.windfarmPoints !== undefined){
+            for (var i = 0; i < this.windfarmPoints.length; i++) {
+                this.state.viewer.entities.remove(this.windfarmPoints[i]);
             }
         }
     }
@@ -797,6 +811,56 @@ class Map extends Component {
         return decomyardsPoints;
     }
 
+    loadUpWindfarms(nextProps) {
+        console.log('loading windfarms :D');
+        var windfarmsPoints = [];
+        let windfarms;
+        
+        if (nextProps.cesiumWindfarms.length === 0) {
+            windfarms = this.state.currentWindfarmsFilter ? this.state.currentWindfarmFilter(this.state.windfarms) : this.state.windfarms;
+        } else {
+            windfarms = this.state.currentWindfarmsFilter ? this.state.currentWindfarmFilter(nextProps.cesiumWindfarms) : nextProps.cesiumWindfarms;
+        }
+
+        if (!windfarms) return;
+        
+        for (var i = 0; i < windfarms.length; i++) {
+            var windfarm = windfarms[i];
+
+            if (!windfarm.LONGITUDE || !windfarm.LATITUDE) continue;
+            var point = this.state.viewer.entities.add({
+                name: windfarm["Name"],
+                position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
+                point: {
+                    pixelSize: 12,
+                    color: window.Cesium.Color.WHITE,
+                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                    outlineColor : window.Cesium.Color.BLACK,
+                    outlineWidth: 1, 
+                },
+                label:{
+                    text:windfarm["Name"],
+                    fillColor:window.Cesium.Color.WHITE,
+                    style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineColor : window.Cesium.Color.BLACK,
+                    outlineWidth: 1.5,
+                    pixelOffset: new  window.Cesium.Cartesian2(25, 0),
+                    verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
+                    horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                }
+            });
+            point.windfarm = windfarm;
+            windfarmsPoints.push(point);
+        }
+        this.windfarmsPoints = windfarmsPoints;
+        return windfarmsPoints;
+    }
+
 
     render() {
         const divStyle = {
@@ -841,6 +905,7 @@ const mapStateToProps = (state) => {
         currentInstallation: state.InstallationReducer.currentInstallation,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
         cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
+        cesiumWindfarms: state.InstallationReducer.cesiumWindfarms,
         installationFilter: filterType,
         decomYardFilter: decomYardFilterType,
         fieldState: state.BathymetryReducer.ogaFieldsSwitched,

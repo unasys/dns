@@ -2,6 +2,7 @@ export const CHANGE_CURRENT_INSTALLATION = "CHANGE_CURRENT_INSTALLATION";
 export const SET_CESIUM_INSTALLATIONS = "SET_CESIUM_INSTALLATIONS";
 export const CHANGE_INSTALLATION_FILTER_TYPE = "CHANGE_INSTALLATION_FILTER_TYPE";
 export const SET_CESIUM_DECOMYARDS = "SET_CESIUM_DECOMYARDS";
+export const SET_CESIUM_WINDFARMS = "SET_CESIUM_WINDFARMS";
 export const CHANGE_DECOMYARD_FILTER_TYPE = "CHANGE_DECOMYARD_FILTER_TYPE";
 
 export const INSTALLATION_FILTER_TYPES = {
@@ -22,6 +23,11 @@ export function setCesiumInstallations(installations) {
 
 export function setCesiumDecomyards(decomyards) {
     return { type: SET_CESIUM_DECOMYARDS, decomyards }
+}
+
+
+export function setCesiumWindfarms(windfarms) {
+    return { type: SET_CESIUM_WINDFARMS, windfarms }
 }
 
 export function changeDecomYardFilterType(filterType, propertyName, filterOn) {
