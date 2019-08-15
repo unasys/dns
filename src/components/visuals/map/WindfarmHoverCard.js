@@ -22,3 +22,4 @@ class WindfarmHoverCard extends Component {
 }
 
 export default WindfarmHoverCard;
+
