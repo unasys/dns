@@ -193,7 +193,7 @@ class WindfarmTable extends Component {
         show: this.state.shownColumns.includes('First Power'),
       },
       {
-        Header: 'Area (km2)',
+        Header: <div>Area (km<sup>2</sup>)</div>,
         accessor: 'Area (km2)',
         show: this.state.shownColumns.includes('Area (km2)'),
       },
