@@ -8,6 +8,8 @@ import axios from 'axios';
 import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
 import DecomyardHoverCard from './DecomyardHoverCard';
+import WindfarmHoverCard from './WindfarmHoverCard';
+
 
 const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
 const baseWMSUrl = baseUrl + '/arcgis/services';
@@ -56,8 +58,11 @@ class Map extends Component {
             currentInstallationFilter: null,
             currentDecomYardFilter: null,
             currentPipelineFilter: null,
+            windfarms: [],
+            currentWindfarmFilter: null,
             lastHoveredInstallation: null,
-            lastHoveredDecomyard: null
+            lastHoveredDecomyard: null,
+            lastHoveredWindfarm: null,
         }
         
         this.state.installations = this.props.cesiumInstallations;
@@ -83,25 +88,31 @@ class Map extends Component {
         if (this.state.lastHoveredDecomyard !== nextState.lastHoveredDecomyard) {
             return true;
         }
+        if (this.state.lastHoveredWindfarm !== nextState.lastHoveredWindfarm) {
+            return true;
+        }
         if (this.state.viewer != null) {
             this.sortLayers(nextProps);
             this.clearInstallations();
             this.clearDecomYards();            
-            this.clearPipelines();            
+            this.clearPipelines();
+            this.clearWindfarms();
 
+            this.pipelinePoints = this.loadUpPipelines(nextProps);    
             this.installationPoints = this.loadUpInstallations(nextProps);
             this.decomyardsPoints = this.loadUpDecomyards(nextProps);
-            this.pipelinePoints = this.loadUpPipelines(nextProps);
+            this.windfarmPoints = this.loadUpWindfarms(nextProps);
+
             if (this.props.activeTab.name !== "Bathymetry" && nextProps.activeTab.name === "Bathymetry") {
                 this.setUpBathymetry();
 
             } else if (this.props.activeTab.name === "Bathymetry" && nextProps.activeTab.name !== "Bathymetry") {
                 this.clearBathymetry();
             }
-            if (this.props.installationFilter !== nextProps.installationFilter) {
-                this.filterInstallations(nextProps.installationFilter);
-                return true;
-            }
+            // if (this.props.installationFilter !== nextProps.installationFilter) {
+            //     this.filterInstallations(nextProps.installationFilter);
+            //     return true;
+            // }
 
             if (this.props.decomYardFilter !== nextProps.decomYardFilter) {
                 this.filterDecomYards(nextProps.decomYardFilter);
@@ -242,6 +253,14 @@ class Map extends Component {
         if(this.pipelinePoints!== undefined){
             for (var i = 0; i < this.pipelinePoints.length; i++) {
                 this.state.viewer.entities.remove(this.pipelinePoints[i]);
+            }
+        }
+    }
+    
+    clearWindfarms() {
+        if(this.windfarmPoints !== undefined){
+            for (var i = 0; i < this.windfarmPoints.length; i++) {
+                this.state.viewer.entities.remove(this.windfarmPoints[i]);
             }
         }
     }
@@ -496,15 +515,18 @@ class Map extends Component {
                 let color;
                 if (previousPickedEntity.installation) {
                     color=window.Cesium.Color.GOLD
-                } else {
+                } else if (previousPickedEntity.decomyard) {
                     color=window.Cesium.Color.AQUA
+                } else {
+                    color=window.Cesium.Color.WHITE
                 }
                 previousPickedEntity.point.color = color;
             }
-            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard) {
+            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm) {
                 self.setState({
                     lastHoveredInstallation: null,
-                    lastHoveredDecomyard: null
+                    lastHoveredDecomyard: null,
+                    lastHoveredWindfarm: null 
                 })
             }
 
@@ -518,6 +540,9 @@ class Map extends Component {
                 })
                 self.setState({
                     lastHoveredDecomyard: pickedEntity.decomyard
+                })
+                self.setState({
+                    lastHoveredWindfarm: pickedEntity.windfarm
                 })
 
             }
@@ -588,11 +613,11 @@ class Map extends Component {
 
                 // dot has been clicked.
                 this.props.changeCurrentInstallation(id.installation);
-                if (id.installation.ProjectId) { // unselect if no project id is selected.
-                    history.push(`/projects/${id.installation.ProjectId}`);
-                } else {
-                    history.push(`/projects/`)
-                }
+                // if (id.installation.ProjectId) { // unselect if no project id is selected.
+                //     history.push(`/projects/${id.installation.ProjectId}`);
+                // } else {
+                //     history.push(`/projects/`)
+                // }
 
                 if (id.installation.CesiumId) {
                     this.loadCesiumModelOntoMap(id.installation.CesiumId)
@@ -838,7 +863,7 @@ class Map extends Component {
         }
         
         if (!pipelines) return;
-        var shape = this.computeCircle(40.0);
+        //var shape = this.computeCircle(40.0);
         var errors = [];
         var materialHash = {};
         this.state.viewer.entities.suspendEvents();
@@ -921,6 +946,55 @@ class Map extends Component {
     }
 
 
+    loadUpWindfarms(nextProps) {
+        var windfarmsPoints = [];
+        let windfarms;
+        
+        if (nextProps.cesiumWindfarms.length === 0) {
+            windfarms = this.state.currentWindfarmsFilter ? this.state.currentWindfarmFilter(this.state.windfarms) : this.state.windfarms;
+        } else {
+            windfarms = this.state.currentWindfarmsFilter ? this.state.currentWindfarmFilter(nextProps.cesiumWindfarms) : nextProps.cesiumWindfarms;
+        }
+
+        if (!windfarms) return;
+        
+        for (var i = 0; i < windfarms.length; i++) {
+            var windfarm = windfarms[i];
+
+            if (!windfarm.LONGITUDE || !windfarm.LATITUDE) continue;
+            var point = this.state.viewer.entities.add({
+                name: windfarm["Name"],
+                position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
+                point: {
+                    pixelSize: 12,
+                    color: window.Cesium.Color.WHITE,
+                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                    outlineColor : window.Cesium.Color.BLACK,
+                    outlineWidth: 1, 
+                },
+                label:{
+                    text:windfarm["Name"],
+                    fillColor:window.Cesium.Color.WHITE,
+                    style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineColor : window.Cesium.Color.BLACK,
+                    outlineWidth: 1.5,
+                    pixelOffset: new  window.Cesium.Cartesian2(25, 0),
+                    verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
+                    horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                }
+            });
+            point.windfarm = windfarm;
+            windfarmsPoints.push(point);
+        }
+        this.windfarmsPoints = windfarmsPoints;
+        return windfarmsPoints;
+    }
+
 
     render() {
         const divStyle = {
@@ -931,6 +1005,7 @@ class Map extends Component {
         };
         let hoveredInstallation = this.state.lastHoveredInstallation;
         let hoveredDecomyard = this.state.lastHoveredDecomyard;
+        let hoveredWindfarm = this.state.lastHoveredWindfarm;
         
         return (
             <div style={{height:'100%', width:'100%'}}>
@@ -939,6 +1014,7 @@ class Map extends Component {
                 </div>
                 <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
                 <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
+                <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
             </ReactCursorPosition>
             </div>
         );
@@ -961,6 +1037,7 @@ const mapStateToProps = (state) => {
     let filterType = state.InstallationReducer.installationFilter
     let decomYardFilterType = state.InstallationReducer.decomYardFilterType
     let pipelineFilterType = state.InstallationReducer.pipelineFilterType
+    let windfarmFilterType = state.InstallationReducer.windfarmFilterType
     return {
         activeTab: state.HeaderReducer.activeTab,
         currentInstallation: state.InstallationReducer.currentInstallation,
@@ -970,6 +1047,8 @@ const mapStateToProps = (state) => {
         installationFilter: filterType,
         decomYardFilter: decomYardFilterType,
         pipelineFilterType: pipelineFilterType,
+        cesiumWindfarms: state.InstallationReducer.cesiumWindfarms,
+        windfarmFilter: windfarmFilterType,
         fieldState: state.BathymetryReducer.ogaFieldsSwitched,
         quadrantsState: state.BathymetryReducer.ogaQuadrantsSwitched,
         wellState: state.BathymetryReducer.ogaWellsSwitched,

@@ -20,6 +20,12 @@ export function fetchDecomyards(token) {
 
 export function fetchPipelines(token) {
     let url = assetsBaseUrl+`/data/pipelines/pipelines.json`;
+    return axios.get(url, {
+        cancelToken: token
+    })
+}
+export function fetchWindfarms(token) {
+    let url = assetsBaseUrl+`/data/windfarms/windfarms.json`;
 
     return axios.get(url, {
         cancelToken: token

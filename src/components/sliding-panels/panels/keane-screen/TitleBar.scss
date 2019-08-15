@@ -1,0 +1,24 @@
+.title-bar-container {
+    display:flex;
+    padding: 10px 20px;
+    border-bottom: 1px solid #fff;
+    justify-content: space-between;
+    font-family: 'Roboto';
+    .keane-title-container {
+        color:white;
+        text-align:left;
+        .main-title{
+            font-size:20px;
+        }
+        .keane-subtitle {
+            font-size:15px;
+            font-weight:100;
+            color:rgb(212, 212, 212);
+        }
+    }
+    .title-bar-icons {
+        color:white;
+        display:flex;
+        align-items:center;
+    }
+}

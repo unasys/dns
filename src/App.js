@@ -14,6 +14,7 @@ import Bathymetry from './components/pages/bathymetry/Bathymetry';
 import InstallationTable from './components/pages/installationTable/InstallationTable';
 import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
 import PipelineTable from './components/pages/pipelineTable/PipelineTable';
+import WindfarmTable from './components/pages/windfarmTable/WindfarmTable';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 const store = createStore(
@@ -70,7 +71,7 @@ class App extends Component {
                     </DynamicWidthPage>
                   )
                 }} />
-              <Route path="/decomyards" render={(props) => {
+                  <Route path="/decomyards" render={(props) => {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
                       <DecomYardTable {...props}></DecomYardTable>
@@ -81,6 +82,13 @@ class App extends Component {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
                       <PipelineTable {...props}></PipelineTable>
+                      </DynamicWidthPage>
+                      )
+                    }} />
+                <Route path="/windfarms" render={(props) => {
+                  return (
+                    <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
+                      <WindfarmTable {...props}></WindfarmTable>
                     </DynamicWidthPage>
                   )
                 }} />
@@ -89,6 +97,11 @@ class App extends Component {
                 <Route path="/bathymetry" exact={true} render={(props) => {
                   return (
                     <Bathymetry {...props}></Bathymetry>
+                  )
+                }} />
+                <Route path="/(installations|decomyards|windfarms|pipelines)" render={(props) => {
+                  return (
+                    <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>
                   )
                 }} />
                 <Route path="/" render={(props) => {
@@ -104,6 +117,7 @@ class App extends Component {
     );
   }
 }
+
 
 
 export default App;
