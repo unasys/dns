@@ -13,6 +13,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import Bathymetry from './components/pages/bathymetry/Bathymetry';
 import InstallationTable from './components/pages/installationTable/InstallationTable';
 import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
+import PipelineTable from './components/pages/pipelineTable/PipelineTable';
 import WindfarmTable from './components/pages/windfarmTable/WindfarmTable';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
@@ -77,6 +78,13 @@ class App extends Component {
                     </DynamicWidthPage>
                   )
                 }} />
+                <Route path="/pipelines" render={(props) => {
+                  return (
+                    <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
+                      <PipelineTable {...props}></PipelineTable>
+                      </DynamicWidthPage>
+                      )
+                    }} />
                 <Route path="/windfarms" render={(props) => {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
@@ -91,7 +99,7 @@ class App extends Component {
                     <Bathymetry {...props}></Bathymetry>
                   )
                 }} />
-                <Route path="/(installations|decomyards|windfarms)" render={(props) => {
+                <Route path="/(installations|decomyards|windfarms|pipelines)" render={(props) => {
                   return (
                     <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>
                   )
