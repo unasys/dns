@@ -10,7 +10,7 @@ class PipelineHandler extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            decomyards: []
+            pipelines: []
         }
         this.source = CancelToken.source();
         this.fetchPipelines = this.fetchPipelines.bind(this);

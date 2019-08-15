@@ -3,6 +3,8 @@ import { CHANGE_CURRENT_INSTALLATION, SET_CESIUM_INSTALLATIONS, CHANGE_INSTALLAT
 let initialState = {
     currentInstallation: null,
     cesiumInstallations: [],
+    cesiumPipelines:[],
+    cesiumDecomyards:[],
     installationFilter: INSTALLATION_FILTER_TYPES.OilAndGas
 }
   

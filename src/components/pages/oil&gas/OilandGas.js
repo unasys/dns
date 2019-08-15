@@ -95,7 +95,7 @@ function mapStateToProps(state) {
         pipelineFilter:pipelineFilterType,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
         cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
-        cesiumPiplines:state.InstallationReducer.cesiumPiplines
+        cesiumPipelines:state.InstallationReducer.cesiumPiplines
     }
 }
 
