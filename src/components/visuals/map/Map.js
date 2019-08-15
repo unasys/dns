@@ -9,6 +9,7 @@ import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
 import DecomyardHoverCard from './DecomyardHoverCard';
 import WindfarmHoverCard from './WindfarmHoverCard';
+import PipelineHoverCard from './PipelineHoverCard';
 
 
 const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
@@ -63,6 +64,7 @@ class Map extends Component {
             lastHoveredInstallation: null,
             lastHoveredDecomyard: null,
             lastHoveredWindfarm: null,
+            lastHoveredPipeline: null,
         }
         
         this.state.installations = this.props.cesiumInstallations;
@@ -89,6 +91,9 @@ class Map extends Component {
             return true;
         }
         if (this.state.lastHoveredWindfarm !== nextState.lastHoveredWindfarm) {
+            return true;
+        }
+        if (this.state.lastHoveredPipeline !== nextState.lastHoveredPipeline) {
             return true;
         }
         if (this.state.viewer != null) {
@@ -522,11 +527,12 @@ class Map extends Component {
                 }
                 previousPickedEntity.point.color = color;
             }
-            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm) {
+            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm || self.state.lastHoveredPipeline) {
                 self.setState({
                     lastHoveredInstallation: null,
                     lastHoveredDecomyard: null,
-                    lastHoveredWindfarm: null 
+                    lastHoveredWindfarm: null,
+                    lastHoveredPipeline: null
                 })
             }
 
@@ -544,7 +550,10 @@ class Map extends Component {
                 self.setState({
                     lastHoveredWindfarm: pickedEntity.windfarm
                 })
-
+            } else if (window.Cesium.defined(pickedEntity) && window.Cesium.defined(pickedEntity.pipeline)) {
+                self.setState({
+                    lastHoveredPipeline: pickedEntity.pipeline
+                })
             }
         }, window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }
@@ -923,14 +932,12 @@ class Map extends Component {
                             //     heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
                             // }
                         });
-                      
+                        poly.pipeline = pipeline;
                         pipelinePolys.push(poly);
                     }
                     catch(error){
                         errors.push({error:error, coordinates:coordinates.flat()});
                     }
-                        
-                    
                     }
                 }
 
@@ -1006,6 +1013,7 @@ class Map extends Component {
         let hoveredInstallation = this.state.lastHoveredInstallation;
         let hoveredDecomyard = this.state.lastHoveredDecomyard;
         let hoveredWindfarm = this.state.lastHoveredWindfarm;
+        let hoveredPipeline = this.state.lastHoveredPipeline;
         
         return (
             <div style={{height:'100%', width:'100%'}}>
@@ -1015,6 +1023,7 @@ class Map extends Component {
                 <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
                 <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
                 <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
+                <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
             </ReactCursorPosition>
             </div>
         );
