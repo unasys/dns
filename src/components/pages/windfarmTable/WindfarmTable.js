@@ -76,14 +76,25 @@ class WindfarmTable extends Component {
 
   expandColumns() {
     if (this.state.shownColumns.length === 1) {
-        this.addToShownColumns(['Lat/Long']);
-      }
+      this.addToShownColumns(['MW Cap', 'Turbines', 'Capacity Factor']);
+    }
+    if (this.state.shownColumns.length === 4) {
+      this.addToShownColumns(['Status', 'Depth (M)', 'KM to shore', 'First Power', 'Area (km2)'])
+    }
   }
 
   collapseColumns() {
-    if (this.state.shownColumns.length === 2) {
-        this.removeFromShownColumns('Lat/Long')
-      }
+    if (this.state.shownColumns.length === 9) {
+      this.removeFromShownColumns('Area (km2)')
+      this.removeFromShownColumns('First Power')
+      this.removeFromShownColumns('KM to shore')
+      this.removeFromShownColumns('Depth (M)')
+      this.removeFromShownColumns('Status')
+    } else if (this.state.shownColumns.length === 4) {
+      this.removeFromShownColumns('Capacity Factor')
+      this.removeFromShownColumns('Turbines')
+      this.removeFromShownColumns('MW Cap')      
+    }
   }
 
   onTableViewChange() {
@@ -97,11 +108,11 @@ class WindfarmTable extends Component {
   }
 
   render() {
-      console.log(this.state.rows);
     const columns = [
       {
         Header: 'Name',
         id: 'Name',
+        show: this.state.shownColumns.includes('Name'),
         accessor: row => {
           if (row.NAME) {
             return row.NAME.toLowerCase()
@@ -128,35 +139,63 @@ class WindfarmTable extends Component {
       },
       {
         Header: 'MW Cap',
-        accessor: 'MW CAP'
+        accessor: 'MW CAP',
+        show: this.state.shownColumns.includes('MW Cap'),
       },
       {
         Header: 'Turbines',
-        accessor: 'TURBINES'
+        accessor: 'TURBINES',
+        show: this.state.shownColumns.includes('Turbines'),
+        width: 250,
+        Cell: row => (
+          <>
+            <div style={{overflowX: 'scroll'}}>
+              <p>
+                {row.value.toLowerCase()}
+              </p>
+            </div>
+          </>
+        ),
       },
       {
         Header: 'Capacity Factor',
-        accessor: 'CAPACITY FACTOR'
-      },
-      {
-        Header: 'Depth (M)',
-        accessor: 'DEPTH'
+        accessor: 'CAPACITY FACTOR',
+        show: this.state.shownColumns.includes('Capacity Factor'),
       },
       {
         Header: 'Status',
-        accessor: 'STATUS'
+        accessor: 'STATUS',
+        show: this.state.shownColumns.includes('Status'),
+        width: 200,
+        Cell: row => (
+          <>
+            <div style={{overflowX: 'scroll'}}>
+              <p>
+                {row.value.toLowerCase()}
+              </p>
+            </div>
+          </>
+        ),
       },
       {
-        Header: 'DEPTH (M)',
-        accessor: 'DEPTH'
+        Header: 'Depth (M)',
+        accessor: 'DEPTH',
+        show: this.state.shownColumns.includes('Depth (M)'),
+      },
+      {
+        Header: 'KM to shore',
+        accessor: 'KM TO SHORE',
+        show: this.state.shownColumns.includes('KM to shore'),
       },
       {
         Header: 'First Power',
-        accessor: 'First Power'
+        accessor: 'First Power',
+        show: this.state.shownColumns.includes('First Power'),
       },
       {
         Header: 'Area (km2)',
-        accessor: 'Area (km2)'
+        accessor: 'Area (km2)',
+        show: this.state.shownColumns.includes('Area (km2)'),
       },
     ]
 
