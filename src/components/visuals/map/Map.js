@@ -840,6 +840,8 @@ class Map extends Component {
         if (!pipelines) return;
         var shape = this.computeCircle(40.0);
         var errors = [];
+        var materialHash = {};
+        this.state.viewer.entities.suspendEvents();
         for (var i = 0; i < pipelines.length; i++) {
             var pipeline = pipelines[i];
             var coordinates = pipeline.Coordinates;
@@ -851,7 +853,22 @@ class Map extends Component {
                     else{
                         try{
                         let flatCoordinates = coordinates.flat();
-                        
+                        var material = materialHash[pipeline["Fluid Conveyed"]];
+            if (!material) {
+                var color = window.Cesium.Color.fromRandom({
+                    alpha : 1.0
+                });
+                // material = new window.Cesium.StripeMaterialProperty({
+                //     // The newest part of the line is bright yellow.
+                //     evenColor: color,
+                //     // The oldest part of the line is yellow with a low alpha value.
+                //     oddColor: color.withAlpha(0.1),
+                //     repeat: 1,
+                //     offset: 0.25,
+                //     orientation: window.Cesium.StripeOrientation.VERTICAL
+                // })
+                materialHash[pipeline["Fluid Conveyed"]] = color;
+            }
                         var poly =this.state.viewer.entities.add({
                             name: pipeline["Pipeline Name"],
                             position: window.Cesium.Cartesian3.fromDegrees(flatCoordinates[Math.floor((flatCoordinates.length - 1) / 2)]),
@@ -864,26 +881,23 @@ class Map extends Component {
                             // },
                             polyline:{
                                 positions : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                                material : window.Cesium.Color.RED,
+                                material : material,
                                 heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND ,
-                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(100000, 50000000),
-                            },
-                            label:{
-                                text:pipeline["Pipeline Name"],
-                                fillColor:window.Cesium.Color.WHITE,
-                                style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                                outlineColor : window.Cesium.Color.BLACK,
-                                outlineWidth: 1.5,
-                                pixelOffset: new  window.Cesium.Cartesian2(25, 0),
-                                verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
-                                horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
-                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
-                                heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                                // distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(100000, 50000000),
                             }
+                            // label:{
+                            //     text:pipeline["Pipeline Name"],
+                            //     fillColor:window.Cesium.Color.WHITE,
+                            //     style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                            //     outlineColor : window.Cesium.Color.BLACK,
+                            //     outlineWidth: 1.5,
+                            //     pixelOffset: new  window.Cesium.Cartesian2(25, 0),
+                            //     verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
+                            //     horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
+                            //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                            //     heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                            // }
                         });
-                        poly.manualUpdate = true;
-                        poly.forceUpdate = true;
-                        poly.pipeline = pipeline;
                       
                         pipelinePolys.push(poly);
                     }
@@ -900,7 +914,7 @@ class Map extends Component {
         if(errors.length > 0 ){
             console.error(errors);
         }
-            
+        this.state.viewer.entities.resumeEvents();   
         
         this.pipelinePoints = pipelinePolys;
         return pipelinePolys;
