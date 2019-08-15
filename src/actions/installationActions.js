@@ -47,10 +47,8 @@ export function setCesiumPipelines(pipelines) {
 
 export function changePipelineFilterType(filterType, propertyName, filterOn) {
     return { type: CHANGE_PIPELINE_FILTER_TYPE, filterType, propertyName, filterOn }
-export function changeWindfarmFilterType(filterType, propertyName, filterOn) {
-    return { type: CHANGE_WINDFARM_FILTER_TYPE, filterType, propertyName, filterOn }
 }
 
-export function changeInstallationFilterType(filterType, propertyName, filterOn) {
-    return { type: CHANGE_INSTALLATION_FILTER_TYPE, filterType, propertyName, filterOn }
+export function changeWindfarmFilterType(filterType, propertyName, filterOn) {
+    return { type: CHANGE_WINDFARM_FILTER_TYPE, filterType, propertyName, filterOn }
 }
