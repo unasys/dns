@@ -19,7 +19,7 @@ class InstallationHoverCard extends Component {
                 <div className="installation-hover-card-body">
                     <div className="image-block-container">                    
                             <div className="image">
-                                    {hoveredInstallation["ImageID"] ? <img src={`https://assets.digitalnorthsea.com/images/installations/${hoveredInstallation["ImageID"]}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
+                                {hoveredInstallation["ImageID"] ? <img src={`https://assets.digitalnorthsea.com/images/installations/${hoveredInstallation["ImageID"]}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
                             </div>
                         <div className="text-block">
                             <div className="installation-text-value">

@@ -8,6 +8,8 @@ import InformationMessageBox from '../../visuals/did-you-know-box/InformationMes
 import { fetchFact } from '../../../api/RandomFact';
 import InstallationHandler from '../../../InstallationHandler';
 import DecomyardHandler from '../../../DecomyardHandler';
+import PipelineHandler from '../../../PipelineHandler';
+import WindfarmHandler from '../../../WindfarmHandler';
 
 const defaultFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OilAndGas" }) }
 const CancelToken = axios.CancelToken;
@@ -21,6 +23,7 @@ class OilandGas extends React.Component {
         this.state = {
             breadcrumbs: [],
             installations: [],
+            pipelines:[],
             currentInstallationFilter: defaultFilter,
             didYouKnowMessage: null
         }
@@ -76,7 +79,9 @@ class OilandGas extends React.Component {
                 </InstallationPanel>}
 
                 <InstallationHandler></InstallationHandler>
+                <WindfarmHandler></WindfarmHandler>
                 <DecomyardHandler></DecomyardHandler>
+                <PipelineHandler></PipelineHandler>
             </>
         );
     }
@@ -85,11 +90,14 @@ class OilandGas extends React.Component {
 function mapStateToProps(state) {
     let filterType = state.InstallationReducer.installationFilter;
     let decomYardFilterType = state.InstallationReducer.decomYardFilterType;
+    let pipelineFilterType = state.InstallationReducer.pipelineFilterType;
     return {
         installationFilter: filterType,
         decomYardFilter: decomYardFilterType,
+        pipelineFilter:pipelineFilterType,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
-        cesiumDecomyards: state.InstallationReducer.cesiumDecomyard
+        cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
+        cesiumPipelines:state.InstallationReducer.cesiumPiplines
     }
 }
 

@@ -22,7 +22,7 @@
     border-bottom: 2px solid white;
     padding-top: 5px;
     padding-left: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
   }
   .installation-hover-card-body {
     padding: 0px 20px;
@@ -34,17 +34,19 @@
       .image {
         img {
         width:100px;
+        margin-top:15px;
         border-radius:10px;
         }
       }
       .text-block {
         padding-left: 20px;
+        margin-top:10px;
       }
     }
     .text-block-container {
       display: flex;
+      flex-wrap:wrap;
       border-bottom: 1px dotted white;
-      margin-bottom: 20px;
       padding-top: 10px;
       padding-bottom: 10px;
     }

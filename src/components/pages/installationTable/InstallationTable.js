@@ -163,7 +163,12 @@ class InstallationTable extends Component {
                 {row.original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${row.original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
               </div>
               <p>
-                {row.original.ePMID ? (<div style={{cursor:'pointer'}} onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}>{row.value.toLowerCase()}</div>) : row.value.toLowerCase()}
+                <div>
+                  <>
+                    {row.value.toLowerCase()}
+                    {row.original.ePMID && <img style={{width:'25px', cursor:'pointer', marginLeft:'5px'}} src="https://epm.unasys.com/icon.svg" onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}/>}
+                  </>
+                </div>
               </p>
             </div>
           </>
