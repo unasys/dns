@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
+const assetsBaseUrl = process.env.ENVIRONMENT === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
 export function fetchInstallations(token) {
     let url = assetsBaseUrl+`/data/installations.json`;
