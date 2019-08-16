@@ -12,12 +12,12 @@ import WindfarmHoverCard from './WindfarmHoverCard';
 import PipelineHoverCard from './PipelineHoverCard';
 
 
-const baseUrl = process.env.ENVIRONMENT === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
+const baseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
 const baseWMSUrl = baseUrl + '/arcgis/services';
 const baseRESTUrl = baseUrl + '/arcgis/rest/services';
-const bathymetryBaseUrl = process.env.ENVIRONMENT === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
-const emodnetBaseUrl = process.env.ENVIRONMENT === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/wms';
-const assetsBaseUrl = process.env.ENVIRONMENT === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
+const bathymetryBaseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
+const emodnetBaseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/wms';
+const assetsBaseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
 let iconModels = {
     "FPSO":assetsBaseUrl+"/models/platform-types/FPSO/lp_fpsoplat.gltf",

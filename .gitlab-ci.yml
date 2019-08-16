@@ -12,7 +12,7 @@ build:
     - apt-get install -y zip 
   script:
     - yarn install
-    - CI=false ENVIRONMENT=production yarn run build
+    - CI=false REACT_APP_ENVIRONMENT=production yarn run build
     - cd build 
     - zip -r ../public.zip * 
   artifacts:
@@ -21,14 +21,14 @@ build:
   only: 
     - master
 
-build:
+build-dev:
   stage: build
   before_script:
     - apt-get update -y 
     - apt-get install -y zip 
   script:
     - yarn install
-    - CI=false ENVIRONMENT=development yarn run build
+    - CI=false REACT_APP_ENVIRONMENT=development yarn run build
     - cd build 
     - zip -r ../public.zip * 
   artifacts:
