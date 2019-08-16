@@ -16,8 +16,6 @@ function formatToAmericanDate(dateStr) {
 }
 
 function KeaneScreen(props) {
-        console.log(props);
-
         let titleBar = (
             <TitleBar 
                 title={props.installationDetails && props.installationDetails.Name} 
@@ -65,7 +63,6 @@ function KeaneScreen(props) {
                 timeLineDates.push(formatToAmericanDate(props.installationDetails.PlannedCOP))  
             } 
         }
-        console.log(timeLineDates);
 
         let timeLine = (
             <Timeline values={timeLineDates}></Timeline>

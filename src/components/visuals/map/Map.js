@@ -97,16 +97,19 @@ class Map extends Component {
             return true;
         }
         if (this.state.viewer != null) {
-            this.sortLayers(nextProps);
-            this.clearInstallations();
-            this.clearDecomYards();            
-            this.clearPipelines();
-            this.clearWindfarms();
-
-            this.pipelinePoints = this.loadUpPipelines(nextProps);    
-            this.installationPoints = this.loadUpInstallations(nextProps);
-            this.decomyardsPoints = this.loadUpDecomyards(nextProps);
-            this.windfarmPoints = this.loadUpWindfarms(nextProps);
+            this.sortLayers(nextProps);            
+            if (this.props.cesiumDecomyards.length === 0 && nextProps.cesiumDecomyards !== 0) {
+                this.decomyardsPoints = this.loadUpDecomyards(nextProps);
+            } 
+            if (this.props.cesiumInstallations.length === 0 && nextProps.cesiumInstallations !== 0) {
+                this.installationPoints = this.loadUpInstallations(nextProps);
+            }
+            if (this.props.cesiumWindfarms.length === 0 && nextProps.cesiumWindfarms !== 0) {
+                this.windfarmPoints = this.loadUpWindfarms(nextProps);
+            }  
+            if (this.props.cesiumPipelines.length === 0 && nextProps.cesiumPipelines !== 0) {
+                this.pipelinePoints = this.loadUpPipelines(nextProps);                        
+            } 
 
             if (this.props.activeTab.name !== "Bathymetry" && nextProps.activeTab.name === "Bathymetry") {
                 this.setUpBathymetry();
@@ -125,7 +128,7 @@ class Map extends Component {
             }
 
             if (this.props.pipelineFilter !== nextProps.pipelineFilter) {
-                this.filterDecomYards(nextProps.pipelineFilter);
+                this.filterPipelines(nextProps.pipelineFilter);
                 return true;
             }
 
@@ -882,7 +885,7 @@ class Map extends Component {
             if(Array.isArray(coordinates) && coordinates.length > 0){
                 if(Array.isArray(coordinates[0])){
                     if(coordinates[0].length >0 && Array.isArray(coordinates[0][0])){
-                        console.log("multi line here");
+                        //console.log("multi line here");
                     }
                     else{
                         try{
