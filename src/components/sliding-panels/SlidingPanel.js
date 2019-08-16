@@ -25,7 +25,7 @@ class SlidingPanel extends React.Component {
     }
 
     render() {
-        let width = this.props.isSmallWidth ? '300px' : '600px';
+        let width = this.props.isSmallWidth ? '300px' : '400px';
         if (this.props.isBreadcrumbBar) {
             width = '15%';
         }

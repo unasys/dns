@@ -5,7 +5,7 @@ import history from '../../../history';
 import { connect } from 'react-redux';
 import { changeCurrentInstallation } from '../../../actions/installationActions';
 import HardcodedNorthSeaDetailsPanel from '../../sliding-panels/panels/details-panel/installation-details-panel/HardcodedNorthSeaDetailsPanel';
-import InstallationDetailsPanel from '../../sliding-panels/panels/details-panel/installation-details-panel/InstallationDetailsPanel';
+import KeaneScreen from '../../sliding-panels/panels/details-panel/installation-details-panel/KeaneScreen';
 
 class InstallationPanel extends React.Component {
     constructor(props) {
@@ -58,12 +58,7 @@ class InstallationPanel extends React.Component {
 
     render() {
         let content;
-        if (this.props.currentInstallation) {
-            content = <InstallationDetailsPanel
-                installationDetails={this.props.currentInstallation}
-                projectId={this.props.projectId}>
-            </InstallationDetailsPanel>
-        } else if (this.state.filterTypeSelected) {
+        if (this.state.filterTypeSelected) {
             content = this.getFilterTypeComponent(this.state.filterTypeSelected)
         } else {
             content = <HardcodedNorthSeaDetailsPanel
@@ -78,9 +73,18 @@ class InstallationPanel extends React.Component {
                 {content}
             </Breadcrumbs>
 
+        let keaneScreenContent = (
+            <KeaneScreen
+                installationDetails={this.props.currentInstallation}
+                projectId={this.props.projectId}>
+            </KeaneScreen>
+        )
+
         return (
             <div>
-                <SlidingPanel content={wrappedContent} isSmallWidth={true}></SlidingPanel>
+                <SlidingPanel content={wrappedContent} isSmallWidth={true} pullRight={false}></SlidingPanel>
+                {this.props.currentInstallation &&
+                    <SlidingPanel content={keaneScreenContent} pullRight={true}></SlidingPanel>}
             </div>
         );
     }

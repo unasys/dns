@@ -58,13 +58,10 @@ function KeaneScreen(props) {
         let timeLineDates = [];
         if (props.installationDetails) {
             if (props.installationDetails.StartDate) { 
-                console.log(formatToAmericanDate(props.installationDetails.StartDate));
                 timeLineDates.push(formatToAmericanDate(props.installationDetails.StartDate))
             }
             
             if (props.installationDetails.PlannedCOP) {
-                console.log(props.installationDetails.PlannedCOP);
-                console.log(formatToAmericanDate(props.installationDetails.PlannedCOP));
                 timeLineDates.push(formatToAmericanDate(props.installationDetails.PlannedCOP))  
             } 
         }
@@ -86,10 +83,10 @@ function KeaneScreen(props) {
                 </>
         } else {
             content = 
-            <div style={{margin:'10px'}}>
+            <div style={{margin:'10px', display:'flex', flexDirection:'column'}}>
                 {titleBar}
                 {doubleWidth}
-                {props.installationDetails && props.installationDetails.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${props.installationDetails.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
+                {props.installationDetails && props.installationDetails.ImageID ? <img style={{alignSelf:'center', maxWidth:'300px'}} src={`https://assets.digitalnorthsea.com/images/installations/${props.installationDetails.ImageID}`} alt="overview-thumbnail" ></img> : <img style={{alignSelf:'center', maxWidth:'300px'}} src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
                 {timeLine}
             </div>
         }
