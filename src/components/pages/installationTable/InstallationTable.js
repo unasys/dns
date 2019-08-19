@@ -232,7 +232,7 @@ class InstallationTable extends Component {
             filterType = "Gas"
           }
           if (filterType) this.props.changeInstallationFilterType(INSTALLATION_FILTER_TYPES.Property, "FieldType", filterType);
-          return row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase())
+          return row._original["FieldType"] ? row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase()) : false;
         },
       },
       {
