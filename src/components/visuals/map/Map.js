@@ -172,8 +172,9 @@ class Map extends Component {
             url: bathymetryBaseUrl,
             credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
         });
-        var osm = window.Cesium.createOpenStreetMapImageryProvider({
-            url : 'https://a.tile.openstreetmap.org/'
+        var osm = new window.Cesium.UrlTemplateImageryProvider({
+            url : 'https://api.maptiler.com/maps/topo/{z}/{x}/{y}@2x.png?key=iQlEN0rAM6vknjE8ZN0n',
+            credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
         });
         
         this.terrainIsOn = true;
@@ -200,13 +201,13 @@ class Map extends Component {
             viewer.scene.globe.enableLighting = false;
             viewer.scene.globe.depthTestAgainstTerrain = false;
 
-            var provider = new window.Cesium.WebMapServiceImageryProvider({
-                url : emodnetBaseUrl,
-                layers : 'contours',
-                parameters:{transparent:true,format:"image/png",cors:window.location.href }
-            });
+            // var provider = new window.Cesium.WebMapServiceImageryProvider({
+            //     url : emodnetBaseUrl,
+            //     layers : 'contours',
+            //     parameters:{transparent:true,format:"image/png",cors:window.location.href }
+            // });
             
-            viewer.imageryLayers.addImageryProvider(provider);
+            //viewer.imageryLayers.addImageryProvider(provider);
             //eslint-disable-next-line
             this.state.viewer = viewer;
     }
