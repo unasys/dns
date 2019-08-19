@@ -71,7 +71,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 {decomYardSelection}
                 {pipelineSelection}
                 {windfarmSelection}
-                {collapsibleHeadings}
+                {/* {collapsibleHeadings} */}
                 {navigationHeadings}
             </>
 
