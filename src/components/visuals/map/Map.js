@@ -12,12 +12,12 @@ import WindfarmHoverCard from './WindfarmHoverCard';
 import PipelineHoverCard from './PipelineHoverCard';
 
 
-const baseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
+const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
 const baseWMSUrl = baseUrl + '/arcgis/services';
 const baseRESTUrl = baseUrl + '/arcgis/rest/services';
-const bathymetryBaseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
-const emodnetBaseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/wms';
-const assetsBaseUrl = process.env.REACT_APP_ENVIRONMENT === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
+const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
+const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/wms';
+const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
 let iconModels = {
     "FPSO":assetsBaseUrl+"/models/platform-types/FPSO/lp_fpsoplat.gltf",
@@ -97,7 +97,8 @@ class Map extends Component {
             return true;
         }
         if (this.state.viewer != null) {
-            this.sortLayers(nextProps);            
+            this.sortLayers(nextProps);        
+            //first run    
             if (this.props.cesiumDecomyards.length === 0 && nextProps.cesiumDecomyards !== 0) {
                 this.decomyardsPoints = this.loadUpDecomyards(nextProps);
             } 
@@ -110,6 +111,24 @@ class Map extends Component {
             if (this.props.cesiumPipelines.length === 0 && nextProps.cesiumPipelines !== 0) {
                 this.pipelinePoints = this.loadUpPipelines(nextProps);                        
             } 
+
+            // handle update.
+            if (this.props.cesiumDecomyards.length !== nextProps.cesiumDecomyards.length) {
+                this.clearDecomYards();
+                this.loadUpDecomyards(nextProps);
+            }
+            if (this.props.cesiumInstallations.length !== nextProps.cesiumInstallations.length) {
+                this.clearInstallations();
+                this.loadUpInstallations(nextProps);
+            }
+            if (this.props.cesiumWindfarms.length !== nextProps.cesiumWindfarms.length) {
+                this.clearWindfarms();
+                this.loadUpWindfarms(nextProps);
+            }
+            if (this.props.cesiumPipelines.length !== nextProps.cesiumPipelines.length) {
+                this.clearPipelines();
+                this.loadUpPipelines(nextProps);
+            }
 
             if (this.props.activeTab.name !== "Bathymetry" && nextProps.activeTab.name === "Bathymetry") {
                 this.setUpBathymetry();
@@ -957,7 +976,7 @@ class Map extends Component {
 
 
     loadUpWindfarms(nextProps) {
-        var windfarmsPoints = [];
+        var windfarmPoints = [];
         let windfarms;
         
         if (nextProps.cesiumWindfarms.length === 0) {
@@ -999,10 +1018,10 @@ class Map extends Component {
                 }
             });
             point.windfarm = windfarm;
-            windfarmsPoints.push(point);
+            windfarmPoints.push(point);
         }
-        this.windfarmsPoints = windfarmsPoints;
-        return windfarmsPoints;
+        this.windfarmPoints = windfarmPoints;
+        return windfarmPoints;
     }
 
 
