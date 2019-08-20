@@ -173,7 +173,7 @@ class Map extends Component {
             credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
         });
         var osm = new window.Cesium.UrlTemplateImageryProvider({
-            url : 'https://api.maptiler.com/maps/topo/{z}/{x}/{y}@2x.png?key=iQlEN0rAM6vknjE8ZN0n',
+            url : 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}@2x.png?key=FSzrABzSMJXbH2n6FfZc',
             credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
         });
         
