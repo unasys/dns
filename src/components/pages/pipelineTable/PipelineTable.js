@@ -99,7 +99,6 @@ class PipelineTable extends Component {
               let minDiameter = parseInt(Math.min(...diameters).toFixed(0));
 
               let maxDiameter = parseInt(Math.max(...diameters).toFixed(0));
-console.log(minDiameter, maxDiameter);
               this.setState({
                   rows: payload.data,
                   currentRowLength: payload.data.length,
