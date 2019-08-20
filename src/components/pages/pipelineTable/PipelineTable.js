@@ -28,6 +28,8 @@ class PipelineTable extends Component {
       minEndDateInData: new Date(-8640000000000000),
       maxEndDateInData: new Date(8640000000000000),
       maxLengthInData: 0,
+      minDiameterInData: 0,
+      maxDiameterInData: 0,
     }
     this.reactTable = React.createRef();
     this.addToShownColumns = this.addToShownColumns.bind(this);
@@ -86,6 +88,17 @@ class PipelineTable extends Component {
               let maxDateEnd = new Date(maxEndTime * 1000);
               let minDateEnd = new Date(minEndTime * 1000);
 
+              let diameters = payload.data.map(pipeline => {
+                if (pipeline["Diameter Unit"] === "inch") {
+                  return (parseInt(pipeline["Diameter"]) * 25.4) || 0;
+                } else {
+                  return parseInt(pipeline["Diameter"]) || 0;
+                }
+              });
+
+              let minDiameter = parseInt(Math.min(...diameters).toFixed(0));
+
+              let maxDiameter = parseInt(Math.max(...diameters).toFixed(0));
               this.setState({
                   rows: payload.data,
                   currentRowLength: payload.data.length,
@@ -93,7 +106,9 @@ class PipelineTable extends Component {
                   minStartDateInData: minDateStart,
                   maxEndDateInData : maxDateEnd,
                   minEndDateInData: minDateEnd,
-                  maxLengthInData: Math.max(...payload.data.map(pipeline => parseInt(pipeline["Length [m]"]) || 0))
+                  maxLengthInData: Math.max(...payload.data.map(pipeline => parseInt(pipeline["Length [m]"]) || 0)),
+                  minDiameterInData: minDiameter,
+                  maxDiameterInData:maxDiameter
               });
                           
               
@@ -225,15 +240,44 @@ class PipelineTable extends Component {
         show: this.state.shownColumns.includes('Inst Type')
       },
       {
-        Header: 'Diameter',
+        Header: 'Diameter (mm)',
         id: 'Diameter',
-        accessor: row => { if (row.Diameter) { return row.Diameter } },
+        accessor: row => { 
+          if (row.Diameter) {
+            if(row["Diameter Units"] === "inch"){
+              return ((row.Diameter ||0)* 25.4).toFixed(0);
+            }
+            else{
+              return (row.Diameter||0).toFixed(0);
+            }
+          } 
+        },
+        filterMethod: (filter, row) => {
+          let startValue = filter.value[0]
+          let endValue = filter.value[1] 
+          let length = row._original["Diameter"] ? row._original["Diameter"] : 0
+          if(row["Diameter Units"] === "inch")
+          {
+            length = length*25.4;
+          }
+          return length <= endValue && length >= startValue
+        },
         show: this.state.shownColumns.includes('Diameter'),
         Cell: row => (
           <>
-              {row.value} {row["Diameter Units"]}
+              {row.value}
           </>
         ),
+        Filter: ({ filter, onChange }) => {
+          return (<div>
+            <Range 
+              allowCross={false} 
+              min={this.state.minDiameterInData} 
+              max={this.state.maxDiameterInData} 
+              defaultValue={[this.state.minDiameterInData, this.state.maxDiameterInData]}
+              onChange={onChange} />
+          </div>)
+        }
       },
       {
         Header: 'Untrenched Flag',

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './Map.scss';
 import { changeCurrentInstallation } from '../../../actions/installationActions';
-import history from '../../../history';
 import { updatePositions } from '../../../actions/bathymetryActions';
 import axios from 'axios';
 import ReactCursorPosition from 'react-cursor-position';
@@ -11,12 +10,10 @@ import DecomyardHoverCard from './DecomyardHoverCard';
 import WindfarmHoverCard from './WindfarmHoverCard';
 import PipelineHoverCard from './PipelineHoverCard';
 
-
 const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
 const baseWMSUrl = baseUrl + '/arcgis/services';
 const baseRESTUrl = baseUrl + '/arcgis/rest/services';
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
-const emodnetBaseUrl = process.env.NODE_ENV === 'development' ? 'https://ows.emodnet-bathymetry.eu/wms' : 'https://emodnet-ows.azureedge.net/wms';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
 let iconModels = {
@@ -82,6 +79,10 @@ class Map extends Component {
         })
         this.props.updatePositions(positions);
     }
+
+    scaleBetween(unscaledNum, minAllowed, maxAllowed, min, max) {
+        return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+      }
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.state.lastHoveredInstallation !== nextState.lastHoveredInstallation) {
@@ -898,6 +899,8 @@ class Map extends Component {
         //var shape = this.computeCircle(40.0);
         var errors = [];
         var materialHash = {};
+        var minDiameter = 0;
+        var maxDiameter = 1058;
         this.state.viewer.entities.suspendEvents();
         for (var i = 0; i < pipelines.length; i++) {
             var pipeline = pipelines[i];
@@ -925,7 +928,16 @@ class Map extends Component {
                 //     orientation: window.Cesium.StripeOrientation.VERTICAL
                 // })
                 materialHash[pipeline["Fluid Conveyed"]] = color;
-            }
+            }           
+
+            var pipeDiameter = parseInt(pipeline.Diameter) || 0
+
+            if(pipeline["Diameter Units"] === "inch"){
+                pipeDiameter = pipeDiameter*25.4;
+              }
+              var scaledWidth = this.scaleBetween(pipeDiameter, 1,3, minDiameter, maxDiameter);
+              var scaledDistance = this.scaleBetween(pipeDiameter, 1000000,50000000, minDiameter, maxDiameter);
+              
                         var poly =this.state.viewer.entities.add({
                             name: pipeline["Pipeline Name"],
                             position: window.Cesium.Cartesian3.fromDegrees(flatCoordinates[Math.floor((flatCoordinates.length - 1) / 2)]),
@@ -940,7 +952,8 @@ class Map extends Component {
                                 positions : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
                                 material : material,
                                 heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND ,
-                                // distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(100000, 50000000),
+                                width:scaledWidth,
+                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
                             }
                             // label:{
                             //     text:pipeline["Pipeline Name"],
