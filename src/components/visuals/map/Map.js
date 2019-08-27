@@ -173,9 +173,14 @@ class Map extends Component {
             url: bathymetryBaseUrl,
             credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
         });
-        var osm = new window.Cesium.UrlTemplateImageryProvider({
-            url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}@2x.png?key=FSzrABzSMJXbH2n6FfZc',
-            credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+        // var osm = new window.Cesium.UrlTemplateImageryProvider({
+        //     url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}@2x.png?key=FSzrABzSMJXbH2n6FfZc',
+        //     credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+        // });
+
+        var mapbox = new window.Cesium.MapboxImageryProvider({
+            mapId: 'mapbox.satellite',
+            accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
         });
 
         this.terrainIsOn = true;
@@ -196,7 +201,7 @@ class Map extends Component {
                 terrainProvider: terrainProvider,
                 terrainExaggeration: 5,
                 requestRenderMode: true,
-                imageryProvider: osm
+                imageryProvider: mapbox
             });
 
         viewer.scene.globe.enableLighting = false;
