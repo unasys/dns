@@ -6,15 +6,17 @@
 
 .table-installation-title {
     width:100%;
+    font-size:14px;
     display:flex;
     align-items:center;
     max-height:30px;
-    color:black;
+    color:#99A3AE;
     .table-installation-image {
+        display:flex;
         img {
             min-width:30px;
             max-width:30px;
-            height:30px;
+            height:30px !important;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -38,8 +40,9 @@
     min-width:300px;
     border:none;
     .rt-table { 
-        color:#313747 !important;
-        background-color:rgba(255, 255, 255, 0.966) !important;
+        font-size:13px;
+        color:#99A3AE !important;
+        background-color:#33475C !important;
     }
     .rt-thead {
         border-bottom: 1px solid rgba(130, 129, 168, 0.314) !important;
@@ -53,16 +56,16 @@
         .rt-th {
             border-color:rgba(130, 129, 168, 0.315);
            input {
-               background: rgba(38, 43, 56, 0.062) !important;
+               background: rgba(153, 163, 174, 0.336) !important;
                border: 1px solid  #383e4e54 !important;
                color:white;
            } 
            .rc-slider {
                .rc-slider-rail {
-                   background-color: #8a8a8a;
+                   background-color: #99A3AE;
                }
                .rc-slider-track {
-                   background-color: rgba(32, 38, 87, 0.753);
+                   background-color: #99A3AE !important;
                }
             .rc-slider-handle-1 {
                 background-color:#cacaca;
@@ -90,7 +93,8 @@
             }
         }
         .rt-tr-group {
-            border-bottom: 1px solid #31374733 !important;
+            border-bottom: 1px solid #2D3D4E !important;
+            border-top: 1px solid #435C76 !important;
             margin:0px 20px;
             padding:5px 0px;
         }
@@ -114,18 +118,18 @@
     padding-right:15px;
     padding-top:15px;
     padding-bottom:15px;
-    background:white !important;
+    background:#33475C !important;
     border: 1px solid rgba(243, 201, 201, 0.11);
     border-top:none;
     height:130px;
     border-bottom-right-radius: 20px;
     .backbutton { 
-        color:#272B38 !important;
+        color:#99A3AE !important;
         padding-bottom:10px;
     }
 
     .outward-handle {
-        color:#272B38 !important;
+        color:#99A3AE !important;
         font-size:20px;
     }
 }
