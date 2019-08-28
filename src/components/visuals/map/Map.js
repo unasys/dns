@@ -10,22 +10,33 @@ import DecomyardHoverCard from './DecomyardHoverCard';
 import WindfarmHoverCard from './WindfarmHoverCard';
 import PipelineHoverCard from './PipelineHoverCard';
 
-const baseUrl = process.env.NODE_ENV === 'development' ? 'https://data.ogauthority.co.uk' : 'https://oga.azureedge.net';
-const baseWMSUrl = baseUrl + '/arcgis/services';
-const baseRESTUrl = baseUrl + '/arcgis/rest/services';
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
 let iconModels = {
-    "FPSO":assetsBaseUrl+"/models/platform-types/FPSO/lp_fpsoplat.gltf",
-    "FPU": assetsBaseUrl+"/models/platform-types/FPU/fpu_lowpoly.gltf",
-    "FPV":assetsBaseUrl+"/models/platform-types/FPV/lp_fpsoplat.gltf",
-    "GravBase": assetsBaseUrl+"/models/platform-types/GravBase/lp_gravbase.gltf",
-    "Jacket": assetsBaseUrl+"/models/platform-types/Jacket/lp_jacket.gltf",
-    "Platform": assetsBaseUrl+"/models/platform-types/Jacket/lp_jacket.gltf",
-    "FSO":assetsBaseUrl+"/models/platform-types/FPU/fpu_lowpoly.gltf"
-    
+    "FPSO": assetsBaseUrl + "/models/platform-types/FPSO/lp_fpsoplat.gltf",
+    "FPU": assetsBaseUrl + "/models/platform-types/FPU/fpu_lowpoly.gltf",
+    "FPV": assetsBaseUrl + "/models/platform-types/FPV/lp_fpsoplat.gltf",
+    "GravBase": assetsBaseUrl + "/models/platform-types/GravBase/lp_gravbase.gltf",
+    "Jacket": assetsBaseUrl + "/models/platform-types/Jacket/lp_jacket.gltf",
+    "Platform": assetsBaseUrl + "/models/platform-types/Jacket/lp_jacket.gltf",
+    "FSO": assetsBaseUrl + "/models/platform-types/FPU/fpu_lowpoly.gltf"
 };
+
+let pipelineColours = {
+    "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
+    "condensate": window.Cesium.Color.fromBytes(132, 0, 168),
+    "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
+    "gas": window.Cesium.Color.fromBytes(255, 51, 0),
+    "hydraulic": window.Cesium.Color.fromBytes(255, 255, 0),
+    "methanol": window.Cesium.Color.fromBytes(223, 155, 255),
+    "mixed hydrocarbons": window.Cesium.Color.fromBytes(155, 0, 76),
+    "oil": window.Cesium.Color.fromBytes(56, 168, 0),
+    "other fluid": window.Cesium.Color.fromBytes(161, 0, 123),
+    "water": window.Cesium.Color.fromBytes(0, 92, 230),
+    "disused": window.Cesium.Color.fromBytes(128, 128, 128),
+    "default": window.Cesium.Color.WHITE
+}
 const CancelToken = axios.CancelToken;
 
 class Map extends Component {
@@ -52,7 +63,7 @@ class Map extends Component {
             positions: [],
             installations: [],
             decomyards: [],
-            pipelines:[],
+            pipelines: [],
             currentInstallationFilter: null,
             currentDecomYardFilter: null,
             currentPipelineFilter: null,
@@ -63,12 +74,12 @@ class Map extends Component {
             lastHoveredWindfarm: null,
             lastHoveredPipeline: null,
         }
-        
+
         this.state.installations = this.props.cesiumInstallations;
-        if(this.props.cesiumDecomyards){
+        if (this.props.cesiumDecomyards) {
             this.state.decomyards = this.props.cesiumDecomyards;
         }
-        if(this.props.cesiumPipelines){        
+        if (this.props.cesiumPipelines) {
             this.state.pipelines = this.props.cesiumPipelines;
         }
     }
@@ -82,7 +93,7 @@ class Map extends Component {
 
     scaleBetween(unscaledNum, minAllowed, maxAllowed, min, max) {
         return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
-      }
+    }
 
     shouldComponentUpdate(nextProps, nextState) {
         if (this.state.lastHoveredInstallation !== nextState.lastHoveredInstallation) {
@@ -98,20 +109,19 @@ class Map extends Component {
             return true;
         }
         if (this.state.viewer != null) {
-            this.sortLayers(nextProps);        
             //first run    
             if (this.props.cesiumDecomyards.length === 0 && nextProps.cesiumDecomyards !== 0) {
                 this.decomyardsPoints = this.loadUpDecomyards(nextProps);
-            } 
+            }
             if (this.props.cesiumInstallations.length === 0 && nextProps.cesiumInstallations !== 0) {
                 this.installationPoints = this.loadUpInstallations(nextProps);
             }
             if (this.props.cesiumWindfarms.length === 0 && nextProps.cesiumWindfarms !== 0) {
                 this.windfarmPoints = this.loadUpWindfarms(nextProps);
-            }  
+            }
             if (this.props.cesiumPipelines.length === 0 && nextProps.cesiumPipelines !== 0) {
-                this.pipelinePoints = this.loadUpPipelines(nextProps);                        
-            } 
+                this.pipelinePoints = this.loadUpPipelines(nextProps);
+            }
 
             // handle update.
             if (this.props.cesiumDecomyards.length !== nextProps.cesiumDecomyards.length) {
@@ -173,14 +183,19 @@ class Map extends Component {
             url: bathymetryBaseUrl,
             credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
         });
-        var osm = new window.Cesium.UrlTemplateImageryProvider({
-            url : 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}@2x.png?key=FSzrABzSMJXbH2n6FfZc',
-            credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+        // var osm = new window.Cesium.UrlTemplateImageryProvider({
+        //     url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}@2x.png?key=FSzrABzSMJXbH2n6FfZc',
+        //     credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+        // });
+
+        var mapbox = new window.Cesium.MapboxImageryProvider({
+            mapId: 'mapbox.satellite',
+            accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
         });
-        
+
         this.terrainIsOn = true;
         //eslint-disable-next-line
-        var viewer = 
+        var viewer =
             new window.Cesium.Viewer('cesiumContainer', {
                 baseLayerPicker: false,
                 animation: false,
@@ -196,21 +211,21 @@ class Map extends Component {
                 terrainProvider: terrainProvider,
                 terrainExaggeration: 5,
                 requestRenderMode: true,
-                imageryProvider : osm
+                imageryProvider: mapbox
             });
 
-            viewer.scene.globe.enableLighting = false;
-            viewer.scene.globe.depthTestAgainstTerrain = false;
+        viewer.scene.globe.enableLighting = false;
+        viewer.scene.globe.depthTestAgainstTerrain = false;
 
-            // var provider = new window.Cesium.WebMapServiceImageryProvider({
-            //     url : emodnetBaseUrl,
-            //     layers : 'contours',
-            //     parameters:{transparent:true,format:"image/png",cors:window.location.href }
-            // });
-            
-            //viewer.imageryLayers.addImageryProvider(provider);
-            //eslint-disable-next-line
-            this.state.viewer = viewer;
+        // var provider = new window.Cesium.WebMapServiceImageryProvider({
+        //     url : emodnetBaseUrl,
+        //     layers : 'contours',
+        //     parameters:{transparent:true,format:"image/png",cors:window.location.href }
+        // });
+
+        //viewer.imageryLayers.addImageryProvider(provider);
+        //eslint-disable-next-line
+        this.state.viewer = viewer;
     }
 
     setMousePosition(p) {
@@ -263,15 +278,15 @@ class Map extends Component {
     }
 
     clearInstallations() {
-        if(this.installationPoints!== undefined){
-           for (var i = 0; i < this.installationPoints.length; i++) {
+        if (this.installationPoints !== undefined) {
+            for (var i = 0; i < this.installationPoints.length; i++) {
                 this.state.viewer.entities.remove(this.installationPoints[i]);
             }
         }
     }
 
     clearDecomYards() {
-        if(this.decomyardsPoints!== undefined){
+        if (this.decomyardsPoints !== undefined) {
             for (var i = 0; i < this.decomyardsPoints.length; i++) {
                 this.state.viewer.entities.remove(this.decomyardsPoints[i]);
             }
@@ -279,15 +294,15 @@ class Map extends Component {
     }
 
     clearPipelines() {
-        if(this.pipelinePoints!== undefined){
+        if (this.pipelinePoints !== undefined) {
             for (var i = 0; i < this.pipelinePoints.length; i++) {
                 this.state.viewer.entities.remove(this.pipelinePoints[i]);
             }
         }
     }
-    
+
     clearWindfarms() {
-        if(this.windfarmPoints !== undefined){
+        if (this.windfarmPoints !== undefined) {
             for (var i = 0; i < this.windfarmPoints.length; i++) {
                 this.state.viewer.entities.remove(this.windfarmPoints[i]);
             }
@@ -543,11 +558,11 @@ class Map extends Component {
             if (window.Cesium.defined(previousPickedEntity)) {
                 let color;
                 if (previousPickedEntity.installation) {
-                    color=window.Cesium.Color.GOLD
+                    color = window.Cesium.Color.GOLD
                 } else if (previousPickedEntity.decomyard) {
-                    color=window.Cesium.Color.AQUA
+                    color = window.Cesium.Color.AQUA
                 } else {
-                    color=window.Cesium.Color.WHITE
+                    color = window.Cesium.Color.WHITE
                 }
                 previousPickedEntity.point.color = color;
             }
@@ -646,126 +661,10 @@ class Map extends Component {
 
                 // dot has been clicked.
                 this.props.changeCurrentInstallation(id.installation);
-                // if (id.installation.ProjectId) { // unselect if no project id is selected.
-                //     history.push(`/projects/${id.installation.ProjectId}`);
-                // } else {
-                //     history.push(`/projects/`)
-                // }
-
                 if (id.installation.CesiumId) {
                     this.loadCesiumModelOntoMap(id.installation.CesiumId)
                 }
             }
-        }
-    }
-
-    // if cdn fails then replace with https://epm-oga.azureedge.net with https://itportal.ogauthority.co.uk/arcgis/services/OGA_Public_WGS84
-    sortLayers(props) {
-        var ogaFields = new window.Cesium.WebMapServiceImageryProvider({
-            url: baseWMSUrl + '/OGA_Public_WGS84/OGA_Offshore_Fields_WGS84/MapServer/WMSServer',
-            layers: '0',
-            tilingScheme: new window.Cesium.GeographicTilingScheme(),
-            parameters: {
-                format: 'png32',
-                transparent: true
-            },
-            enablePickFeatures: true,
-            getFeatureInfoParameters: {
-                info_format: "application/xml"
-            },
-            getFeatureInfoFormats: [new window.Cesium.GetFeatureInfoFormat('xml', 'text/xml', console.log)]
-        });
-
-        var ogaQuadrants = new window.Cesium.WebMapServiceImageryProvider({
-            url: baseWMSUrl + '/OGA_Public_WGS84/OGA_Quadrants_WGS84/MapServer/WMSServer',
-            layers: '0',
-            tilingScheme: new window.Cesium.GeographicTilingScheme(),
-            parameters: {
-                format: 'png32',
-                transparent: true
-            },
-            enablePickFeatures: true,
-            getFeatureInfoParameters: {
-                info_format: "application/xml"
-            },
-            getFeatureInfoFormats: [new window.Cesium.GetFeatureInfoFormat('xml', 'text/xml', console.log)]
-        });
-
-        var ogaWells = new window.Cesium.WebMapServiceImageryProvider({
-            url: baseWMSUrl + '/OGA_Public_WGS84/OGA_Wells_WGS84/MapServer/WMSServer',
-            layers: '0',
-            tilingScheme: new window.Cesium.GeographicTilingScheme(),
-            parameters: {
-                format: 'png32',
-                transparent: true
-            },
-            enablePickFeatures: true,
-            getFeatureInfoParameters: {
-                info_format: "application/xml"
-            },
-            getFeatureInfoFormats: [new window.Cesium.GetFeatureInfoFormat('xml', 'text/xml', console.log)]
-        });
-
-        var ogaLicenses = new window.Cesium.WebMapServiceImageryProvider({
-            url: baseWMSUrl + '/OGA_Public_WGS84/OGA_Licences_WGS84/MapServer/WMSServer',
-            layers: '0,1,2,3',
-            tilingScheme: new window.Cesium.GeographicTilingScheme(),
-            parameters: {
-                format: 'png32',
-                transparent: true
-            },
-            enablePickFeatures: true,
-            getFeatureInfoParameters: {
-                info_format: "application/xml"
-            },
-            getFeatureInfoFormats: [new window.Cesium.GetFeatureInfoFormat('xml', 'text/xml', console.log)]
-        });
-
-        var ogaInfrastructure = new window.Cesium.ArcGisMapServerImageryProvider({
-            url: baseRESTUrl + '/OGA_CDA/CDA_Infrastructure_WGS84/MapServer/export',
-            layers: '0,1,2',
-            tilingScheme: new window.Cesium.GeographicTilingScheme(),
-            parameters: {
-                format: 'png32',
-                transparent: true
-            },
-            enablePickFeatures: true,
-            getFeatureInfoParameters: {
-                info_format: "application/xml"
-            },
-            getFeatureInfoFormats: [new window.Cesium.GetFeatureInfoFormat('xml', 'text/xml', console.log)]
-        });
-
-
-        if (props.fieldState && this.ogaFields === null) {
-            this.ogaFields = this.state.viewer.imageryLayers.addImageryProvider(ogaFields);
-        } else if (!props.fieldState && this.ogaFields != null) {
-            this.state.viewer.imageryLayers.remove(this.ogaFields);
-            this.ogaFields = null;
-        }
-        if (props.quadrantsState && this.ogaQuadrants === null) {
-            this.ogaQuadrants = this.state.viewer.imageryLayers.addImageryProvider(ogaQuadrants);
-        } else if (!props.quadrantsState && this.ogaQuadrants != null) {
-            this.state.viewer.imageryLayers.remove(this.ogaQuadrants);
-            this.ogaQuadrants = null;
-        }
-        if (props.wellState && this.ogaWells === null) {
-            this.ogaWells = this.state.viewer.imageryLayers.addImageryProvider(ogaWells);
-        } else if (!props.wellState && this.ogaWells != null) {
-            this.state.viewer.imageryLayers.remove(this.ogaWells);
-            this.ogaWells = null;
-        }
-        if (props.licensesState && this.ogaLicenses === null) {
-            this.ogaLicenses = this.state.viewer.imageryLayers.addImageryProvider(ogaLicenses);
-        } else if (!props.licensesState && this.ogaLicenses != null) {
-            this.state.viewer.imageryLayers.remove(this.ogaLicenses);
-            this.ogaLicenses = null;
-        }
-        if (props.infrastructureState && this.ogaInfrastructure === null) {
-            this.ogaInfrastructure = this.state.viewer.imageryLayers.addImageryProvider(ogaInfrastructure);
-        } else if (!props.infrastructureState && this.ogaInfrastructure != null) {
-            this.state.viewer.imageryLayers.remove(this.ogaInfrastructure);
-            this.ogaInfrastructure = null;
         }
     }
 
@@ -777,13 +676,13 @@ class Map extends Component {
         this.state.viewer.screenSpaceEventHandler.setInputAction(this.mouseEvent, window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         var installationPoints = [];
         let installations;
-        
+
         if (nextProps.cesiumInstallations.length === 0) {
             installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
         } else {
             installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
         }
-        
+
         for (var i = 0; i < installations.length; i++) {
             var installation = installations[i];
             if (installation.id === "world-map") { continue; }
@@ -791,39 +690,39 @@ class Map extends Component {
             var point = this.state.viewer.entities.add({
                 name: installation["Name"],
                 position: window.Cesium.Cartesian3.fromDegrees(installation.Longitude, installation.Latitude),
-                point : {
+                point: {
                     pixelSize: 12,
                     color: window.Cesium.Color.GOLD,
-                    outlineColor : window.Cesium.Color.BLACK,
+                    outlineColor: window.Cesium.Color.BLACK,
                     outlineWidth: 1,
                     eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                     translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 },
-                model:{
-                    uri:model,
+                model: {
+                    uri: model,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 100000),
-                    scale:0.18,
-                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    shadows:window.Cesium.ShadowMode.DISABLED 
+                    scale: 0.18,
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                    shadows: window.Cesium.ShadowMode.DISABLED
                 },
-                label:{
-                    text:installation["Name"],
-                    fillColor:window.Cesium.Color.WHITE,
-                    style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                    outlineColor : window.Cesium.Color.BLACK,
+                label: {
+                    text: installation["Name"],
+                    fillColor: window.Cesium.Color.WHITE,
+                    style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineColor: window.Cesium.Color.BLACK,
                     outlineWidth: 1.5,
-                    pixelOffset: new  window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
-                    horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
+                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
+                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
-                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 }
             });
             point.installation = installation;
             installationPoints.push(point);
-            
+
         }
         this.installationPoints = installationPoints;
         return installationPoints;
@@ -832,7 +731,7 @@ class Map extends Component {
     loadUpDecomyards(nextProps) {
         var decomyardsPoints = [];
         let decomyards;
-        
+
         if (nextProps.cesiumDecomyards.length === 0) {
             decomyards = this.state.currentDecomYardFilter ? this.state.currentDecomYardFilter(this.state.decomyards) : this.state.decomyards;
         } else {
@@ -840,7 +739,7 @@ class Map extends Component {
         }
 
         if (!decomyards) return;
-        
+
         for (var i = 0; i < decomyards.length; i++) {
             var decomyard = decomyards[i];
 
@@ -853,21 +752,21 @@ class Map extends Component {
                     eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                     translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    outlineColor : window.Cesium.Color.BLACK,
-                    outlineWidth: 1, 
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                    outlineColor: window.Cesium.Color.BLACK,
+                    outlineWidth: 1,
                 },
-                label:{
-                    text:decomyard["Name"],
-                    fillColor:window.Cesium.Color.WHITE,
-                    style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                    outlineColor : window.Cesium.Color.BLACK,
+                label: {
+                    text: decomyard["Name"],
+                    fillColor: window.Cesium.Color.WHITE,
+                    style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineColor: window.Cesium.Color.BLACK,
                     outlineWidth: 1.5,
-                    pixelOffset: new  window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
-                    horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
+                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
+                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
-                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 }
             });
             point.decomyard = decomyard;
@@ -886,6 +785,23 @@ class Map extends Component {
         return positions;
     }
 
+    getPipelineColour(pipeline) {
+        let pipelineFluid = pipeline["Fluid Conveyed"];
+        if (pipelineFluid) {
+            pipelineFluid = pipelineFluid.toLowerCase();
+        }
+
+        let colour = pipelineColours[pipelineFluid];
+        if (!colour) {
+            colour = pipelineColours["default"];
+        }
+
+        if (pipeline["Status"] !== "ACTIVE") {
+            colour = colour.withAlpha(0.5);
+        }
+        return colour;
+    }
+
     loadUpPipelines(nextProps) {
         var pipelinePolys = [];
         let pipelines;
@@ -894,51 +810,37 @@ class Map extends Component {
         } else {
             pipelines = this.state.currentPipelineFilter ? this.state.currentPipelineFilter(nextProps.cesiumPipelines) : nextProps.cesiumPipelines;
         }
-        
+
         if (!pipelines) return;
         //var shape = this.computeCircle(40.0);
         var errors = [];
-        var materialHash = {};
         var minDiameter = 0;
         var maxDiameter = 1058;
         this.state.viewer.entities.suspendEvents();
         for (var i = 0; i < pipelines.length; i++) {
             var pipeline = pipelines[i];
             var coordinates = pipeline.Coordinates;
-            if(Array.isArray(coordinates) && coordinates.length > 0){
-                if(Array.isArray(coordinates[0])){
-                    if(coordinates[0].length >0 && Array.isArray(coordinates[0][0])){
-                        //console.log("multi line here");
-                    }
-                    else{
-                        try{
-                        let flatCoordinates = coordinates.flat();
-                        var material = materialHash[pipeline["Fluid Conveyed"]];
-            if (!material) {
-                var color = window.Cesium.Color.fromRandom({
-                    alpha : 1.0
-                });
-                // material = new window.Cesium.StripeMaterialProperty({
-                //     // The newest part of the line is bright yellow.
-                //     evenColor: color,
-                //     // The oldest part of the line is yellow with a low alpha value.
-                //     oddColor: color.withAlpha(0.1),
-                //     repeat: 1,
-                //     offset: 0.25,
-                //     orientation: window.Cesium.StripeOrientation.VERTICAL
-                // })
-                materialHash[pipeline["Fluid Conveyed"]] = color;
-            }           
+            if (Array.isArray(coordinates) && coordinates.length > 0) {
+                if (Array.isArray(coordinates[0])) {
 
-            var pipeDiameter = parseInt(pipeline.Diameter) || 0
 
-            if(pipeline["Diameter Units"] === "inch"){
-                pipeDiameter = pipeDiameter*25.4;
-              }
-              var scaledWidth = this.scaleBetween(pipeDiameter, 1,3, minDiameter, maxDiameter);
-              var scaledDistance = this.scaleBetween(pipeDiameter, 1000000,50000000, minDiameter, maxDiameter);
-              
-                        var poly =this.state.viewer.entities.add({
+                    try {
+                        var c = coordinates;
+                        if (coordinates[0].length > 0 && Array.isArray(coordinates[0][0])) {
+                            c = coordinates.flat();
+                        }
+                        let flatCoordinates = c.flat();
+                        var material = this.getPipelineColour(pipeline);
+
+                        var pipeDiameter = parseInt(pipeline.Diameter) || 0
+
+                        if (pipeline["Diameter Units"] === "inch") {
+                            pipeDiameter = pipeDiameter * 25.4;
+                        }
+                        var scaledWidth = this.scaleBetween(pipeDiameter, 1, 3, minDiameter, maxDiameter);
+                        var scaledDistance = this.scaleBetween(pipeDiameter, 1000000, 50000000, minDiameter, maxDiameter);
+
+                        var poly = this.state.viewer.entities.add({
                             name: pipeline["Pipeline Name"],
                             position: window.Cesium.Cartesian3.fromDegrees(flatCoordinates[Math.floor((flatCoordinates.length - 1) / 2)]),
                             // polylineVolume : {
@@ -948,11 +850,11 @@ class Map extends Component {
                             //     heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND ,
                             //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 10000),
                             // },
-                            polyline:{
-                                positions : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                                material : material,
-                                heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND ,
-                                width:scaledWidth,
+                            polyline: {
+                                positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                                material: material,
+                                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                                width: scaledWidth,
                                 distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
                             }
                             // label:{
@@ -964,26 +866,26 @@ class Map extends Component {
                             //     pixelOffset: new  window.Cesium.Cartesian2(25, 0),
                             //     verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
                             //     horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
-                            //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                            //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, scaledDistance),
                             //     heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
                             // }
                         });
                         poly.pipeline = pipeline;
                         pipelinePolys.push(poly);
                     }
-                    catch(error){
-                        errors.push({error:error, coordinates:coordinates.flat()});
-                    }
+                    catch (error) {
+                        errors.push({ error: error, coordinates: coordinates.flat() });
                     }
                 }
-
             }
+
+
         }
-        if(errors.length > 0 ){
+        if (errors.length > 0) {
             console.error(errors);
         }
-        this.state.viewer.entities.resumeEvents();   
-        
+        this.state.viewer.entities.resumeEvents();
+
         this.pipelinePoints = pipelinePolys;
         return pipelinePolys;
     }
@@ -992,7 +894,7 @@ class Map extends Component {
     loadUpWindfarms(nextProps) {
         var windfarmPoints = [];
         let windfarms;
-        
+
         if (nextProps.cesiumWindfarms.length === 0) {
             windfarms = this.state.currentWindfarmsFilter ? this.state.currentWindfarmFilter(this.state.windfarms) : this.state.windfarms;
         } else {
@@ -1000,7 +902,7 @@ class Map extends Component {
         }
 
         if (!windfarms) return;
-        
+
         for (var i = 0; i < windfarms.length; i++) {
             var windfarm = windfarms[i];
 
@@ -1014,21 +916,21 @@ class Map extends Component {
                     eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                     translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    outlineColor : window.Cesium.Color.BLACK,
-                    outlineWidth: 1, 
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                    outlineColor: window.Cesium.Color.BLACK,
+                    outlineWidth: 1,
                 },
-                label:{
-                    text:windfarm["Name"],
-                    fillColor:window.Cesium.Color.WHITE,
-                    style:window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                    outlineColor : window.Cesium.Color.BLACK,
+                label: {
+                    text: windfarm["Name"],
+                    fillColor: window.Cesium.Color.WHITE,
+                    style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineColor: window.Cesium.Color.BLACK,
                     outlineWidth: 1.5,
-                    pixelOffset: new  window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin : window.Cesium.VerticalOrigin.CENTER,
-                    horizontalOrigin : window.Cesium.HorizontalOrigin.LEFT ,
+                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
+                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
-                    heightReference : window.Cesium.HeightReference.CLAMP_TO_GROUND 
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 }
             });
             point.windfarm = windfarm;
@@ -1050,17 +952,17 @@ class Map extends Component {
         let hoveredDecomyard = this.state.lastHoveredDecomyard;
         let hoveredWindfarm = this.state.lastHoveredWindfarm;
         let hoveredPipeline = this.state.lastHoveredPipeline;
-        
+
         return (
-            <div style={{height:'100%', width:'100%'}}>
-            <ReactCursorPosition style={{width:'100%', height:'100%', pointerEvents:'none'}}>
-                <div id="cesiumContainer" style={divStyle} >
-                </div>
-                <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
-                <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
-                <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
-                <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
-            </ReactCursorPosition>
+            <div style={{ height: '100%', width: '100%' }}>
+                <ReactCursorPosition style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
+                    <div id="cesiumContainer" style={divStyle} >
+                    </div>
+                    <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
+                    <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
+                    <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
+                    <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
+                </ReactCursorPosition>
             </div>
         );
     }
