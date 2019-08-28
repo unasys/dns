@@ -9,6 +9,7 @@
     display:flex;
     align-items:center;
     max-height:30px;
+    color:black;
     .table-installation-image {
         img {
             min-width:30px;
@@ -37,11 +38,11 @@
     min-width:300px;
     border:none;
     .rt-table { 
-        color:white;
-        background-color:#252B38;
+        color:#313747 !important;
+        background-color:rgba(255, 255, 255, 0.966) !important;
     }
     .rt-thead {
-        border-bottom: 1px solid #313747;
+        border-bottom: 1px solid rgba(130, 129, 168, 0.314) !important;
         padding:5px 0;
         .rt-th.-sort-asc {
             box-shadow: inset 0 3px 0 0 rgba(255, 255, 255, 0.315);
@@ -52,8 +53,8 @@
         .rt-th {
             border-color:rgba(130, 129, 168, 0.315);
            input {
-               background: #262B38;
-               border: 1px solid  #383e4e;
+               background: rgba(38, 43, 56, 0.062) !important;
+               border: 1px solid  #383e4e54 !important;
                color:white;
            } 
            .rc-slider {
@@ -89,7 +90,7 @@
             }
         }
         .rt-tr-group {
-            border-bottom: 1px solid #313747;
+            border-bottom: 1px solid #31374733 !important;
             margin:0px 20px;
             padding:5px 0px;
         }
@@ -113,18 +114,18 @@
     padding-right:15px;
     padding-top:15px;
     padding-bottom:15px;
-    background:#262B38;
+    background:white !important;
     border: 1px solid rgba(243, 201, 201, 0.11);
     border-top:none;
     height:130px;
     border-bottom-right-radius: 20px;
     .backbutton { 
-        color:white;
+        color:#272B38 !important;
         padding-bottom:10px;
     }
 
     .outward-handle {
-        color:white;
+        color:#272B38 !important;
         font-size:20px;
     }
 }
