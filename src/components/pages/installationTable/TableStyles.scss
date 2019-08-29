@@ -92,6 +92,9 @@
                 align-items:center;
             }
         }
+        .rt-tr-group:first-child {
+            border-top:none !important;
+        }
         .rt-tr-group {
             border-bottom: 1px solid #2D3D4E !important;
             border-top: 1px solid #435C76 !important;
