@@ -10,7 +10,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createReducers from './reducers/reducers';
 import { routerMiddleware } from 'connected-react-router';
 import { ConnectedRouter } from 'connected-react-router';
-import Bathymetry from './components/pages/bathymetry/Bathymetry';
 import InstallationTable from './components/pages/installationTable/InstallationTable';
 import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
 import PipelineTable from './components/pages/pipelineTable/PipelineTable';
@@ -94,11 +93,6 @@ class App extends Component {
                 }} />
               </Switch>
               <Switch>
-                <Route path="/bathymetry" exact={true} render={(props) => {
-                  return (
-                    <Bathymetry {...props}></Bathymetry>
-                  )
-                }} />
                 <Route path="/(installations|decomyards|windfarms|pipelines)" render={(props) => {
                   return (
                     <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>

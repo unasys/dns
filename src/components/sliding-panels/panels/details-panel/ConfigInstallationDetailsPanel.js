@@ -1,8 +1,6 @@
 import React from 'react';
 import '../Panels.scss';
-import CollapsibleHeading from './CollapsibleHeading';
 import axios from 'axios';
-import { getAuxiliaryDataImage } from '../../../../api/Entities';
 import history from '../../../../history.js'
 import NavigationHeading from './NavigationHeading';
 
@@ -19,22 +17,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
         this.source = CancelToken.source();
     }
 
-    componentDidMount() {
-        if (this.props.installationDetails["EntityImage ID"]) {
-            let imageId = this.props.installationDetails["EntityImage ID"];
-            getAuxiliaryDataImage(this.props.projectId, this.props.entityId, imageId, this.source.token).then(image => {
-                this.setState({
-                    auxiliaryDataImage: image.data
-                })
-            })
-        }
-    }
-
     render() {
-        let collapsibleHeadings =
-            this.props.installationDetails.Details.map(heading => {
-                return <CollapsibleHeading key={heading.name} heading={heading.name} items={heading.items}></CollapsibleHeading>
-            })
 
         let navigationHeadings =
             (this.props.projectId && <>
@@ -71,7 +54,6 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 {decomYardSelection}
                 {pipelineSelection}
                 {windfarmSelection}
-                {/* {collapsibleHeadings} */}
                 {navigationHeadings}
             </>
 
