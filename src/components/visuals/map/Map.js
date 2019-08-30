@@ -11,6 +11,7 @@ import PipelineHoverCard from './PipelineHoverCard';
 
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
+const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
 
 let iconModels = {
     "FPSO": assetsBaseUrl + "/models/platform-types/FPSO/lp_fpsoplat.gltf",
@@ -62,6 +63,7 @@ class Map extends Component {
             installations: [],
             decomyards: [],
             pipelines: [],
+            ukBlocks:null,
             currentInstallationFilter: null,
             currentDecomYardFilter: null,
             currentPipelineFilter: null,
@@ -206,6 +208,43 @@ class Map extends Component {
                 }
             }
         );
+
+        let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+       
+
+        window.Cesium.GeoJsonDataSource.load(ukBlocks,{
+            fill:window.Cesium.Color.TRANSPARENT,
+            stroke:window.Cesium.Color.LIGHTCORAL
+        }).then(
+            function(dataSource) {
+                viewer.dataSources.add(dataSource);
+                var p = dataSource.entities.values;
+                for (var i = 0; i < p.length; i++) {
+                    let entity = p[i];
+                    let polygon = entity.polygon;
+                    if(polygon){
+                        //var position = entity.polygon.hierarchy.getValue().positions[0];
+                        var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+                        window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+                        entity.position = new window.Cesium.ConstantPositionProperty(center);;
+                    }
+                    entity.label = new window.Cesium.LabelGraphics({
+                        text:entity.properties.ALL_LABELS,
+                        //pixeloffset : new window.Cesium.Cartesian2(50, 50),
+                    //     verticalOrigin: window.Cesium.VerticalOrigin.TOP,
+                    // horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+                    font: '12px sans-serif',
+                    scaleByDistance:scale
+                    //heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+                    });
+                }
+                
+            }
+        ).otherwise(function(error) {
+            console.error(error);
+          });
+
         viewer.scene.globe.enableLighting = false;
         viewer.scene.globe.depthTestAgainstTerrain = false;
 
@@ -341,11 +380,11 @@ class Map extends Component {
             if (window.Cesium.defined(previousPickedEntity)) {
                 let color;
                 if (previousPickedEntity.installation) {
-                    color = window.Cesium.Color.GOLD
+                    color = window.Cesium.Color.GOLD;
                 } else if (previousPickedEntity.decomyard) {
-                    color = window.Cesium.Color.AQUA
+                    color = window.Cesium.Color.AQUA;
                 } else {
-                    color = window.Cesium.Color.WHITE
+                    color = window.Cesium.Color.WHITE;
                 }
                 previousPickedEntity.point.color = color;
             }
@@ -484,7 +523,7 @@ class Map extends Component {
                     outlineColor: window.Cesium.Color.BLACK,
                     outlineWidth: 1.5,
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                    verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
@@ -581,7 +620,7 @@ class Map extends Component {
                                 outlineColor: material.color,
                                 outlineWidth: 1.5,
                                 pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                                verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                                verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
                                 horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
                                 distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, scaledTextDistance),
                                 heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
