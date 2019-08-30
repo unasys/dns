@@ -12,7 +12,6 @@ class Header extends Component {
       <div className="header-container">
         <div className="logo-container" onClick={() => {
           history.push("")
-          this.onTabClick(0)
         }}>
           <DigitalNorthSeaLogo></DigitalNorthSeaLogo>
         </div>

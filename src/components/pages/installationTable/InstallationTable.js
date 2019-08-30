@@ -270,7 +270,6 @@ class InstallationTable extends Component {
           return msSinceEpoch <= endValue && msSinceEpoch >= startValue
         },
         sortMethod: (a, b) => {
-          console.log(a)
           let formattedA = a;
           let formattedB = b;
           let aDate = new Date(formattedA);

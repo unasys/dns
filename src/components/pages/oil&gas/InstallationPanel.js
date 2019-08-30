@@ -66,12 +66,7 @@ class InstallationPanel extends React.Component {
             </HardcodedNorthSeaDetailsPanel>
         }
 
-        let wrappedContent =
-            <Breadcrumbs
-                crumbs={this.props.breadcrumbs}
-                removeCrumbs={this.props.removeBreadcrumbsAfter}>
-                {content}
-            </Breadcrumbs>
+        let wrappedContent = content
 
         let keaneScreenContent = (
             <KeaneScreen

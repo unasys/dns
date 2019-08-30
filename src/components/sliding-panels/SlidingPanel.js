@@ -45,7 +45,7 @@ class SlidingPanel extends React.Component {
                             zIndex: "3",
                             borderRight: "solid 1px rgba(255, 255, 255, 0.2)",
                             borderLeft: "solid 1px rgba(255, 255, 255, 0.2)",
-                            backgroundColor: "#252B38",
+                            backgroundColor: "#33475C",
                             pointerEvents:'auto'
                         }
                     }
