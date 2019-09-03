@@ -1,0 +1,9 @@
+[[headers]]
+for = "/*"
+[headers.values]
+Content-Security-Policy-report-only = "connect-src 'self' app.digitalnorthsea.com; font-src fonts.gstatic.com use.fontawesome.com; script-src-elem 'self'; script-src 'unsafe-eval' 'self'; style-src-elem cdnjs.cloudflare.com fonts.googleapis.com use.fontawesome.com 'unsafe-inline' unpkg.com; style-src-attr 'unsafe-inline'; report-uri https://unasys.report-uri.com/r/d/csp/wizard"
+Feature-Policy = "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'none'; geolocation 'none'; gyroscope 'none';  magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'none'; sync-xhr 'none'; usb 'none'; vr 'none'"
+Referrer-Policy = "no-referrer-when-downgrade"
+X-Content-Type-Options = "nosniff"
+X-Frame-Options = "SAMEORIGIN"
+X-XSS-Protection = "1; mode=block"
