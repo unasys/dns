@@ -117,10 +117,15 @@ class Map extends Component {
 
         // toggle pipelines 
         if (this.props.showPipelines != nextProps.showPipelines) {
-            this.pipelinePoints.map(pipeline => {
-                pipeline.show = nextProps.showPipelines
-            })
+            if (!this.pipelinePoints) {
+                this.loadUpPipelines(nextProps);
+            } else {
+                this.pipelinePoints.map(pipeline => {
+                    pipeline.show = nextProps.showPipelines
+                })
+            }   
             this.state.viewer.scene.requestRender()
+
         }
         // toggle pipelines
 
@@ -147,9 +152,9 @@ class Map extends Component {
             if (this.props.cesiumWindfarms.length === 0 && nextProps.cesiumWindfarms !== 0) {
                 this.windfarmPoints = this.loadUpWindfarms(nextProps);
             }
-            if (this.props.cesiumPipelines.length === 0 && nextProps.cesiumPipelines !== 0) {
-                this.pipelinePoints = this.loadUpPipelines(nextProps);
-            }
+            // if (this.props.cesiumPipelines.length === 0 && nextProps.cesiumPipelines !== 0) {
+            //     this.pipelinePoints = this.loadUpPipelines(nextProps);
+            // }
 
             // handle update.
             if (this.props.cesiumDecomyards.length !== nextProps.cesiumDecomyards.length) {
@@ -164,7 +169,7 @@ class Map extends Component {
                 this.clearWindfarms();
                 this.loadUpWindfarms(nextProps);
             }
-            if (this.props.cesiumPipelines.length !== nextProps.cesiumPipelines.length) {
+            if (this.props.cesiumPipelines.length !== nextProps.cesiumPipelines.length && this.props.showPipelines) {
                 this.clearPipelines();
                 this.loadUpPipelines(nextProps);
             }

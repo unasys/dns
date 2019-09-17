@@ -5,7 +5,7 @@ const initialState = {
     ogaQuadrantsSwitched: false,
     ogaWellsSwitched: false,
     ogaLicensesSwitched: false, 
-    ogaPipelinesSwitched: true, 
+    ogaPipelinesSwitched: false, 
     positions: []
 }
 
