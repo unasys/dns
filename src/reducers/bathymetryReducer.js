@@ -1,11 +1,11 @@
-import { TOGGLE_QUADRANTS, TOGGLE_WELLS, TOGGLE_LICENSES, TOGGLE_INFRASTRUCTURE, UPDATE_POSITIONS } from '../actions/bathymetryActions';
+import { TOGGLE_QUADRANTS, TOGGLE_WELLS, TOGGLE_LICENSES, UPDATE_POSITIONS, TOGGLE_PIPELINES } from '../actions/bathymetryActions';
 
 const initialState = {
     ogaFieldsSwitched: false,
     ogaQuadrantsSwitched: false,
     ogaWellsSwitched: false,
     ogaLicensesSwitched: false, 
-    ogaInfrastructureSwitched: false, 
+    ogaPipelinesSwitched: true, 
     positions: []
 }
 
@@ -26,10 +26,10 @@ export default function(state = initialState, action) {
                 ...state,
                 ogaLicensesSwitched: !state.ogaLicensesSwitched
             })
-        case TOGGLE_INFRASTRUCTURE:
+        case TOGGLE_PIPELINES:
             return ({
                 ...state,
-                ogaInfrastructureSwitched: !state.ogaInfrastructureSwitched
+                ogaPipelinesSwitched: !state.ogaPipelinesSwitched
             })
         case UPDATE_POSITIONS: 
             return ({

@@ -2,7 +2,7 @@ export const TOGGLE_FIELDS = "TOGGLE_FIELDS";
 export const TOGGLE_QUADRANTS = "TOGGLE_QUADRANTS";
 export const TOGGLE_WELLS = "TOGGLE_WELLS";
 export const TOGGLE_LICENSES = "TOGGLE_LICENSES";
-export const TOGGLE_INFRASTRUCTURE = "TOGGLE_INFRASTRUCTURE";
+export const TOGGLE_PIPELINES = "TOGGLE_PIPELINES";
 export const UPDATE_POSITIONS = "UPDATE_POSITIONS";
 
 export function toggleFields() {
@@ -21,8 +21,8 @@ export function toggleLicenses() {
     return {type: TOGGLE_LICENSES};
 }
 
-export function toggleInfrastructure() {
-    return {type: TOGGLE_INFRASTRUCTURE};
+export function togglePipelines() {
+    return {type: TOGGLE_PIPELINES};
 }
 
 export function updatePositions(positions) {

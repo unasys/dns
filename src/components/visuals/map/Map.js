@@ -114,6 +114,16 @@ class Map extends Component {
             this.state.viewer.scene.requestRender()
         }
         // toggle quadrants
+
+        // toggle pipelines 
+        if (this.props.showPipelines != nextProps.showPipelines) {
+            this.pipelinePoints.map(pipeline => {
+                pipeline.show = nextProps.showPipelines
+            })
+            this.state.viewer.scene.requestRender()
+        }
+        // toggle pipelines
+
         if (this.state.lastHoveredInstallation !== nextState.lastHoveredInstallation) {
             return true;
         }
@@ -780,6 +790,7 @@ const mapStateToProps = (state) => {
         cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
         cesiumPipelines: state.InstallationReducer.cesiumPipelines,
         showQuadrants: state.BathymetryReducer.ogaQuadrantsSwitched,
+        showPipelines: state.BathymetryReducer.ogaPipelinesSwitched,
         installationFilter: filterType,
         decomYardFilter: decomYardFilterType,
         pipelineFilterType: pipelineFilterType,
