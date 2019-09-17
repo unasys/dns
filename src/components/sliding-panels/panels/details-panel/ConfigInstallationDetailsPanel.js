@@ -3,6 +3,8 @@ import '../Panels.scss';
 import axios from 'axios';
 import history from '../../../../history.js'
 import NavigationHeading from './NavigationHeading';
+import CollapsibleHeading from './CollapsibleHeading';
+import MapFilterPanel from './map-filter-panel/MapFilterPanel';
 
 const CancelToken = axios.CancelToken;
 
@@ -47,6 +49,8 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 <NavigationHeading heading={'Windfarms'} onClick={()=> history.push('windfarms')}></NavigationHeading>
             </div>
 
+        let mapFilters = <MapFilterPanel></MapFilterPanel>
+
 
         let content =
             <>
@@ -55,6 +59,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 {pipelineSelection}
                 {windfarmSelection}
                 {navigationHeadings}
+                {mapFilters}
             </>
 
         let imageId;

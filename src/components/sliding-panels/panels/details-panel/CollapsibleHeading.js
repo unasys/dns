@@ -1,5 +1,4 @@
 import React from 'react';
-import ResultItem from '../../../result-item/ResultItem';
 import { Collapse } from 'react-collapse';
 
 
@@ -39,7 +38,11 @@ class CollapsibleHeading extends React.Component {
                             content += ": " + property.value;
                         }
 
-                        return <ResultItem key={i} content={content} contentOnClick={function () { }} noChevron={true}></ResultItem>
+                        return ( 
+                            <div key={i}>
+                                {content}
+                            </div>
+                        )
                     })}
                 </Collapse>
             </>
