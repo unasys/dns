@@ -212,40 +212,39 @@ class Map extends Component {
         let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
        
 
-        // GRID ------------------------------------------------------------------------------------------------------------------------------------ QUADRANTS
-        // window.Cesium.GeoJsonDataSource.load(ukBlocks,{
-        //     fill:window.Cesium.Color.TRANSPARENT,
-        //     stroke:window.Cesium.Color.LIGHTCORAL
-        // }).then(
-        //     function(dataSource) {
-        //         viewer.dataSources.add(dataSource);
-        //         var p = dataSource.entities.values;
-        //         for (var i = 0; i < p.length; i++) {
-        //             let entity = p[i];
-        //             let polygon = entity.polygon;
-        //             if(polygon){
-        //                 //var position = entity.polygon.hierarchy.getValue().positions[0];
-        //                 var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
-        //                 window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
-        //                 entity.position = new window.Cesium.ConstantPositionProperty(center);;
-        //             }
-        //             entity.label = new window.Cesium.LabelGraphics({
-        //                 text:entity.properties.ALL_LABELS,
-        //                 //pixeloffset : new window.Cesium.Cartesian2(50, 50),
-        //             //     verticalOrigin: window.Cesium.VerticalOrigin.TOP,
-        //             // horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        //             distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
-        //             font: '12px sans-serif',
-        //             scaleByDistance:scale
-        //             //heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-        //             });
-        //         }
+
+        window.Cesium.GeoJsonDataSource.load(ukBlocks,{
+            fill:window.Cesium.Color.TRANSPARENT,
+            stroke:window.Cesium.Color.LIGHTCORAL
+        }).then(
+            function(dataSource) {
+                viewer.dataSources.add(dataSource);
+                var p = dataSource.entities.values;
+                for (var i = 0; i < p.length; i++) {
+                    let entity = p[i];
+                    let polygon = entity.polygon;
+                    if(polygon){
+                        //var position = entity.polygon.hierarchy.getValue().positions[0];
+                        var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+                        window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+                        entity.position = new window.Cesium.ConstantPositionProperty(center);;
+                    }
+                    entity.label = new window.Cesium.LabelGraphics({
+                        text:entity.properties.ALL_LABELS,
+                        //pixeloffset : new window.Cesium.Cartesian2(50, 50),
+                    //     verticalOrigin: window.Cesium.VerticalOrigin.TOP,
+                    // horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+                    font: '12px sans-serif',
+                    scaleByDistance:scale
+                    //heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+                    });
+                }
                 
-        //     }
-        // ).otherwise(function(error) {
-        //     console.error(error);
-        //   });
-        // GRID ------------------------------------------------------------------------------------------------------------------------------------ QUADRANTS
+            }
+        ).otherwise(function(error) {
+            console.error(error);
+          });
 
         viewer.scene.globe.enableLighting = false;
         viewer.scene.globe.depthTestAgainstTerrain = false;
