@@ -1,7 +1,7 @@
 import React from 'react';
 import Switch from 'react-toggle-switch';
 import './MapFilterPanel.scss';
-// import { toggleFields, toggleQuadrants, toggleWells, toggleLicenses, toggleInfrastructure } from '../../../../../actions/bathymetryActions';
+import { toggleQuadrants, toggleWells, toggleLicenses, toggleInfrastructure } from '../../../../../actions/bathymetryActions';
 import { connect } from 'react-redux';
 
 class MapFilterPanel extends React.Component {
@@ -20,14 +20,8 @@ class MapFilterPanel extends React.Component {
                 </div>
                     <div className="layer-container">
                         <div className="layer-content">
-                            <div className="bathymetry-title">Fields</div>
-                            <Switch onClick={() => {}} on={() => {}} className={'bathymetry-title'} />
-                        </div>
-                    </div>
-                    <div className="layer-container">
-                        <div className="layer-content">
                             <div className="bathymetry-title">Quadrants</div>
-                            <Switch onClick={() => {}} on={() => {}} className={'bathymetry-title'} />
+                            <Switch onClick={this.props.toggleQuadrants} on={this.props.ogaQuadrantsSwitched} className={'bathymetry-title'} />
                         </div>
                     </div>
                     <div className="layer-container">
@@ -57,35 +51,32 @@ class MapFilterPanel extends React.Component {
     }
 }
 
-// function mapDispatchToProps(dispatch) {
-//     return {
-//         toggleFields: () => {
-//             dispatch(toggleFields())
-//         },
-//         toggleQuadrants: () => {
-//             dispatch(toggleQuadrants())
-//         },
-//         toggleWells: () => {
-//             dispatch(toggleWells())
-//         },
-//         toggleLicenses: () => {
-//             dispatch(toggleLicenses())
-//         },
-//         toggleInfrastructure: () => {
-//             dispatch(toggleInfrastructure())
-//         }
-//     }
-// }
+function mapDispatchToProps(dispatch) {
+    return {
+        toggleQuadrants: () => {
+            dispatch(toggleQuadrants())
+        },
+        toggleWells: () => {
+            dispatch(toggleWells())
+        },
+        toggleLicenses: () => {
+            dispatch(toggleLicenses())
+        },
+        toggleInfrastructure: () => {
+            dispatch(toggleInfrastructure())
+        }
+    }
+}
 
-// function mapStateToProps(state) {
-//     return {
-//         ogaFieldsSwitched: state.BathymetryReducer.ogaFieldsSwitched,
-//         ogaQuadrantsSwitched: state.BathymetryReducer.ogaQuadrantsSwitched,
-//         ogaWellsSwitched: state.BathymetryReducer.ogaWellsSwitched,
-//         ogaLicensesSwitched: state.BathymetryReducer.ogaLicensesSwitched,
-//         ogaInfrastructureSwitched: state.BathymetryReducer.ogaInfrastructureSwitched,
-//         coords: state.BathymetryReducer.positions
-//     }
-// }
+function mapStateToProps(state) {
+  
+    return {
+        ogaQuadrantsSwitched: state.BathymetryReducer.ogaQuadrantsSwitched,
+        ogaWellsSwitched: state.BathymetryReducer.ogaWellsSwitched,
+        ogaLicensesSwitched: state.BathymetryReducer.ogaLicensesSwitched,
+        ogaInfrastructureSwitched: state.BathymetryReducer.ogaInfrastructureSwitched,
+        coords: state.BathymetryReducer.positions
+    }
+}
 
-export default connect(null, null)(MapFilterPanel)
+export default connect(mapStateToProps, mapDispatchToProps)(MapFilterPanel)
