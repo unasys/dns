@@ -3,8 +3,8 @@ import '../Panels.scss';
 import axios from 'axios';
 import history from '../../../../history.js'
 import NavigationHeading from './NavigationHeading';
-import CollapsibleHeading from './CollapsibleHeading';
 import MapFilterPanel from './map-filter-panel/MapFilterPanel';
+import NorthSeaAreaPanel from './north-sea-area-panel/NorthSeaAreaPanel';
 
 const CancelToken = axios.CancelToken;
 
@@ -51,9 +51,12 @@ class ConfigInstallationDetailsPanel extends React.Component {
 
         let mapFilters = <MapFilterPanel></MapFilterPanel>
 
+        let northSeaAreaSelector = <NorthSeaAreaPanel></NorthSeaAreaPanel>
+
 
         let content =
             <>
+                {northSeaAreaSelector}
                 {installationSelection}
                 {decomYardSelection}
                 {pipelineSelection}

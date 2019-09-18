@@ -1,0 +1,19 @@
+.areas {
+    .area-result-item-container {
+
+        .area-result-item {
+            border-top: 1px solid gray;
+            color:rgba(247, 247, 247, 0.822);
+            font-size:13px;
+            padding-left:20px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            &.highlighted  {
+                background: rgb(97, 115, 138);
+                color:white;
+            }
+        }
+    }
+    margin-top:1px;
+    border-bottom: 1px solid gray;
+}

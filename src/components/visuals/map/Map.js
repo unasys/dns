@@ -55,6 +55,7 @@ class Map extends Component {
         this.getDynamicLengthlabel = this.getDynamicLengthlabel.bind(this);
         this.setDynamicLengthLabel = this.setDynamicLengthLabel.bind(this);
         this.updatePosition = this.updatePosition.bind(this);
+        this.flyTo = this.flyTo.bind(this);
         this.source = CancelToken.source();
         this.state = {
             viewer: null,
@@ -306,6 +307,19 @@ class Map extends Component {
 
     getHandlerNull() {
         return this.handlerNull;
+    }
+
+    flyTo(west, south, east, north, pitch) {
+        var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
+        this.state.viewer.camera.flyTo({
+            destination: rectangle,
+            duration: 3,
+            orientation: {
+                heading: 0.0,
+                pitch: window.Cesium.Math.toRadians(pitch),
+                roll: 0.0
+            }
+        });
     }
 
     componentDidMount() {
@@ -771,10 +785,13 @@ class Map extends Component {
                     <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
                     <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
                 </ReactCursorPosition>
+                <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider>
             </div>
         );
     }
 }
+
+export const MapContext = React.createContext();
 
 function mapDispatchToProps(dispatch) {
     return {

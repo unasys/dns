@@ -61,7 +61,7 @@ class App extends Component {
             }
             } />
             <div className="content-container">
-              {this.getMainPanelContent()}
+              <Map>
               <Switch>          
                 <Route path="/installations" render={(props) => {
                   return (
@@ -104,6 +104,7 @@ class App extends Component {
                   )
                 }} />
               </Switch>
+              </Map>
             </div>
           </div>
         </ConnectedRouter>
