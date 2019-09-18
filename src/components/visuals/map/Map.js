@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import './Map.scss';
 import { changeCurrentInstallation } from '../../../actions/installationActions';
 import axios from 'axios';
@@ -99,6 +100,9 @@ class Map extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.location.pathname !== this.props.location.pathname) {
+            return true;
+        }
         // toggle quadrants 
         if (this.props.showQuadrants != nextProps.showQuadrants) {
             let index = this.state.viewer.dataSources.indexOf(this.quadrants)
@@ -821,4 +825,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Map)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Map));
