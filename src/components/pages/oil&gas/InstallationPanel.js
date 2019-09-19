@@ -1,11 +1,11 @@
 import React from 'react';
 import SlidingPanel from '../../sliding-panels/SlidingPanel';
-import Breadcrumbs from '../../breadcrumbs/Breadcrumbs';
 import history from '../../../history';
 import { connect } from 'react-redux';
 import { changeCurrentInstallation } from '../../../actions/installationActions';
 import HardcodedNorthSeaDetailsPanel from '../../sliding-panels/panels/details-panel/installation-details-panel/HardcodedNorthSeaDetailsPanel';
-import KeaneScreen from '../../sliding-panels/panels/details-panel/installation-details-panel/KeaneScreen';
+import InstallationKeaneScreen from '../../sliding-panels/panels/details-panel/installation-details-panel/InstallationKeaneScreen';
+import AreaKeaneScreen from '../../sliding-panels/panels/details-panel/area-details-panel/AreaKeaneScreen';
 
 class InstallationPanel extends React.Component {
     constructor(props) {
@@ -69,10 +69,10 @@ class InstallationPanel extends React.Component {
         let wrappedContent = content
 
         let keaneScreenContent = (
-            <KeaneScreen
+            <InstallationKeaneScreen
                 installationDetails={this.props.currentInstallation}
                 projectId={this.props.projectId}>
-            </KeaneScreen>
+            </InstallationKeaneScreen>
         )
 
         return (
@@ -80,6 +80,13 @@ class InstallationPanel extends React.Component {
                 <SlidingPanel content={wrappedContent} isSmallWidth={true} pullRight={false}></SlidingPanel>
                 {this.props.currentInstallation &&
                     <SlidingPanel content={keaneScreenContent} pullRight={true}></SlidingPanel>}
+
+                {!this.props.currentInstallation && this.props.currentArea && 
+                    <SlidingPanel content={<AreaKeaneScreen
+                        areaDetails={this.props.currentArea.details}
+                        allInstallations={this.props.allInstallations}
+                        projectId={this.props.projectId}>
+                    ></AreaKeaneScreen>} pullRight={true}></SlidingPanel>}
             </div>
         );
     }
@@ -104,13 +111,11 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
     let pathname = state.router.location.pathname;
     let projectId = parsePathName(pathname);
-    if (projectId) {
-
-    }
     return {
         pathname: pathname,
         projectId: projectId,
         currentInstallation: state.InstallationReducer.currentInstallation,
+        currentArea: state.AreaReducer.currentArea
     }
 }
 

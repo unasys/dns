@@ -15,11 +15,11 @@ function formatToAmericanDate(dateStr) {
     return month + '/' + day + '/' + year;
 }
 
-function KeaneScreen(props) {
+function InstallationKeaneScreen(props) {
         let titleBar = (
             <TitleBar 
                 title={props.installationDetails && props.installationDetails.Name} 
-                subtitle={"Operator " + props.installationDetails && props.installationDetails.Operator}
+                subtitle={"Operator " + (props.installationDetails && props.installationDetails.Operator)}
                 installationtype={props.installationDetails && props.installationDetails.FieldType}>
             </TitleBar>
         )
@@ -69,7 +69,7 @@ function KeaneScreen(props) {
         )
 
         let content;
-        if (props.installationDetails.DetailsPanel) {
+        if (props.installationDetails && props.installationDetails.DetailsPanel) {
             content =
                 <>
                 {titleBar}
@@ -93,4 +93,4 @@ function KeaneScreen(props) {
         );
     }
 
-export default KeaneScreen;
+export default InstallationKeaneScreen;

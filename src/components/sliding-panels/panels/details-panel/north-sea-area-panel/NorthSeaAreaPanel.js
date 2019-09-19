@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './NorthSeaAreaPanel.scss';
 import { MapContext } from '../../../../visuals/map/Map';
+import { connect } from 'react-redux';
+import { setCurrentArea } from '../../../../../actions/areaActions';
 
 
 
@@ -20,6 +22,7 @@ class NorthSeaAreaPanel extends React.Component {
         if (area.flyTo) {
             this.context.flyTo(area.flyTo.west, area.flyTo.south, area.flyTo.east, area.flyTo.north, area.flyTo.pitch)
         }
+        this.props.setCurrentArea(area);
     }
 
     resultItem(content) { 
@@ -30,22 +33,75 @@ class NorthSeaAreaPanel extends React.Component {
         </div>
     }
 
+    
     render() {
         return (
-            <div className="areas">
-                {[
-                    { name: "North Sea", flyTo: {north: 55.0, east: 6.0, south: 46.0, west: -4.0, pitch: -65}}, 
-                    { name: "East of Shetland", flyTo: {north: 58.0, east: 9.0, south: 55.0, west: -10.0, pitch: -65}}, 
-                    { name: "Morcambe Bay", flyTo: { north: 54.5, east: -3, south: 50.0, west: -6, pitch: -80}}, 
-                    { name: "Northern North Sea",  flyTo: { north: 57, east: 10, south: 55.0, west: -7, pitch: -75}}, 
-                    { name: "Central North Sea", flyTo: { north: 55, east: 10, south: 54.0, west: -7, pitch: -82}}, 
-                    { name: "Southern North Sea", flyTo: { north: 54.5, east: 4, south: 50.0, west: -1.4, pitch: -75}}, 
-                    { name: "West of Shetland", flyTo: {north: 59.0, east: 0, south: 55.0, west: -8.0, pitch: -75}}
-                ].map(area => this.resultItem(area))}
-            </div>
+                <div className="areas">
+                    {[
+                        { name: "North Sea", 
+                          flyTo: {north: 55.0, east: 6.0, south: 42.0, west: -4.0, pitch: -70},
+                          details: {
+                              name: "North Sea"
+                          }
+                        }, 
+                        { name: "East of Shetland", 
+                          flyTo: {north: 60.0, east: 10.0, south: 58.0, west: -4.0, pitch: -65},
+                          details: {
+                            name: "East of Shetland",
+                            areaCode: "EOS"
+                          }
+                        }, 
+                        { name: "Morcambe Bay", 
+                          flyTo: { north: 54.5, east: -3, south: 50.0, west: -6, pitch: -80},
+                          details: {
+                            name: "Morcambe Bay",
+                            areaCode: "IS"
+                          }
+                        }, 
+                        { name: "Moray Firth", 
+                        flyTo: { north: 58, east: 2, south: 55.0, west: -7, pitch: -75},
+                        details: {
+                            name: "Moray Firth",
+                            areaCode: "MF"
+                        }, 
+                        },
+                        { name: "Northern North Sea", 
+                          flyTo: { north: 57, east: 10, south: 55.0, west: -7, pitch: -75},
+                          details: {
+                              name: "Northern North Sea",
+                              areaCode: "NNS"
+                          }, 
+                        },
+                        { name: "Central North Sea", flyTo: { north: 55, east: 10, south: 54.0, west: -7, pitch: -82},
+                            details: {
+                            name: "Central North Sea",
+                            areaCode: "CNS"
+                          }}, 
+                        { name: "Southern North Sea", flyTo: { north: 54.5, east: 4, south: 50.0, west: -1.4, pitch: -80},
+                        details: {
+                            name: "Southern North Sea",
+                            areaCode: "SNS"
+                        }},
+                        { name: "West of Shetland", flyTo: {north: 60.0, east: 0, south: 56.0, west: -7.0, pitch: -75},
+                        details: {
+                            name: "West of Shetland",
+                            areaCode: "WOS"
+                        }}
+                    ].map(area => this.resultItem(area))}
+                </div>
         )
     }
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        setCurrentArea: (currentArea) => {
+            dispatch(setCurrentArea(currentArea))
+        }
+    }
+}
+
 NorthSeaAreaPanel.contextType = MapContext;
 
-export default NorthSeaAreaPanel;
+export default connect(null, mapDispatchToProps)(NorthSeaAreaPanel);
+

@@ -11,7 +11,6 @@ import DecomyardHandler from '../../../DecomyardHandler';
 import PipelineHandler from '../../../PipelineHandler';
 import WindfarmHandler from '../../../WindfarmHandler';
 
-const defaultFilter = (installations) => { return installations.filter(installation => { return installation.Type === "OilAndGas" }) }
 const CancelToken = axios.CancelToken;
 
 class OilandGas extends React.Component {
@@ -24,10 +23,10 @@ class OilandGas extends React.Component {
             breadcrumbs: [],
             installations: [],
             pipelines:[],
-            currentInstallationFilter: defaultFilter,
             didYouKnowMessage: null
         }
         this.clearDidYouKnowMessage = this.clearDidYouKnowMessage.bind(this);
+        this.setAllInstallations = this.setAllInstallations.bind(this);
         this.source = CancelToken.source();
     }
 
@@ -43,6 +42,12 @@ class OilandGas extends React.Component {
     clearDidYouKnowMessage() {
         this.setState({
             didYouKnowMessage: null
+        })
+    }
+
+    setAllInstallations(installations) {
+        this.setState({
+            installations: installations
         })
     }
 
@@ -74,11 +79,12 @@ class OilandGas extends React.Component {
                     addToBreadcrumbs={this.addToBreadcrumbs}
                     removeBreadcrumbsAfter={this.removeBreadcrumbsAfterIndex}
                     installations={this.props.cesiumInstallations}
+                    allInstallations={this.state.installations}
                     setCesiumInstallations={this.props.setCesiumInstallations}
                     changeMainContent={this.props.changeMainContent}>
                 </InstallationPanel>}
 
-                <InstallationHandler></InstallationHandler>
+                <InstallationHandler setAllInstallations={this.setAllInstallations}></InstallationHandler>
                 <WindfarmHandler></WindfarmHandler>
                 <DecomyardHandler></DecomyardHandler>
                 <PipelineHandler></PipelineHandler>

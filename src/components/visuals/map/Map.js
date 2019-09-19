@@ -329,9 +329,9 @@ class Map extends Component {
     componentDidMount() {
         this.initialiseViewer();
         var west = -10.0;
-        var south = 0.0;
-        var east = 2.0;
-        var north = 45.0;
+        var south = 35.0;
+        var east = 10.0;
+        var north = 46.0;
         var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
         // fly to the north sea
         this.state.viewer.camera.flyTo({
@@ -339,7 +339,7 @@ class Map extends Component {
             duration: 3,
             orientation: {
                 heading: 0.0,
-                pitch: window.Cesium.Math.toRadians(295),
+                pitch: window.Cesium.Math.toRadians(-50),
                 roll: 0.0
             }
         });
