@@ -431,7 +431,7 @@ class Map extends Component {
             if (window.Cesium.defined(previousPickedEntity)) {
                 let color;
                 if (previousPickedEntity.installation) {
-                    color = window.Cesium.Color.GOLD;
+                    color = previousPickedEntity.installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD;
                 } else if (previousPickedEntity.decomyard) {
                     color = window.Cesium.Color.AQUA;
                 } else {
@@ -503,7 +503,7 @@ class Map extends Component {
                 position: window.Cesium.Cartesian3.fromDegrees(installation.Longitude, installation.Latitude),
                 point: {
                     pixelSize: 6,
-                    color: window.Cesium.Color.GOLD,
+                    color: installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD,
                     outlineColor: window.Cesium.Color.BLACK,
                     outlineWidth: 1,
                     eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
