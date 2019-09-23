@@ -10,6 +10,7 @@ import InstallationHandler from '../../../InstallationHandler';
 import DecomyardHandler from '../../../DecomyardHandler';
 import PipelineHandler from '../../../PipelineHandler';
 import WindfarmHandler from '../../../WindfarmHandler';
+import FieldHandler from '../../../FieldHandler';
 
 const CancelToken = axios.CancelToken;
 
@@ -88,6 +89,7 @@ class OilandGas extends React.Component {
                 <WindfarmHandler></WindfarmHandler>
                 <DecomyardHandler></DecomyardHandler>
                 <PipelineHandler></PipelineHandler>
+                <FieldHandler></FieldHandler>
             </>
         );
     }

@@ -3,7 +3,7 @@ import axios from 'axios';
 const assetsBaseUrl = process.env.NODE_ENV == 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
 export function fetchInstallations(token) {
-    let url = assetsBaseUrl+`/data/installations.json`;
+    let url = assetsBaseUrl + `/data/installations.json`;
 
     return axios.get(url, {
         cancelToken: token
@@ -11,7 +11,7 @@ export function fetchInstallations(token) {
 }
 
 export function fetchDecomyards(token) {
-    let url = assetsBaseUrl+`/data/decomyards/decomyards.json`;
+    let url = assetsBaseUrl + `/data/decomyards/decomyards.json`;
 
     return axios.get(url, {
         cancelToken: token
@@ -19,13 +19,22 @@ export function fetchDecomyards(token) {
 }
 
 export function fetchPipelines(token) {
-    let url = assetsBaseUrl+`/data/pipelines/pipelines.json`;
+    let url = assetsBaseUrl + `/data/pipelines/pipelines.json`;
     return axios.get(url, {
         cancelToken: token
     })
 }
+
 export function fetchWindfarms(token) {
-    let url = assetsBaseUrl+`/data/windfarms/windfarms.json`;
+    let url = assetsBaseUrl + `/data/windfarms/windfarms.json`;
+
+    return axios.get(url, {
+        cancelToken: token
+    })
+}
+
+export function fetchFields(token) {
+    let url = assetsBaseUrl + `/data/fields/fields.json`;
 
     return axios.get(url, {
         cancelToken: token

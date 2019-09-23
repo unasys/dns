@@ -14,6 +14,7 @@ import InstallationTable from './components/pages/installationTable/Installation
 import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
 import PipelineTable from './components/pages/pipelineTable/PipelineTable';
 import WindfarmTable from './components/pages/windfarmTable/WindfarmTable';
+import FieldTable from './components/pages/fields/FieldTable';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 const store = createStore(
@@ -91,9 +92,16 @@ class App extends Component {
                     </DynamicWidthPage>
                   )
                 }} />
+                <Route path="/fields" render={(props) => {
+                  return (
+                    <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
+                      <FieldTable {...props}></FieldTable>
+                    </DynamicWidthPage>
+                  )
+                }} />
               </Switch>
               <Switch>
-                <Route path="/(installations|decomyards|windfarms|pipelines)" render={(props) => {
+                <Route path="/(installations|decomyards|windfarms|pipelines|fields)" render={(props) => {
                   return (
                     <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>
                   )
