@@ -638,13 +638,17 @@ class Map extends Component {
     }
 
     getFieldColour(field) {
+        let hcType = field["Hydrocarbon Type"];
+        if (hcType) {
+            hcType = hcType.toLowerCase();
+        }
+        let colour = pipelineColours[hcType];
+        if (!colour) {
+            colour = pipelineColours["default"];
+        }
+        colour = colour.withAlpha(0.75);
 
-        var material = new window.Cesium.PolylineGlowMaterialProperty({
-            color:window.Cesium.Color.LIGHTCORAL,
-            glowPower:0.2,
-            taperPower:1.0
-        })
-        return material;
+        return colour;
     }
 
     loadUpPipelines(nextProps) {
@@ -802,13 +806,17 @@ class Map extends Component {
 
         for (var i = 0; i < fields.length; i++) {
             var field = fields[i];
+            var material = this.getFieldColour(field);
             var flatCoordinates = field.Coordinates.flat();
             var poly = this.state.viewer.entities.add({
-                name: field["Pipeline Name"],
+                name: field["Field Name"],
                 //position: position,
-                polyline: {
-                    positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                    material: this.getFieldColour(field),
+                polygon: {
+                    hierarchy : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                    height:0,
+                    material: material,
+                    outline : true,
+                    outlineColor : window.Cesium.Color.WHITE,
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
                     //width: scaledWidth,
                     //distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
@@ -817,9 +825,7 @@ class Map extends Component {
             });
             poly.field = field;
             fieldPolys.push(poly);
-            poly.windfarm = field;
         }
-
         this.fieldPoints = fieldPolys;
         return fieldPolys;
     }

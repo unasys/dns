@@ -348,8 +348,6 @@ class FieldTable extends Component {
       }
     ]
 
-    console.log(this.state.rows);
-
     return (
       <>
         <div className="ReactTable-container">
