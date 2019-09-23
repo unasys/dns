@@ -806,25 +806,27 @@ class Map extends Component {
 
         for (var i = 0; i < fields.length; i++) {
             var field = fields[i];
-            var material = this.getFieldColour(field);
-            var flatCoordinates = field.Coordinates.flat();
-            var poly = this.state.viewer.entities.add({
-                name: field["Field Name"],
-                //position: position,
-                polygon: {
-                    hierarchy : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                    height:0,
-                    material: material,
-                    outline : true,
-                    outlineColor : window.Cesium.Color.WHITE,
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    //width: scaledWidth,
-                    //distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
-                },
-                //label: label
-            });
-            poly.field = field;
-            fieldPolys.push(poly);
+            if(field.Coordinates){
+                var material = this.getFieldColour(field);
+                var flatCoordinates = field.Coordinates.flat();
+                var poly = this.state.viewer.entities.add({
+                    name: field["Field Name"],
+                    //position: position,
+                    polygon: {
+                        hierarchy : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                        height:0,
+                        material: material,
+                        outline : true,
+                        outlineColor : window.Cesium.Color.WHITE,
+                        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                        //width: scaledWidth,
+                        //distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
+                    },
+                    //label: label
+                });
+                poly.field = field;
+                fieldPolys.push(poly);
+            }
         }
         this.fieldPoints = fieldPolys;
         return fieldPolys;
