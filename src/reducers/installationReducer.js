@@ -1,4 +1,4 @@
-import { CHANGE_CURRENT_INSTALLATION, SET_CESIUM_INSTALLATIONS, CHANGE_INSTALLATION_FILTER_TYPE, INSTALLATION_FILTER_TYPES, SET_CESIUM_DECOMYARDS, SET_CESIUM_PIPELINES, SET_CESIUM_WINDFARMS} from '../actions/installationActions';
+import { CHANGE_CURRENT_INSTALLATION, SET_CESIUM_INSTALLATIONS, CHANGE_INSTALLATION_FILTER_TYPE, INSTALLATION_FILTER_TYPES, SET_CESIUM_DECOMYARDS, SET_CESIUM_PIPELINES, SET_CESIUM_WINDFARMS, SET_CESIUM_FIELDS, CHANGE_FIELD_FILTER_TYPE} from '../actions/installationActions';
 
 let initialState = {
     currentInstallation: null,
@@ -6,6 +6,7 @@ let initialState = {
     cesiumPipelines:[],
     cesiumDecomyards:[],
     cesiumWindfarms: [],
+    cesiumFields: [],
     installationFilter: INSTALLATION_FILTER_TYPES.OilAndGas
 }
   
@@ -41,6 +42,12 @@ export default function(state = initialState, action) {
                 ...state,
                 installationFilter: { type: action.filterType, propertyName: action.propertyName, on: action.filterOn } 
             })
+        case SET_CESIUM_FIELDS:
+            return ({
+                ...state,
+                cesiumFields: action.fields
+            })
+
         default:
             return state;
     }

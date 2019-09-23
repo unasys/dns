@@ -49,10 +49,15 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 <NavigationHeading heading={'Windfarms'} onClick={()=> history.push('windfarms')}></NavigationHeading>
             </div>
 
+        let fieldsSelection =
+            this.props.installationSelectorComponent &&
+            <div>
+                <NavigationHeading heading={'Fields'} onClick={()=> history.push('fields')}></NavigationHeading>
+            </div>
+
         let mapFilters = <MapFilterPanel></MapFilterPanel>
 
         let northSeaAreaSelector = <NorthSeaAreaPanel></NorthSeaAreaPanel>
-
 
         let content =
             <>
@@ -61,6 +66,7 @@ class ConfigInstallationDetailsPanel extends React.Component {
                 {decomYardSelection}
                 {pipelineSelection}
                 {windfarmSelection}
+                {fieldsSelection}
                 {navigationHeadings}
                 {mapFilters}
             </>
