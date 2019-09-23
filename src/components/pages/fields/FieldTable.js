@@ -19,7 +19,7 @@ class FieldTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      shownColumns: ['Name'],
+      shownColumns: ['Field Name'],
       expandedLevel: 0,
       rows: [],
       currentRowLength: 0,
@@ -150,7 +150,6 @@ class FieldTable extends Component {
     }
   }
 
-
   onTableViewChange() {
     if (this.reactTable.current) {
       let currentFields = this.reactTable.current.getResolvedState().sortedData
@@ -168,7 +167,7 @@ class FieldTable extends Component {
         id: 'Field Name',
         accessor: row => {
           if (row["Field Name"]) {
-            return row["Field Name"].toLowerCase()
+            return row["Field Name"];
           }
         },
         Cell: row => (
@@ -202,16 +201,17 @@ class FieldTable extends Component {
           return row['Field Status']
         },
         id: 'Field Status',
-        show: this.state.shownColumns.includes('Field Status')
+        show: this.state.shownColumns.includes('Field Status'),
+        minWidth: 180
       },
       {
         Header: 'Current Operator',
         id: 'Current Operator',
         accessor: row => {
-          return row["Current Operator"].toLowerCase()
+          return row["Current Operator"]
         },
         show: this.state.shownColumns.includes('Current Operator'),
-        minWidth: 150
+        minWidth: 260
       },
       {
         Header: 'Depth (m)',
@@ -237,9 +237,9 @@ class FieldTable extends Component {
           return (<div>
             <Range 
               allowCross={false} 
-              min={this.state.minDiameterInData} 
-              max={this.state.maxDiameterInData} 
-              defaultValue={[this.state.minDiameterInData, this.state.maxDiameterInData]}
+              min={0} 
+              max={this.state.maxLengthInData} 
+              defaultValue={[0, this.state.maxLengthInData]}
               onChange={onChange} />
           </div>)
         }
@@ -348,6 +348,8 @@ class FieldTable extends Component {
       }
     ]
 
+    console.log(this.state.rows);
+
     return (
       <>
         <div className="ReactTable-container">
@@ -383,8 +385,8 @@ function mapDispatchToProps(dispatch) {
       changeFieldFilterType: (filterType, propertyName, filterOn) => {
           dispatch(changeFieldFilterType(filterType, propertyName, filterOn))
       },
-      setCesiumFields: (pipelines) => {
-        dispatch(setCesiumFields(pipelines))
+      setCesiumFields: (fields) => {
+        dispatch(setCesiumFields(fields))
     }
   }
 }

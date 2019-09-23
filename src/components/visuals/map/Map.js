@@ -452,12 +452,13 @@ class Map extends Component {
                 }
                 previousPickedEntity.point.color = color;
             }
-            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm || self.state.lastHoveredPipeline) {
+            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm || self.state.lastHoveredPipeline|| self.state.lastHoveredField) {
                 self.setState({
                     lastHoveredInstallation: null,
                     lastHoveredDecomyard: null,
                     lastHoveredWindfarm: null,
-                    lastHoveredPipeline: null
+                    lastHoveredPipeline: null,
+                    lastHoveredField : null
                 })
             }
 
@@ -478,6 +479,10 @@ class Map extends Component {
             } else if (window.Cesium.defined(pickedEntity) && window.Cesium.defined(pickedEntity.pipeline)) {
                 self.setState({
                     lastHoveredPipeline: pickedEntity.pipeline
+                })
+            } else if (window.Cesium.defined(pickedEntity) && window.Cesium.defined(pickedEntity.field)) {
+                self.setState({
+                    lastHoveredField: pickedEntity.field
                 })
             }
         }, window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
