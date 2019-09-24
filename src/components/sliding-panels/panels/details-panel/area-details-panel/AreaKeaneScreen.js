@@ -43,7 +43,16 @@ function getAreaModelId(areaName) {
         case "West of Shetland": {
             return null;
         }
+    }
+}
 
+function getAreaRealisticModelId(areaName) {
+    switch (areaName) {
+        case "East of Shetland": {
+            return "5dc86fb5edaa473cbcc594bc6b4f6889";
+        }
+
+        default: return null;
     }
 }
 
@@ -150,6 +159,9 @@ function AreaKeaneScreen(props) {
                 {doubleWidth}
                 {<div style={{width:'100%', height:'350px', paddingTop:'20px'}}>
                     {getAreaModelId(areaName) && <SketchfabViewer sketchfabId={getAreaModelId(areaName)} isNonAbsolute={true}></SketchfabViewer>}
+                </div>}
+                {<div style={{width:'100%', height:'350px', paddingTop:'20px'}}>
+                    {getAreaRealisticModelId(areaName) && <SketchfabViewer sketchfabId={getAreaRealisticModelId(areaName)} isNonAbsolute={true}></SketchfabViewer>}
                 </div>}
             </div>
         }

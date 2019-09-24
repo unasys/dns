@@ -47,22 +47,6 @@ class NorthSeaAreaPanel extends React.Component {
                         }
                     },
                     {
-                        name: "Morcambe Bay",
-                        flyTo: { north: 54.5, east: -3, south: 50.0, west: -6, pitch: -80 },
-                        details: {
-                            name: "Morcambe Bay",
-                            areaCode: "IS"
-                        }
-                    },
-                    {
-                        name: "Moray Firth",
-                        flyTo: { north: 58, east: 2, south: 55.0, west: -7, pitch: -75 },
-                        details: {
-                            name: "Moray Firth",
-                            areaCode: "MF"
-                        },
-                    },
-                    {
                         name: "Northern North Sea",
                         flyTo: { north: 57, east: 10, south: 55.0, west: -7, pitch: -75 },
                         details: {
@@ -80,6 +64,21 @@ class NorthSeaAreaPanel extends React.Component {
                         }
                     },
                     {
+                        name: "West of Shetland", flyTo: { north: 60.0, east: 0, south: 56.0, west: -7.0, pitch: -75 },
+                        details: {
+                            name: "West of Shetland",
+                            areaCode: "WOS"
+                        }
+                    },
+                    {
+                        name: "Moray Firth",
+                        flyTo: { north: 58, east: 2, south: 55.0, west: -7, pitch: -75 },
+                        details: {
+                            name: "Moray Firth",
+                            areaCode: "MF"
+                        },
+                    },
+                    {
                         name: "Central North Sea", flyTo: { north: 55, east: 10, south: 54.0, west: -7, pitch: -82 },
                         details: {
                             name: "Central North Sea",
@@ -87,17 +86,18 @@ class NorthSeaAreaPanel extends React.Component {
                         }
                     },
                     {
+                        name: "Morcambe Bay",
+                        flyTo: { north: 54.5, east: -3, south: 50.0, west: -6, pitch: -80 },
+                        details: {
+                            name: "Morcambe Bay",
+                            areaCode: "IS"
+                        }
+                    },
+                    {
                         name: "Southern North Sea", flyTo: { north: 54.5, east: 4, south: 50.0, west: -1.4, pitch: -80 },
                         details: {
                             name: "Southern North Sea",
                             areaCode: "SNS"
-                        }
-                    },
-                    {
-                        name: "West of Shetland", flyTo: { north: 60.0, east: 0, south: 56.0, west: -7.0, pitch: -75 },
-                        details: {
-                            name: "West of Shetland",
-                            areaCode: "WOS"
                         }
                     }
                 ].map(area => this.resultItem(area))}
