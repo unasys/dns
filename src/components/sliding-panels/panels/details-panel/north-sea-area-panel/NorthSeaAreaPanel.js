@@ -28,6 +28,7 @@ class NorthSeaAreaPanel extends React.Component {
     resultItem(content) { 
         return <div className="area-result-item-container">
             <div className={"area-result-item" + (this.state.highlighted === content.name ? ' highlighted' : '')} onClick={(e) => this.areaClicked(content)}>
+                {content.indented && <i class="fas fa-share" style={{transform:'scaleY(-1)', paddingLeft:'10px', paddingRight:'5px'}}></i>}
                 {content.name}
             </div>
         </div>
@@ -44,34 +45,35 @@ class NorthSeaAreaPanel extends React.Component {
                               name: "North Sea"
                           }
                         }, 
-                        { name: "East of Shetland", 
-                          flyTo: {north: 60.0, east: 10.0, south: 58.0, west: -4.0, pitch: -65},
-                          details: {
-                            name: "East of Shetland",
-                            areaCode: "EOS"
-                          }
-                        }, 
                         { name: "Morcambe Bay", 
-                          flyTo: { north: 54.5, east: -3, south: 50.0, west: -6, pitch: -80},
-                          details: {
+                        flyTo: { north: 54.5, east: -3, south: 50.0, west: -6, pitch: -80},
+                        details: {
                             name: "Morcambe Bay",
                             areaCode: "IS"
-                          }
-                        }, 
-                        { name: "Moray Firth", 
-                        flyTo: { north: 58, east: 2, south: 55.0, west: -7, pitch: -75},
-                        details: {
-                            name: "Moray Firth",
-                            areaCode: "MF"
-                        }, 
+                        }
+                    }, 
+                    { name: "Moray Firth", 
+                    flyTo: { north: 58, east: 2, south: 55.0, west: -7, pitch: -75},
+                    details: {
+                        name: "Moray Firth",
+                        areaCode: "MF"
+                    }, 
                         },
                         { name: "Northern North Sea", 
-                          flyTo: { north: 57, east: 10, south: 55.0, west: -7, pitch: -75},
-                          details: {
-                              name: "Northern North Sea",
-                              areaCode: "NNS"
-                          }, 
-                        },
+                        flyTo: { north: 57, east: 10, south: 55.0, west: -7, pitch: -75},
+                        details: {
+                            name: "Northern North Sea",
+                            areaCode: "NNS"
+                        }, 
+                    },
+                    { name: "East of Shetland", 
+                      indented: true,
+                      flyTo: {north: 60.0, east: 10.0, south: 58.0, west: -4.0, pitch: -65},
+                      details: {
+                        name: "East of Shetland",
+                        areaCode: "EOS"
+                      }
+                    }, 
                         { name: "Central North Sea", flyTo: { north: 55, east: 10, south: 54.0, west: -7, pitch: -82},
                             details: {
                             name: "Central North Sea",
