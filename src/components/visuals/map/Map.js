@@ -138,6 +138,18 @@ class Map extends Component {
         }
         // toggle pipelines
 
+        // toggle fields 
+        if (this.props.showFields != nextProps.showFields) {
+            if (!this.fieldPoints) {
+                this.loadUpFields(nextProps);
+            } else {
+                this.fieldPoints.map(field => {
+                    field.show = nextProps.showFields
+                })
+            }   
+            this.state.viewer.scene.requestRender()
+        }
+        // toggle fields
 
         if (this.state.lastHoveredInstallation !== nextState.lastHoveredInstallation) {
             return true;
@@ -166,9 +178,9 @@ class Map extends Component {
             if (this.props.cesiumWindfarms.length === 0 && nextProps.cesiumWindfarms !== 0) {
                 this.windfarmPoints = this.loadUpWindfarms(nextProps);
             }
-            if (this.props.cesiumFields.length === 0 && nextProps.cesiumFields !== 0) {
-                this.fieldPoints = this.loadUpFields(nextProps);
-            }
+            // if (this.props.cesiumFields.length === 0 && nextProps.cesiumFields !== 0) {
+            //     this.fieldPoints = this.loadUpFields(nextProps);
+            // }
             // if (this.props.cesiumPipelines.length === 0 && nextProps.cesiumPipelines !== 0) {
             //     this.pipelinePoints = this.loadUpPipelines(nextProps);
             // }
@@ -186,7 +198,7 @@ class Map extends Component {
                 this.clearWindfarms();
                 this.loadUpWindfarms(nextProps);
             }
-            if (this.props.cesiumFields.length !== nextProps.cesiumFields.length) {
+            if (this.props.cesiumFields.length !== nextProps.cesiumFields.length && this.props.showFields) {
                 this.clearFields();
                 this.loadUpFields(nextProps);
             }
@@ -884,6 +896,7 @@ const mapStateToProps = (state) => {
         cesiumFields: state.InstallationReducer.cesiumFields,
         showQuadrants: state.BathymetryReducer.ogaQuadrantsSwitched,
         showPipelines: state.BathymetryReducer.ogaPipelinesSwitched,
+        showFields: state.BathymetryReducer.ogaFieldsSwitched,
         installationFilter: filterType,
         decomYardFilter: decomYardFilterType,
         pipelineFilterType: pipelineFilterType,

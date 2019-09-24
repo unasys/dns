@@ -1,7 +1,7 @@
 import React from 'react';
 import Switch from 'react-toggle-switch';
 import './MapFilterPanel.scss';
-import { toggleQuadrants, togglePipelines} from '../../../../../actions/bathymetryActions';
+import { toggleQuadrants, togglePipelines, toggleFields } from '../../../../../actions/bathymetryActions';
 import { connect } from 'react-redux';
 
 class MapFilterPanel extends React.Component {
@@ -30,6 +30,12 @@ class MapFilterPanel extends React.Component {
                             <Switch onClick={this.props.togglePipelines} on={this.props.ogaPipelinesSwitched} className={'bathymetry-title'} />
                         </div>
                     </div>
+                    <div className="layer-container">
+                        <div className="layer-content">
+                            <div className="bathymetry-title">Fields</div>
+                            <Switch onClick={this.props.toggleFields} on={this.props.ogaFieldsSwitched} className={'bathymetry-title'} />
+                        </div>
+                    </div>
                 </div>
             </div >
 
@@ -46,6 +52,9 @@ function mapDispatchToProps(dispatch) {
         },
         togglePipelines: () => {
             dispatch(togglePipelines())
+        },
+        toggleFields: () => {
+            dispatch(toggleFields())
         }
     }
 }
@@ -55,6 +64,7 @@ function mapStateToProps(state) {
     return {
         ogaQuadrantsSwitched: state.BathymetryReducer.ogaQuadrantsSwitched,
         ogaPipelinesSwitched: state.BathymetryReducer.ogaPipelinesSwitched,
+        ogaFieldsSwitched: state.BathymetryReducer.ogaFieldsSwitched,
         coords: state.BathymetryReducer.positions
     }
 }

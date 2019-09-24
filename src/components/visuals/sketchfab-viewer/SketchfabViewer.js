@@ -57,7 +57,7 @@ class SketchfabViewer extends Component {
             if (this.props.annotationSelected) {
                 this.props.annotationSelected(index);
             }
-            this.props.changeWalkthroughSrc(this.state.annotations[index]["content"]["raw"]);
+            //this.props.changeWalkthroughSrc(this.state.annotations[index]["content"]["raw"]);
         }
     }
 
