@@ -855,6 +855,7 @@ class Map extends Component {
         let hoveredDecomyard = this.state.lastHoveredDecomyard;
         let hoveredWindfarm = this.state.lastHoveredWindfarm;
         let hoveredPipeline = this.state.lastHoveredPipeline;
+        let hoveredField = this.state.lastHoveredField;
 
         return (
             <div style={{ height: '100%', width: '100%' }}>
@@ -865,6 +866,7 @@ class Map extends Component {
                     <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
                     <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
                     <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
+                    <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard>
                 </ReactCursorPosition>
                 <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider>
             </div>
