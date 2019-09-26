@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+
 import './Map.scss';
 import { changeCurrentInstallation } from '../../../actions/installationActions';
 import axios from 'axios';
@@ -226,6 +227,10 @@ class Map extends Component {
                     this.loadCesiumModelOntoMap(nextProps.currentInstallation.CesiumId)
                 }
                 return true;
+            }
+
+            if (this.props.year !== nextProps.year) {
+                this.state.viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601(""+nextProps.year);
             }
         }
         return false;
@@ -528,9 +533,39 @@ class Map extends Component {
             var installation = installations[i];
             if (installation.id === "world-map") { continue; }
             var model = iconModels[installation.Type];
+            var start = installation.StartDate;
+            var end = installation.PlannedCOP;
+            
+            if(start){
+                start=window.Cesium.JulianDate.fromDate(new Date(start));
+               
+            }
+            else{
+                start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
+            }
+           
+            if(end){
+               
+                end = window.Cesium.JulianDate.fromDate(new Date(end));
+            }
+            else{
+                end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
+            }
+            
+            var availability = null;
+            if(start || end){
+                var interval = new window.Cesium.TimeInterval({
+                    start: start,
+                    stop: end,
+                    isStartIncluded : start !== null,
+                    isStopIncluded : end !== null
+                });
+                availability = new window.Cesium.TimeIntervalCollection([interval]);
+            }
             var point = this.state.viewer.entities.add({
                 name: installation["Name"],
                 position: window.Cesium.Cartesian3.fromDegrees(installation.Longitude, installation.Latitude),
+                availability:availability,
                 point: {
                     pixelSize: 6,
                     color: installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD,
@@ -557,7 +592,7 @@ class Map extends Component {
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
                     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 }
             });
@@ -606,7 +641,7 @@ class Map extends Component {
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
                     verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 }
             });
@@ -658,7 +693,7 @@ class Map extends Component {
         if (!colour) {
             colour = pipelineColours["default"];
         }
-        colour = colour.withAlpha(0.75);
+        colour = colour.withAlpha(0.7).brighten(0.5,new window.Cesium.Color() );
 
         return colour;
     }
@@ -723,9 +758,36 @@ class Map extends Component {
                                 font: '14px sans-serif'
                             };
 
+                        var start = pipeline["Start Date"];
+                        if(start){
+                            start=window.Cesium.JulianDate.fromDate(new Date(start));
+                        }
+                        else{
+                            start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
+                        }
+                        var end = pipeline["End Date"];
+                        if(end){
+                            end = window.Cesium.JulianDate.fromDate(new Date(end));
+                        }
+                        else{
+                            end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
+                        }
+                        
+                        var availability = null;
+                        if(start || end){
+                            var interval = new window.Cesium.TimeInterval({
+                                start: start,
+                                stop: end,
+                                isStartIncluded : start !== null,
+                                isStopIncluded : end !== null
+                            });
+                            availability=new window.Cesium.TimeIntervalCollection([interval]);
+                        }
+
                         var poly = this.state.viewer.entities.add({
                             name: pipeline["Pipeline Name"],
                             position: position,
+                            availability:availability,
                             polyline: {
                                 positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
                                 material: material,
@@ -771,6 +833,7 @@ class Map extends Component {
             var windfarm = windfarms[i];
 
             if (!windfarm.LONGITUDE || !windfarm.LATITUDE) continue;
+
             var point = this.state.viewer.entities.add({
                 name: windfarm["Name"],
                 position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
@@ -793,7 +856,7 @@ class Map extends Component {
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
                     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 50000),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 }
             });
@@ -819,11 +882,35 @@ class Map extends Component {
         for (var i = 0; i < fields.length; i++) {
             var field = fields[i];
             if(field.Coordinates){
+                var start = field["Discovery Date"];
+               
+                        if(start){
+                            start=window.Cesium.JulianDate.fromDate(new Date(start));
+                        }
+                        else{
+                            start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
+                        }
+                        var end = 
+                            end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
+                        
+                        
+                        var availability = null;
+                        if(start || end){
+                            var interval = new window.Cesium.TimeInterval({
+                                start: start,
+                                stop: end,
+                                isStartIncluded : start !== null,
+                                isStopIncluded : end !== null
+                            });
+                            availability=new window.Cesium.TimeIntervalCollection([interval]);
+                        }
+               
                 var material = this.getFieldColour(field);
                 var flatCoordinates = field.Coordinates.flat();
                 var poly = this.state.viewer.entities.add({
                     name: field["Field Name"],
                     //position: position,
+                    availability : availability,
                     polygon: {
                         hierarchy : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
                         height:0,
@@ -844,6 +931,8 @@ class Map extends Component {
         return fieldPolys;
     }
 
+    
+
     render() {
         const divStyle = {
             width: '100%',
@@ -857,6 +946,7 @@ class Map extends Component {
         let hoveredPipeline = this.state.lastHoveredPipeline;
         let hoveredField = this.state.lastHoveredField;
 
+    
         return (
             <div style={{ height: '100%', width: '100%' }}>
                 <ReactCursorPosition style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
@@ -890,6 +980,7 @@ const mapStateToProps = (state) => {
     let pipelineFilterType = state.InstallationReducer.pipelineFilterType
     let windfarmFilterType = state.InstallationReducer.windfarmFilterType
     let fieldFilterType = state.InstallationReducer.fieldFilterType
+    let year = state.MapReducer.year;
     return {
         currentInstallation: state.InstallationReducer.currentInstallation,
         cesiumInstallations: state.InstallationReducer.cesiumInstallations,
@@ -904,7 +995,8 @@ const mapStateToProps = (state) => {
         pipelineFilterType: pipelineFilterType,
         cesiumWindfarms: state.InstallationReducer.cesiumWindfarms,
         windfarmFilter: windfarmFilterType,
-        fieldFilter: fieldFilterType
+        fieldFilter: fieldFilterType,
+        year:year
     }
 }
 
