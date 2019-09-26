@@ -40,6 +40,21 @@ let pipelineColours = {
     "disused": window.Cesium.Color.fromBytes(128, 128, 128),
     "default": window.Cesium.Color.WHITE
 }
+
+let fieldColours = {
+    "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
+    "cond": window.Cesium.Color.fromBytes(154, 159, 167),
+    "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
+    "gas": window.Cesium.Color.fromBytes(133, 30, 7),
+    "hydraulic": window.Cesium.Color.fromBytes(255, 255, 0),
+    "methanol": window.Cesium.Color.fromBytes(223, 155, 255),
+    "mixed hydrocarbons": window.Cesium.Color.fromBytes(155, 0, 76),
+    "oil": window.Cesium.Color.fromBytes(53, 86, 36),
+    "other fluid": window.Cesium.Color.fromBytes(161, 0, 123),
+    "water": window.Cesium.Color.fromBytes(0, 92, 230),
+    "disused": window.Cesium.Color.fromBytes(128, 128, 128),
+    "default": window.Cesium.Color.WHITE
+}
 const CancelToken = axios.CancelToken;
 
 class Map extends Component {
@@ -592,7 +607,7 @@ class Map extends Component {
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
                     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 800000),
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
                 }
             });
@@ -689,11 +704,11 @@ class Map extends Component {
         if (hcType) {
             hcType = hcType.toLowerCase();
         }
-        let colour = pipelineColours[hcType];
+        let colour = fieldColours[hcType];
         if (!colour) {
-            colour = pipelineColours["default"];
+            colour = fieldColours["default"];
         }
-        colour = colour.withAlpha(0.7).brighten(0.5,new window.Cesium.Color() );
+        colour = colour.withAlpha(0.7);
 
         return colour;
     }
@@ -906,6 +921,7 @@ class Map extends Component {
                         }
                
                 var material = this.getFieldColour(field);
+              //  var outline = material.brighten(0.5, new window.Cesium.Color());
                 var flatCoordinates = field.Coordinates.flat();
                 var poly = this.state.viewer.entities.add({
                     name: field["Field Name"],
@@ -915,8 +931,8 @@ class Map extends Component {
                         hierarchy : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
                         height:0,
                         material: material,
-                        outline : true,
-                        outlineColor : window.Cesium.Color.WHITE,
+                       // outline : true,
+                        //outlineColor : outline,
                         heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
                         //width: scaledWidth,
                         //distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
