@@ -608,7 +608,8 @@ class Map extends Component {
                     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 800000),
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                    scale:0.65
                 }
             });
             point.installation = installation;
