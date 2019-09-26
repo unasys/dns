@@ -7,6 +7,7 @@ import HardcodedNorthSeaDetailsPanel from '../../sliding-panels/panels/details-p
 import InstallationKeaneScreen from '../../sliding-panels/panels/details-panel/installation-details-panel/InstallationKeaneScreen';
 import AreaKeaneScreen from '../../sliding-panels/panels/details-panel/area-details-panel/AreaKeaneScreen';
 
+
 class InstallationPanel extends React.Component {
     constructor(props) {
         super(props);
@@ -75,11 +76,14 @@ class InstallationPanel extends React.Component {
             </InstallationKeaneScreen>
         )
 
+       
+
         return (
             <div>
                 <SlidingPanel content={wrappedContent} isSmallWidth={true} pullRight={false}></SlidingPanel>
                 {this.props.currentInstallation &&
                     <SlidingPanel content={keaneScreenContent} pullRight={true}></SlidingPanel>}
+                    
 
                 {!this.props.currentInstallation && this.props.currentArea && 
                     <SlidingPanel content={<AreaKeaneScreen

@@ -57,8 +57,6 @@ function getAreaRealisticModelId(areaName) {
 }
 
 function AreaKeaneScreen(props) {
-        console.log(props);
-
         if (!props.areaDetails) return <div>Area not supported.</div>;
 
         let areaName = props.areaDetails.name;
