@@ -607,9 +607,9 @@ class Map extends Component {
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
                     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 800000),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    scale:0.65
+                    scale:0.5
                 }
             });
             point.installation = installation;
