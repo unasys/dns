@@ -467,11 +467,11 @@ class Map extends Component {
 
         const viewer = this.state.viewer;
         let self = this;
+        var element = document.getElementById('cesiumContainer');
         // If the mouse is over a point of interest, change the entity billboard scale and color
         handler.setInputAction(function (movement) {
             var pickedPrimitive = viewer.scene.pick(movement.endPosition);
             var pickedEntity = (window.Cesium.defined(pickedPrimitive)) ? pickedPrimitive.id : undefined;
-
             // Unhighlight the previously picked entity
             if (window.Cesium.defined(previousPickedEntity)) {
                 let color;
@@ -495,27 +495,33 @@ class Map extends Component {
             }
 
             // Highlight the currently picked entity
-            if (window.Cesium.defined(pickedEntity) && window.Cesium.defined(pickedEntity.point)) {
-                viewer.scene.requestRender();
-                pickedEntity.point.color = window.Cesium.Color.AZURE;
-                previousPickedEntity = pickedEntity;
-                self.setState({
-                    lastHoveredInstallation: pickedEntity.installation
-                })
-                self.setState({
-                    lastHoveredDecomyard: pickedEntity.decomyard
-                })
-                self.setState({
-                    lastHoveredWindfarm: pickedEntity.windfarm
-                })
-            } else if (window.Cesium.defined(pickedEntity) && window.Cesium.defined(pickedEntity.pipeline)) {
-                self.setState({
-                    lastHoveredPipeline: pickedEntity.pipeline
-                })
-            } else if (window.Cesium.defined(pickedEntity) && window.Cesium.defined(pickedEntity.field)) {
-                self.setState({
-                    lastHoveredField: pickedEntity.field
-                })
+            if(window.Cesium.defined(pickedEntity)){
+                element.style.cursor = 'pointer';
+                if (window.Cesium.defined(pickedEntity.point)) {
+                    viewer.scene.requestRender();
+                    pickedEntity.point.color = window.Cesium.Color.AZURE;
+                    previousPickedEntity = pickedEntity;
+                    self.setState({
+                        lastHoveredInstallation: pickedEntity.installation
+                    });
+                    self.setState({
+                        lastHoveredDecomyard: pickedEntity.decomyard
+                    });
+                    self.setState({
+                        lastHoveredWindfarm: pickedEntity.windfarm
+                    });
+                } else if (window.Cesium.defined(pickedEntity.pipeline)) {
+                    self.setState({
+                        lastHoveredPipeline: pickedEntity.pipeline
+                    });
+                } else if (window.Cesium.defined(pickedEntity.field)) {
+                    self.setState({
+                        lastHoveredField: pickedEntity.field
+                    });
+                }
+            }
+            else {
+                element.style.cursor = 'default';
             }
         }, window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }
@@ -523,6 +529,7 @@ class Map extends Component {
     mouseEvent(e) {
         const picked = this.state.viewer.scene.pick(e.position);
         const id = picked ? picked.id || picked.primitive.id : null;
+        
         if (picked && id) {
             if (id.installation !== undefined) {
 
