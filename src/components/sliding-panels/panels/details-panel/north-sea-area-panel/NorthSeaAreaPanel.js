@@ -57,7 +57,7 @@ class NorthSeaAreaPanel extends React.Component {
                     {
                         name: "East of Shetland",
                         indented: true,
-                        flyTo: { north: 60.0, east: 10.0, south: 58.0, west: -4.0, pitch: -65 },
+                        flyTo: { north: 60.0, east: 7.0, south: 58.0, west: -1.0, pitch: -65 },
                         details: {
                             name: "East of Shetland",
                             areaCode: "EOS"
