@@ -95,16 +95,16 @@ function AreaKeaneScreen(props) {
         var month = dateNow.getMonth();
         var day = dateNow.getDate();
         var next5Years = new Date(year + 5, month, day);
-        var last5Years = new Date(year -5, month, day);
+        var next10Years = new Date(year + 10, month, day);
     
         let decomNext5Years = installationsInArea.filter(installation => { 
             let plannedCOP = new Date(installation.PlannedCOP);
             return plannedCOP > dateNow && plannedCOP < next5Years;
         }).length
 
-        let installedLast5Years = installationsInArea.filter(installation => {
-            let startDate = new Date(installation.StartDate);
-            return startDate > last5Years;
+        let decomNext10Years = installationsInArea.filter(installation => { 
+            let plannedCOP = new Date(installation.PlannedCOP);
+            return plannedCOP > dateNow && plannedCOP < next10Years;
         }).length
 
         let weightInArea = installationsInArea.reduce((acc, installation) => {
@@ -125,7 +125,7 @@ function AreaKeaneScreen(props) {
             </EntryContainer>
             <EntryContainer borderBottom>
                 <Entry title={"Decom next 5 years"} subtitle={decomNext5Years}></Entry>
-                <Entry title={"Installed last 5 years"} subtitle={installedLast5Years}></Entry>
+                <Entry title={"Decom next 10 years"} subtitle={decomNext10Years}></Entry>
             </EntryContainer>
             <EntryContainer borderBottom>
                 <Entry icon={<i className="fas fa-dumbbell" style={{fontSize:'20px'}}></i>} title={"Total Weight"} subtitle={weightInArea + " te"}></Entry>
