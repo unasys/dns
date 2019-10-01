@@ -2,7 +2,7 @@
   position: absolute;
   z-index: 1;
   width: 300px;
-  border: 2px solid white;
+  border: 1px solid grey;
   font-family: "Roboto", sans-serif;
   color: white;
   background-color: rgba(51,71,92, 1);
@@ -20,7 +20,7 @@
 
   .installation-hover-card-title {
     display: flex;
-    border-bottom: 2px solid white;
+    border-bottom: 1px solid grey;
     padding-top: 5px;
     padding-left: 20px;
     margin-bottom: 5px;
@@ -30,7 +30,7 @@
 
     .image-block-container {
       display: flex;
-      border-bottom: 1px dotted white;
+      border-bottom: 1px dotted grey;
       padding-bottom: 10px;
       .image {
         img {
@@ -47,7 +47,7 @@
     .text-block-container {
       display: flex;
       flex-wrap:wrap;
-      border-bottom: 1px dotted white;
+      border-bottom: 1px dotted grey;
       padding-top: 10px;
       padding-bottom: 10px;
     }

@@ -38,11 +38,6 @@ class InstallationHoverCard extends Component {
                             <div className="installation-hover-card-value">{hoveredInstallation["Type"]}</div>
                         </div>
                     </div>
-                    <div className="image-block-container">
-                        {/* <div className="image">
-                            <div style={{ height: '50px', width: '50px', backgroundColor: 'yellow', borderRadius: '10px' }}>
-                            </div>
-                        </div> */}
                         <div className="text-block">
                             <div className="installation-text-value">
                                 <div className="installation-hover-card-heading">Area</div>
@@ -53,7 +48,7 @@ class InstallationHoverCard extends Component {
                                 <div className="installation-hover-card-value">{hoveredInstallation["StartDate"]}</div>
                             </div>
                         </div>
-                    </div>
+                    
                 </div>
             </div>
         )
