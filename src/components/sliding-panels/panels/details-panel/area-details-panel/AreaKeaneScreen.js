@@ -5,6 +5,7 @@ import TitleBar from '../../keane-screen/TitleBar';
 import EntryContainer from '../../keane-screen/EntryContainer';
 import Entry from '../../keane-screen/Entry';
 import SketchfabViewer from '../../../../visuals/sketchfab-viewer/SketchfabViewer';
+import history from '../../../../../history';
 
 function groupBy(list, keyGetter) {
     const map = new Map();
@@ -124,8 +125,20 @@ function AreaKeaneScreen(props) {
               {installationTypeEntries}
             </EntryContainer>
             <EntryContainer borderBottom>
+                <span onClick={() => {
+                        let toSearchParams = new URLSearchParams();
+                        toSearchParams.set("plannedCOPStart", "2025"); // generate date add 5 years
+                        history.push({
+                            pathname: `/installations`,
+                            search: `?${toSearchParams}`
+                        });
+                    }
+                }>
                 <Entry title={"Decom next 5 years"} subtitle={decomNext5Years}></Entry>
+                </span>
+                <span>
                 <Entry title={"Decom next 10 years"} subtitle={decomNext10Years}></Entry>
+                </span>
             </EntryContainer>
             <EntryContainer borderBottom>
                 <Entry icon={<i className="fas fa-dumbbell" style={{fontSize:'20px'}}></i>} title={"Total Weight"} subtitle={weightInArea + " te"}></Entry>

@@ -284,7 +284,7 @@ class InstallationTable extends Component {
               allowCross={false} 
               min={this.state.minCOPInData.getTime()} 
               max={this.state.maxCOPInData.getTime()} 
-              defaultValue={[this.state.minCOPInData.getTime(), this.state.maxCOPInData.getTime()]}
+              defaultValue={[this.props.plannedCOPStart ? this.props.plannedCOPStart : this.state.minCOPInData.getTime(), this.state.maxCOPInData.getTime()]}
               onChange={onChange}
               tipFormatter={value => {
                 let date = new Date(value);
@@ -456,4 +456,14 @@ function mapDispatchToProps(dispatch) {
     }
   }
 }
-export default connect(null, mapDispatchToProps)(InstallationTable)
+
+function mapStateToProps(state) {
+  let search = new URLSearchParams(state.router.location.search);
+
+  let plannedCOPStart = search.get("plannedCOPStart");
+  return {
+    plannedCOPStart: plannedCOPStart
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(InstallationTable)
