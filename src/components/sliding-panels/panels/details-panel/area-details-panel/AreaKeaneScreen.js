@@ -127,7 +127,8 @@ function AreaKeaneScreen(props) {
             <EntryContainer borderBottom>
                 <span onClick={() => {
                         let toSearchParams = new URLSearchParams();
-                        toSearchParams.set("plannedCOPStart", "2025"); // generate date add 5 years
+                        toSearchParams.set("plannedCOPStart", new Date().getFullYear()); // generate date add 5 years
+                        toSearchParams.set("plannedCOPEnd", new Date().getFullYear() + 5)
                         history.push({
                             pathname: `/installations`,
                             search: `?${toSearchParams}`

@@ -181,15 +181,11 @@ class PipelineTable extends Component {
       {
         Header: 'Name',
         id: 'Name',
-        accessor: row => {
-          if (row["Pipeline Name"]) {
-            return row["Pipeline Name"].toLowerCase()
-          }
-        },
+        accessor: "Pipeline Name",
         Cell: row => (
           <>
             <div className="table-installation-title">
-              {row.value}
+              {row.value.toLowerCase()}
             </div>
           </>
         ),
@@ -205,25 +201,22 @@ class PipelineTable extends Component {
       },
       {
         Header: 'Pipeline DTI No',
-        accessor: row => {
-          return row['Pipeline DTI No']
-        },
+        accessor: 'Pipeline DTI No',
         id: 'Pipeline DTI No',
         show: this.state.shownColumns.includes('Pipeline DTI No')
       },
       {
         Header: 'Status',
         id: 'Status',
-        accessor: row => {
-          return row["Status"].toLowerCase()
-        },
+        accessor: "Status",
+        Cell: row => row.value.toLowerCase(),
         show: this.state.shownColumns.includes('Status'),
         minWidth: 150
       },
       {
         Header: 'Fluid Conveyed',
         id: 'Fluid Conveyed',
-        accessor: row => { return row["Fluid Conveyed"] },
+        accessor: "Fluid Conveyed",
         show: this.state.shownColumns.includes('Fluid Conveyed'),
         minWidth: 180
       },
@@ -231,12 +224,14 @@ class PipelineTable extends Component {
         Header: 'Operator',
         id: 'Operator',
         accessor: row => { if (row["Operator"]) { return row["Operator"].toLowerCase() } },
+        Cell: row => row.value.toLowerCase(),
         show: this.state.shownColumns.includes('Operator')
       },
       {
         Header: 'Inst Type',
         id: 'Inst Type',
-        accessor: row => { if (row["Inst Type"]) { return row["Inst Type"].toLowerCase() } },
+        accessor: "Inst Type",
+        Cell: row => row.value.toLowerCase(),
         show: this.state.shownColumns.includes('Inst Type')
       },
       {

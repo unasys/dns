@@ -279,12 +279,25 @@ class InstallationTable extends Component {
           return aDate >= bDate ? 1 : -1;
         },
         Filter: ({ filter, onChange }) => {
+          console.log(this.props.plannedCOPStart);
+          let plannedCOPstarttime = null;
+          let plannedCOPendtime = null;
+          if (this.props.plannedCOPStart) {
+            let date = new Date();
+            date.setFullYear(this.props.plannedCOPStart)
+            plannedCOPstarttime = date.getTime();
+          }
+          if (this.props.plannedCOPEnd) {
+            let date = new Date();
+            date.setFullYear(this.props.plannedCOPEnd)
+            plannedCOPendtime = date.getTime();
+          }
           return (<div>
             <Range 
               allowCross={false} 
               min={this.state.minCOPInData.getTime()} 
               max={this.state.maxCOPInData.getTime()} 
-              defaultValue={[this.props.plannedCOPStart ? this.props.plannedCOPStart : this.state.minCOPInData.getTime(), this.state.maxCOPInData.getTime()]}
+              defaultValue={[plannedCOPstarttime ? plannedCOPstarttime : this.state.minCOPInData.getTime(), plannedCOPendtime ? plannedCOPendtime : this.state.maxCOPInData.getTime()]}
               onChange={onChange}
               tipFormatter={value => {
                 let date = new Date(value);
@@ -461,8 +474,10 @@ function mapStateToProps(state) {
   let search = new URLSearchParams(state.router.location.search);
 
   let plannedCOPStart = search.get("plannedCOPStart");
+  let plannedCOPEnd = search.get("plannedCOPEnd");
   return {
-    plannedCOPStart: plannedCOPStart
+    plannedCOPStart: plannedCOPStart,
+    plannedCOPEnd: plannedCOPEnd
   }
 }
 

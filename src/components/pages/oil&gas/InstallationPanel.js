@@ -76,8 +76,6 @@ class InstallationPanel extends React.Component {
             </InstallationKeaneScreen>
         )
 
-       
-
         return (
             <div>
                 <SlidingPanel content={wrappedContent} isSmallWidth={true} pullRight={false}></SlidingPanel>
