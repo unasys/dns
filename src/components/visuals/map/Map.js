@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import './Map.scss';
-import { changeCurrentInstallation } from '../../../actions/installationActions';
+import { changeCurrentEntity } from '../../../actions/installationActions';
 import axios from 'axios';
 import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
@@ -531,11 +531,17 @@ class Map extends Component {
         const id = picked ? picked.id || picked.primitive.id : null;
         
         if (picked && id) {
+            if (id.windfarm !== undefined) {
+                this.props.changeCurrentEntity({entity: id.windfarm, type: "Windfarm"});
+            }
+            if (id.pipeline !== undefined) {
+                this.props.changeCurrentEntity({entity: id.pipeline, type: "Pipeline"});
+            }
             if (id.installation !== undefined) {
 
                 if (this.props.currentInstallation === id.installation) return; // if selecting already selected installation.
                 // dot has been clicked.
-                this.props.changeCurrentInstallation(id.installation);
+                this.props.changeCurrentEntity({ entity:id.installation, type: "Installation"});
             }
         }
     }
@@ -560,14 +566,12 @@ class Map extends Component {
             
             if(start){
                 start=window.Cesium.JulianDate.fromDate(new Date(start));
-               
             }
-            else{
+            else {
                 start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
             }
            
-            if(end){
-               
+            if(end) {
                 end = window.Cesium.JulianDate.fromDate(new Date(end));
             }
             else{
@@ -992,9 +996,9 @@ export const MapContext = React.createContext();
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeCurrentInstallation: (currentInstallation) => {
-            dispatch(changeCurrentInstallation(currentInstallation))
-        }
+        changeCurrentEntity: (currentEntity) => {
+            dispatch(changeCurrentEntity(currentEntity))
+        },
     }
 }
 

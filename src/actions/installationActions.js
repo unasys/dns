@@ -9,6 +9,7 @@ export const CHANGE_DECOMYARD_FILTER_TYPE = "CHANGE_DECOMYARD_FILTER_TYPE";
 export const CHANGE_PIPELINE_FILTER_TYPE = "CHANGE_PIPELINE_FILTER_TYPE";
 export const CHANGE_WINDFARM_FILTER_TYPE = "CHANGE_WINDFARM_FILTER_TYPE";
 export const CHANGE_FIELD_FILTER_TYPE = "CHANGE_FIELD_FILTER_TYPE";
+export const SET_CURRENT_ENTITY = "SET_CURRENT_ENTITY";
 
 export const INSTALLATION_FILTER_TYPES = {
     OilAndGas: 1,
@@ -18,8 +19,8 @@ export const INSTALLATION_FILTER_TYPES = {
     Property: 5
 }
 
-export function changeCurrentInstallation(currentInstallation) {
-    return { type: CHANGE_CURRENT_INSTALLATION, currentInstallation };
+export function changeCurrentEntity(currentEntity) {
+    return { type: SET_CURRENT_ENTITY, currentEntity };
 }
 
 export function setCesiumInstallations(installations) {

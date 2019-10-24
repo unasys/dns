@@ -36,13 +36,13 @@ function getAreaModelId(areaName) {
             return null;
         }
         case "Northern North Sea": {
-            return null;
+            return "04be885ac00b44e4b321e50d76f67546";
         }
         case "Southern North Sea": {
             return "df135c854ced45a1b74fa9940f3316a0";
         }
         case "West of Shetland": {
-            return null;
+            return "a29c3d267673403180147d8c543cea01";
         }
     }
 }
