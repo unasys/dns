@@ -535,9 +535,17 @@ class Map extends Component {
                 this.props.changeCurrentEntity({entity: id.windfarm, type: "Windfarm"});
             }
             if (id.pipeline !== undefined) {
+                let pipeline = this.pipelinePoints.find(pipeline => id.pipeline["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
+                if (pipeline) {
+                    this.state.viewer.flyTo(pipeline);
+                }
                 this.props.changeCurrentEntity({entity: id.pipeline, type: "Pipeline"});
             }
             if (id.installation !== undefined) {
+                let installation = this.installationPoints.find(installation => id.installation.Name === installation.installation.Name);
+                if (installation) {
+                    this.state.viewer.flyTo(installation);
+                }
 
                 if (this.props.currentInstallation === id.installation) return; // if selecting already selected installation.
                 // dot has been clicked.
@@ -559,22 +567,21 @@ class Map extends Component {
 
         for (var i = 0; i < installations.length; i++) {
             var installation = installations[i];
-            if (installation.id === "world-map") { continue; }
             var model = iconModels[installation.Type];
             var start = installation.StartDate;
             var end = installation.PlannedCOP;
             
-            if(start){
+            if (start){
                 start=window.Cesium.JulianDate.fromDate(new Date(start));
             }
             else {
                 start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
             }
            
-            if(end) {
+            if (end) {
                 end = window.Cesium.JulianDate.fromDate(new Date(end));
             }
-            else{
+            else {
                 end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
             }
             
@@ -753,6 +760,7 @@ class Map extends Component {
                             c = coordinates.flat();
                         }
                         let flatCoordinates = c.flat();
+
                         var material = this.getPipelineColour(pipeline);
 
                         var pipeDiameter = parseInt(pipeline.Diameter) || 0
@@ -765,10 +773,17 @@ class Map extends Component {
                         var scaledTextDistance = this.scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
                         var label;
                         var a = Math.floor((flatCoordinates.length - 1) / 2);
-                        var x = flatCoordinates[a];
-                        var y = flatCoordinates[a + 1];
-                        var position = window.Cesium.Cartesian3.fromDegrees(x, y);
+                        var y = flatCoordinates[a];
+                        var x = flatCoordinates[a + 1];
 
+                        // swapping them here due to a problem with the data. seemed to be mixed up in some cases.
+                        if (y < x) {
+                            var tempY = y;
+                            y = x;
+                            x = tempY;
+                        }
+                        var position = window.Cesium.Cartesian3.fromDegrees(x, y);
+ 
                         label =
                             {
                                 text: pipeline["Pipeline Name"],
@@ -973,7 +988,6 @@ class Map extends Component {
         let hoveredWindfarm = this.state.lastHoveredWindfarm;
         let hoveredPipeline = this.state.lastHoveredPipeline;
         let hoveredField = this.state.lastHoveredField;
-
     
         return (
             <div style={{ height: '100%', width: '100%' }}>
@@ -986,7 +1000,8 @@ class Map extends Component {
                     <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
                     <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard>
                 </ReactCursorPosition>
-                <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider>
+                {/* {React.Children.map(this.props.children, child => { console.log(child); React.Children.map(child.props.children, c => { console.log(c); return React.cloneElement(c, this.state.viewer && { flyTo: this.state.viewer.flyTo })})})} */}
+                {this.props.children}
             </div>
         );
     }

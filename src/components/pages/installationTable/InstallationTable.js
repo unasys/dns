@@ -429,6 +429,9 @@ class InstallationTable extends Component {
       },
     ]
 
+    console.log(this.props);
+    console.log(this.props.flyTo);
+
     return (
       <>
         <div className="ReactTable-container">
