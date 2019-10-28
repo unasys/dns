@@ -1027,8 +1027,7 @@ class Map extends Component {
                     <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
                     <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard>
                 </ReactCursorPosition>
-                {/* {React.Children.map(this.props.children, child => { console.log(child); React.Children.map(child.props.children, c => { console.log(c); return React.cloneElement(c, this.state.viewer && { flyTo: this.state.viewer.flyTo })})})} */}
-                {this.props.children}
+                <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider>
             </div>
         );
     }
