@@ -131,9 +131,7 @@ class Map extends Component {
         }
         if (prevProps.selectedInstallation !== this.props.selectedInstallation && this.props.selectedInstallation) {
             if (!this.installationPoints) return;
-            
-            console.log(this.props.selectedInstallation);
-            console.log(this.installationPoints);
+
             let installation = this.installationPoints.find(installation => this.props.selectedInstallation._original.Name === installation.installation.Name);
             if (installation) {
                 this.state.viewer.flyTo(installation);
