@@ -429,9 +429,6 @@ class InstallationTable extends Component {
       },
     ]
 
-    console.log(this.props);
-    console.log(this.props.flyTo);
-
     return (
       <>
         <div className="ReactTable-container">
@@ -446,6 +443,17 @@ class InstallationTable extends Component {
             minRows={0}
             pageSize={this.state.installations.length}
             onFilteredChange={this.onTableViewChange}
+            getTrProps={(state, rowInfo) => {
+              if (rowInfo && rowInfo.row) {
+                return {
+                  onClick: (e) => {
+                    this.props.setSelectedInstallation(rowInfo.row);
+                  }
+                }
+              }else{
+                return {}
+              }
+            }}
           />
           <div className="button-bar">
               <i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i>

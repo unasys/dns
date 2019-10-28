@@ -413,6 +413,17 @@ class PipelineTable extends Component {
             minRows={0}
             pageSize={this.state.rows.length}
             onFilteredChange={this.onTableViewChange}
+            getTrProps={(state, rowInfo) => {
+              if (rowInfo && rowInfo.row) {
+                return {
+                  onClick: (e) => {
+                    this.props.setSelectedPipeline(rowInfo.row);
+                  }
+                }
+              }else{
+                return {}
+              }
+            }}
           />
           <div className="button-bar">
               <i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i>

@@ -27,27 +27,27 @@ const store = createStore(
   )
 );
 
-let mainContent = [
-  <Map></Map>,
-]
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mainContentIndex: 0
+      selectedPipeline: null,
+      selectedInstallation: null
     }
-    this.changeMainContentIndex = this.changeMainContentIndex.bind(this);
+    this.setSelectedPipeline = this.setSelectedPipeline.bind(this);
+    this.setSelectedInstallation = this.setSelectedInstallation.bind(this);
   }  
 
-  getMainPanelContent() {
-    return mainContent[this.state.mainContentIndex];
+  setSelectedInstallation(newInstallation) {
+    this.setState({
+      selectedInstallation: newInstallation
+    })
   }
 
-  changeMainContentIndex(index) {
+  setSelectedPipeline(newPipeline) {
     this.setState({
-      mainContentIndex: index
-    });
+      selectedPipeline: newPipeline
+    })
   }
 
   render() {
@@ -58,16 +58,16 @@ class App extends Component {
             <Route render={(props) => {
               if (this.state.checkingSession) return <span></span>;
 
-              return <Header changeMainContent={this.changeMainContentIndex} {...props} />
+              return <Header {...props} />
             }
             } />
             <div className="content-container">
-              <Map>
+              <Map selectedPipeline={this.state.selectedPipeline} selectedInstallation={this.state.selectedInstallation}>
               <Switch>          
                 <Route path="/installations" render={(props) => {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                      <InstallationTable {...props}></InstallationTable>
+                      <InstallationTable {...props} setSelectedInstallation={this.setSelectedInstallation}></InstallationTable>
                     </DynamicWidthPage>
                   )
                 }} />
@@ -81,7 +81,7 @@ class App extends Component {
                 <Route path="/pipelines" render={(props) => {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                      <PipelineTable {...props}></PipelineTable>
+                      <PipelineTable {...props} setSelectedPipeline={this.setSelectedPipeline}></PipelineTable>
                       </DynamicWidthPage>
                       )
                     }} />

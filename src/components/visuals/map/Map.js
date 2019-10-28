@@ -119,8 +119,37 @@ class Map extends Component {
         return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.selectedPipeline !== this.props.selectedPipeline && this.props.selectedPipeline) {
+            if (!this.pipelinePoints) return;
+
+            let pipeline = this.pipelinePoints.find(pipeline => this.props.selectedPipeline._original["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
+            if (pipeline) {
+                this.state.viewer.flyTo(pipeline);
+            }
+            this.props.changeCurrentEntity({entity: this.props.selectedPipeline, type: "Pipeline"});
+        }
+        if (prevProps.selectedInstallation !== this.props.selectedInstallation && this.props.selectedInstallation) {
+            if (!this.installationPoints) return;
+            
+            console.log(this.props.selectedInstallation);
+            console.log(this.installationPoints);
+            let installation = this.installationPoints.find(installation => this.props.selectedInstallation._original.Name === installation.installation.Name);
+            if (installation) {
+                this.state.viewer.flyTo(installation);
+            }
+            this.props.changeCurrentEntity({entity: this.props.selectedInstallation, type: "Installation"});
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.location.pathname !== this.props.location.pathname) {
+            return true;
+        }
+        if (nextProps.selectedPipeline !== this.props.selectedPipeline) {
+            return true;
+        }
+        if (nextProps.selectedInstallation !== this.props.selectedInstallation) {
             return true;
         }
         // toggle quadrants 
