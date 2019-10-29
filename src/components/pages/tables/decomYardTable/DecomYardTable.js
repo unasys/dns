@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import './TableStyles.scss';
-import history from '../../../history';
-import { fetchDecomyards } from '../../../api/Installations.js';
+import '../TableStyles.scss';
+import history from '../../../../history';
+import { fetchDecomyards } from '../../../../api/Installations.js';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { changeDecomYardFilterType,  setCesiumDecomyards } from '../../../actions/installationActions';
+import { changeDecomYardFilterType,  setCesiumDecomyards } from '../../../../actions/installationActions';
 
 const CancelToken = axios.CancelToken;
 

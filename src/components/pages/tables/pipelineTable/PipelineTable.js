@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import './TableStyles.scss';
-import history from '../../../history';
+import '../TableStyles.scss';
+import history from '../../../../history';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import { fetchPipelines } from '../../../api/Installations.js';
+import { fetchPipelines } from '../../../../api/Installations.js';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { changePipelineFilterType, setCesiumPipelines } from '../../../actions/installationActions';
+import { changePipelineFilterType, setCesiumPipelines } from '../../../../actions/installationActions';
 
 const CancelToken = axios.CancelToken;
 const Slider = require('rc-slider');

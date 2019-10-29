@@ -10,11 +10,11 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createReducers from './reducers/reducers';
 import { routerMiddleware } from 'connected-react-router';
 import { ConnectedRouter } from 'connected-react-router';
-import InstallationTable from './components/pages/installationTable/InstallationTable';
-import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
-import PipelineTable from './components/pages/pipelineTable/PipelineTable';
-import WindfarmTable from './components/pages/windfarmTable/WindfarmTable';
-import FieldTable from './components/pages/fields/FieldTable';
+import InstallationTable from './components/pages/tables/installationTable/InstallationTable';
+import DecomYardTable from './components/pages/tables/decomYardTable/DecomYardTable';
+import PipelineTable from './components/pages/tables/pipelineTable/PipelineTable';
+import WindfarmTable from './components/pages/tables/windfarmTable/WindfarmTable';
+import FieldTable from './components/pages/tables/fieldsTable/FieldTable';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 const store = createStore(

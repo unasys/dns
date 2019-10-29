@@ -1,0 +1,76 @@
+.table-installation-title {
+    display:flex;
+    color:#99A3AE;
+    .table-installation-image {
+        display:flex;
+        img {
+            height:30px !important;
+        }
+    }
+    p {
+        padding-left:15px;
+    }
+
+    i {
+        font-size:18px;
+        color: #5B5963;
+        margin-left:auto;
+    }
+}
+
+.rc-tooltip, .rc-slider-tooltip {
+    z-index: 5;
+}
+
+.ReactTable {
+    .rt-table { 
+        font-size:13px;
+        color:#99A3AE !important;
+        background-color:#33475C !important;
+    }
+    .rt-thead {
+        border-bottom: 1px solid rgba(130, 129, 168, 0.314) !important;
+        .rt-th {
+           input {
+               background: rgba(153, 163, 174, 0.336) !important;
+               border: 1px solid  #383e4e54 !important;
+           } 
+           .rc-slider {
+               .rc-slider-rail {
+                   background-color: #99A3AE;
+               }
+               .rc-slider-track {
+                   background-color: #99A3AE !important;
+               }
+           }
+        }
+    }
+    .rt-tbody, .rt-tfoot {
+        .rt-tr-group:first-child {
+            border-top:none !important;
+        }
+        .rt-tr-group {
+            border-bottom: 1px solid #2D3D4E !important;
+            border-top: 1px solid #435C76 !important;
+        }
+    }
+    .-pagination {
+        background-color:rgba(65,68,80,.65);
+        color:white;
+        .-btn {
+            color:white;
+        }
+    }
+}
+
+
+.button-bar {
+    background:#33475C !important;
+    .backbutton { 
+        color:#99A3AE !important;
+    }
+
+    .outward-handle {
+        color:#99A3AE !important;
+    }
+}
