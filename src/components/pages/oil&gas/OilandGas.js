@@ -6,11 +6,11 @@ import '../../../api/RandomFact';
 import { setCesiumInstallations } from '../../../actions/installationActions';
 import InformationMessageBox from '../../visuals/did-you-know-box/InformationMessageBox';
 import { fetchFact } from '../../../api/RandomFact';
-import InstallationHandler from '../../../InstallationHandler';
-import DecomyardHandler from '../../../DecomyardHandler';
-import PipelineHandler from '../../../PipelineHandler';
-import WindfarmHandler from '../../../WindfarmHandler';
-import FieldHandler from '../../../FieldHandler';
+import InstallationHandler from '../../../handlers/InstallationHandler';
+import DecomyardHandler from '../../../handlers/DecomyardHandler';
+import PipelineHandler from '../../../handlers/PipelineHandler';
+import WindfarmHandler from '../../../handlers/WindfarmHandler';
+import FieldHandler from '../../../handlers/FieldHandler';
 
 const CancelToken = axios.CancelToken;
 

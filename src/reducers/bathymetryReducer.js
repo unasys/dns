@@ -4,7 +4,6 @@ const initialState = {
     ogaFieldsSwitched: false,
     ogaQuadrantsSwitched: false,
     ogaWellsSwitched: false,
-    ogaFieldsSwitched: false, 
     ogaPipelinesSwitched: false, 
     positions: []
 }

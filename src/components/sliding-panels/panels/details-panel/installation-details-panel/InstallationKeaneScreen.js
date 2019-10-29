@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../../Panels.scss';
 import ConfigInstallationDetailsPanel from '../ConfigInstallationDetailsPanel';
 import TitleBar from '../../keane-screen/TitleBar';

@@ -151,7 +151,7 @@ class Map extends Component {
             return true;
         }
         // toggle quadrants 
-        if (this.props.showQuadrants != nextProps.showQuadrants) {
+        if (this.props.showQuadrants !== nextProps.showQuadrants) {
             let index = this.state.viewer.dataSources.indexOf(this.quadrants)
             let dataSource = this.state.viewer.dataSources.get(index);
             if (nextProps.showQuadrants) {
@@ -168,11 +168,11 @@ class Map extends Component {
         // toggle quadrants
 
         // toggle pipelines 
-        if (this.props.showPipelines != nextProps.showPipelines) {
+        if (this.props.showPipelines !== nextProps.showPipelines) {
             if (!this.pipelinePoints) {
                 this.loadUpPipelines(nextProps);
             } else {
-                this.pipelinePoints.map(pipeline => {
+                this.pipelinePoints.forEach(pipeline => {
                     pipeline.show = nextProps.showPipelines
                 })
             }   
@@ -182,11 +182,11 @@ class Map extends Component {
         // toggle pipelines
 
         // toggle fields 
-        if (this.props.showFields != nextProps.showFields) {
+        if (this.props.showFields !== nextProps.showFields) {
             if (!this.fieldPoints) {
                 this.loadUpFields(nextProps);
             } else {
-                this.fieldPoints.map(field => {
+                this.fieldPoints.forEach(field => {
                     field.show = nextProps.showFields
                 })
             }   
@@ -272,6 +272,7 @@ class Map extends Component {
             }
 
             if (this.props.year !== nextProps.year) {
+                // eslint-disable-next-line
                 this.state.viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601(""+nextProps.year);
             }
         }

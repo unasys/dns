@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../../Panels.scss';
 import ConfigInstallationDetailsPanel from '../ConfigInstallationDetailsPanel';
 import TitleBar from '../../keane-screen/TitleBar';
@@ -43,6 +43,9 @@ function getAreaModelId(areaName) {
         }
         case "West of Shetland": {
             return "a29c3d267673403180147d8c543cea01";
+        }
+        default: {
+            
         }
     }
 }

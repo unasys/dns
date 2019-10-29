@@ -57,7 +57,7 @@ class InstallationTable extends Component {
                 payload.data.filter(installation => {
                   if (!installation.PlannedCOP) return false
                   let date = new Date(installation.PlannedCOP)
-                  return date != "Invalid Date"                
+                  return date !== "Invalid Date"                
                 }).map(installation => {
                   let epochTime = Math.round(((new Date(installation.PlannedCOP)).getTime()) / 1000) // seconds since epoch.
                   return epochTime
@@ -166,7 +166,7 @@ class InstallationTable extends Component {
                 <div>
                   <>
                     {row.value.toLowerCase()}
-                    {row.original.ePMID && <img style={{width:'25px', cursor:'pointer', marginLeft:'5px'}} src="https://epm.unasys.com/icon.svg" onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}/>}
+                    {row.original.ePMID && <img style={{width:'25px', cursor:'pointer', marginLeft:'5px'}} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}/>}
                   </>
                 </div>
               </p>
@@ -193,7 +193,9 @@ class InstallationTable extends Component {
         sortMethod: (a, b) => {
           let formattedA = a;
           let formattedB = b;
+          // eslint-disable-next-line
           if (a == "-") formattedA = -1
+          // eslint-disable-next-line
           if (b == "-") formattedB = -1
           return parseInt(formattedA) >= parseInt(formattedB) ? 1 : -1;
         },
@@ -274,7 +276,9 @@ class InstallationTable extends Component {
           let formattedB = b;
           let aDate = new Date(formattedA);
           let bDate = new Date(formattedB)
+          // eslint-disable-next-line
           if (aDate == "Invalid Date") aDate = new Date(-8640000000000000)
+          // eslint-disable-next-line
           if (bDate == "Invalid Date") bDate = new Date(-8640000000000000)
           return aDate >= bDate ? 1 : -1;
         },

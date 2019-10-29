@@ -134,7 +134,6 @@ class WindfarmTable extends Component {
           </span>)
         },
         style: { color: '#fff', fontSize: '15px' },
-        show: this.state.shownColumns.includes('Name'),
         minWidth: 300
       },
       {
