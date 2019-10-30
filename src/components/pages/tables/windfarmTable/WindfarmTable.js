@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import './TableStyles.scss';
-import history from '../../../history';
-import { fetchWindfarms } from '../../../api/Installations.js';
+import '../TableStyles.scss';
+import history from '../../../../history';
+import { fetchWindfarms } from '../../../../api/Installations.js';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { changeWindfarmFilterType,  setCesiumWindfarms } from '../../../actions/installationActions';
+import { changeWindfarmFilterType,  setCesiumWindfarms } from '../../../../actions/installationActions';
 
 const CancelToken = axios.CancelToken;
 
@@ -134,7 +134,6 @@ class WindfarmTable extends Component {
           </span>)
         },
         style: { color: '#fff', fontSize: '15px' },
-        show: this.state.shownColumns.includes('Name'),
         minWidth: 300
       },
       {

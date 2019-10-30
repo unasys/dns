@@ -2,10 +2,12 @@ import React from 'react';
 import SlidingPanel from '../../sliding-panels/SlidingPanel';
 import history from '../../../history';
 import { connect } from 'react-redux';
-import { changeCurrentInstallation } from '../../../actions/installationActions';
+import { changeCurrentEntity } from '../../../actions/installationActions';
 import HardcodedNorthSeaDetailsPanel from '../../sliding-panels/panels/details-panel/installation-details-panel/HardcodedNorthSeaDetailsPanel';
 import InstallationKeaneScreen from '../../sliding-panels/panels/details-panel/installation-details-panel/InstallationKeaneScreen';
 import AreaKeaneScreen from '../../sliding-panels/panels/details-panel/area-details-panel/AreaKeaneScreen';
+import PipelineKeaneScreen from '../../sliding-panels/panels/pipeline-details-panel/PipelineKeaneScreen';
+import WindfarmKeaneScreen from '../../sliding-panels/panels/windfarm-details-panel/WindfarmKeaneScreen';
 
 
 class InstallationPanel extends React.Component {
@@ -21,8 +23,9 @@ class InstallationPanel extends React.Component {
         this.props.addToBreadcrumbs({
             name: 'Home', onClick: () => {
                 this.clearFilterType()
-                this.props.changeCurrentInstallation(null)
-            }
+                this.props.changeCurrentEntity(null)
+            },
+            currentRightKeaneScreen: <></>
         });
         this.onInstallationClick = this.onInstallationClick.bind(this);
     }
@@ -37,8 +40,55 @@ class InstallationPanel extends React.Component {
         }
     }
 
+    componentWillUpdate(nextProps) {
+        if (this.props.currentEntity !== nextProps.currentEntity && nextProps.currentEntity) {      
+            let entityType = nextProps.currentEntity.type;
+            switch (entityType) {
+                case "Installation": 
+                    let keaneScreenContent = (
+                        <InstallationKeaneScreen
+                            installationDetails={nextProps.currentEntity.entity}
+                            projectId={nextProps.projectId}>
+                        </InstallationKeaneScreen>
+                    )      
+                    this.setState({
+                        currentRightKeaneScreen: <SlidingPanel content={keaneScreenContent} pullRight={true}></SlidingPanel>
+                    })
+                    return;
+                case "Windfarm":
+                        this.setState({
+                            currentRightKeaneScreen: <SlidingPanel content={<WindfarmKeaneScreen
+                                windfarmDetails={nextProps.currentEntity.entity}
+                                projectId={nextProps.projectId}>
+                            ></WindfarmKeaneScreen>} pullRight={true}></SlidingPanel>
+                        })
+                    return;
+                case "Pipeline":
+                        this.setState({
+                            currentRightKeaneScreen: <SlidingPanel content={<PipelineKeaneScreen
+                                pipelineDetails={nextProps.currentEntity.entity}
+                                projectId={nextProps.projectId}>
+                            ></PipelineKeaneScreen>} pullRight={true}></SlidingPanel>
+                        })
+                    return;
+                default: 
+                    return;
+            }
+        } else {
+            if (!this.state.currentRightKeaneScreen || this.props.currentArea !== nextProps.currentArea) {
+                this.setState({
+                    currentRightKeaneScreen: <SlidingPanel content={<AreaKeaneScreen
+                        areaDetails={nextProps.currentArea.details}
+                        allInstallations={nextProps.allInstallations}
+                        projectId={nextProps.projectId}>
+                    ></AreaKeaneScreen>} pullRight={true}></SlidingPanel>
+                })
+            }
+        }
+    }
+
     onInstallationClick(installation) {
-        this.props.changeCurrentInstallation(installation);
+        this.props.changeCurrentEntity({entity: installation, type: "Installation"});
         if (installation.ProjectId) {
             history.push(`/projects/${installation.ProjectId}`);
         }
@@ -69,28 +119,12 @@ class InstallationPanel extends React.Component {
 
         let wrappedContent = content
 
-        let keaneScreenContent = (
-            <InstallationKeaneScreen
-                installationDetails={this.props.currentInstallation}
-                projectId={this.props.projectId}>
-            </InstallationKeaneScreen>
-        )
-
-       
-
         return (
             <div>
                 <SlidingPanel content={wrappedContent} isSmallWidth={true} pullRight={false}></SlidingPanel>
-                {this.props.currentInstallation &&
-                    <SlidingPanel content={keaneScreenContent} pullRight={true}></SlidingPanel>}
-                    
-
-                {!this.props.currentInstallation && this.props.currentArea && 
-                    <SlidingPanel content={<AreaKeaneScreen
-                        areaDetails={this.props.currentArea.details}
-                        allInstallations={this.props.allInstallations}
-                        projectId={this.props.projectId}>
-                    ></AreaKeaneScreen>} pullRight={true}></SlidingPanel>}
+                
+                {this.state.currentRightKeaneScreen} 
+            
             </div>
         );
     }
@@ -106,8 +140,8 @@ function parsePathName(pathname) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeCurrentInstallation: (currentInstallation) => {
-            dispatch(changeCurrentInstallation(currentInstallation))
+        changeCurrentEntity: (currentInstallation) => {
+            dispatch(changeCurrentEntity({ entity: currentInstallation, type: "Installation"})) // change type to enum.
         }
     }
 }
@@ -118,7 +152,7 @@ function mapStateToProps(state) {
     return {
         pathname: pathname,
         projectId: projectId,
-        currentInstallation: state.InstallationReducer.currentInstallation,
+        currentEntity: state.InstallationReducer.currentEntity,
         currentArea: state.AreaReducer.currentArea
     }
 }

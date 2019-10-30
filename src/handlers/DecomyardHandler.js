@@ -1,7 +1,7 @@
 import React from 'react';
-import { setCesiumDecomyards } from './actions/installationActions';
+import { setCesiumDecomyards } from '../actions/installationActions';
 import { connect } from 'react-redux';
-import { fetchDecomyards } from './api/Installations';
+import { fetchDecomyards } from '../api/Installations';
 import axios from 'axios';
 
 const CancelToken = axios.CancelToken;

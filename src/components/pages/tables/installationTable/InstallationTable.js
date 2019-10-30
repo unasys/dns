@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import './TableStyles.scss';
-import history from '../../../history';
+import history from '../../../../history';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import Circle01 from '../../../assets/installationTable/circle01.js';
-import Circle02 from '../../../assets/installationTable/circle02.js';
-import { fetchInstallations } from '../../../api/Installations.js';
+import Circle01 from '../../../../assets/installationTable/circle01.js';
+import Circle02 from '../../../../assets/installationTable/circle02.js';
+import { fetchInstallations } from '../../../../api/Installations.js';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { changeInstallationFilterType, INSTALLATION_FILTER_TYPES, setCesiumInstallations } from '../../../actions/installationActions';
+import { changeInstallationFilterType, INSTALLATION_FILTER_TYPES, setCesiumInstallations } from '../../../../actions/installationActions';
 
 const CancelToken = axios.CancelToken;
 const Slider = require('rc-slider');
@@ -57,7 +57,7 @@ class InstallationTable extends Component {
                 payload.data.filter(installation => {
                   if (!installation.PlannedCOP) return false
                   let date = new Date(installation.PlannedCOP)
-                  return date != "Invalid Date"                
+                  return date !== "Invalid Date"                
                 }).map(installation => {
                   let epochTime = Math.round(((new Date(installation.PlannedCOP)).getTime()) / 1000) // seconds since epoch.
                   return epochTime
@@ -166,7 +166,7 @@ class InstallationTable extends Component {
                 <div>
                   <>
                     {row.value.toLowerCase()}
-                    {row.original.ePMID && <img style={{width:'25px', cursor:'pointer', marginLeft:'5px'}} src="https://epm.unasys.com/icon.svg" onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}/>}
+                    {row.original.ePMID && <img style={{width:'25px', cursor:'pointer', marginLeft:'5px'}} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={()=> window.open(`https://epm.unasys.com/projects/${row.row._original.ePMID}/`, "_blank")}/>}
                   </>
                 </div>
               </p>
@@ -193,7 +193,9 @@ class InstallationTable extends Component {
         sortMethod: (a, b) => {
           let formattedA = a;
           let formattedB = b;
+          // eslint-disable-next-line
           if (a == "-") formattedA = -1
+          // eslint-disable-next-line
           if (b == "-") formattedB = -1
           return parseInt(formattedA) >= parseInt(formattedB) ? 1 : -1;
         },
@@ -274,17 +276,32 @@ class InstallationTable extends Component {
           let formattedB = b;
           let aDate = new Date(formattedA);
           let bDate = new Date(formattedB)
+          // eslint-disable-next-line
           if (aDate == "Invalid Date") aDate = new Date(-8640000000000000)
+          // eslint-disable-next-line
           if (bDate == "Invalid Date") bDate = new Date(-8640000000000000)
           return aDate >= bDate ? 1 : -1;
         },
         Filter: ({ filter, onChange }) => {
+          console.log(this.props.plannedCOPStart);
+          let plannedCOPstarttime = null;
+          let plannedCOPendtime = null;
+          if (this.props.plannedCOPStart) {
+            let date = new Date();
+            date.setFullYear(this.props.plannedCOPStart)
+            plannedCOPstarttime = date.getTime();
+          }
+          if (this.props.plannedCOPEnd) {
+            let date = new Date();
+            date.setFullYear(this.props.plannedCOPEnd)
+            plannedCOPendtime = date.getTime();
+          }
           return (<div>
             <Range 
               allowCross={false} 
               min={this.state.minCOPInData.getTime()} 
               max={this.state.maxCOPInData.getTime()} 
-              defaultValue={[this.state.minCOPInData.getTime(), this.state.maxCOPInData.getTime()]}
+              defaultValue={[plannedCOPstarttime ? plannedCOPstarttime : this.state.minCOPInData.getTime(), plannedCOPendtime ? plannedCOPendtime : this.state.maxCOPInData.getTime()]}
               onChange={onChange}
               tipFormatter={value => {
                 let date = new Date(value);
@@ -430,6 +447,17 @@ class InstallationTable extends Component {
             minRows={0}
             pageSize={this.state.installations.length}
             onFilteredChange={this.onTableViewChange}
+            getTrProps={(state, rowInfo) => {
+              if (rowInfo && rowInfo.row) {
+                return {
+                  onClick: (e) => {
+                    this.props.setSelectedInstallation(rowInfo.row);
+                  }
+                }
+              }else{
+                return {}
+              }
+            }}
           />
           <div className="button-bar">
               <i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i>
@@ -456,4 +484,16 @@ function mapDispatchToProps(dispatch) {
     }
   }
 }
-export default connect(null, mapDispatchToProps)(InstallationTable)
+
+function mapStateToProps(state) {
+  let search = new URLSearchParams(state.router.location.search);
+
+  let plannedCOPStart = search.get("plannedCOPStart");
+  let plannedCOPEnd = search.get("plannedCOPEnd");
+  return {
+    plannedCOPStart: plannedCOPStart,
+    plannedCOPEnd: plannedCOPEnd
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(InstallationTable)

@@ -6,11 +6,6 @@ import { connect } from 'react-redux';
 
 class MapFilterPanel extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-    
-
     render() {
         let content = (
             <div style={{ display: 'flex' }}>

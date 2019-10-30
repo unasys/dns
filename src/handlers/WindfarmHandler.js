@@ -1,19 +1,19 @@
 import React from 'react';
-import { setCesiumFields } from './actions/installationActions';
+import { setCesiumWindfarms } from '../actions/installationActions';
 import { connect } from 'react-redux';
-import { fetchFields } from './api/Installations';
+import { fetchWindfarms } from '../api/Installations';
 import axios from 'axios';
 
 const CancelToken = axios.CancelToken;
 
-class FieldHandler extends React.Component {
+class WindfarmHandler extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             windfarms: []
         }
         this.source = CancelToken.source();
-        this.fetchFields = this.fetchFields.bind(this);
+        this.fetchWindfarms = this.fetchWindfarms.bind(this);
         this.attemptedRetry = false;
     }
 
@@ -22,23 +22,23 @@ class FieldHandler extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchFields();
+        this.fetchWindfarms();
     }
 
-    fetchFields() {
-        fetchFields(this.source.token)
+    fetchWindfarms() {
+        fetchWindfarms(this.source.token)
             .then(payload => {
                 //Here we need to assign a type to OilAndGas if it doesn't exists in the response. This is to further help the other components to filter the data.
                 this.setState({
-                    fields: payload.data
+                    windfarms: payload.data
                 });
                 
-                this.props.setCesiumFields(payload.data);
+                this.props.setCesiumWindfarms(payload.data);
 
                 if (payload.status === 401 && !this.attemptedRetry) {
                     this.attemptedRetry = true;
                     new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                        this.fete();
+                        this.fetchWindfarms();
                     });
                 }
             })
@@ -56,9 +56,9 @@ class FieldHandler extends React.Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        setCesiumFields: (fields) => {
-            dispatch(setCesiumFields(fields))
+        setCesiumWindfarms: (installations) => {
+            dispatch(setCesiumWindfarms(installations))
         }
     }
 }
-export default connect(null, mapDispatchToProps)(FieldHandler)
+export default connect(null, mapDispatchToProps)(WindfarmHandler)

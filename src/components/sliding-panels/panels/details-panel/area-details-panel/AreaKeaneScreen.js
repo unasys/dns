@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../../Panels.scss';
 import ConfigInstallationDetailsPanel from '../ConfigInstallationDetailsPanel';
 import TitleBar from '../../keane-screen/TitleBar';
 import EntryContainer from '../../keane-screen/EntryContainer';
 import Entry from '../../keane-screen/Entry';
 import SketchfabViewer from '../../../../visuals/sketchfab-viewer/SketchfabViewer';
+import history from '../../../../../history';
 
 function groupBy(list, keyGetter) {
     const map = new Map();
@@ -35,13 +36,16 @@ function getAreaModelId(areaName) {
             return null;
         }
         case "Northern North Sea": {
-            return null;
+            return "04be885ac00b44e4b321e50d76f67546";
         }
         case "Southern North Sea": {
             return "df135c854ced45a1b74fa9940f3316a0";
         }
         case "West of Shetland": {
-            return null;
+            return "a29c3d267673403180147d8c543cea01";
+        }
+        default: {
+            
         }
     }
 }
@@ -124,8 +128,21 @@ function AreaKeaneScreen(props) {
               {installationTypeEntries}
             </EntryContainer>
             <EntryContainer borderBottom>
+                <span onClick={() => {
+                        let toSearchParams = new URLSearchParams();
+                        toSearchParams.set("plannedCOPStart", new Date().getFullYear()); // generate date add 5 years
+                        toSearchParams.set("plannedCOPEnd", new Date().getFullYear() + 5)
+                        history.push({
+                            pathname: `/installations`,
+                            search: `?${toSearchParams}`
+                        });
+                    }
+                }>
                 <Entry title={"Decom next 5 years"} subtitle={decomNext5Years}></Entry>
+                </span>
+                <span>
                 <Entry title={"Decom next 10 years"} subtitle={decomNext10Years}></Entry>
+                </span>
             </EntryContainer>
             <EntryContainer borderBottom>
                 <Entry icon={<i className="fas fa-dumbbell" style={{fontSize:'20px'}}></i>} title={"Total Weight"} subtitle={weightInArea + " te"}></Entry>

@@ -1,7 +1,7 @@
-import { CHANGE_CURRENT_INSTALLATION, SET_CESIUM_INSTALLATIONS, CHANGE_INSTALLATION_FILTER_TYPE, INSTALLATION_FILTER_TYPES, SET_CESIUM_DECOMYARDS, SET_CESIUM_PIPELINES, SET_CESIUM_WINDFARMS, SET_CESIUM_FIELDS, CHANGE_FIELD_FILTER_TYPE} from '../actions/installationActions';
+import { SET_CURRENT_ENTITY, SET_CESIUM_INSTALLATIONS, CHANGE_INSTALLATION_FILTER_TYPE, INSTALLATION_FILTER_TYPES, SET_CESIUM_DECOMYARDS, SET_CESIUM_PIPELINES, SET_CESIUM_WINDFARMS, SET_CESIUM_FIELDS} from '../actions/installationActions';
 
 let initialState = {
-    currentInstallation: null,
+    currentEntity: null, 
     cesiumInstallations: [],
     cesiumPipelines:[],
     cesiumDecomyards:[],
@@ -12,11 +12,6 @@ let initialState = {
   
 export default function(state = initialState, action) {
     switch(action.type) {
-        case CHANGE_CURRENT_INSTALLATION:
-            return ({
-                ...state,
-                currentInstallation: action.currentInstallation
-            })
         case SET_CESIUM_INSTALLATIONS: 
             return ({
                 ...state, 
@@ -32,6 +27,11 @@ export default function(state = initialState, action) {
                 ...state,
                 cesiumPipelines: action.pipelines
             })
+        case SET_CURRENT_ENTITY:
+                return ({
+                    ...state,
+                    currentEntity: action.currentEntity
+                })
         case SET_CESIUM_WINDFARMS:
             return ({
                 ...state,

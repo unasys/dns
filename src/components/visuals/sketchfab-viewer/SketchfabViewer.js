@@ -62,6 +62,9 @@ class SketchfabViewer extends Component {
     }
 
     reRenderModel() {       
+        if (this.props.sketchfabId === null) {
+            return <div></div>
+        }
         const Sketchfab=window.Sketchfab;
         let version = "1.5.0"
 

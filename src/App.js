@@ -10,11 +10,11 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createReducers from './reducers/reducers';
 import { routerMiddleware } from 'connected-react-router';
 import { ConnectedRouter } from 'connected-react-router';
-import InstallationTable from './components/pages/installationTable/InstallationTable';
-import DecomYardTable from './components/pages/decomYardTable/DecomYardTable';
-import PipelineTable from './components/pages/pipelineTable/PipelineTable';
-import WindfarmTable from './components/pages/windfarmTable/WindfarmTable';
-import FieldTable from './components/pages/fields/FieldTable';
+import InstallationTable from './components/pages/tables/installationTable/InstallationTable';
+import DecomYardTable from './components/pages/tables/decomYardTable/DecomYardTable';
+import PipelineTable from './components/pages/tables/pipelineTable/PipelineTable';
+import WindfarmTable from './components/pages/tables/windfarmTable/WindfarmTable';
+import FieldTable from './components/pages/tables/fieldsTable/FieldTable';
 import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 const store = createStore(
@@ -27,27 +27,27 @@ const store = createStore(
   )
 );
 
-let mainContent = [
-  <Map></Map>,
-]
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mainContentIndex: 0
+      selectedPipeline: null,
+      selectedInstallation: null
     }
-    this.changeMainContentIndex = this.changeMainContentIndex.bind(this);
+    this.setSelectedPipeline = this.setSelectedPipeline.bind(this);
+    this.setSelectedInstallation = this.setSelectedInstallation.bind(this);
   }  
 
-  getMainPanelContent() {
-    return mainContent[this.state.mainContentIndex];
+  setSelectedInstallation(newInstallation) {
+    this.setState({
+      selectedInstallation: newInstallation
+    })
   }
 
-  changeMainContentIndex(index) {
+  setSelectedPipeline(newPipeline) {
     this.setState({
-      mainContentIndex: index
-    });
+      selectedPipeline: newPipeline
+    })
   }
 
   render() {
@@ -58,16 +58,16 @@ class App extends Component {
             <Route render={(props) => {
               if (this.state.checkingSession) return <span></span>;
 
-              return <Header changeMainContent={this.changeMainContentIndex} {...props} />
+              return <Header {...props} />
             }
             } />
             <div className="content-container">
-              <Map>
+              <Map selectedPipeline={this.state.selectedPipeline} selectedInstallation={this.state.selectedInstallation}>
               <Switch>          
                 <Route path="/installations" render={(props) => {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                      <InstallationTable {...props}></InstallationTable>
+                      <InstallationTable {...props} setSelectedInstallation={this.setSelectedInstallation}></InstallationTable>
                     </DynamicWidthPage>
                   )
                 }} />
@@ -81,7 +81,7 @@ class App extends Component {
                 <Route path="/pipelines" render={(props) => {
                   return (
                     <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                      <PipelineTable {...props}></PipelineTable>
+                      <PipelineTable {...props} setSelectedPipeline={this.setSelectedPipeline}></PipelineTable>
                       </DynamicWidthPage>
                       )
                     }} />

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import './Map.scss';
-import { changeCurrentInstallation } from '../../../actions/installationActions';
+import { changeCurrentEntity } from '../../../actions/installationActions';
 import axios from 'axios';
 import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
@@ -119,12 +119,39 @@ class Map extends Component {
         return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.selectedPipeline !== this.props.selectedPipeline && this.props.selectedPipeline) {
+            if (!this.pipelinePoints) return;
+
+            let pipeline = this.pipelinePoints.find(pipeline => this.props.selectedPipeline._original["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
+            if (pipeline) {
+                this.state.viewer.flyTo(pipeline);
+            }
+            this.props.changeCurrentEntity({entity: this.props.selectedPipeline, type: "Pipeline"});
+        }
+        if (prevProps.selectedInstallation !== this.props.selectedInstallation && this.props.selectedInstallation) {
+            if (!this.installationPoints) return;
+
+            let installation = this.installationPoints.find(installation => this.props.selectedInstallation._original.Name === installation.installation.Name);
+            if (installation) {
+                this.state.viewer.flyTo(installation);
+            }
+            this.props.changeCurrentEntity({entity: this.props.selectedInstallation, type: "Installation"});
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.location.pathname !== this.props.location.pathname) {
             return true;
         }
+        if (nextProps.selectedPipeline !== this.props.selectedPipeline) {
+            return true;
+        }
+        if (nextProps.selectedInstallation !== this.props.selectedInstallation) {
+            return true;
+        }
         // toggle quadrants 
-        if (this.props.showQuadrants != nextProps.showQuadrants) {
+        if (this.props.showQuadrants !== nextProps.showQuadrants) {
             let index = this.state.viewer.dataSources.indexOf(this.quadrants)
             let dataSource = this.state.viewer.dataSources.get(index);
             if (nextProps.showQuadrants) {
@@ -141,11 +168,11 @@ class Map extends Component {
         // toggle quadrants
 
         // toggle pipelines 
-        if (this.props.showPipelines != nextProps.showPipelines) {
+        if (this.props.showPipelines !== nextProps.showPipelines) {
             if (!this.pipelinePoints) {
                 this.loadUpPipelines(nextProps);
             } else {
-                this.pipelinePoints.map(pipeline => {
+                this.pipelinePoints.forEach(pipeline => {
                     pipeline.show = nextProps.showPipelines
                 })
             }   
@@ -155,11 +182,11 @@ class Map extends Component {
         // toggle pipelines
 
         // toggle fields 
-        if (this.props.showFields != nextProps.showFields) {
+        if (this.props.showFields !== nextProps.showFields) {
             if (!this.fieldPoints) {
                 this.loadUpFields(nextProps);
             } else {
-                this.fieldPoints.map(field => {
+                this.fieldPoints.forEach(field => {
                     field.show = nextProps.showFields
                 })
             }   
@@ -245,6 +272,7 @@ class Map extends Component {
             }
 
             if (this.props.year !== nextProps.year) {
+                // eslint-disable-next-line
                 this.state.viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601(""+nextProps.year);
             }
         }
@@ -531,11 +559,25 @@ class Map extends Component {
         const id = picked ? picked.id || picked.primitive.id : null;
         
         if (picked && id) {
+            if (id.windfarm !== undefined) {
+                this.props.changeCurrentEntity({entity: id.windfarm, type: "Windfarm"});
+            }
+            if (id.pipeline !== undefined) {
+                let pipeline = this.pipelinePoints.find(pipeline => id.pipeline["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
+                if (pipeline) {
+                    this.state.viewer.flyTo(pipeline);
+                }
+                this.props.changeCurrentEntity({entity: id.pipeline, type: "Pipeline"});
+            }
             if (id.installation !== undefined) {
+                let installation = this.installationPoints.find(installation => id.installation.Name === installation.installation.Name);
+                if (installation) {
+                    this.state.viewer.flyTo(installation);
+                }
 
                 if (this.props.currentInstallation === id.installation) return; // if selecting already selected installation.
                 // dot has been clicked.
-                this.props.changeCurrentInstallation(id.installation);
+                this.props.changeCurrentEntity({ entity:id.installation, type: "Installation"});
             }
         }
     }
@@ -553,24 +595,21 @@ class Map extends Component {
 
         for (var i = 0; i < installations.length; i++) {
             var installation = installations[i];
-            if (installation.id === "world-map") { continue; }
             var model = iconModels[installation.Type];
             var start = installation.StartDate;
             var end = installation.PlannedCOP;
             
-            if(start){
+            if (start){
                 start=window.Cesium.JulianDate.fromDate(new Date(start));
-               
             }
-            else{
+            else {
                 start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
             }
            
-            if(end){
-               
+            if (end) {
                 end = window.Cesium.JulianDate.fromDate(new Date(end));
             }
-            else{
+            else {
                 end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
             }
             
@@ -749,6 +788,7 @@ class Map extends Component {
                             c = coordinates.flat();
                         }
                         let flatCoordinates = c.flat();
+
                         var material = this.getPipelineColour(pipeline);
 
                         var pipeDiameter = parseInt(pipeline.Diameter) || 0
@@ -761,10 +801,17 @@ class Map extends Component {
                         var scaledTextDistance = this.scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
                         var label;
                         var a = Math.floor((flatCoordinates.length - 1) / 2);
-                        var x = flatCoordinates[a];
-                        var y = flatCoordinates[a + 1];
-                        var position = window.Cesium.Cartesian3.fromDegrees(x, y);
+                        var y = flatCoordinates[a];
+                        var x = flatCoordinates[a + 1];
 
+                        // swapping them here due to a problem with the data. seemed to be mixed up in some cases.
+                        if (y < x) {
+                            var tempY = y;
+                            y = x;
+                            x = tempY;
+                        }
+                        var position = window.Cesium.Cartesian3.fromDegrees(x, y);
+ 
                         label =
                             {
                                 text: pipeline["Pipeline Name"],
@@ -969,7 +1016,6 @@ class Map extends Component {
         let hoveredWindfarm = this.state.lastHoveredWindfarm;
         let hoveredPipeline = this.state.lastHoveredPipeline;
         let hoveredField = this.state.lastHoveredField;
-
     
         return (
             <div style={{ height: '100%', width: '100%' }}>
@@ -992,9 +1038,9 @@ export const MapContext = React.createContext();
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeCurrentInstallation: (currentInstallation) => {
-            dispatch(changeCurrentInstallation(currentInstallation))
-        }
+        changeCurrentEntity: (currentEntity) => {
+            dispatch(changeCurrentEntity(currentEntity))
+        },
     }
 }
 

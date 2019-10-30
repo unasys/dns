@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './NorthSeaAreaPanel.scss';
 import { MapContext } from '../../../../visuals/map/Map';
 import { connect } from 'react-redux';
