@@ -326,6 +326,11 @@ class Map extends Component {
             accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
         });
 
+        var maptiler = new window.Cesium.UrlTemplateImageryProvider({
+            url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=fU8GO3UjrAHXu6oeGQiM',
+            credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+        });
+
         this.terrainIsOn = true;
         //eslint-disable-next-line
         var viewer =
@@ -344,7 +349,7 @@ class Map extends Component {
                 terrainProvider: terrainProvider,
                 terrainExaggeration: 5,
                 requestRenderMode: true,
-                imageryProvider: mapbox
+                imageryProvider: maptiler
             });
         viewer.camera.changed.addEventListener(
             function () {
