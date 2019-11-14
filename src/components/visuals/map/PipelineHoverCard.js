@@ -21,6 +21,10 @@ class PipelineHoverCard extends Component {
                             <div className="installation-hover-card-heading">Fluid Conveyed</div>
                             <div className="installation-hover-card-value">{hoveredPipeline["Fluid Conveyed"]}</div>
                         </div>
+                        <div className="installation-text-value">
+                            <div className="installation-hover-card-heading">Pipeline DTI No</div>
+                            <div className="installation-hover-card-value">{hoveredPipeline["Pipeline DTI No"]}</div>
+                        </div>   
                 </div>
                 <div className="text-block-container">                    
                         <div className="installation-text-value">

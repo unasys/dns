@@ -75,7 +75,7 @@ class InstallationPanel extends React.Component {
                     return;
             }
         } else {
-            if (!this.state.currentRightKeaneScreen || this.props.currentArea !== nextProps.currentArea) {
+            if ((!this.state.currentRightKeaneScreen || this.props.currentArea !== nextProps.currentArea) && this.props.allInstallations.length !== 0) { 
                 this.setState({
                     currentRightKeaneScreen: <SlidingPanel content={<AreaKeaneScreen
                         areaDetails={nextProps.currentArea.details}
@@ -122,9 +122,7 @@ class InstallationPanel extends React.Component {
         return (
             <div>
                 <SlidingPanel content={wrappedContent} isSmallWidth={true} pullRight={false}></SlidingPanel>
-                
-                {this.state.currentRightKeaneScreen} 
-            
+                {this.state.currentRightKeaneScreen}            
             </div>
         );
     }
