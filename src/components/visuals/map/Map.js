@@ -349,7 +349,7 @@ class Map extends Component {
                 terrainProvider: terrainProvider,
                 terrainExaggeration: 5,
                 requestRenderMode: true,
-                imageryProvider: maptiler
+                imageryProvider: mapbox
             });
         viewer.camera.changed.addEventListener(
             function () {
