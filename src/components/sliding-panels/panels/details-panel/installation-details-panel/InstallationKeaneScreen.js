@@ -28,15 +28,15 @@ function InstallationKeaneScreen(props) {
     if(props.installationDetails){
     doubleWidth= (
         <>
-            <EntryContainer title="Field">
+            <EntryContainer title="Field" borderBottom>
                 <Entry title={"Name"} subtitle={props.installationDetails.Fieldname} borderBottom></Entry>
                 <Entry title={"Type"} subtitle={props.installationDetails.FieldType} borderBottom></Entry>
             </EntryContainer>
-            <EntryContainer title="Operator">
+            <EntryContainer title="Operator" borderBottom>
                 <Entry title={"Name"} subtitle={props.installationDetails.Operator} borderBottom></Entry>
                 <Entry title={"Original Operator"} subtitle={props.installationDetails.OriginalOperator} borderBottom></Entry>
             </EntryContainer>
-            <EntryContainer title="Installation">
+            <EntryContainer title="Installation" borderBottom>
                 <Entry title={"Type"} subtitle={props.installationDetails.Type} borderBottom></Entry>
                 <Entry title={"Age"} subtitle={props.installationDetails.Age + " years"} borderBottom></Entry>
                 <Entry title={"Design"} subtitle={props.installationDetails.Design} borderBottom></Entry>
@@ -47,13 +47,13 @@ function InstallationKeaneScreen(props) {
                 <Entry title={"Manned"} subtitle={props.installationDetails.MannedOrNUI} borderBottom></Entry>
                 <Entry title={"Viability for Reuse"} subtitle={props.installationDetails.ViabilityForReuse} borderBottom></Entry>
             </EntryContainer>
-            <EntryContainer title="Licence">
+            <EntryContainer title="Licence" borderBottom>
                 <Entry title={"Original Licence1"} subtitle={props.installationDetails.OriginalLicence1} borderBottom></Entry>
                 <Entry title={"Original Licence 2"} subtitle={props.installationDetails.OriginalLicence2} borderBottom></Entry>
                 <Entry title={"Certifying Authority"} subtitle={props.installationDetails.CertifyingAuthority} borderBottom></Entry>
                 <Entry title={"Class Certificate"} subtitle={props.installationDetails.ClassCertificate} borderBottom></Entry>
             </EntryContainer>
-            <EntryContainer title="Location">
+            <EntryContainer title="Location" borderBottom>
                 <Entry title={"CRS Code"} subtitle={props.installationDetails.CRSCode} borderBottom></Entry>
                 <Entry title={"CRS Name"} subtitle={props.installationDetails.CRSName} borderBottom></Entry>
                 <Entry title={"Area"} subtitle={props.installationDetails.AreaName} borderBottom></Entry>
@@ -64,7 +64,7 @@ function InstallationKeaneScreen(props) {
                 <Entry title={"Distance from ABZ"} subtitle={props.installationDetails.DistanceFromABZ} borderBottom></Entry>
                 <Entry title={"Azimuth"} subtitle={props.installationDetails.DistanceFromABZ} borderBottom></Entry>
             </EntryContainer>
-            <EntryContainer title="Emergency">
+            <EntryContainer title="Emergency" borderBottom>
                 <Entry title={"OIM"} subtitle={props.installationDetails.OIM} borderBottom></Entry>
                 <Entry title={"Onshore OIM"} subtitle={props.installationDetails.OnshoreOIM} borderBottom></Entry>
                 <Entry title={"Tel Offshore"} subtitle={props.installationDetails.TelOffshore} borderBottom></Entry>
@@ -83,7 +83,7 @@ function InstallationKeaneScreen(props) {
                 <Entry title={"Crane Capacity"} subtitle={props.installationDetails.CraneCapacity} borderBottom></Entry>
                 <Entry title={"Crane Type"} subtitle={props.installationDetails.CraneType} borderBottom></Entry>
             </EntryContainer>
-            <EntryContainer title="Subsea">
+            <EntryContainer title="Subsea" borderBottom>
                 <Entry title={"Fields"} subtitle={props.installationDetails.Fields} borderBottom></Entry>
                 <Entry title={"Wells"} subtitle={props.installationDetails.Wells} borderBottom></Entry>
                 <Entry title={"Discovery Well"} subtitle={props.installationDetails.DiscoveryWell} borderBottom></Entry>
@@ -91,7 +91,7 @@ function InstallationKeaneScreen(props) {
                 <Entry title={"Water Depth"} subtitle={props.installationDetails.WaterDepth} borderBottom></Entry>
                 <Entry title={"Water Injection Well"} subtitle={props.installationDetails.WaterInjectionWell} borderBottom></Entry>
             </EntryContainer>
-            <EntryContainer title="Production">
+            <EntryContainer title="Production" borderBottom>
                 <Entry title={"Status"} subtitle={props.installationDetails.Status} borderBottom></Entry>
                 <Entry title={"Rate"} subtitle={props.installationDetails.Rate} borderBottom></Entry>
                 <Entry title={"Start"} subtitle={props.installationDetails.StartDate} borderBottom></Entry>
@@ -100,7 +100,7 @@ function InstallationKeaneScreen(props) {
                 <Entry title={"Pipeline System"} subtitle={props.installationDetails.PipelineSystemName} borderBottom></Entry>
             </EntryContainer>
 
-            <EntryContainer title="Weight">
+            <EntryContainer title="Weight" borderBottom>
                 <Entry title={"Topsides"} subtitle={props.installationDetails.TopsideWeight} borderBottom></Entry>
                 <Entry title={"Displacement"} subtitle={props.installationDetails.Displacement} borderBottom></Entry>
                 <Entry title={"Lightship"} subtitle={props.installationDetails.Lightship} borderBottom></Entry>
@@ -108,20 +108,20 @@ function InstallationKeaneScreen(props) {
                 <Entry title={"Subsea"} subtitle={props.installationDetails.SubStructureWeight} borderBottom></Entry>
             </EntryContainer>
 
-            <EntryContainer title="Supply / Consumables">
+            <EntryContainer title="Supply / Consumables" borderBottom>
                 <Entry title={"Supply Boats / WK"} subtitle={props.installationDetails.ConsumablesPerWeek} borderBottom></Entry>
                 <Entry title={"Operator"} subtitle={props.installationDetails.SupplyOperator} borderBottom></Entry>
                 <Entry title={"Water"} subtitle={props.installationDetails.Water} borderBottom></Entry>
                 <Entry title={"Fuel"} subtitle={props.installationDetails.Fuel} borderBottom></Entry>
             </EntryContainer>
 
-            <EntryContainer title="Helicopters">
+            <EntryContainer title="Helicopters" borderBottom>
                 <Entry title={"Per Week"} subtitle={props.installationDetails.HelicoptersPerWeek} borderBottom></Entry>
                 <Entry title={"Operator"} subtitle={props.installationDetails.HelicopterOperator} borderBottom></Entry>
                 <Entry title={"Refueling Capability"} subtitle={props.installationDetails.RefuelingCapability} borderBottom></Entry>
             </EntryContainer>
 
-            <EntryContainer title="Power Generation">
+            <EntryContainer title="Power Generation" borderBottom>
                 <Entry title={"Capacity"} subtitle={props.installationDetails.PowerGenerationCapacity} borderBottom></Entry>
                 <Entry title={"Average / Hour"} subtitle={props.installationDetails.PowerGenerationAverageHour} borderBottom></Entry>
                 <Entry title={"Fuel"} subtitle={props.installationDetails.Fuel} borderBottom></Entry>
