@@ -652,7 +652,7 @@ class Map extends Component {
                 label: {
                     text: installation["Name"],
                     fillColor: window.Cesium.Color.WHITE,
-                    style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    style: window.Cesium.LabelStyle.FILL,
                     outlineColor: window.Cesium.Color.BLACK,
                     outlineWidth: 1.5,
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
@@ -660,7 +660,7 @@ class Map extends Component {
                     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
                     heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    scale:0.5
+                    scale:0.7
                 }
             });
             point.installation = installation;
@@ -743,12 +743,14 @@ class Map extends Component {
             colour = colour.withAlpha(0.5);
         }
 
-        var material = new window.Cesium.PolylineGlowMaterialProperty({
-            color:colour,
-            glowPower:0.2,
-            taperPower:1.0
-        })
-        return material;
+        colour = colour.darken(0.5, new window.Cesium.Color());
+
+        // var material = new window.Cesium.PolylineGlowMaterialProperty({
+        //     color:colour,
+        //     glowPower:0.2,
+        //     taperPower:1.0
+        // })
+        return colour;
     }
 
     getFieldColour(field) {
@@ -801,7 +803,7 @@ class Map extends Component {
                         if (pipeline["Diameter Units"] === "inch") {
                             pipeDiameter = pipeDiameter * 25.4;
                         }
-                        var scaledWidth = this.scaleBetween(pipeDiameter, 2, 4, minDiameter, maxDiameter);
+                        var scaledWidth = this.scaleBetween(pipeDiameter, 1, 2, minDiameter, maxDiameter);
                         var scaledDistance = this.scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
                         var scaledTextDistance = this.scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
                         var label;

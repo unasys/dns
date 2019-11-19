@@ -37,6 +37,10 @@ class InstallationHoverCard extends Component {
                             <div className="installation-hover-card-heading">Installation Type</div>
                             <div className="installation-hover-card-value">{hoveredInstallation["Type"]}</div>
                         </div>
+                        <div className="installation-text-value">
+                            <div className="installation-hover-card-heading">Operator</div>
+                            <div className="installation-hover-card-value">{hoveredInstallation["Operator"]}</div>
+                        </div>
                     </div>
                         <div className="text-block">
                             <div className="installation-text-value">
