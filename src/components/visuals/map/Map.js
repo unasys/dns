@@ -1,15 +1,13 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import React, { Component, useState, useEffect, useRef } from 'react';
 
 import './Map.scss';
-import { changeCurrentEntity } from '../../../actions/installationActions';
 import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
 import DecomyardHoverCard from './DecomyardHoverCard';
 import WindfarmHoverCard from './WindfarmHoverCard';
 import PipelineHoverCard from './PipelineHoverCard';
 import FieldHoverCard from './FieldHoverCard';
+import { useStateValue } from '../../../utils/state';
 
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
@@ -55,7 +53,72 @@ let fieldColours = {
     "default": window.Cesium.Color.WHITE
 }
 
-class Map extends Component {
+const Map = () => {
+    const [{installations,pipelines,windfarms,decomYards,fields}, dispatch] = useStateValue();
+    const cesiumRef = useRef(null);
+    const [viewer, setViewer] = useState(null);
+    useEffect(() => {
+        const terrainProvider = new window.Cesium.CesiumTerrainProvider({
+            url: bathymetryBaseUrl,
+            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
+        });
+        
+        const mapbox = new window.Cesium.MapboxImageryProvider({
+            mapId: 'mapbox.satellite',
+            accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
+        });
+        
+        // var maptiler = new window.Cesium.UrlTemplateImageryProvider({
+            //     url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=fU8GO3UjrAHXu6oeGQiM',
+            //     credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+            // });
+            
+            const viewer =
+            new window.Cesium.Viewer(cesiumRef.current, {
+                baseLayerPicker: false,
+                animation: false,
+                fullscreenButton: false,
+                shadows: false,
+                geocoder: false,
+                infoBox: false,
+                homeButton: false,
+                sceneModePicker: false,
+                selectionIndicator: false,
+                timeline: false,
+                navigationHelpButton: false,
+                terrainProvider: terrainProvider,
+                terrainExaggeration: 5,
+                requestRenderMode: true,
+                imageryProvider: mapbox
+            });
+            
+            viewer.camera.changed.addEventListener(
+                function () {
+                    if (viewer.camera._suspendTerrainAdjustment && viewer.scene.mode === window.Cesium.SceneMode.SCENE3D) {
+                        viewer.camera._suspendTerrainAdjustment = false;
+                        viewer.camera._adjustHeightForTerrain();
+                }
+            }
+        );
+
+        viewer.scene.globe.enableLighting = false;
+        viewer.scene.globe.depthTestAgainstTerrain = false; 
+        setViewer(viewer);
+    }, []);
+    return (
+        
+                    <div id="cesiumContainer" ref={cesiumRef} />
+                // <ReactCursorPosition style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
+                //      <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
+                //     <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
+                //     <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
+                //     <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
+                //     <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard> 
+                // </ReactCursorPosition>
+    );
+}
+
+class Map2 extends Component {
     constructor(props) {
         super(props)
         this.mouseEvent = this.mouseEvent.bind(this);
@@ -312,57 +375,6 @@ class Map extends Component {
           });
     }
 
-    initialiseViewer() {
-        var terrainProvider = new window.Cesium.CesiumTerrainProvider({
-            url: bathymetryBaseUrl,
-            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
-        });
-
-        var mapbox = new window.Cesium.MapboxImageryProvider({
-            mapId: 'mapbox.satellite',
-            accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
-        });
-
-        var maptiler = new window.Cesium.UrlTemplateImageryProvider({
-            url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=fU8GO3UjrAHXu6oeGQiM',
-            credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
-        });
-
-        this.terrainIsOn = true;
-        //eslint-disable-next-line
-        var viewer =
-            new window.Cesium.Viewer('cesiumContainer', {
-                baseLayerPicker: false,
-                animation: false,
-                fullscreenButton: false,
-                shadows: false,
-                geocoder: false,
-                infoBox: false,
-                homeButton: false,
-                sceneModePicker: false,
-                selectionIndicator: false,
-                timeline: false,
-                navigationHelpButton: false,
-                terrainProvider: terrainProvider,
-                terrainExaggeration: 5,
-                requestRenderMode: true,
-                imageryProvider: mapbox
-            });
-        viewer.camera.changed.addEventListener(
-            function () {
-                if (viewer.camera._suspendTerrainAdjustment && viewer.scene.mode === window.Cesium.SceneMode.SCENE3D) {
-                    viewer.camera._suspendTerrainAdjustment = false;
-                    viewer.camera._adjustHeightForTerrain();
-                }
-            }
-        );
-
-        viewer.scene.globe.enableLighting = false;
-        viewer.scene.globe.depthTestAgainstTerrain = false;
-
-        //eslint-disable-next-line
-        this.state.viewer = viewer;
-    }
 
     setMousePosition(p) {
         this.mousePosition = p;
@@ -1029,19 +1041,9 @@ class Map extends Component {
                     <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
                     <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard>
                 </ReactCursorPosition>
-                <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider>
+                {/* <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider> */}
             </div>
         );
-    }
-}
-
-export const MapContext = React.createContext();
-
-function mapDispatchToProps(dispatch) {
-    return {
-        changeCurrentEntity: (currentEntity) => {
-            dispatch(changeCurrentEntity(currentEntity))
-        },
     }
 }
 
@@ -1071,4 +1073,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Map));
+export default Map;

@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
-import StateProvider from './utils/state/StateProvider';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { StateProvider } from './utils/state';
 
 const initialState = { installations: [], decomYards: [], fields: [], pipelines: [], windfarms: [], facts: [] };
 
@@ -38,6 +38,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 facts: action.facts
+            };
+        case 'changeYear':
+            return {
+                ...state,
+                year: action.year
             };
         default:
             return state;

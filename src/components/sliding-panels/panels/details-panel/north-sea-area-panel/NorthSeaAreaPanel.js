@@ -1,6 +1,6 @@
 import React from 'react';
 import './NorthSeaAreaPanel.scss';
-import { MapContext } from '../../../../visuals/map/Map';
+//import { MapContext } from '../../../../visuals/map/Map';
 import { connect } from 'react-redux';
 import { setCurrentArea } from '../../../../../actions/areaActions';
 
@@ -114,7 +114,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-NorthSeaAreaPanel.contextType = MapContext;
+//NorthSeaAreaPanel.contextType = MapContext;
 
 export default connect(null, mapDispatchToProps)(NorthSeaAreaPanel);
 
