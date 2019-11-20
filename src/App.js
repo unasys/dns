@@ -34,7 +34,7 @@ const App = () => {
   useEffect(() => {
     fetchInstallations().then(installations => { dispatch({ type: "setInstallations", installations: unique(installations, "Name") }) });
     fetchDecomyards().then(decomYards => { dispatch({ type: "setDecomYards", decomYards: unique(decomYards, "Name") }) });
-    fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "Name") }) });
+    fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "Field Name") }) });
     fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "Pipeline Id") }) });
     fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "Name") }) });
     fetchFact().then(facts => { dispatch({ type: "setFacts", facts: facts }) });
