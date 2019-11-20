@@ -2,9 +2,6 @@ import React from 'react';
 import { setCesiumPipelines } from '../actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchPipelines } from '../api/Installations';
-import axios from 'axios';
-
-const CancelToken = axios.CancelToken;
 
 class PipelineHandler extends React.Component {
     constructor(props) {
@@ -12,7 +9,6 @@ class PipelineHandler extends React.Component {
         this.state = {
             pipelines: []
         }
-        this.source = CancelToken.source();
         this.fetchPipelines = this.fetchPipelines.bind(this);
         this.attemptedRetry = false;
     }

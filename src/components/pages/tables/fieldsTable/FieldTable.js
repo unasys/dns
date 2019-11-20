@@ -6,11 +6,9 @@ import history from '../../../../history';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import { fetchFields } from '../../../../api/Installations.js';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { changeFieldFilterType, setCesiumFields } from '../../../../actions/installationActions';
 
-const CancelToken = axios.CancelToken;
 const Slider = require('rc-slider');
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
@@ -35,7 +33,6 @@ class FieldTable extends Component {
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchRows = this.fetchRows.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
-    this.source = CancelToken.source();
   }
 
   componentWillUnmount() {

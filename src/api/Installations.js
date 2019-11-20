@@ -1,42 +1,36 @@
-import axios from 'axios';
-
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 
-export function fetchInstallations(token) {
+export async function fetchInstallations() {
     let url = assetsBaseUrl + `/data/installations.json`;
-
-    return axios.get(url, {
-        cancelToken: token
-    })
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
 }
 
-export function fetchDecomyards(token) {
+export async function fetchDecomyards(token) {
     let url = assetsBaseUrl + `/data/decomyards/decomyards.json`;
-
-    return axios.get(url, {
-        cancelToken: token
-    })
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
 }
 
-export function fetchPipelines(token) {
+export async function fetchPipelines(token) {
     let url = assetsBaseUrl + `/data/pipelines/pipelines.json`;
-    return axios.get(url, {
-        cancelToken: token
-    })
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
 }
 
-export function fetchWindfarms(token) {
+export async function fetchWindfarms(token) {
     let url = assetsBaseUrl + `/data/windfarms/windfarms.json`;
-
-    return axios.get(url, {
-        cancelToken: token
-    })
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
 }
 
-export function fetchFields(token) {
+export async function fetchFields(token) {
     let url = assetsBaseUrl + `/data/fields/fields.json`;
-
-    return axios.get(url, {
-        cancelToken: token
-    })
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
 }

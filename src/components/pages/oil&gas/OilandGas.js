@@ -1,7 +1,6 @@
 import React from 'react';
 import InstallationPanel from './InstallationPanel';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import '../../../api/RandomFact';
 import { setCesiumInstallations } from '../../../actions/installationActions';
 import InformationMessageBox from '../../visuals/did-you-know-box/InformationMessageBox';
@@ -11,8 +10,6 @@ import DecomyardHandler from '../../../handlers/DecomyardHandler';
 import PipelineHandler from '../../../handlers/PipelineHandler';
 import WindfarmHandler from '../../../handlers/WindfarmHandler';
 import FieldHandler from '../../../handlers/FieldHandler';
-
-const CancelToken = axios.CancelToken;
 
 class OilandGas extends React.Component {
     constructor(props) {
@@ -28,7 +25,6 @@ class OilandGas extends React.Component {
         }
         this.clearDidYouKnowMessage = this.clearDidYouKnowMessage.bind(this);
         this.setAllInstallations = this.setAllInstallations.bind(this);
-        this.source = CancelToken.source();
     }
 
     componentDidMount() {

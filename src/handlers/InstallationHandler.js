@@ -2,17 +2,12 @@ import React from 'react';
 import { setCesiumInstallations } from '../actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchInstallations } from '../api/Installations';
-import axios from 'axios';
-
-const CancelToken = axios.CancelToken;
-
 class InstallationHandler extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             installations: []
         }
-        this.source = CancelToken.source();
         this.fetchInstallations = this.fetchInstallations.bind(this);
         this.attemptedRetry = false;
     }

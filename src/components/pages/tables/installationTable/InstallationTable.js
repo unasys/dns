@@ -8,11 +8,9 @@ import 'rc-tooltip/assets/bootstrap.css';
 import Circle01 from '../../../../assets/installationTable/circle01.js';
 import Circle02 from '../../../../assets/installationTable/circle02.js';
 import { fetchInstallations } from '../../../../api/Installations.js';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { changeInstallationFilterType, INSTALLATION_FILTER_TYPES, setCesiumInstallations } from '../../../../actions/installationActions';
 
-const CancelToken = axios.CancelToken;
 const Slider = require('rc-slider');
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
@@ -37,7 +35,6 @@ class InstallationTable extends Component {
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchInstallations = this.fetchInstallations.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
-    this.source = CancelToken.source();
   }
   
 

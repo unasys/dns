@@ -4,11 +4,9 @@ import 'react-table/react-table.css';
 import '../TableStyles.scss';
 import history from '../../../../history';
 import { fetchWindfarms } from '../../../../api/Installations.js';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { changeWindfarmFilterType,  setCesiumWindfarms } from '../../../../actions/installationActions';
 
-const CancelToken = axios.CancelToken;
 
 class WindfarmTable extends Component {
   constructor(props) {
@@ -25,7 +23,6 @@ class WindfarmTable extends Component {
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchWindfarms = this.fetchWindfarms.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
-    this.source = CancelToken.source();
   }
   
   componentWillUnmount() {

@@ -2,17 +2,13 @@ import React from 'react';
 import { setCesiumWindfarms } from '../actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchWindfarms } from '../api/Installations';
-import axios from 'axios';
-
-const CancelToken = axios.CancelToken;
-
 class WindfarmHandler extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             windfarms: []
         }
-        this.source = CancelToken.source();
+
         this.fetchWindfarms = this.fetchWindfarms.bind(this);
         this.attemptedRetry = false;
     }

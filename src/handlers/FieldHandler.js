@@ -2,9 +2,7 @@ import React from 'react';
 import { setCesiumFields } from '../actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchFields } from '../api/Installations';
-import axios from 'axios';
 
-const CancelToken = axios.CancelToken;
 
 class FieldHandler extends React.Component {
     constructor(props) {
@@ -12,7 +10,6 @@ class FieldHandler extends React.Component {
         this.state = {
             windfarms: []
         }
-        this.source = CancelToken.source();
         this.fetchFields = this.fetchFields.bind(this);
         this.attemptedRetry = false;
     }

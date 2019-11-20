@@ -4,11 +4,8 @@ import 'react-table/react-table.css';
 import '../TableStyles.scss';
 import history from '../../../../history';
 import { fetchDecomyards } from '../../../../api/Installations.js';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { changeDecomYardFilterType,  setCesiumDecomyards } from '../../../../actions/installationActions';
-
-const CancelToken = axios.CancelToken;
 
 class DecomYardTable extends Component {
   constructor(props) {
@@ -25,7 +22,6 @@ class DecomYardTable extends Component {
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchInstallations = this.fetchInstallations.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
-    this.source = CancelToken.source();
   }
   
 

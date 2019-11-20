@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 
 import './Map.scss';
 import { changeCurrentEntity } from '../../../actions/installationActions';
-import axios from 'axios';
 import ReactCursorPosition from 'react-cursor-position';
 import InstallationHoverCard from './InstallationHoverCard';
 import DecomyardHoverCard from './DecomyardHoverCard';
@@ -55,7 +54,6 @@ let fieldColours = {
     "disused": window.Cesium.Color.fromBytes(128, 128, 128),
     "default": window.Cesium.Color.WHITE
 }
-const CancelToken = axios.CancelToken;
 
 class Map extends Component {
     constructor(props) {
@@ -74,7 +72,6 @@ class Map extends Component {
         this.setDynamicLengthLabel = this.setDynamicLengthLabel.bind(this);
         this.updatePosition = this.updatePosition.bind(this);
         this.flyTo = this.flyTo.bind(this);
-        this.source = CancelToken.source();
         this.state = {
             viewer: null,
             isHidden: false,

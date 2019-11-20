@@ -2,9 +2,6 @@ import React from 'react';
 import { setCesiumDecomyards } from '../actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchDecomyards } from '../api/Installations';
-import axios from 'axios';
-
-const CancelToken = axios.CancelToken;
 
 class DecomyardHandler extends React.Component {
     constructor(props) {
@@ -12,7 +9,6 @@ class DecomyardHandler extends React.Component {
         this.state = {
             decomyards: []
         }
-        this.source = CancelToken.source();
         this.fetchDecomyards = this.fetchDecomyards.bind(this);
         this.attemptedRetry = false;
     }
