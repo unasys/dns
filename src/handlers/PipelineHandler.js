@@ -13,29 +13,19 @@ class PipelineHandler extends React.Component {
         this.attemptedRetry = false;
     }
 
-    componentWillUnmount() {
-        this.source.cancel()
-    }
-
     componentDidMount() {
         this.fetchPipelines();
     }
 
     fetchPipelines() {
-        fetchPipelines(this.source.token)
+        fetchPipelines()
             .then(payload => {
                 this.setState({
-                    pipelines: payload.data
+                    pipelines: payload
                 });
                 
-                this.props.setCesiumPipelines(payload.data);
+                this.props.setCesiumPipelines(payload);
 
-                if (payload.status === 401 && !this.attemptedRetry) {
-                    this.attemptedRetry = true;
-                    new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                        this.fetchPipelines();
-                    });
-                }
             })
             .catch((e) => {
                 console.error('something went wrong when fetching installations in fetchDecomyards.js', e);

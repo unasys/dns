@@ -37,20 +37,17 @@ class PipelineTable extends Component {
     this.onTableViewChange = this.onTableViewChange.bind(this);
   }
 
-  componentWillUnmount() {
-    this.source.cancel()
-}
 
   componentDidMount() {
       this.fetchRows();
   }
 
   fetchRows() {
-    fetchPipelines(this.source.token)
+    fetchPipelines()
           .then(payload => {
               
               let startDatesAsEpoch = (
-                payload.data.filter(pipeline => {
+                payload.filter(pipeline => {
                   if (!pipeline["Start Date"]) return false
                   let date = new Date(pipeline["Start Date"])
                   return date !== "Invalid Date"                
@@ -68,7 +65,7 @@ class PipelineTable extends Component {
               let minDateStart = new Date(minStartTime * 1000);
 
               let endDatesAsEpoch = (
-                payload.data.filter(pipeline => {
+                payload.filter(pipeline => {
                   if (!pipeline["End Date"]) return false
                   let date = new Date(pipeline["Start Date"])
                   return date !== "Invalid Date"                
@@ -85,7 +82,7 @@ class PipelineTable extends Component {
               let maxDateEnd = new Date(maxEndTime * 1000);
               let minDateEnd = new Date(minEndTime * 1000);
 
-              let diameters = payload.data.map(pipeline => {
+              let diameters = payload.map(pipeline => {
                 if (pipeline["Diameter Unit"] === "inch") {
                   return (parseInt(pipeline["Diameter"]) * 25.4) || 0;
                 } else {
@@ -97,24 +94,18 @@ class PipelineTable extends Component {
 
               let maxDiameter = parseInt(Math.max(...diameters).toFixed(0));
               this.setState({
-                  rows: payload.data,
-                  currentRowLength: payload.data.length,
+                  rows: payload,
+                  currentRowLength: payload.length,
                   maxStartDateInData: maxDateStart,
                   minStartDateInData: minDateStart,
                   maxEndDateInData : maxDateEnd,
                   minEndDateInData: minDateEnd,
-                  maxLengthInData: Math.max(...payload.data.map(pipeline => parseInt(pipeline["Length [m]"]) || 0)),
+                  maxLengthInData: Math.max(...payload.map(pipeline => parseInt(pipeline["Length [m]"]) || 0)),
                   minDiameterInData: minDiameter,
                   maxDiameterInData:maxDiameter
               });
                           
-              
-              if (payload.status === 401 && !this.attemptedRetry) {
-                  this.attemptedRetry = true;
-                  new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                      this.fetchRows();
-                  });
-              }
+
           })
           .catch((e) => {
               console.error('something went wrong when fetching pipelines', e);

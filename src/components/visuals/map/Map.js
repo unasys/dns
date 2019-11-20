@@ -413,9 +413,6 @@ class Map extends Component {
         this.addHighlightHandlers();
     }
 
-    componentWillUnmount() {
-        this.source.cancel()
-    }
 
     clearInstallations() {
         if (this.installationPoints !== undefined) {

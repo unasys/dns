@@ -38,20 +38,16 @@ class InstallationTable extends Component {
   }
   
 
-  componentWillUnmount() {
-    this.source.cancel()
-}
-
   componentDidMount() {
       this.fetchInstallations();
   }
 
   fetchInstallations() {
-      fetchInstallations(this.source.token)
+      fetchInstallations()
           .then(payload => {
               
               let datesAsEpoch = (
-                payload.data.filter(installation => {
+                payload.filter(installation => {
                   if (!installation.PlannedCOP) return false
                   let date = new Date(installation.PlannedCOP)
                   return date !== "Invalid Date"                
@@ -69,22 +65,16 @@ class InstallationTable extends Component {
               let minDateCOP = new Date(minDateTime * 1000)
 
               this.setState({
-                  installations: payload.data,
-                  currentInstallationLength: payload.data.length,
-                  maxAgeInData: Math.max(...payload.data.map(installation => parseInt(installation.Age) || 0)),
+                  installations: payload,
+                  currentInstallationLength: payload.length,
+                  maxAgeInData: Math.max(...payload.map(installation => parseInt(installation.Age) || 0)),
                   maxCOPInData: maxDateCOP,
                   minCOPInData: minDateCOP,
-                  maxTopsideWeightInData: Math.max(...payload.data.map(installation => parseInt(installation.TopsideWeight) || 0)),
-                  maxSubstructureWeightInData: Math.max(...payload.data.map(installation => parseInt(installation.SubStructureWeight) || 0)),
+                  maxTopsideWeightInData: Math.max(...payload.map(installation => parseInt(installation.TopsideWeight) || 0)),
+                  maxSubstructureWeightInData: Math.max(...payload.map(installation => parseInt(installation.SubStructureWeight) || 0)),
               });
                           
-              
-              if (payload.status === 401 && !this.attemptedRetry) {
-                  this.attemptedRetry = true;
-                  new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                      this.fetchInstallations();
-                  });
-              }
+            
           })
           .catch((e) => {
               console.error('something went wrong when fetching installations in installationsTables.js', e);

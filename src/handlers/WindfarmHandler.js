@@ -13,30 +13,20 @@ class WindfarmHandler extends React.Component {
         this.attemptedRetry = false;
     }
 
-    componentWillUnmount() {
-        this.source.cancel()
-    }
-
     componentDidMount() {
         this.fetchWindfarms();
     }
 
     fetchWindfarms() {
-        fetchWindfarms(this.source.token)
+        fetchWindfarms()
             .then(payload => {
                 //Here we need to assign a type to OilAndGas if it doesn't exists in the response. This is to further help the other components to filter the data.
                 this.setState({
-                    windfarms: payload.data
+                    windfarms: payload
                 });
                 
-                this.props.setCesiumWindfarms(payload.data);
+                this.props.setCesiumWindfarms(payload);
 
-                if (payload.status === 401 && !this.attemptedRetry) {
-                    this.attemptedRetry = true;
-                    new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                        this.fetchWindfarms();
-                    });
-                }
             })
             .catch((e) => {
                 console.error('something went wrong when fetching installations in OilandGas.js', e);

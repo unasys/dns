@@ -25,30 +25,22 @@ class WindfarmTable extends Component {
     this.onTableViewChange = this.onTableViewChange.bind(this);
   }
   
-  componentWillUnmount() {
-    this.source.cancel()
-    }
+
 
   componentDidMount() {
       this.fetchWindfarms();
   }
 
   fetchWindfarms() {
-    fetchWindfarms(this.source.token)
+    fetchWindfarms()
           .then(payload => {
 
               this.setState({
-                  rows: payload.data,
-                  currentDataLength: payload.data.length,
+                  rows: payload,
+                  currentDataLength: payload.length,
               });
                           
-              
-              if (payload.status === 401 && !this.attemptedRetry) {
-                  this.attemptedRetry = true;
-                  new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                      this.fetchWindfarms();
-                  });
-              }
+
           })
           .catch((e) => {
               console.error('something went wrong when fetching decom yards', e);

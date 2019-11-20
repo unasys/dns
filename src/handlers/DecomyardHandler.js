@@ -13,29 +13,20 @@ class DecomyardHandler extends React.Component {
         this.attemptedRetry = false;
     }
 
-    componentWillUnmount() {
-        this.source.cancel()
-    }
 
     componentDidMount() {
         this.fetchDecomyards();
     }
 
     fetchDecomyards() {
-        fetchDecomyards(this.source.token)
+        fetchDecomyards()
             .then(payload => {
                 this.setState({
-                    decomyards: payload.data
+                    decomyards: payload
                 });
                 
-                this.props.setCesiumDecomyards(payload.data);
+                this.props.setCesiumDecomyards(payload);
 
-                if (payload.status === 401 && !this.attemptedRetry) {
-                    this.attemptedRetry = true;
-                    new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                        this.fetchDecomyards();
-                    });
-                }
             })
             .catch((e) => {
                 console.error('something went wrong when fetching installations in fetchDecomyards.js', e);

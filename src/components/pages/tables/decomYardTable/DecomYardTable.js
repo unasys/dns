@@ -25,33 +25,20 @@ class DecomYardTable extends Component {
   }
   
 
-  componentWillUnmount() {
-    this.source.cancel()
-}
 
   componentDidMount() {
       this.fetchInstallations();
   }
 
   fetchInstallations() {
-      fetchDecomyards(this.source.token)
+      fetchDecomyards()
           .then(payload => {
 
               this.setState({
-                  rows: payload.data,
-                  currentDataLength: payload.data.length,
+                  rows: payload,
+                  currentDataLength: payload.length,
               });
                           
-              
-              if (payload.status === 401 && !this.attemptedRetry) {
-                  this.attemptedRetry = true;
-                  new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                      this.fetchInstallations();
-                  });
-              }
-          })
-          .catch((e) => {
-              console.error('something went wrong when fetching decom yards', e);
           })
   }
 

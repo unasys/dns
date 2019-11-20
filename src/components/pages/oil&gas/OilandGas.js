@@ -28,9 +28,9 @@ class OilandGas extends React.Component {
     }
 
     componentDidMount() {
-        fetchFact(this.source.token).then(res => {
+        fetchFact().then(data => {
             this.setState({
-                didYouKnowMessage: res.data[Math.floor(Math.random()*res.data.length)]
+                didYouKnowMessage: data[Math.floor(Math.random()*data.length)]
             })
             setTimeout(this.clearDidYouKnowMessage, 6000);
         })
@@ -48,9 +48,6 @@ class OilandGas extends React.Component {
         })
     }
 
-    componentWillUnmount() {
-        this.source.cancel()
-    }
 
     addToBreadcrumbs(crumb) {
         if (this.state.breadcrumbs.length !== 0 && crumb.name === this.state.breadcrumbs[this.state.breadcrumbs.length - 1].name) return;

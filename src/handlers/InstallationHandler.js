@@ -12,31 +12,23 @@ class InstallationHandler extends React.Component {
         this.attemptedRetry = false;
     }
 
-    componentWillUnmount() {
-        this.source.cancel()
-    }
+
 
     componentDidMount() {
         this.fetchInstallations();
     }
 
     fetchInstallations() {
-        fetchInstallations(this.source.token)
+        fetchInstallations()
             .then(payload => {
                 //Here we need to assign a type to OilAndGas if it doesn't exists in the response. This is to further help the other components to filter the data.
                 this.setState({
-                    installations: payload.data
+                    installations: payload
                 });
                 
-                this.props.setCesiumInstallations(payload.data);
-                this.props.setAllInstallations(payload.data);
+                this.props.setCesiumInstallations(payload);
+                this.props.setAllInstallations(payload);
 
-                if (payload.status === 401 && !this.attemptedRetry) {
-                    this.attemptedRetry = true;
-                    new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                        this.fetchInstallations();
-                    });
-                }
             })
             .catch((e) => {
                 console.error('something went wrong when fetching installations in OilandGas.js', e);
