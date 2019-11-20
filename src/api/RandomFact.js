@@ -1,9 +1,7 @@
-import axios from 'axios';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
-export function fetchFact(token) {
+export async function fetchFact(token) {
     let url = assetsBaseUrl+`/data/homescreenfacts.json`;
-
-    return axios.get(url, {
-        cancelToken: token
-    })
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
 }

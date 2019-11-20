@@ -1,13 +1,9 @@
 import React from 'react';
 import '../Panels.scss';
-import axios from 'axios';
 import history from '../../../../history.js'
 import NavigationHeading from './NavigationHeading';
 import MapFilterPanel from './map-filter-panel/MapFilterPanel';
 import NorthSeaAreaPanel from './north-sea-area-panel/NorthSeaAreaPanel';
-
-const CancelToken = axios.CancelToken;
-
 
 class ConfigInstallationDetailsPanel extends React.Component {
 
@@ -16,7 +12,6 @@ class ConfigInstallationDetailsPanel extends React.Component {
         this.state = {
             auxiliaryDataImage: null,
         }
-        this.source = CancelToken.source();
     }
 
     render() {

@@ -4,11 +4,8 @@ import 'react-table/react-table.css';
 import '../TableStyles.scss';
 import history from '../../../../history';
 import { fetchDecomyards } from '../../../../api/Installations.js';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { changeDecomYardFilterType,  setCesiumDecomyards } from '../../../../actions/installationActions';
-
-const CancelToken = axios.CancelToken;
 
 class DecomYardTable extends Component {
   constructor(props) {
@@ -25,37 +22,23 @@ class DecomYardTable extends Component {
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchInstallations = this.fetchInstallations.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
-    this.source = CancelToken.source();
   }
   
 
-  componentWillUnmount() {
-    this.source.cancel()
-}
 
   componentDidMount() {
       this.fetchInstallations();
   }
 
   fetchInstallations() {
-      fetchDecomyards(this.source.token)
+      fetchDecomyards()
           .then(payload => {
 
               this.setState({
-                  rows: payload.data,
-                  currentDataLength: payload.data.length,
+                  rows: payload,
+                  currentDataLength: payload.length,
               });
                           
-              
-              if (payload.status === 401 && !this.attemptedRetry) {
-                  this.attemptedRetry = true;
-                  new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                      this.fetchInstallations();
-                  });
-              }
-          })
-          .catch((e) => {
-              console.error('something went wrong when fetching decom yards', e);
           })
   }
 

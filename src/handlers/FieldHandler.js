@@ -2,9 +2,7 @@ import React from 'react';
 import { setCesiumFields } from '../actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchFields } from '../api/Installations';
-import axios from 'axios';
 
-const CancelToken = axios.CancelToken;
 
 class FieldHandler extends React.Component {
     constructor(props) {
@@ -12,35 +10,25 @@ class FieldHandler extends React.Component {
         this.state = {
             windfarms: []
         }
-        this.source = CancelToken.source();
         this.fetchFields = this.fetchFields.bind(this);
         this.attemptedRetry = false;
     }
 
-    componentWillUnmount() {
-        this.source.cancel()
-    }
+
 
     componentDidMount() {
         this.fetchFields();
     }
 
     fetchFields() {
-        fetchFields(this.source.token)
+        fetchFields()
             .then(payload => {
                 //Here we need to assign a type to OilAndGas if it doesn't exists in the response. This is to further help the other components to filter the data.
                 this.setState({
-                    fields: payload.data
+                    fields: payload
                 });
                 
-                this.props.setCesiumFields(payload.data);
-
-                if (payload.status === 401 && !this.attemptedRetry) {
-                    this.attemptedRetry = true;
-                    new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                        this.fete();
-                    });
-                }
+                this.props.setCesiumFields(payload);
             })
             .catch((e) => {
                 console.error('something went wrong when fetching installations in OilandGas.js', e);

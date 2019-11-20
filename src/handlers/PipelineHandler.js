@@ -2,9 +2,6 @@ import React from 'react';
 import { setCesiumPipelines } from '../actions/installationActions';
 import { connect } from 'react-redux';
 import { fetchPipelines } from '../api/Installations';
-import axios from 'axios';
-
-const CancelToken = axios.CancelToken;
 
 class PipelineHandler extends React.Component {
     constructor(props) {
@@ -12,13 +9,8 @@ class PipelineHandler extends React.Component {
         this.state = {
             pipelines: []
         }
-        this.source = CancelToken.source();
         this.fetchPipelines = this.fetchPipelines.bind(this);
         this.attemptedRetry = false;
-    }
-
-    componentWillUnmount() {
-        this.source.cancel()
     }
 
     componentDidMount() {
@@ -26,20 +18,14 @@ class PipelineHandler extends React.Component {
     }
 
     fetchPipelines() {
-        fetchPipelines(this.source.token)
+        fetchPipelines()
             .then(payload => {
                 this.setState({
-                    pipelines: payload.data
+                    pipelines: payload
                 });
                 
-                this.props.setCesiumPipelines(payload.data);
+                this.props.setCesiumPipelines(payload);
 
-                if (payload.status === 401 && !this.attemptedRetry) {
-                    this.attemptedRetry = true;
-                    new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                        this.fetchPipelines();
-                    });
-                }
             })
             .catch((e) => {
                 console.error('something went wrong when fetching installations in fetchDecomyards.js', e);

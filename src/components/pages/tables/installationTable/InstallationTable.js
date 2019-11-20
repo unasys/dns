@@ -8,11 +8,9 @@ import 'rc-tooltip/assets/bootstrap.css';
 import Circle01 from '../../../../assets/installationTable/circle01.js';
 import Circle02 from '../../../../assets/installationTable/circle02.js';
 import { fetchInstallations } from '../../../../api/Installations.js';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { changeInstallationFilterType, INSTALLATION_FILTER_TYPES, setCesiumInstallations } from '../../../../actions/installationActions';
 
-const CancelToken = axios.CancelToken;
 const Slider = require('rc-slider');
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
@@ -37,24 +35,19 @@ class InstallationTable extends Component {
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchInstallations = this.fetchInstallations.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
-    this.source = CancelToken.source();
   }
   
-
-  componentWillUnmount() {
-    this.source.cancel()
-}
 
   componentDidMount() {
       this.fetchInstallations();
   }
 
   fetchInstallations() {
-      fetchInstallations(this.source.token)
+      fetchInstallations()
           .then(payload => {
               
               let datesAsEpoch = (
-                payload.data.filter(installation => {
+                payload.filter(installation => {
                   if (!installation.PlannedCOP) return false
                   let date = new Date(installation.PlannedCOP)
                   return date !== "Invalid Date"                
@@ -72,22 +65,16 @@ class InstallationTable extends Component {
               let minDateCOP = new Date(minDateTime * 1000)
 
               this.setState({
-                  installations: payload.data,
-                  currentInstallationLength: payload.data.length,
-                  maxAgeInData: Math.max(...payload.data.map(installation => parseInt(installation.Age) || 0)),
+                  installations: payload,
+                  currentInstallationLength: payload.length,
+                  maxAgeInData: Math.max(...payload.map(installation => parseInt(installation.Age) || 0)),
                   maxCOPInData: maxDateCOP,
                   minCOPInData: minDateCOP,
-                  maxTopsideWeightInData: Math.max(...payload.data.map(installation => parseInt(installation.TopsideWeight) || 0)),
-                  maxSubstructureWeightInData: Math.max(...payload.data.map(installation => parseInt(installation.SubStructureWeight) || 0)),
+                  maxTopsideWeightInData: Math.max(...payload.map(installation => parseInt(installation.TopsideWeight) || 0)),
+                  maxSubstructureWeightInData: Math.max(...payload.map(installation => parseInt(installation.SubStructureWeight) || 0)),
               });
                           
-              
-              if (payload.status === 401 && !this.attemptedRetry) {
-                  this.attemptedRetry = true;
-                  new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                      this.fetchInstallations();
-                  });
-              }
+            
           })
           .catch((e) => {
               console.error('something went wrong when fetching installations in installationsTables.js', e);

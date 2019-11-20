@@ -6,11 +6,9 @@ import history from '../../../../history';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import { fetchFields } from '../../../../api/Installations.js';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { changeFieldFilterType, setCesiumFields } from '../../../../actions/installationActions';
 
-const CancelToken = axios.CancelToken;
 const Slider = require('rc-slider');
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
@@ -35,23 +33,19 @@ class FieldTable extends Component {
     this.expandColumns = this.expandColumns.bind(this);
     this.fetchRows = this.fetchRows.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
-    this.source = CancelToken.source();
   }
 
-  componentWillUnmount() {
-    this.source.cancel()
-}
 
   componentDidMount() {
       this.fetchRows();
   }
 
   fetchRows() {
-    fetchFields(this.source.token)
+    fetchFields()
           .then(payload => {
               
               let discoveryDateAsEpoch = (
-                payload.data.filter(field => {
+                payload.filter(field => {
                   if (!field["Discovery Date"]) return false
                   let date = new Date(field["Discovery Date"])
                   return date !== "Invalid Date"                
@@ -69,7 +63,7 @@ class FieldTable extends Component {
               let minDiscoveryDate = new Date(minDiscovery * 1000);
 
               let productionDateAsEpoch = (
-                payload.data.filter(field => {
+                payload.filter(field => {
                   if (!field["Production Start Date"]) return false
                   let date = new Date(field["Production Start Date"])
                   return date !== "Invalid Date"                
@@ -87,22 +81,15 @@ class FieldTable extends Component {
               let minProductionDate = new Date(minProduction * 1000);
 
               this.setState({
-                  rows: payload.data,
-                  currentRowLength: payload.data.length,
+                  rows: payload,
+                  currentRowLength: payload.length,
                   maxDiscoveryDateInData: maxDiscoveryDate,
                   minDiscoveryDateInData: minDiscoveryDate,
                   minProductionStartDateInData:minProductionDate,
                   maxProductionStartDateInData:maxProductionDate,
-                  maxLengthInData: Math.max(...payload.data.map(field => parseInt(field["Depth (m)"]) || 0))
+                  maxLengthInData: Math.max(...payload.map(field => parseInt(field["Depth (m)"]) || 0))
               });
                           
-              
-              if (payload.status === 401 && !this.attemptedRetry) {
-                  this.attemptedRetry = true;
-                  new Promise(resolve => setTimeout(resolve, 3000)).then(res => {
-                      this.fetchRows();
-                  });
-              }
           })
           .catch((e) => {
               console.error('something went wrong when fetching pipelines', e);
