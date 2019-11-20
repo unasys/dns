@@ -120,6 +120,10 @@ const flyHome = (viewer) => {
     });
 }
 
+const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
+    return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+}
+
 const mapInstallation = (installation) => {
     let start = installation.StartDate;
     let end = installation.PlannedCOP;
@@ -239,6 +243,130 @@ const setupDecomyards = (decomyards) => {
     return dataSource;
 }
 
+const getPipelineColour = (pipeline) => {
+    let pipelineFluid = pipeline["Fluid Conveyed"];
+    if (pipelineFluid) {
+        pipelineFluid = pipelineFluid.toLowerCase();
+    }
+
+    let colour = pipelineColours[pipelineFluid];
+    if (!colour) {
+        colour = pipelineColours["default"];
+    }
+
+    if (pipeline["Status"] !== "ACTIVE") {
+        colour = colour.withAlpha(0.5);
+    }
+
+    colour = colour.darken(0.5, new window.Cesium.Color());
+
+    return colour;
+}
+const pipelineScale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+const mapPipeline = (pipeline) => {
+    const minDiameter = 0;
+    const maxDiameter = 1058;
+
+    const coordinates = pipeline.Coordinates;
+    if (Array.isArray(coordinates) && coordinates.length > 0) {
+        if (Array.isArray(coordinates[0])) {
+
+            let c = coordinates;
+            if (coordinates[0].length > 0 && Array.isArray(coordinates[0][0])) {
+                c = coordinates.flat();
+            }
+            const flatCoordinates = c.flat();
+
+            const material = getPipelineColour(pipeline);
+
+            let pipeDiameter = parseInt(pipeline.Diameter) || 0
+
+            if (pipeline["Diameter Units"] === "inch") {
+                pipeDiameter = pipeDiameter * 25.4;
+            }
+            const scaledWidth = scaleBetween(pipeDiameter, 1, 2, minDiameter, maxDiameter);
+            const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
+            const scaledTextDistance = scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
+
+            const a = Math.floor((flatCoordinates.length - 1) / 2);
+            let y = flatCoordinates[a];
+            let x = flatCoordinates[a + 1];
+
+            // swapping them here due to a problem with the data. seemed to be mixed up in some cases.
+            if (y < x) {
+                var tempY = y;
+                y = x;
+                x = tempY;
+            }
+            var position = window.Cesium.Cartesian3.fromDegrees(x, y);
+
+            const label =
+            {
+                text: pipeline["Pipeline Name"],
+                fillColor: window.Cesium.Color.WHITE,
+                style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+                outlineColor: material.color,
+                outlineWidth: 1.5,
+                pixelOffset: new window.Cesium.Cartesian2(25, 0),
+                verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
+                horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, scaledTextDistance),
+                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                scaleByDistance: pipelineScale,
+                font: '14px sans-serif'
+            };
+
+            let start = pipeline["Start Date"];
+            if (start) {
+                start = window.Cesium.JulianDate.fromDate(new Date(start));
+            }
+            else {
+                start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+            }
+            let end = pipeline["End Date"];
+            if (end) {
+                end = window.Cesium.JulianDate.fromDate(new Date(end));
+            }
+            else {
+                end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+            }
+
+            let availability = null;
+            if (start || end) {
+                const interval = new window.Cesium.TimeInterval({
+                    start: start,
+                    stop: end,
+                    isStartIncluded: start !== null,
+                    isStopIncluded: end !== null
+                });
+                availability = new window.Cesium.TimeIntervalCollection([interval]);
+            }
+
+            return {
+                id: pipeline["Pipeline Id"],
+                name: pipeline["Pipeline Name"],
+                position: position,
+                availability: availability,
+                polyline: {
+                    positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                    material: material,
+                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                    width: scaledWidth,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
+                },
+                label: label
+            };
+
+        }
+    }
+}
+
+const setupPipelines = (pipelines) => {
+    const dataSource = new window.Cesium.CustomDataSource("pipelines");
+    pipelines.map(i => mapPipeline(i)).forEach(i => dataSource.entities.add(i));
+    return dataSource;
+}
+
 const Map = () => {
     const [{ installations, pipelines, windfarms, decomYards, fields }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
@@ -258,8 +386,15 @@ const Map = () => {
     }, [viewer, installations]);
 
     useEffect(() => {
-        if (!viewer || pipelines.length === 0) return;
+        if (!viewer || decomYards.length === 0) return;
         const dataSource = setupDecomyards(decomYards);
+        viewer.dataSources.add(dataSource);
+
+    }, [viewer, decomYards]);
+
+    useEffect(() => {
+        if (!viewer || pipelines.length === 0) return;
+        const dataSource = setupPipelines(pipelines);
         viewer.dataSources.add(dataSource);
 
     }, [viewer, pipelines]);
@@ -796,130 +931,9 @@ class Map2 extends Component {
     }
 
     loadUpPipelines(nextProps) {
-        let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
-        var pipelinePolys = [];
-        let pipelines;
-
-        if (!nextProps.cesiumPipelines || nextProps.cesiumPipelines.length === 0) {
-            pipelines = this.state.currentPipelineFilter ? this.state.currentPipelineFilter(this.state.pipelines) : this.state.pipelines;
-        } else {
-            pipelines = this.state.currentPipelineFilter ? this.state.currentPipelineFilter(nextProps.cesiumPipelines) : nextProps.cesiumPipelines;
-        }
-
-        if (!pipelines) return;
-        //var shape = this.computeCircle(40.0);
-        var errors = [];
-        var minDiameter = 0;
-        var maxDiameter = 1058;
-        this.state.viewer.entities.suspendEvents();
-        for (var i = 0; i < pipelines.length; i++) {
-            var pipeline = pipelines[i];
-            var coordinates = pipeline.Coordinates;
-            if (Array.isArray(coordinates) && coordinates.length > 0) {
-                if (Array.isArray(coordinates[0])) {
-                    try {
-                        var c = coordinates;
-                        if (coordinates[0].length > 0 && Array.isArray(coordinates[0][0])) {
-                            c = coordinates.flat();
-                        }
-                        let flatCoordinates = c.flat();
-
-                        var material = this.getPipelineColour(pipeline);
-
-                        var pipeDiameter = parseInt(pipeline.Diameter) || 0
-
-                        if (pipeline["Diameter Units"] === "inch") {
-                            pipeDiameter = pipeDiameter * 25.4;
-                        }
-                        var scaledWidth = this.scaleBetween(pipeDiameter, 1, 2, minDiameter, maxDiameter);
-                        var scaledDistance = this.scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
-                        var scaledTextDistance = this.scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
-                        var label;
-                        var a = Math.floor((flatCoordinates.length - 1) / 2);
-                        var y = flatCoordinates[a];
-                        var x = flatCoordinates[a + 1];
-
-                        // swapping them here due to a problem with the data. seemed to be mixed up in some cases.
-                        if (y < x) {
-                            var tempY = y;
-                            y = x;
-                            x = tempY;
-                        }
-                        var position = window.Cesium.Cartesian3.fromDegrees(x, y);
-
-                        label =
-                            {
-                                text: pipeline["Pipeline Name"],
-                                fillColor: window.Cesium.Color.WHITE,
-                                style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                                outlineColor: material.color,
-                                outlineWidth: 1.5,
-                                pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                                verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
-                                horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, scaledTextDistance),
-                                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                                scaleByDistance: scale,
-                                font: '14px sans-serif'
-                            };
-
-                        var start = pipeline["Start Date"];
-                        if (start) {
-                            start = window.Cesium.JulianDate.fromDate(new Date(start));
-                        }
-                        else {
-                            start = window.Cesium.JulianDate.fromDate(new Date("1901"));
-                        }
-                        var end = pipeline["End Date"];
-                        if (end) {
-                            end = window.Cesium.JulianDate.fromDate(new Date(end));
-                        }
-                        else {
-                            end = window.Cesium.JulianDate.fromDate(new Date("2500"));
-                        }
-
-                        var availability = null;
-                        if (start || end) {
-                            var interval = new window.Cesium.TimeInterval({
-                                start: start,
-                                stop: end,
-                                isStartIncluded: start !== null,
-                                isStopIncluded: end !== null
-                            });
-                            availability = new window.Cesium.TimeIntervalCollection([interval]);
-                        }
-
-                        var poly = this.state.viewer.entities.add({
-                            name: pipeline["Pipeline Name"],
-                            position: position,
-                            availability: availability,
-                            polyline: {
-                                positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                                material: material,
-                                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                                width: scaledWidth,
-                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
-                            },
-                            label: label
-                        });
-                        poly.pipeline = pipeline;
-                        pipelinePolys.push(poly);
-                    }
-                    catch (error) {
-                        errors.push({ error: error, coordinates: coordinates.flat() });
-                    }
-                }
-            }
 
 
-        }
-        if (errors.length > 0) {
-            console.error(errors);
-        }
-        this.state.viewer.entities.resumeEvents();
 
-        this.pipelinePoints = pipelinePolys;
-        return pipelinePolys;
     }
 
     loadUpWindfarms(nextProps) {

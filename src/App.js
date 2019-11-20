@@ -16,16 +16,28 @@ import { useStateValue } from './utils/state';
 import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms } from './api/Installations';
 import { fetchFact } from './api/RandomFact';
 
+const unique = (arr, prop) => {
+  const result = [];
+  const set = new Set();
+  for (const item of arr) {
+    if (!set.has(item[prop])) {
+      set.add(item[prop])
+      result.push(item);
+    }
+  }
+  return result;
+}
+
 const App = () => {
   const [, dispatch] = useStateValue();
 
   useEffect(() => {
-    fetchInstallations().then(installations =>{ dispatch({ type: "setInstallations", installations: installations })});
-    fetchDecomyards().then(decomYards =>{ dispatch({ type: "setDecomYards", decomYards: decomYards })});
-    fetchFields().then(fields =>{ dispatch({ type: "setFields", fields: fields })});
-    fetchPipelines().then(pipelines =>{ dispatch({ type: "setPipelines", pipelines: pipelines })});
-    fetchWindfarms().then(windfarms =>{ dispatch({ type: "setWindfarms", windfarms: windfarms })});
-    fetchFact().then(facts =>{ dispatch({ type: "setFacts", facts: facts })});
+    fetchInstallations().then(installations => { dispatch({ type: "setInstallations", installations: unique(installations, "Name") }) });
+    fetchDecomyards().then(decomYards => { dispatch({ type: "setDecomYards", decomYards: unique(decomYards, "Name") }) });
+    fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "Name") }) });
+    fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "Pipeline Id") }) });
+    fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "Name") }) });
+    fetchFact().then(facts => { dispatch({ type: "setFacts", facts: facts }) });
   }, []);
 
   return (
@@ -35,7 +47,7 @@ const App = () => {
         <Header />
         <div className="content-container">
           <Map />
-          
+
           {/* <Switch>
             <Route path="/installations" render={(props) => {
               return (
