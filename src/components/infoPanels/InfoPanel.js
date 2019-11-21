@@ -7,7 +7,6 @@ import WindfarmInfoPanel from './WindfarmPanel';
 import AreaInfoPanel from './AreaInfoPanel';
 import './Panels.scss'
 import Handle from '../sliding-panels/handle/Handle';
-import { visible } from 'ansi-colors';
 
 function InfoPanel() {
     const [{ installations, pipelines, windfarms, areas },] = useStateValue();

@@ -16,6 +16,7 @@ import { useStateValue } from './utils/state';
 import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas } from './api/Installations';
 import { fetchFact } from './api/RandomFact';
 import InfoPanel from './components/infoPanels/InfoPanel';
+import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -46,8 +47,13 @@ const App = () => {
       <div className="app-container">
         <Header />
         <div className="content-container">
+          <Switch>
+            <Route path="/" >
+              <MenuPanel />
+            </Route>
+          </Switch>
           <CesiumMap />
-          
+
           <InfoPanel />
 
           {/* <Switch>
