@@ -1,13 +1,13 @@
 import React from 'react';
-import '../Panels.scss';
-import TitleBar from '../keane-screen/TitleBar';
-import EntryContainer from '../keane-screen/EntryContainer';
-import Entry from '../keane-screen/Entry';
+import './Panels.scss';
+import TitleBar from './TitleBar';
+import EntryContainer from './EntryContainer';
+import Entry from './Entry';
 
-function WindfarmKeaneScreen(props) {
-        if (!props.windfarmDetails) return <div>Windfarm not supported.</div>;
+function WindfarmInfoPanel(props) {
+        if (!props.windfarm) return <div>Windfarm not supported.</div>;
 
-        let windfarmDetails = props.windfarmDetails;
+        let windfarmDetails = props.windfarm;
         let windfarmName = windfarmDetails.NAME;
         let windfarmCost = windfarmDetails["BUILD COST"];
         let windfarmBuilder = windfarmDetails["BUILDER"];
@@ -54,4 +54,4 @@ function WindfarmKeaneScreen(props) {
         );
     }
 
-export default WindfarmKeaneScreen;
+export default WindfarmInfoPanel;

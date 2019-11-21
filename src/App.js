@@ -13,8 +13,9 @@ import './App.scss';
 // import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
 
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms } from './api/Installations';
+import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas } from './api/Installations';
 import { fetchFact } from './api/RandomFact';
+import InfoPanel from './components/infoPanels/InfoPanel';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -35,6 +36,7 @@ const App = () => {
     fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "Field Name") }) });
     fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "Pipeline Id") }) });
     fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "Name") }) });
+    fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "name") }) });
     fetchFact().then(facts => { dispatch({ type: "setFacts", facts: facts }) });
   }, []);
 
@@ -45,6 +47,8 @@ const App = () => {
         <Header />
         <div className="content-container">
           <CesiumMap />
+          
+          <InfoPanel />
 
           {/* <Switch>
             <Route path="/installations" render={(props) => {

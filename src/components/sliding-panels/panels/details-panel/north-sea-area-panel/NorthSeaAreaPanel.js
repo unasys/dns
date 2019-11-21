@@ -1,8 +1,6 @@
 import React from 'react';
 import './NorthSeaAreaPanel.scss';
-//import { MapContext } from '../../../../visuals/map/Map';
-import { connect } from 'react-redux';
-import { setCurrentArea } from '../../../../../actions/areaActions';
+
 
 
 
@@ -106,15 +104,9 @@ class NorthSeaAreaPanel extends React.Component {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        setCurrentArea: (currentArea) => {
-            dispatch(setCurrentArea(currentArea))
-        }
-    }
-}
 
-//NorthSeaAreaPanel.contextType = MapContext;
 
-export default connect(null, mapDispatchToProps)(NorthSeaAreaPanel);
+
+
+export default NorthSeaAreaPanel;
 

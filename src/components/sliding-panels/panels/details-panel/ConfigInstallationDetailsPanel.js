@@ -1,12 +1,10 @@
 import React from 'react';
-import '../Panels.scss';
-import history from '../../../../history.js'
 import NavigationHeading from './NavigationHeading';
 import MapFilterPanel from './map-filter-panel/MapFilterPanel';
 import NorthSeaAreaPanel from './north-sea-area-panel/NorthSeaAreaPanel';
-
+let history;
 class ConfigInstallationDetailsPanel extends React.Component {
-
+    
     constructor(props) {
         super(props);
         this.state = {

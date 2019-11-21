@@ -1,8 +1,7 @@
 import React from 'react';
 import Switch from 'react-toggle-switch';
 import './MapFilterPanel.scss';
-import { toggleQuadrants, togglePipelines, toggleFields } from '../../../../../actions/bathymetryActions';
-import { connect } from 'react-redux';
+
 
 class MapFilterPanel extends React.Component {
 
@@ -40,28 +39,6 @@ class MapFilterPanel extends React.Component {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        toggleQuadrants: () => {
-            dispatch(toggleQuadrants())
-        },
-        togglePipelines: () => {
-            dispatch(togglePipelines())
-        },
-        toggleFields: () => {
-            dispatch(toggleFields())
-        }
-    }
-}
 
-function mapStateToProps(state) {
-  
-    return {
-        ogaQuadrantsSwitched: state.BathymetryReducer.ogaQuadrantsSwitched,
-        ogaPipelinesSwitched: state.BathymetryReducer.ogaPipelinesSwitched,
-        ogaFieldsSwitched: state.BathymetryReducer.ogaFieldsSwitched,
-        coords: state.BathymetryReducer.positions
-    }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapFilterPanel)
+export default MapFilterPanel
