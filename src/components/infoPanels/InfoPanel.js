@@ -1,15 +1,18 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { useLocation } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
 import PipelineInfoPanel from './PipelineInfoPanel';
 import WindfarmInfoPanel from './WindfarmPanel';
 import AreaInfoPanel from './AreaInfoPanel';
-import SlidingPanel from '../sliding-panels/SlidingPanel';
+import './Panels.scss'
+import Handle from '../sliding-panels/handle/Handle';
+import { visible } from 'ansi-colors';
 
 function InfoPanel() {
     const [{ installations, pipelines, windfarms, areas },] = useStateValue();
     const location = useLocation();
+    const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
     const eid = search.get("eid");
     const etype = search.get("etype");
@@ -51,9 +54,12 @@ function InfoPanel() {
     }
 
 
-    return (<SlidingPanel pullRight={true}>
-        {panel}
-    </SlidingPanel>);
+    return (
+        <>
+            <Handle onHandleClick={() => setIsVisible(!isVisible)} isFacingLeft={false} isOpen={isVisible} />
+            {panel && <aside className={isVisible ? "sidePanel" : "sidePanel hidden"}>{panel}</aside>}
+        </>
+    );
 }
 
 export default InfoPanel;

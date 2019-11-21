@@ -15,11 +15,21 @@
     &.left {
         border-left:none;
         border-radius: 0px 8px 8px 0px;
-        left:0px;
+        &.open{
+            left:400px;
+        }
+        &.collapsed{
+            left:0px;
+        }
     }
     &.right {
-        right:0px;
         border-right:none;
         border-radius: 8px 0px 0px 8px;
+        &.open{
+            right:390px;
+        }
+        &.collapsed{
+            right:0px;
+        }
     }
 }

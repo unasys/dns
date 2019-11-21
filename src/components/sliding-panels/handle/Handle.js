@@ -23,7 +23,7 @@ class Handle extends React.Component {
 
     render() {
         return (
-            <div className={'handle ' + (this.props.isFacingLeft ? 'left' : 'right')} onClick={this.handleClicked}>
+            <div className={'handle ' + (this.props.isFacingLeft ? 'left ' : 'right ') + (this.props.isOpen ? 'open' : 'collapsed')} onClick={this.handleClicked}>
                 { this.state.handleFacingLeft ? <i className="fas fa-caret-left"></i> : <i className="fas fa-caret-right"></i> }
             </div>
         )
