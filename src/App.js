@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
-import Map from './components/visuals/map/Map';
+import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 // import OilandGas from './components/pages/oil&gas/OilandGas';
@@ -17,15 +17,13 @@ import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetch
 import { fetchFact } from './api/RandomFact';
 
 const unique = (arr, prop) => {
-  const result = [];
-  const set = new Set();
+  const map = new Map();
   for (const item of arr) {
-    if (!set.has(item[prop])) {
-      set.add(item[prop])
-      result.push(item);
+    if (!map.has(item[prop])) {
+      map.set(item[prop], item)
     }
   }
-  return result;
+  return map;
 }
 
 const App = () => {
@@ -46,7 +44,7 @@ const App = () => {
       <div className="app-container">
         <Header />
         <div className="content-container">
-          <Map />
+          <CesiumMap />
 
           {/* <Switch>
             <Route path="/installations" render={(props) => {

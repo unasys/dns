@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { StateProvider } from './utils/state';
 
-const initialState = { installations: [], decomYards: [], fields: [], pipelines: [], windfarms: [], facts: [], showInstallations: true, showPipelines: false, showWindfarms: true, showDecomYards: true, showFields: false, showBlocks: false };
+const initialState = { installations: new Map(), decomYards: new Map(), fields: new Map(), pipelines: new Map(), windfarms: new Map(), facts: [], showInstallations: true, showPipelines: false, showWindfarms: true, showDecomYards: true, showFields: false, showBlocks: false, year:2019 };
 
 const reducer = (state, action) => {
     switch (action.type) {

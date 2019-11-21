@@ -1,13 +1,9 @@
-import React, { Component, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import './Map.scss';
-import ReactCursorPosition from 'react-cursor-position';
-import InstallationHoverCard from './InstallationHoverCard';
-import DecomyardHoverCard from './DecomyardHoverCard';
-import WindfarmHoverCard from './WindfarmHoverCard';
-import PipelineHoverCard from './PipelineHoverCard';
-import FieldHoverCard from './FieldHoverCard';
 import { useStateValue } from '../../../utils/state';
+import HoverCard from './HoverCard';
 
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
@@ -194,13 +190,14 @@ const mapInstallation = (installation) => {
         availability: availability,
         point: point,
         model: model,
-        label: label
+        label: label,
+        originalData : installation
     }
 }
 
 const setupInstallations = (installations) => {
-    const dataSource = new window.Cesium.CustomDataSource("installations");
-    installations.map(i => mapInstallation(i)).forEach(i => dataSource.entities.add(i));
+    const dataSource = new window.Cesium.CustomDataSource("Installation");
+    installations.forEach(i => dataSource.entities.add(mapInstallation(i)));
     return dataSource;
 }
 
@@ -233,13 +230,14 @@ const mapDecomyard = (decomyard) => {
         name: decomyard["Name"],
         position: position,
         point: point,
-        label: label
+        label: label,
+        originalData : decomyard
     }
 }
 
 const setupDecomyards = (decomyards) => {
-    const dataSource = new window.Cesium.CustomDataSource("decomyards");
-    decomyards.map(i => mapDecomyard(i)).forEach(i => dataSource.entities.add(i));
+    const dataSource = new window.Cesium.CustomDataSource("DecomYard");
+    decomyards.forEach(i => dataSource.entities.add(mapDecomyard(i)));
     return dataSource;
 }
 
@@ -354,7 +352,8 @@ const mapPipeline = (pipeline) => {
                     width: scaledWidth,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
                 },
-                label: label
+                label: label,
+                originalData : pipeline
             };
 
         }
@@ -362,8 +361,8 @@ const mapPipeline = (pipeline) => {
 }
 
 const setupPipelines = (pipelines) => {
-    const dataSource = new window.Cesium.CustomDataSource("pipelines");
-    pipelines.map(i => mapPipeline(i)).forEach(i => dataSource.entities.add(i));
+    const dataSource = new window.Cesium.CustomDataSource("Pipeline");
+    pipelines.forEach(i => dataSource.entities.add(mapPipeline(i)));
     return dataSource;
 }
 
@@ -395,13 +394,14 @@ const mapWindfarm = (windfarm) => {
             horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
             distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
             heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-        }
+        },
+        originalData : windfarm
     };
 }
 
 const setupWindfarms = (windfarms) => {
-    const dataSource = new window.Cesium.CustomDataSource("windfarms");
-    windfarms.map(i => mapWindfarm(i)).forEach(i => dataSource.entities.add(i));
+    const dataSource = new window.Cesium.CustomDataSource("Windfarm");
+    windfarms.forEach(i => dataSource.entities.add(mapWindfarm(i)));
     return dataSource;
 }
 
@@ -461,13 +461,14 @@ const mapField = (field) => {
                 material: material,
                 heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
             },
+            originalData : field
         };
     }
 }
 
 const setupFields = (fields) => {
-    const dataSource = new window.Cesium.CustomDataSource("fields");
-    fields.map(i => mapField(i)).forEach(i => dataSource.entities.add(i));
+    const dataSource = new window.Cesium.CustomDataSource("Field");
+    fields.forEach(i => dataSource.entities.add(mapField(i)));
     return dataSource;
 }
 
@@ -498,387 +499,137 @@ const setupBlocks = async () => {
     return dataSource;
 }
 
-const Map = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks },] = useStateValue();
+const leftClick = (viewer, history, location, search, e) => {
+    const picked = viewer.scene.pick(e.position);
+    const entity = picked ? picked.id || picked.primitive.id : null;
+    if (entity && entity.entityCollection && entity.entityCollection.owner) {
+        const type = entity.entityCollection.owner.name;
+        const id = entity.id;
+        search.set("eid", id);
+        search.set("etype", type);
+        history.push(location.pathname + `?${search.toString()}`);
+    }
+}
+
+let previousPickedEntity;
+
+const mouseMove = (viewer, setHover, movement) => {
+    const element = viewer.container;
+    const picked = viewer.scene.pick(movement.endPosition);
+    const entity = picked ? picked.id || picked.primitive.id : null;
+    
+    // Highlight the currently picked entity
+    if (entity && entity.entityCollection && entity.entityCollection.owner) {
+        if(previousPickedEntity !== entity){
+            element.style.cursor = 'pointer';
+            previousPickedEntity = entity;
+            if(entity.originalData){
+                setHover({entity:entity.originalData, type:entity.entityCollection.owner.name});
+            }
+        }
+    } else {
+        element.style.cursor = 'default';
+        if(!previousPickedEntity){
+            setHover(null);
+        }
+        previousPickedEntity = null;
+    }
+}
+
+// flyTo(west, south, east, north, pitch) {
+//     var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
+//     this.state.viewer.camera.flyTo({
+//         destination: rectangle,
+//         duration: 3,
+//         orientation: {
+//             heading: 0.0,
+//             pitch: window.Cesium.Math.toRadians(pitch),
+//             roll: 0.0
+//         }
+//     });
+// }
+
+
+const CesiumMap = () => {
+    const [{ installations, pipelines, windfarms, decomYards, fields, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year },] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
+    const location = useLocation();
+    const history = useHistory();
+    const search = new URLSearchParams(location.search);
+    const eid  = search.get("eid");
+    const etype  = search.get("etype");
+    const [hover, setHover] = useState(null);
+    const [position, setPosition] = useState({x:0,y:0});
+    
+    useEffect(() => {
+        if(!viewer) return;
+        const dataSources = viewer.dataSources.getByName(etype);
+        if(dataSources.length !== 0){
+            const entity = dataSources[0].entities.getById(eid);
+            if(entity){
+                viewer.flyTo(entity);
+            }
+        }
+        
+    },[viewer,eid, etype]);
+
+    useEffect(() => {
+        if (viewer) {
+            viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601("" + year);
+        }
+    }, [viewer, year]);
 
     useEffect(() => {
         const viewer = setupCesium(cesiumRef);
+        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE );
         setViewer(viewer);
         flyHome(viewer);
-        setupBlocks().then(dataSource => { dataSource.show=showBlocks; viewer.dataSources.add(dataSource) });
+        setupBlocks().then(dataSource => { dataSource.show = showBlocks; viewer.dataSources.add(dataSource) });
     }, []);
 
     useEffect(() => {
-        if (!viewer || installations.length === 0) return;
+        if (!viewer || installations.size === 0)  return;
         const dataSource = setupInstallations(installations);
         dataSource.show = showInstallations;
         viewer.dataSources.add(dataSource);
     }, [viewer, installations]);
 
     useEffect(() => {
-        if (!viewer || decomYards.length === 0) return;
+        if (!viewer || decomYards.size === 0 ) return;
         const dataSource = setupDecomyards(decomYards);
         dataSource.show = showDecomYards;
         viewer.dataSources.add(dataSource);
     }, [viewer, decomYards]);
 
     useEffect(() => {
-        if (!viewer || pipelines.length === 0) return;
+        if (!viewer || pipelines.size === 0) return;
         const dataSource = setupPipelines(pipelines);
         dataSource.show = showPipelines;
         viewer.dataSources.add(dataSource);
     }, [viewer, pipelines]);
 
     useEffect(() => {
-        if (!viewer || windfarms.length === 0) return;
+        if (!viewer || windfarms.size === 0) return;
         const dataSource = setupWindfarms(windfarms);
         dataSource.show = showWindfarms;
         viewer.dataSources.add(dataSource);
     }, [viewer, windfarms]);
 
     useEffect(() => {
-        if (!viewer || fields.length === 0) return;
+        if (!viewer || fields.size === 0) return;
         const dataSource = setupFields(fields);
         dataSource.show = showFields;
         viewer.dataSources.add(dataSource);
     }, [viewer, fields]);
 
     return (
-
-        <ReactCursorPosition style={{ width: '100%', height: '100%' }}>
-            {/* <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
-                    <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
-                    <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
-                    <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
-                    <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard>  */}
-            <div id="cesiumContainer" ref={cesiumRef} />
-        </ReactCursorPosition>
+        <div style={{ width: '100%', height: '100%' }} onMouseMove={(e => setPosition({ x: e.nativeEvent.offsetX+5, y: e.nativeEvent.offsetY+5 }))}>
+            {hover && <HoverCard position={position} type={hover.type} entity={hover.entity} />}
+            <div id="cesiumContainer" ref={cesiumRef}  />
+        </div>
     );
 }
 
-class Map2 extends Component {
-    constructor(props) {
-        super(props)
-        this.mouseEvent = this.mouseEvent.bind(this);
-        this.setMousePosition = this.setMousePosition.bind(this);
-        this.getMousePosition = this.getMousePosition.bind(this);
-        this.getHandlerNull = this.getHandlerNull.bind(this);
-        this.setHandlerNull = this.setHandlerNull.bind(this);
-        this.setCurrentPath = this.setCurrentPath.bind(this);
-        this.getCurrentPath = this.getCurrentPath.bind(this);
-        this.addCurrentLabel = this.addCurrentLabel.bind(this);
-        this.getCurrentLabels = this.getCurrentLabels.bind(this);
-        this.setCurrentLabels = this.setCurrentLabels.bind(this);
-        this.getDynamicLengthlabel = this.getDynamicLengthlabel.bind(this);
-        this.setDynamicLengthLabel = this.setDynamicLengthLabel.bind(this);
-        this.updatePosition = this.updatePosition.bind(this);
-        this.flyTo = this.flyTo.bind(this);
-        this.state = {
-            viewer: null,
-            isHidden: false,
-            positions: [],
-            installations: [],
-            decomyards: [],
-            pipelines: [],
-            fields: [],
-            windfarms: [],
-            ukBlocks: null,
-            currentInstallationFilter: null,
-            currentDecomYardFilter: null,
-            currentPipelineFilter: null,
-            currentFieldFilter: null,
-            currentWindfarmFilter: null,
-            lastHoveredInstallation: null,
-            lastHoveredDecomyard: null,
-            lastHoveredWindfarm: null,
-            lastHoveredPipeline: null,
-            lastHoveredField: null,
-        }
-
-        this.quadrants = null;
-
-        this.state.installations = this.props.cesiumInstallations;
-        if (this.props.cesiumDecomyards) {
-            this.state.decomyards = this.props.cesiumDecomyards;
-        }
-        if (this.props.cesiumPipelines) {
-            this.state.pipelines = this.props.cesiumPipelines;
-        }
-    }
-
-    updatePositions(positions) {
-        this.setState({
-            positions: positions
-        })
-        this.props.updatePositions(positions);
-    }
-
-    scaleBetween(unscaledNum, minAllowed, maxAllowed, min, max) {
-        return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.selectedPipeline !== this.props.selectedPipeline && this.props.selectedPipeline) {
-            if (!this.pipelinePoints) return;
-
-            let pipeline = this.pipelinePoints.find(pipeline => this.props.selectedPipeline._original["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
-            if (pipeline) {
-                this.state.viewer.flyTo(pipeline);
-            }
-            this.props.changeCurrentEntity({ entity: this.props.selectedPipeline, type: "Pipeline" });
-        }
-        if (prevProps.selectedInstallation !== this.props.selectedInstallation && this.props.selectedInstallation) {
-            if (!this.installationPoints) return;
-
-            let installation = this.installationPoints.find(installation => this.props.selectedInstallation._original.Name === installation.installation.Name);
-            if (installation) {
-                this.state.viewer.flyTo(installation);
-            }
-            this.props.changeCurrentEntity({ entity: this.props.selectedInstallation, type: "Installation" });
-        }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-
-        // toggle quadrants 
-        if (this.props.showQuadrants !== nextProps.showQuadrants) {
-            let index = this.state.viewer.dataSources.indexOf(this.quadrants)
-            let dataSource = this.state.viewer.dataSources.get(index);
-            if (nextProps.showQuadrants) {
-                if (index === -1) {
-                    this.addQuadrantsToMap(this.state.viewer);
-                } else {
-                    dataSource.entities.show = true;
-                }
-            } else {
-                dataSource.entities.show = false;
-            }
-            this.state.viewer.scene.requestRender()
-        }
-
-
-        if (this.state.viewer != null) {
-            //first run    
-
-
-            if (this.props.year !== nextProps.year) {
-                // eslint-disable-next-line
-                this.state.viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601("" + nextProps.year);
-            }
-        }
-        return false;
-    }
-
-    addQuadrantsToMap(viewer) {
-
-    }
-
-
-    setMousePosition(p) {
-        this.mousePosition = p;
-    }
-
-    getMousePosition() {
-        return this.mousePosition;
-    }
-
-    setHandlerNull(isNull) {
-        this.handlerNull = isNull;
-    }
-
-    getHandlerNull() {
-        return this.handlerNull;
-    }
-
-    flyTo(west, south, east, north, pitch) {
-        var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
-        this.state.viewer.camera.flyTo({
-            destination: rectangle,
-            duration: 3,
-            orientation: {
-                heading: 0.0,
-                pitch: window.Cesium.Math.toRadians(pitch),
-                roll: 0.0
-            }
-        });
-    }
-
-    componentDidMount() {
-        this.initialiseViewer();
-
-        this.addHighlightHandlers();
-    }
-
-    setCurrentPath(path) {
-        this.currentPath = path;
-    }
-
-    getCurrentPath() {
-        return this.currentPath;
-    }
-
-    addCurrentLabel(label) {
-        this.currentLabels.push(label);
-    }
-
-    getCurrentLabels() {
-        return this.currentLabels;
-    }
-
-    setCurrentLabels(labels) {
-        this.currentLabels = labels;
-    }
-
-    getDynamicLengthlabel() {
-        return this.dynamicLengthLabel;
-    }
-
-    setDynamicLengthLabel(dll) {
-        this.dynamicLengthLabel = dll;
-    }
-
-    updatePosition(position) {
-        this.position = position;
-        this.updatePositions(position);
-    }
-
-    addHighlightHandlers() {
-        this.state.viewer.screenSpaceEventHandler.setInputAction(this.mouseEvent, window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-        var handler = new window.Cesium.ScreenSpaceEventHandler(this.state.viewer.scene.canvas);
-
-        var previousPickedEntity = undefined;
-
-        const viewer = this.state.viewer;
-        let self = this;
-        var element = document.getElementById('cesiumContainer');
-        // If the mouse is over a point of interest, change the entity billboard scale and color
-        handler.setInputAction(function (movement) {
-            var pickedPrimitive = viewer.scene.pick(movement.endPosition);
-            var pickedEntity = (window.Cesium.defined(pickedPrimitive)) ? pickedPrimitive.id : undefined;
-            // Unhighlight the previously picked entity
-            if (window.Cesium.defined(previousPickedEntity)) {
-                let color;
-                if (previousPickedEntity.installation) {
-                    color = previousPickedEntity.installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD;
-                } else if (previousPickedEntity.decomyard) {
-                    color = window.Cesium.Color.AQUA;
-                } else {
-                    color = window.Cesium.Color.WHITE;
-                }
-                previousPickedEntity.point.color = color;
-            }
-            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm || self.state.lastHoveredPipeline || self.state.lastHoveredField) {
-                self.setState({
-                    lastHoveredInstallation: null,
-                    lastHoveredDecomyard: null,
-                    lastHoveredWindfarm: null,
-                    lastHoveredPipeline: null,
-                    lastHoveredField: null
-                })
-            }
-
-            // Highlight the currently picked entity
-            if (window.Cesium.defined(pickedEntity)) {
-                element.style.cursor = 'pointer';
-                if (window.Cesium.defined(pickedEntity.point)) {
-                    viewer.scene.requestRender();
-                    pickedEntity.point.color = window.Cesium.Color.AZURE;
-                    previousPickedEntity = pickedEntity;
-                    self.setState({
-                        lastHoveredInstallation: pickedEntity.installation
-                    });
-                    self.setState({
-                        lastHoveredDecomyard: pickedEntity.decomyard
-                    });
-                    self.setState({
-                        lastHoveredWindfarm: pickedEntity.windfarm
-                    });
-                } else if (window.Cesium.defined(pickedEntity.pipeline)) {
-                    self.setState({
-                        lastHoveredPipeline: pickedEntity.pipeline
-                    });
-                } else if (window.Cesium.defined(pickedEntity.field)) {
-                    self.setState({
-                        lastHoveredField: pickedEntity.field
-                    });
-                }
-            }
-            else {
-                element.style.cursor = 'default';
-            }
-        }, window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    }
-
-    mouseEvent(e) {
-        const picked = this.state.viewer.scene.pick(e.position);
-        const id = picked ? picked.id || picked.primitive.id : null;
-
-        if (picked && id) {
-            if (id.windfarm !== undefined) {
-                this.props.changeCurrentEntity({ entity: id.windfarm, type: "Windfarm" });
-            }
-            if (id.pipeline !== undefined) {
-                let pipeline = this.pipelinePoints.find(pipeline => id.pipeline["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
-                if (pipeline) {
-                    this.state.viewer.flyTo(pipeline);
-                }
-                this.props.changeCurrentEntity({ entity: id.pipeline, type: "Pipeline" });
-            }
-            if (id.installation !== undefined) {
-                let installation = this.installationPoints.find(installation => id.installation.Name === installation.installation.Name);
-                if (installation) {
-                    this.state.viewer.flyTo(installation);
-                }
-
-                if (this.props.currentInstallation === id.installation) return; // if selecting already selected installation.
-                // dot has been clicked.
-                this.props.changeCurrentEntity({ entity: id.installation, type: "Installation" });
-            }
-        }
-    }
-
-
-
-    computeCircle(radius) {
-        var positions = [];
-        for (var i = 0; i < 360; i++) {
-            var radians = window.Cesium.Math.toRadians(i);
-            positions.push(new window.Cesium.Cartesian2(radius * Math.cos(radians), radius * Math.sin(radians)));
-        }
-        return positions;
-    }
-
-    render() {
-        const divStyle = {
-            width: '100%',
-            height: '100%',
-            zIndex: 1,
-            pointerEvents: 'auto'
-        };
-        let hoveredInstallation = this.state.lastHoveredInstallation;
-        let hoveredDecomyard = this.state.lastHoveredDecomyard;
-        let hoveredWindfarm = this.state.lastHoveredWindfarm;
-        let hoveredPipeline = this.state.lastHoveredPipeline;
-        let hoveredField = this.state.lastHoveredField;
-
-        return (
-            <div style={{ height: '100%', width: '100%' }}>
-                <ReactCursorPosition style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
-                    <div id="cesiumContainer" style={divStyle} >
-                    </div>
-                    <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
-                    <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
-                    <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
-                    <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
-                    <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard>
-                </ReactCursorPosition>
-                {/* <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider> */}
-            </div>
-        );
-    }
-}
-
-export default Map;
+export default CesiumMap;

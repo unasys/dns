@@ -12,7 +12,6 @@
     "react-addons-css-transition-group": "^15.6.2",
     "react-addons-update": "^15.6.2",
     "react-collapse": "^5.0.0",
-    "react-cursor-position": "^3.0.3",
     "react-dd-menu": "^2.0.2",
     "react-debounce-input": "^3.2.2",
     "react-dom": "^16.12.0",
