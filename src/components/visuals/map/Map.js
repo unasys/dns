@@ -191,7 +191,7 @@ const mapInstallation = (installation) => {
         point: point,
         model: model,
         label: label,
-        originalData : installation
+        originalData: installation
     }
 }
 
@@ -231,7 +231,7 @@ const mapDecomyard = (decomyard) => {
         position: position,
         point: point,
         label: label,
-        originalData : decomyard
+        originalData: decomyard
     }
 }
 
@@ -353,7 +353,7 @@ const mapPipeline = (pipeline) => {
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
                 },
                 label: label,
-                originalData : pipeline
+                originalData: pipeline
             };
 
         }
@@ -395,7 +395,7 @@ const mapWindfarm = (windfarm) => {
             distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
             heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
         },
-        originalData : windfarm
+        originalData: windfarm
     };
 }
 
@@ -461,7 +461,7 @@ const mapField = (field) => {
                 material: material,
                 heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
             },
-            originalData : field
+            originalData: field
         };
     }
 }
@@ -517,19 +517,19 @@ const mouseMove = (viewer, setHover, movement) => {
     const element = viewer.container;
     const picked = viewer.scene.pick(movement.endPosition);
     const entity = picked ? picked.id || picked.primitive.id : null;
-    
+
     // Highlight the currently picked entity
     if (entity && entity.entityCollection && entity.entityCollection.owner) {
-        if(previousPickedEntity !== entity){
+        if (previousPickedEntity !== entity) {
             element.style.cursor = 'pointer';
             previousPickedEntity = entity;
-            if(entity.originalData){
-                setHover({entity:entity.originalData, type:entity.entityCollection.owner.name});
+            if (entity.originalData) {
+                setHover({ entity: entity.originalData, type: entity.entityCollection.owner.name });
             }
         }
     } else {
         element.style.cursor = 'default';
-        if(!previousPickedEntity){
+        if (!previousPickedEntity) {
             setHover(null);
         }
         previousPickedEntity = null;
@@ -557,22 +557,22 @@ const CesiumMap = () => {
     const location = useLocation();
     const history = useHistory();
     const search = new URLSearchParams(location.search);
-    const eid  = search.get("eid");
-    const etype  = search.get("etype");
+    const eid = search.get("eid");
+    const etype = search.get("etype");
     const [hover, setHover] = useState(null);
-    const [position, setPosition] = useState({x:0,y:0});
-    
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+
     useEffect(() => {
-        if(!viewer) return;
+        if (!viewer) return;
         const dataSources = viewer.dataSources.getByName(etype);
-        if(dataSources.length !== 0){
+        if (dataSources.length !== 0) {
             const entity = dataSources[0].entities.getById(eid);
-            if(entity){
+            if (entity) {
                 viewer.flyTo(entity);
             }
         }
-        
-    },[viewer,eid, etype]);
+
+    }, [viewer, eid, etype]);
 
     useEffect(() => {
         if (viewer) {
@@ -583,21 +583,21 @@ const CesiumMap = () => {
     useEffect(() => {
         const viewer = setupCesium(cesiumRef);
         viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE );
+        viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         setViewer(viewer);
         flyHome(viewer);
         setupBlocks().then(dataSource => { dataSource.show = showBlocks; viewer.dataSources.add(dataSource) });
     }, []);
 
     useEffect(() => {
-        if (!viewer || installations.size === 0)  return;
+        if (!viewer || installations.size === 0) return;
         const dataSource = setupInstallations(installations);
         dataSource.show = showInstallations;
         viewer.dataSources.add(dataSource);
     }, [viewer, installations]);
 
     useEffect(() => {
-        if (!viewer || decomYards.size === 0 ) return;
+        if (!viewer || decomYards.size === 0) return;
         const dataSource = setupDecomyards(decomYards);
         dataSource.show = showDecomYards;
         viewer.dataSources.add(dataSource);
@@ -625,10 +625,10 @@ const CesiumMap = () => {
     }, [viewer, fields]);
 
     return (
-        <div style={{ width: '100%', height: '100%' }} onMouseMove={(e => setPosition({ x: e.nativeEvent.offsetX+5, y: e.nativeEvent.offsetY+5 }))}>
-            {hover && <HoverCard position={position} type={hover.type} entity={hover.entity} />}
-            <div id="cesiumContainer" ref={cesiumRef}  />
-        </div>
+        <div style={{ width: '100%', height: '100%' }} onMouseMove={(e => {if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } }) }>
+            { hover && <HoverCard position={position} type={hover.type} entity={hover.entity} />}
+            <div id="cesiumContainer" ref={cesiumRef} />
+        </div >
     );
 }
 
