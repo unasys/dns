@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
@@ -55,9 +55,10 @@ function InfoPanel() {
 
 
     return (
+        panel &&
         <>
             <Handle onHandleClick={() => setIsVisible(!isVisible)} isFacingLeft={false} isOpen={isVisible} />
-            {panel && <aside className={isVisible ? "sidePanel" : "sidePanel hidden"}>{panel}</aside>}
+            <aside className={isVisible ? "sidePanel" : "sidePanel hidden"}>{panel}</aside>
         </>
     );
 }
