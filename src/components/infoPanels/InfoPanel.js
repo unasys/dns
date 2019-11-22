@@ -55,10 +55,10 @@ function InfoPanel() {
 
     return (
         panel &&
-        <>
+        <div className="dns-panel right">
             <Handle onHandleClick={() => setIsVisible(!isVisible)} isFacingLeft={false} isOpen={isVisible} />
             <aside className={isVisible ? "sidePanel" : "sidePanel hidden"}>{panel}</aside>
-        </>
+        </div>
     );
 }
 

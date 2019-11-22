@@ -47,15 +47,16 @@ const App = () => {
       <div className="app-container">
         <Header />
         <div className="content-container">
-          <Switch>
-            <Route path="/" >
-              <MenuPanel />
-            </Route>
-          </Switch>
           <CesiumMap />
+          <div id="dns-panels">
+            <Switch>
+              <Route path="/" >
+                <MenuPanel />
+              </Route>
+            </Switch>
 
-          <InfoPanel />
-
+            <InfoPanel />
+          </div>
           {/* <Switch>
             <Route path="/installations" render={(props) => {
               return (

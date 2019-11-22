@@ -1,15 +1,9 @@
 .sidePanel {
-    background: rgb(51, 71, 92);
     width: 500px;
-    overflow-y: auto;
 }
 
-.hidden{
-    display: none;
-}
-
-::-webkit-scrollbar {
-    display: none;
+.menu-panel{
+    width:400px;
 }
 
 .title-container {

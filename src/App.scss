@@ -1,13 +1,40 @@
-.content-container {
-    position:relative;
-    width:100%;
-    height:100%;
-    display:flex;
+.app-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
-.app-container {
-    position:relative;
-    display:flex;
-    flex-direction: column;
-    height:100%;
+.content-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+#dns-panels {
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+
+    .dns-panel {
+        background: rgb(51, 71, 92);
+        overflow-y: auto;
+
+        &.left {
+            justify-items: left;
+        }
+
+        &.right {
+            justify-items: right;
+        }
+
+        &.hidden {
+            display: none;
+        }
+    }
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
