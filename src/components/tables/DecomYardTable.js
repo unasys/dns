@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import '../TableStyles.scss';
+import './TableStyles.scss';
 import history from '../../../../history';
-import { fetchWindfarms } from '../../../../api/Installations.js';
+import { fetchDecomyards } from '../../../../api/Installations.js';
 import { connect } from 'react-redux';
-import { changeWindfarmFilterType,  setCesiumWindfarms } from '../../../../actions/installationActions';
+import { changeDecomYardFilterType,  setCesiumDecomyards } from '../../../../actions/installationActions';
 
-
-class WindfarmTable extends Component {
+class DecomYardTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,18 +20,18 @@ class WindfarmTable extends Component {
     this.addToShownColumns = this.addToShownColumns.bind(this);
     this.removeFromShownColumns = this.removeFromShownColumns.bind(this);
     this.expandColumns = this.expandColumns.bind(this);
-    this.fetchWindfarms = this.fetchWindfarms.bind(this);
+    this.fetchInstallations = this.fetchInstallations.bind(this);
     this.onTableViewChange = this.onTableViewChange.bind(this);
   }
   
 
 
   componentDidMount() {
-      this.fetchWindfarms();
+      this.fetchInstallations();
   }
 
-  fetchWindfarms() {
-    fetchWindfarms()
+  fetchInstallations() {
+      fetchDecomyards()
           .then(payload => {
 
               this.setState({
@@ -40,10 +39,6 @@ class WindfarmTable extends Component {
                   currentDataLength: payload.length,
               });
                           
-
-          })
-          .catch((e) => {
-              console.error('something went wrong when fetching decom yards', e);
           })
   }
 
@@ -65,25 +60,14 @@ class WindfarmTable extends Component {
 
   expandColumns() {
     if (this.state.shownColumns.length === 1) {
-      this.addToShownColumns(['MW Cap', 'Turbines', 'Capacity Factor']);
-    }
-    if (this.state.shownColumns.length === 4) {
-      this.addToShownColumns(['Status', 'Depth (M)', 'KM to shore', 'First Power', 'Area (km2)'])
-    }
+        this.addToShownColumns(['Lat/Long']);
+      }
   }
 
   collapseColumns() {
-    if (this.state.shownColumns.length === 9) {
-      this.removeFromShownColumns('Area (km2)')
-      this.removeFromShownColumns('First Power')
-      this.removeFromShownColumns('KM to shore')
-      this.removeFromShownColumns('Depth (M)')
-      this.removeFromShownColumns('Status')
-    } else if (this.state.shownColumns.length === 4) {
-      this.removeFromShownColumns('Capacity Factor')
-      this.removeFromShownColumns('Turbines')
-      this.removeFromShownColumns('MW Cap')      
-    }
+    if (this.state.shownColumns.length === 2) {
+        this.removeFromShownColumns('Lat/Long')
+      }
   }
 
   onTableViewChange() {
@@ -92,7 +76,7 @@ class WindfarmTable extends Component {
         let mappedRows = currentRows.map(row => {
         return row._original;
       })
-      this.props.setCesiumWindfarms(mappedRows);
+      this.props.setCesiumDecomyards(mappedRows);
     }
   }
 
@@ -101,10 +85,9 @@ class WindfarmTable extends Component {
       {
         Header: 'Name',
         id: 'Name',
-        show: this.state.shownColumns.includes('Name'),
         accessor: row => {
-          if (row.NAME) {
-            return row.NAME.toLowerCase()
+          if (row.Name) {
+            return row.Name.toLowerCase()
           }
         },
         Cell: row => (
@@ -123,68 +106,16 @@ class WindfarmTable extends Component {
           </span>)
         },
         style: { color: '#fff', fontSize: '15px' },
+        show: this.state.shownColumns.includes('Name'),
         minWidth: 300
       },
+
       {
-        Header: 'MW Cap',
-        accessor: 'MW CAP',
-        show: this.state.shownColumns.includes('MW Cap'),
-      },
-      {
-        Header: 'Turbines',
-        accessor: 'TURBINES',
-        show: this.state.shownColumns.includes('Turbines'),
-        width: 250,
-        Cell: row => (
-          <>
-            <div style={{overflowX: 'scroll'}}>
-              <p>
-                {row.value.toLowerCase()}
-              </p>
-            </div>
-          </>
-        ),
-      },
-      {
-        Header: 'Capacity Factor',
-        accessor: 'CAPACITY FACTOR',
-        show: this.state.shownColumns.includes('Capacity Factor'),
-      },
-      {
-        Header: 'Status',
-        accessor: 'STATUS',
-        show: this.state.shownColumns.includes('Status'),
-        width: 200,
-        Cell: row => (
-          <>
-            <div style={{overflowX: 'scroll'}}>
-              <p>
-                {row.value.toLowerCase()}
-              </p>
-            </div>
-          </>
-        ),
-      },
-      {
-        Header: 'Depth (M)',
-        accessor: 'DEPTH',
-        show: this.state.shownColumns.includes('Depth (M)'),
-      },
-      {
-        Header: 'KM to shore',
-        accessor: 'KM TO SHORE',
-        show: this.state.shownColumns.includes('KM to shore'),
-      },
-      {
-        Header: 'First Power',
-        accessor: 'First Power',
-        show: this.state.shownColumns.includes('First Power'),
-      },
-      {
-        Header: <div>Area (km<sup>2</sup>)</div>,
-        accessor: 'Area (km2)',
-        show: this.state.shownColumns.includes('Area (km2)'),
-      },
+        Header: 'Lat/Long',
+        id: 'Lat/Long',
+        accessor: row => (parseFloat(Math.round(row["Long"] * 100) / 100).toFixed(2) + "/" + parseFloat(Math.round(row["Lat"] * 100) / 100).toFixed(2)),
+        show: this.state.shownColumns.includes('Lat/Long')
+      }
     ]
 
     return (
@@ -219,12 +150,12 @@ class WindfarmTable extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeWindfarmFilterType: (filterType, propertyName, filterOn) => {
-          dispatch(changeWindfarmFilterType(filterType, propertyName, filterOn))
+    changeDecomYardFilterType: (filterType, propertyName, filterOn) => {
+          dispatch(changeDecomYardFilterType(filterType, propertyName, filterOn))
       },
-      setCesiumWindfarms: (rows) => {
-        dispatch(setCesiumWindfarms(rows))
+      setCesiumDecomyards: (rows) => {
+        dispatch(setCesiumDecomyards(rows))
     }
   }
 }
-export default connect(null, mapDispatchToProps)(WindfarmTable)
+export default connect(null, mapDispatchToProps)(DecomYardTable)

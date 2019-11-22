@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import './TableStyles.scss';
+import './InstallationTableStyles.scss';
 import history from '../../../../history';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';

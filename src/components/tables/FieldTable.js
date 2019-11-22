@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import '../TableStyles.scss';
+import './TableStyles.scss';
 import history from '../../../../history';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
-import { fetchFields } from '../../../../api/Installations.js';
+import { fetchFields } from '../../api/Installations.js';
 import { connect } from 'react-redux';
 import { changeFieldFilterType, setCesiumFields } from '../../../../actions/installationActions';
 
