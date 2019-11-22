@@ -53,7 +53,7 @@ const App = () => {
           <CesiumMap />
           <div id="dns-panels">
             <Switch>
-              <Route path="/" >
+              <Route path="/" exact >
                 <MenuPanel />
               </Route>
             </Switch>

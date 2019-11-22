@@ -50,7 +50,7 @@ function AreaInfoPanel(props) {
     let installationTypeEntries = [];
 
     installationTypes.forEach((value, key) => {
-        installationTypeEntries.push(<Entry title={key} subtitle={value.length} borderBottom></Entry>);
+        installationTypeEntries.push(<Entry key={key} title={key} subtitle={value.length} borderBottom></Entry>);
     })
 
 

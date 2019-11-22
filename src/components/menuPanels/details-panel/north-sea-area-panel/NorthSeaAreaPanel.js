@@ -1,20 +1,18 @@
 import React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import './NorthSeaAreaPanel.scss';
 import { useStateValue } from '../../../../utils/state';
 
-const ResultItem = (content, highlighted) => {
-    const history = useHistory();
-    const location = useLocation();
+const ResultItem = (content, highlighted, location) => {
     const search = new URLSearchParams(location.search);
     search.set("etype", "Area");
     search.set("eid", content.name);
-    return (<div key={content.name} className="area-result-item-container">
-        <div className={"area-result-item" + (highlighted === content.name ? ' highlighted' : '')} onClick={(e) => history.push(location.pathname + `?${search.toString()}`)}>
+    return (<Link key={content.name} className="area-result-item-container" to={location => ({ ...location, search: `?${search.toString()}` })}>
+        <div className={"area-result-item" + (highlighted === content.name ? ' highlighted' : '')} >
             {content.indented && <i class="fas fa-share" style={{ transform: 'scaleY(-1)', paddingLeft: '10px', paddingRight: '5px' }}></i>}
             {content.name}
         </div>
-    </div>);
+    </Link>);
 }
 
 const NorthSeaAreaPanel = () => {
@@ -27,7 +25,7 @@ const NorthSeaAreaPanel = () => {
 
     return (
         <div className="areas">
-            {[...areas.values()].map(area => ResultItem(area, highlighted))}
+            {[...areas.values()].map(area => ResultItem(area, highlighted, search))}
         </div>
     )
 }
