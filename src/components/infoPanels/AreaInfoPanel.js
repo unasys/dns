@@ -23,7 +23,6 @@ function AreaInfoPanel(props) {
     const history = useHistory();
 
     if (!props.area) return <div>Area not supported.</div>;
-
     let areaName = props.area.name;
     let areaCode = props.area.areaCode;
 
@@ -39,9 +38,9 @@ function AreaInfoPanel(props) {
     let installationTypes;
 
     if (areaName !== "North Sea") {
-        installationsInArea = props.installations.filter(installation => areaCode === installation.Area)
+        installationsInArea = [...props.installations.values()].filter(installation => areaCode === installation.Area)
     } else {
-        installationsInArea = props.installations;
+        installationsInArea = [...props.installations.values()];
     }
 
     numberOfInstallations = installationsInArea.length

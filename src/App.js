@@ -3,7 +3,6 @@ import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
-// import OilandGas from './components/pages/oil&gas/OilandGas';
 
 // import InstallationTable from './components/pages/tables/installationTable/InstallationTable';
 // import DecomYardTable from './components/pages/tables/decomYardTable/DecomYardTable';

@@ -536,22 +536,21 @@ const mouseMove = (viewer, setHover, movement) => {
     }
 }
 
-// flyTo(west, south, east, north, pitch) {
-//     var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
-//     this.state.viewer.camera.flyTo({
-//         destination: rectangle,
-//         duration: 3,
-//         orientation: {
-//             heading: 0.0,
-//             pitch: window.Cesium.Math.toRadians(pitch),
-//             roll: 0.0
-//         }
-//     });
-// }
-
+const flyTo = (viewer, {west, south, east, north, pitch}) => {
+    var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
+    viewer.camera.flyTo({
+        destination: rectangle,
+        duration: 3,
+        orientation: {
+            heading: 0.0,
+            pitch: window.Cesium.Math.toRadians(pitch),
+            roll: 0.0
+        }
+    });
+}
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year },] = useStateValue();
+    const [{ installations, pipelines, windfarms, decomYards, fields, showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year },] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -564,15 +563,26 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer) return;
-        const dataSources = viewer.dataSources.getByName(etype);
-        if (dataSources.length !== 0) {
-            const entity = dataSources[0].entities.getById(eid);
-            if (entity) {
-                viewer.flyTo(entity);
-            }
+        switch (etype) {
+            case "Area":
+                let area = areas.get(eid);
+                if (area && area.coordinates) {
+                    flyTo(viewer,area.coordinates);
+                }
+                break;
+            default:
+
+                const dataSources = viewer.dataSources.getByName(etype);
+                if (dataSources.length !== 0) {
+                    const entity = dataSources[0].entities.getById(eid);
+                    if (entity) {
+                        viewer.flyTo(entity);
+                    }
+                }
+                break;
         }
 
-    }, [viewer, eid, etype]);
+    }, [viewer, areas, eid, etype]);
 
     useEffect(() => {
         if (!viewer) return;

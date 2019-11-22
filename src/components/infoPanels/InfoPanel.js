@@ -27,7 +27,6 @@ function InfoPanel() {
         }
         case "Pipeline": {
             const entity = pipelines.get(eid);
-            console.log(entity, eid, pipelines)
             if (entity) {
                 panel = <PipelineInfoPanel pipeline={entity} />;
             }
