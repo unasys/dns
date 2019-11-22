@@ -18,8 +18,15 @@
     justify-content: space-between;
 
     .dns-panel {
-        background: rgb(51, 71, 92);
-        overflow-y: auto;
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        
+        .dns-content{
+            overflow-y: auto;
+            background: rgb(51, 71, 92);
+            height: 100%;
+        }
 
         &.left {
             justify-items: left;
@@ -29,7 +36,7 @@
             justify-items: right;
         }
 
-        &.hidden {
+        .hidden {
             display: none;
         }
     }
