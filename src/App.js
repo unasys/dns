@@ -21,8 +21,12 @@ import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 const unique = (arr, prop) => {
   const map = new Map();
   for (const item of arr) {
-    if (!map.has(item[prop])) {
-      map.set(item[prop], item)
+    let key = item[prop];
+    if (key) {
+      key = key.toString();
+    }
+    if (!map.has(key)) {
+      map.set(key, item)
     }
   }
   return map;
