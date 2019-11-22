@@ -84,15 +84,6 @@ const setupCesium = (cesiumRef) => {
             imageryProvider: mapbox
         });
 
-    viewer.camera.changed.addEventListener(
-        function () {
-            if (viewer.camera._suspendTerrainAdjustment && viewer.scene.mode === window.Cesium.SceneMode.SCENE3D) {
-                viewer.camera._suspendTerrainAdjustment = false;
-                viewer.camera._adjustHeightForTerrain();
-            }
-        }
-    );
-
     viewer.scene.globe.enableLighting = false;
     viewer.scene.globe.depthTestAgainstTerrain = false;
     return viewer;
@@ -282,7 +273,7 @@ const mapPipeline = (pipeline) => {
             if (pipeline["Diameter Units"] === "inch") {
                 pipeDiameter = pipeDiameter * 25.4;
             }
-            const scaledWidth = scaleBetween(pipeDiameter, 1, 2, minDiameter, maxDiameter);
+            const scaledWidth = scaleBetween(pipeDiameter, 2, 4, minDiameter, maxDiameter);
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
             const scaledTextDistance = scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
 
@@ -348,9 +339,8 @@ const mapPipeline = (pipeline) => {
                 polyline: {
                     positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
                     material: material,
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
                     width: scaledWidth,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance)
                 },
                 //label: label,
                 originalData: pipeline
@@ -592,7 +582,7 @@ const CesiumMap = () => {
         if (pipeline.length > 0) pipeline[0].show = showPipelines;
         const windfarms = viewer.dataSources.getByName("Windfarm");
         if (windfarms.length > 0) windfarms[0].show = showWindfarms;
-        const decomYards = viewer.dataSources.getByName("deconYard");
+        const decomYards = viewer.dataSources.getByName("DecomYard");
         if (decomYards.length > 0) decomYards[0].show = showDecomYards;
         const fields = viewer.dataSources.getByName("Field");
         if (fields.length > 0) fields[0].show = showFields;
