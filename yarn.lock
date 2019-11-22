@@ -6626,6 +6626,11 @@ mem@^4.0.0:
     mimic-fn "^2.0.0"
     p-is-promise "^2.0.0"
 
+"memoize-one@>=3.1.1 <6":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.1.1.tgz#047b6e3199b508eaec03504de71229b8eb1d75c0"
+  integrity sha512-HKeeBpWvqiVJD57ZUAsJNm71eHTykffzcLZVYWiVfQeI1rJtuEaS7hQiEpWfVVk18donPwJEcFKIkCmPJNOhHA==
+
 memory-fs@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/memory-fs/-/memory-fs-0.4.1.tgz#3a9a20b8462523e447cfbc7e8bb80ed667bfc552"
@@ -9081,12 +9086,10 @@ react-selectable-fast@^3.0.0:
   resolved "https://registry.yarnpkg.com/react-selectable-fast/-/react-selectable-fast-3.0.0.tgz#24bd1bd10a840e852d3083505c1dddfa9bf5a374"
   integrity sha512-RYUqLoWjVhYL+chR1ScaP1mR87+lcvXF+U+iyzI+c6c3o2GwSb71meDzSBzuG6xnU9Ehq5+AlgA+epFTypmXpw==
 
-react-table@^6.10.3:
-  version "6.10.3"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-6.10.3.tgz#d085487a5a1b18b76486b71cf1d388d87c8c7362"
-  integrity sha512-sVlq2/rxVaQJywGD95+qGiMr/SMHFIFnXdx619BLOWE/Os5FOGtV6pQJNAjZixbQZiOu7dmBO1kME28uxh6wmA==
-  dependencies:
-    classnames "^2.2.5"
+react-table@^7.0.0-beta.14:
+  version "7.0.0-beta.14"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.0.0-beta.14.tgz#17824db22de1b082ed9fdb8e3bcb21612abd6523"
+  integrity sha512-5pUAq+Dv/Dwo/iMZHRjxlBpphOclgDDJ0BBW26MgzWPZY+PfhqzIWVk7HnIFa8GJW8dzpMu20/jiWRhwav1N/A==
 
 react-toggle-switch@^3.0.4:
   version "3.0.4"
@@ -9120,6 +9123,14 @@ react-visibility-sensor@^5.0.2:
   integrity sha512-cTUHqIK+zDYpeK19rzW6zF9YfT4486TIgizZW53wEZ+/GPBbK7cNS0EHyJVyHYacwFEvvHLEKfgJndbemWhB/w==
   dependencies:
     prop-types "^15.7.2"
+
+react-window@^1.8.5:
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.5.tgz#a56b39307e79979721021f5d06a67742ecca52d1"
+  integrity sha512-HeTwlNa37AFa8MDZFZOKcNEkuF2YflA0hpGPiTT9vR7OawEt+GZbfM6wqkBahD3D3pUjIabQYzsnY/BSJbgq6Q==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    memoize-one ">=3.1.1 <6"
 
 react@^16.12.0:
   version "16.12.0"

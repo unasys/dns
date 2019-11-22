@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
@@ -16,6 +16,8 @@ import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetch
 import { fetchFact } from './api/RandomFact';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
+import DynamicWidthPage from './components/pages/DynamicWidthPage';
+import InstallationTable from './components/tables/InstallationTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -55,6 +57,11 @@ const App = () => {
             <Switch>
               <Route path="/" exact >
                 <MenuPanel />
+              </Route>
+              <Route path="/installations" exact >
+                <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
+                  <InstallationTable />
+                </DynamicWidthPage>
               </Route>
             </Switch>
 
