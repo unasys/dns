@@ -1,11 +1,47 @@
 import React, { useState } from 'react';
-import NavigationHeading from './NavigationHeading';
-import MapFilterPanel from './map-filter-panel/MapFilterPanel';
+import { Link } from 'react-router-dom';
 import NorthSeaAreaPanel from './north-sea-area-panel/NorthSeaAreaPanel';
 import Handle from '../../sliding-panels/handle/Handle';
 import '../../infoPanels/Panels.scss';
+import { useStateValue } from '../../../utils/state';
+import Switch from 'react-toggle-switch'
+
+const MapOptions = () => {
+    const [{ showBlocks }, dispatch] = useStateValue();
+
+    return (
+        <div style={{ display: 'flex' }}>
+            <div style={{ width: '100%' }}>
+                <div className="panel-title">
+                    Layer Visibility
+                </div>
+                <div className="layer-container">
+                    <div className="layer-content">
+                        <div className="bathymetry-title">Blocks</div>
+                        <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBlocks" }) }} on={showBlocks} className={'bathymetry-title'} />
+                    </div>
+                </div>
+            </div>
+        </div >);
+};
+
+const NavigationHeading = (props) => {
+    return (
+        <Link className="overview-container" to={props.url}>
+            <div className="overview-heading">
+                {props.switch}
+                {props.heading}
+            </div>
+            <div className="dropdown-icon">
+                <i className="fas fa-chevron-right icon"></i>
+            </div>
+        </Link>
+    );
+}
+
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
+    const [{ showInstallations, showDecomYards, showPipelines, showFields, showWindfarms }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
@@ -14,12 +50,12 @@ function MenuPanel() {
                         <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>
                     </div>
                     <NorthSeaAreaPanel />
-                    <NavigationHeading heading={'Installations'} url="installations" />
-                    <NavigationHeading heading={'Decom Yards'} url="decomyards" />
-                    <NavigationHeading heading={'Pipelines'} url="pipelines" />
-                    <NavigationHeading heading={'Windfarms'} url="windfarms" />
-                    <NavigationHeading heading={'Fields'} url="fields" />
-                    <MapFilterPanel />
+                    <NavigationHeading heading={'Installations'} url="installations" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleInstallations" }) }} on={showInstallations} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading={'Decom Yards'} url="decomyards" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleDecomYards" }) }} on={showDecomYards} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading={'Pipelines'} url="pipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "togglePipelines" }) }} on={showPipelines} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading={'Windfarms'} url="windfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWindfarms" }) }} on={showWindfarms} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading={'Fields'} url="fields" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleFields" }) }} on={showFields} className={'bathymetry-title'} />} />
+                    <MapOptions />
                 </aside>
             </div>
             <Handle onHandleClick={() => setIsVisible(!isVisible)} isFacingLeft={true} isOpen={isVisible} />

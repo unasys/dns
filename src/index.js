@@ -23,6 +23,7 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
+
     switch (action.type) {
         case 'setInstallations':
             return {
@@ -63,6 +64,36 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 year: action.year
+            };
+        case 'togglePipelines':
+            return {
+                ...state,
+                showPipelines: !state.showPipelines
+            };
+        case 'toggleInstallations':
+            return {
+                ...state,
+                showInstallations: !state.showInstallations
+            };
+        case 'toggleWindfarms':
+            return {
+                ...state,
+                showWindfarms: !state.showWindfarms
+            };
+        case 'toggleDecomYards':
+            return {
+                ...state,
+                showDecomYards: !state.showDecomYards
+            };
+        case 'toggleFields':
+            return {
+                ...state,
+                showFields: !state.showFields
+            };
+        case 'toggleBlocks':
+            return {
+                ...state,
+                showBlocks: !state.showBlocks
             };
         default:
             return state;
