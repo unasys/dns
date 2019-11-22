@@ -352,7 +352,7 @@ const mapPipeline = (pipeline) => {
                     width: scaledWidth,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
                 },
-                label: label,
+                //label: label,
                 originalData: pipeline
             };
 
@@ -575,6 +575,23 @@ const CesiumMap = () => {
     }, [viewer, eid, etype]);
 
     useEffect(() => {
+        if (!viewer) return;
+        const installation = viewer.dataSources.getByName("Installation");
+        if (installation.length > 0) installation[0].show = showInstallations;
+        const pipeline = viewer.dataSources.getByName("Pipeline");
+        if (pipeline.length > 0) pipeline[0].show = showPipelines;
+        const windfarms = viewer.dataSources.getByName("Windfarm");
+        if (windfarms.length > 0) windfarms[0].show = showWindfarms;
+        const decomYards = viewer.dataSources.getByName("deconYard");
+        if (decomYards.length > 0) decomYards[0].show = showDecomYards;
+        const fields = viewer.dataSources.getByName("Field");
+        if (fields.length > 0) fields[0].show = showFields;
+        const blocks = viewer.dataSources.getByName("Block");
+        if (blocks.length > 0) blocks[0].show = showBlocks;
+        viewer.scene.requestRender();
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks]);
+
+    useEffect(() => {
         if (viewer) {
             viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601("" + year);
         }
@@ -584,16 +601,16 @@ const CesiumMap = () => {
         const viewer = setupCesium(cesiumRef);
         setViewer(viewer);
         flyHome(viewer);
-        setupBlocks().then(dataSource => { dataSource.show = showBlocks; viewer.dataSources.add(dataSource) });
+        setupBlocks().then(dataSource => { dataSource.show = showBlocks; dataSource.name = "Block"; viewer.dataSources.add(dataSource) });
     }, []);
 
-    useEffect(() =>{
-        if(!viewer) return;
+    useEffect(() => {
+        if (!viewer) return;
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    },[viewer, history, location, search]);
+    }, [viewer, history, location, search]);
 
     useEffect(() => {
         if (!viewer || installations.size === 0) return;
@@ -631,8 +648,8 @@ const CesiumMap = () => {
     }, [viewer, fields]);
 
     return (
-        <div style={{ width: '100%', height: '100%' }} onMouseMove={(e => {if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } }) }>
-            { hover && <HoverCard position={position} type={hover.type} entity={hover.entity} />}
+        <div style={{ width: '100%', height: '100%' }} onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>
+            {hover && <HoverCard position={position} type={hover.type} entity={hover.entity} />}
             <div id="cesiumContainer" ref={cesiumRef} />
         </div >
     );
