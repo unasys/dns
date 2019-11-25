@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useTable, useBlockLayout  } from 'react-table'
+import { useTable, useBlockLayout, useFilters } from 'react-table'
 import { FixedSizeList } from 'react-window'
 import { useStateValue } from '../../utils/state'
 import './TableStyles.scss';
@@ -7,16 +7,110 @@ import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import Circle01 from '../../assets/installationTable/circle01.js';
 import Circle02 from '../../assets/installationTable/circle02.js';
-import { Range } from 'rc-slider';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useHistory, useLocation } from 'react-router-dom';
+import Tooltip from 'rc-tooltip';
+function DefaultColumnFilter({
+  column: { filterValue, setFilter },
+}) {
+  return (
+    <input
+      value={filterValue || ''}
+      onChange={e => {
+        setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
+      }}
+    />
+  )
+}
+const createSliderWithTooltip = Slider.createSliderWithTooltip;
+const Range = createSliderWithTooltip(Slider.Range);
+const Handle = Range.Handle;
+const handle = (props) => {
+  const { value, dragging, index, ...restProps } = props;
+  return (
+    <Tooltip
+      prefixCls="rc-slider-tooltip"
+      overlay={value}
+      visible={dragging}
+      placement="top"
+      key={index}
+    >
+      <Handle value={value} {...restProps} />
+    </Tooltip>
+  );
+};
+
+function NumberRangeColumnFilter({
+  column: { filterValue = [], preFilteredRows, setFilter, id },
+}) {
+  const [min, max] = React.useMemo(() => {
+    let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
+    let max = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
+    preFilteredRows.forEach(row => {
+      if (row.values[id]) {
+        min = Math.min(row.values[id], min);
+        max = Math.max(row.values[id], max);
+      }
+    })
+    return [min, max];
+  }, [id, preFilteredRows])
+
+  const onChange = (e) =>{
+    if(e[0] === min && e[1] === max){
+      setFilter([]);
+    } else {
+      setFilter(e);
+    }
+  }
+
+  if (min !== max) {
+    return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={[min, max]} onChange={onChange} handle={handle} tipFormatter={value => value.toLocaleString()} />
+  } else {
+    return <></>
+  }
+}
+
+function DateRangeColumnFilter({
+  column: { filterValue = [], preFilteredRows, setFilter, id },
+}) {
+  const [min, max] = React.useMemo(() => {
+    const time = new Date().getTime();
+    let min = time;
+    let max =  time;
+    preFilteredRows.forEach(row => {
+      if (row.values[id] && row.values[id] > 0) {
+        min = Math.min(row.values[id], min);
+        max = Math.max(row.values[id], max);
+      }
+    })
+    return [min, max];
+  }, [id, preFilteredRows])
+
+  const onChange = (e) =>{
+    if(e[0] === min && e[1] === max){
+      setFilter([]);
+    } else {
+      setFilter(e);
+    }
+  }
+
+  if (min !== max) {
+    return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={[min, max]} onChange={onChange} handle={handle} tipFormatter={value => {
+      const date = new Date(value);
+      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    }} />
+  } else {
+    return <></>
+  }
+}
 
 function Table({ columns, data }) {
-  // Use the state and functions returned from useTable to build your UI
-
   const defaultColumn = React.useMemo(
     () => ({
       width: 150,
+      Filter: DefaultColumnFilter,
     }),
     []
   );
@@ -35,11 +129,12 @@ function Table({ columns, data }) {
       defaultColumn,
     },
     useBlockLayout,
+    useFilters
   );
 
   const history = useHistory();
   const location = useLocation();
-  
+
   const RenderRow = React.useCallback(
     ({ index, style }) => {
       const row = rows[index];
@@ -47,7 +142,7 @@ function Table({ columns, data }) {
       const rowClick = () => {
         search.set("etype", "Installation");
         search.set("eid", row.original.Name);
-        history.push({pathname:location.pathname, search:`?${search.toString()}`});        
+        history.push({ pathname: location.pathname, search: `?${search.toString()}` });
       }
       prepareRow(row)
       return (
@@ -79,6 +174,7 @@ function Table({ columns, data }) {
             {headerGroup.headers.map(column => (
               <div {...column.getHeaderProps()} className="th">
                 {column.render('Header')}
+                <div className="filter">{column.canFilter ? column.render('Filter') : null}</div>
               </div>
             ))}
           </div>
@@ -122,31 +218,15 @@ function InstallationTable() {
             </div>
           </>
         ),
+        filter: 'contains',
         minWidth: 300
       }, {
         Header: 'Age',
         id: "Age",
         accessor: row => parseInt(row.Age),
         Cell: ({ cell: { value } }) => (value ? value : "-"),
-        sortMethod: (a, b) => {
-          let formattedA = a;
-          let formattedB = b;
-          // eslint-disable-next-line
-          if (a == "-") formattedA = -1
-          // eslint-disable-next-line
-          if (b == "-") formattedB = -1
-          return parseInt(formattedA) >= parseInt(formattedB) ? 1 : -1;
-        },
-        filterMethod: (filter, row) => {
-          let startValue = filter.value[0]
-          let endValue = filter.value[1]
-          return row.Age <= endValue && row.Age >= startValue
-        },
-        Filter: ({ filter, onChange }) => {
-          return (<div>
-            {/* <Range style={{ zIndex: 5 }} allowCross={false} min={0} max={this.state.maxAgeInData} defaultValue={[0, (this.state.maxAgeInData)]} onChange={onChange} /> */}
-          </div>)
-        },
+        Filter: NumberRangeColumnFilter,
+        filter: "between",
         width: 60
       }, {
         Header: 'Status',
@@ -156,13 +236,12 @@ function InstallationTable() {
         id: 'Field Type',
         accessor: "FieldType",
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
-        filterMethod: (filter, row) => {
-          return row._original["FieldType"] ? row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase()) : false;
-        },
+        filter: 'contains',
         width: 80
       }, {
         Header: 'Operator',
         accessor: 'Operator',
+        filter: 'contains',
         width: 185
       }, {
         Header: 'Producing',
@@ -170,11 +249,12 @@ function InstallationTable() {
         accessor: row => {
           return row.Status.toLowerCase() === 'active' ? 'Y' : 'N'
         },
-        Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value}></Circle01>),
+        Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value}/>),
         filterMethod: (filter, row) => {
-          let isProducing = row["Status"].toLowerCase() === 'active' ? 'yes' : 'no'
+          let isProducing = row.Status.toLowerCase() === 'active' ? 'yes' : 'no'
           return isProducing.includes(filter.value.toLowerCase())
         },
+        filter: 'contains',
         width: 80
       }, {
         Header: 'Planned COP',
@@ -188,14 +268,8 @@ function InstallationTable() {
           }
         },
 
-        filterMethod: (filter, row) => {
-          let plannedCOP = row.PlannedCOP && new Date(row.PlannedCOP);
-          if (!plannedCOP) return false;
-          let startValue = filter.value[0]
-          let endValue = filter.value[1]
-          let msSinceEpoch = plannedCOP;
-          return msSinceEpoch <= endValue && msSinceEpoch >= startValue
-        },
+        Filter: DateRangeColumnFilter,
+        filter: "between",
         sortMethod: (a, b) => {
           let formattedA = a;
           let formattedB = b;
@@ -208,35 +282,7 @@ function InstallationTable() {
           return aDate >= bDate ? 1 : -1;
         },
         width: 120
-        // Filter: ({ filter, onChange }) => {
-
-        //   let plannedCOPstarttime = null;
-        //   let plannedCOPendtime = null;
-        //   if (this.props.plannedCOPStart) {
-        //     let date = new Date();
-        //     date.setFullYear(this.props.plannedCOPStart)
-        //     plannedCOPstarttime = date.getTime();
-        //   }
-        //   if (this.props.plannedCOPEnd) {
-        //     let date = new Date();
-        //     date.setFullYear(this.props.plannedCOPEnd)
-        //     plannedCOPendtime = date.getTime();
-        //   }
-        //   return (<div>
-        //     <Range
-        //       allowCross={false}
-        //       min={this.state.minCOPInData.getTime()}
-        //       max={this.state.maxCOPInData.getTime()}
-        //       defaultValue={[plannedCOPstarttime ? plannedCOPstarttime : this.state.minCOPInData.getTime(), plannedCOPendtime ? plannedCOPendtime : this.state.maxCOPInData.getTime()]}
-        //       onChange={onChange}
-        //       tipFormatter={value => {
-        //         let date = new Date(value);
-        //         return `${date.toLocaleDateString()}`
-        //       }} />
-        //   </div>)
-        // }
-      },
-      {
+      },      {
         Header: 'Topside Weight (t)',
         id: 'Topside Weight',
         accessor: row => {
@@ -255,27 +301,9 @@ function InstallationTable() {
             {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </span>)
         },
-        filterMethod: (filter, row) => {
-          let startValue = filter.value[0]
-          let endValue = filter.value[1]
-          let topsideWeight = row._original.TopsideWeight ? row._original.TopsideWeight : 0
-          return topsideWeight <= endValue && topsideWeight >= startValue
-        }
-        ,
-        // Filter: ({ filter, onChange }) =>
-        //   <div onMouseUp={this.filterMouseUp}>
-        //     <Range
-        //       allowCross={false}
-        //       min={0}
-        //       max={this.state.maxTopsideWeightInData}
-        //       defaultValue={[0, (this.state.maxTopsideWeightInData)]}
-        //       onChange={onChange}
-        //       tipFormatter={value => {
-        //         return `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}t`
-        //       }} />
-        //   </div>
-      },
-      {
+        Filter: NumberRangeColumnFilter,
+        filter: "between",
+      }, {
         Header: 'Substructure Weight (t)',
         id: 'Substructure Weight',
         accessor: row => {
@@ -309,29 +337,22 @@ function InstallationTable() {
           if (substructureWeight === "N/A" || substructureWeight === "-") substructureWeight = 0
           return substructureWeight <= endValue && substructureWeight >= startValue
         },
-        // Filter: ({ filter, onChange }) =>
-        //   <div>
-        //     <Range
-        //       allowCross={false}
-        //       min={0}
-        //       max={this.state.maxSubstructureWeightInData}
-        //       defaultValue={[0, (this.state.maxSubstructureWeightInData)]}
-        //       onChange={onChange}
-        //       tipFormatter={value => {
-        //         return `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}t`
-        //       }} />
-        //   </div>
+        Filter: NumberRangeColumnFilter,
+        filter: "between",
       }, {
         Header: 'Type',
         accessor: 'Type',
+        filter: 'contains',
         width: 80
       }, {
         Header: 'Area',
         accessor: 'Area',
+        filter: 'contains',
         width: 60
       }, {
         Header: 'Block',
         accessor: 'Block',
+        filter: 'contains',
         width: 80
       }
     ],
