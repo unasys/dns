@@ -39,15 +39,13 @@ function Table({ columns, data }) {
 
   const history = useHistory();
   const location = useLocation();
-  const search = new URLSearchParams(location.search);
-  search.set("etype", "Installation");
-  const currentInstallation = search.get("eid");
+  
   const RenderRow = React.useCallback(
     ({ index, style }) => {
       const row = rows[index];
-      console.log(currentInstallation, row.original.Name );
-
+      const search = new URLSearchParams(location.search);
       const rowClick = () => {
+        search.set("etype", "Installation");
         search.set("eid", row.original.Name);
         history.push({pathname:location.pathname, search:`?${search.toString()}`});        
       }
@@ -57,7 +55,7 @@ function Table({ columns, data }) {
           {...row.getRowProps({
             style,
           })}
-          className={"tr" + (row.original.Name === currentInstallation ? " highlighted" : "")}
+          className={"tr" + (row.original.Name === search.get("eid") ? " highlighted" : "")}
           onClick={rowClick} >
           {row.cells.map(cell => {
             return (
@@ -69,7 +67,7 @@ function Table({ columns, data }) {
         </div>
       )
     },
-    [prepareRow, rows, currentInstallation, history, location, search]
+    [prepareRow, rows, history, location]
   )
 
   // Render the UI for your table
