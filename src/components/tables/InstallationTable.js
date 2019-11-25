@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useTable, useBlockLayout } from 'react-table'
+import { useTable, useBlockLayout  } from 'react-table'
 import { FixedSizeList } from 'react-window'
 import { useStateValue } from '../../utils/state'
 import './TableStyles.scss';
@@ -8,7 +8,8 @@ import 'rc-tooltip/assets/bootstrap.css';
 import Circle01 from '../../assets/installationTable/circle01.js';
 import Circle02 from '../../assets/installationTable/circle02.js';
 import { Range } from 'rc-slider';
-
+import AutoSizer from "react-virtualized-auto-sizer";
+import { useHistory, useLocation } from 'react-router-dom';
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
@@ -18,7 +19,7 @@ function Table({ columns, data }) {
       width: 150,
     }),
     []
-  )
+  );
 
   const {
     getTableProps,
@@ -33,23 +34,34 @@ function Table({ columns, data }) {
       data,
       defaultColumn,
     },
-    useBlockLayout
-  )
+    useBlockLayout,
+  );
 
+  const history = useHistory();
+  const location = useLocation();
+  const search = new URLSearchParams(location.search);
+  search.set("etype", "Installation");
+  const currentInstallation = search.get("eid");
   const RenderRow = React.useCallback(
     ({ index, style }) => {
-      const row = rows[index]
+      const row = rows[index];
+      console.log(currentInstallation, row.original.Name );
+
+      const rowClick = () => {
+        search.set("eid", row.original.Name);
+        history.push({pathname:location.pathname, search:`?${search.toString()}`});        
+      }
       prepareRow(row)
       return (
         <div
           {...row.getRowProps({
             style,
           })}
-          className="tr"
-        >
+          className={"tr" + (row.original.Name === currentInstallation ? " highlighted" : "")}
+          onClick={rowClick} >
           {row.cells.map(cell => {
             return (
-              <div {...cell.getCellProps()} className="td">
+              <div {...cell.getCellProps()} className="td" >
                 {cell.render('Cell')}
               </div>
             )
@@ -57,7 +69,7 @@ function Table({ columns, data }) {
         </div>
       )
     },
-    [prepareRow, rows]
+    [prepareRow, rows, currentInstallation, history, location, search]
   )
 
   // Render the UI for your table
@@ -76,14 +88,18 @@ function Table({ columns, data }) {
       </div>
 
       <div className="tbody" {...getTableBodyProps()}>
-        <FixedSizeList
-          height={400}
-          itemCount={rows.length}
-          itemSize={40}
-          width={totalColumnsWidth}
-        >
-          {RenderRow}
-        </FixedSizeList>
+        <AutoSizer>
+          {({ height }) => (
+            <FixedSizeList
+              height={height}
+              itemCount={rows.length}
+              itemSize={40}
+              width={totalColumnsWidth}
+            >
+              {RenderRow}
+            </FixedSizeList>
+          )}
+        </AutoSizer>
       </div>
     </div>
   )
@@ -318,7 +334,7 @@ function InstallationTable() {
       }, {
         Header: 'Block',
         accessor: 'Block',
-        width:80
+        width: 80
       }
     ],
     []

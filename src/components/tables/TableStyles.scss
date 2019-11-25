@@ -1,9 +1,11 @@
 .table {
     color: rgb(153, 163, 174);
-    background-color: #33475c;
+    background-color: transparent;
     font-size: 13px;
-
+    pointer-events: all;
+    
     .thead {
+        background-color: #33475c;
         font-weight: 400;
         padding-top: 5px;
         padding-bottom: 5px;
@@ -21,16 +23,25 @@
     }
 
     .tbody {
+        background-color: #33475cf1;
+        height: 97.5%;
         font-weight: 400;
         padding-top: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid rgb(49, 55, 71);
+        overflow-y: auto;
+        cursor: pointer;
 
         .tr {
 
             text-align: center;
             text-overflow: ellipsis;
             white-space: nowrap;
+
+            &:hover, &.highlighted {
+                background-color: rgb(97, 115, 138);
+                ;
+            }
 
             &:not(:first-child) {
                 border-top: 1px solid #435C76;

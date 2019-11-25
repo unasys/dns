@@ -59,9 +59,7 @@ const App = () => {
                 <MenuPanel />
               </Route>
               <Route path="/installations" exact >
-                <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
                   <InstallationTable />
-                </DynamicWidthPage>
               </Route>
             </Switch>
 

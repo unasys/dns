@@ -25,6 +25,7 @@
     "react-table": "^7.0.0-beta.14",
     "react-toggle-switch": "^3.0.4",
     "react-transition-group": "^4.3.0",
+    "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "redux": "^4.0.1"
   },
