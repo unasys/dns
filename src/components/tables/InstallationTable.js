@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useTable, useBlockLayout, useFilters } from 'react-table'
+import { useTable, useBlockLayout, useFilters, useSortBy } from 'react-table'
 import { FixedSizeList } from 'react-window'
 import { useStateValue } from '../../utils/state'
 import './TableStyles.scss';
@@ -43,7 +43,7 @@ const handle = (props) => {
 };
 
 function NumberRangeColumnFilter({
-  column: { filterValue = [], preFilteredRows, setFilter, id },
+  column: { preFilteredRows, setFilter, id },
 }) {
   const [min, max] = React.useMemo(() => {
     let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
@@ -73,7 +73,7 @@ function NumberRangeColumnFilter({
 }
 
 function DateRangeColumnFilter({
-  column: { filterValue = [], preFilteredRows, setFilter, id },
+  column: { preFilteredRows, setFilter, id },
 }) {
   const [min, max] = React.useMemo(() => {
     const time = new Date().getTime();
@@ -129,7 +129,8 @@ function Table({ columns, data }) {
       defaultColumn,
     },
     useBlockLayout,
-    useFilters
+    useFilters,
+    useSortBy
   );
 
   const history = useHistory();
@@ -164,7 +165,6 @@ function Table({ columns, data }) {
     },
     [prepareRow, rows, history, location]
   )
-
   // Render the UI for your table
   return (
     <div {...getTableProps()} className="table">
@@ -172,8 +172,15 @@ function Table({ columns, data }) {
         {headerGroups.map(headerGroup => (
           <div {...headerGroup.getHeaderGroupProps()} className="tr">
             {headerGroup.headers.map(column => (
-              <div {...column.getHeaderProps()} className="th">
+              <div {...column.getHeaderProps(column.getSortByToggleProps())} className="th">
                 {column.render('Header')}
+                <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                  </span>
                 <div className="filter">{column.canFilter ? column.render('Filter') : null}</div>
               </div>
             ))}
