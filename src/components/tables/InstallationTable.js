@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useTable, useBlockLayout } from 'react-table'
 import { FixedSizeList } from 'react-window'
 import { useStateValue } from '../../utils/state'
-import './InstallationTableStyles.scss';
+import './TableStyles.scss';
 import 'rc-slider/assets/index.css';
 import 'rc-tooltip/assets/bootstrap.css';
 import Circle01 from '../../assets/installationTable/circle01.js';
@@ -63,7 +63,7 @@ function Table({ columns, data }) {
   // Render the UI for your table
   return (
     <div {...getTableProps()} className="table">
-      <div>
+      <div className="thead">
         {headerGroups.map(headerGroup => (
           <div {...headerGroup.getHeaderGroupProps()} className="tr">
             {headerGroup.headers.map(column => (
@@ -75,11 +75,11 @@ function Table({ columns, data }) {
         ))}
       </div>
 
-      <div {...getTableBodyProps()}>
+      <div className="tbody" {...getTableBodyProps()}>
         <FixedSizeList
           height={400}
           itemCount={rows.length}
-          itemSize={35}
+          itemSize={40}
           width={totalColumnsWidth}
         >
           {RenderRow}
@@ -94,44 +94,26 @@ function InstallationTable() {
     () => [
       {
         Header: 'Name',
-        id: 'Name',
-        accessor: row => {
-          if (row.Name) {
-            return row.Name.toLowerCase()
-          }
-        },
-        Cell: row => (          
+        accessor: "Name",
+        Cell: ({ cell: { value }, row: { original } }) => (
           <>
             <div className="table-installation-title">
               <div className="table-installation-image">
-                {row.row.original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${row.row.original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
+                {original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
               </div>
-              <p>
-                <div>
-                  <>
-                    {row.value}
-                    {row.row.original.ePMID && <img style={{ width: '25px', cursor: 'pointer', marginLeft: '5px' }} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${row.row.original.ePMID}/`, "_blank")} />}
-                  </>
-                </div>
-              </p>
+              <div className="table-installation-name">
+                {value}
+                {original.ePMID && <img style={{ width: '25px', cursor: 'pointer', marginLeft: '5px' }} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${original.ePMID}/`, "_blank")} />}
+              </div>
             </div>
           </>
         ),
-        Footer: (row) => {
-          let total = row.data.length;
-          return (<span>
-            Totals:  {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          </span>)
-        },
-        style: { color: '#fff', fontSize: '15px' },
         minWidth: 300
-      },
-      {
+      }, {
         Header: 'Age',
-        accessor: row => {
-          return row.Age || "-"
-        },
-        id: 'Age',
+        id: "Age",
+        accessor: row => parseInt(row.Age),
+        Cell: ({ cell: { value } }) => (value ? value : "-"),
         sortMethod: (a, b) => {
           let formattedA = a;
           let formattedB = b;
@@ -150,47 +132,47 @@ function InstallationTable() {
           return (<div>
             {/* <Range style={{ zIndex: 5 }} allowCross={false} min={0} max={this.state.maxAgeInData} defaultValue={[0, (this.state.maxAgeInData)]} onChange={onChange} /> */}
           </div>)
-        }
-      },
-      {
-        Header: 'Status',
-        id: 'Status',
-        accessor: row => {
-          return row["Status"].toLowerCase()
         },
-        minWidth: 150
-      },
-      {
+        width: 60
+      }, {
+        Header: 'Status',
+        accessor: 'Status',
+      }, {
         Header: 'Field Type',
         id: 'Field Type',
-        accessor: row => { return <Circle01 size='30px' text={row["FieldType"]}></Circle01> },
+        accessor: "FieldType",
+        Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
         filterMethod: (filter, row) => {
           return row._original["FieldType"] ? row._original["FieldType"].toLowerCase().includes(filter.value.toLowerCase()) : false;
         },
-      },
-      {
+        width: 80
+      }, {
         Header: 'Operator',
-        id: 'Operator',
-        accessor: row => { if (row["Operator"]) { return row["Operator"].toLowerCase() } },
+        accessor: 'Operator',
         width: 185
-      },
-      {
+      }, {
         Header: 'Producing',
         id: 'Producing',
         accessor: row => {
-          return row["Status"].toLowerCase() === 'active' ? <Circle01 size='30px' text={'Y'}></Circle01> : <Circle02 size='30px' text={'N'}></Circle02>
+          return row.Status.toLowerCase() === 'active' ? 'Y' : 'N'
         },
+        Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value}></Circle01>),
         filterMethod: (filter, row) => {
           let isProducing = row["Status"].toLowerCase() === 'active' ? 'yes' : 'no'
           return isProducing.includes(filter.value.toLowerCase())
-        }
-      },
-      {
-        Header: 'Planned COP',
-        accessor: row => {
-          return row.PlannedCOP || "-"
         },
+        width: 80
+      }, {
+        Header: 'Planned COP',
         id: 'PlannedCOP',
+        accessor: row => (row.PlannedCOP ? new Date(row.PlannedCOP) : null),
+        Cell: ({ cell: { value } }) => {
+          if (value) {
+            return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
+          } else {
+            return "-"
+          }
+        },
 
         filterMethod: (filter, row) => {
           let plannedCOP = row.PlannedCOP && new Date(row.PlannedCOP);
@@ -211,6 +193,7 @@ function InstallationTable() {
           if (bDate == "Invalid Date") bDate = new Date(-8640000000000000)
           return aDate >= bDate ? 1 : -1;
         },
+        width: 120
         // Filter: ({ filter, onChange }) => {
 
         //   let plannedCOPstarttime = null;
@@ -243,10 +226,9 @@ function InstallationTable() {
         Header: 'Topside Weight (t)',
         id: 'Topside Weight',
         accessor: row => {
-          let topsideWeight = row.TopsideWeight ? row.TopsideWeight : 0
-          let totalWeight = parseInt(topsideWeight);
-          return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          return parseInt(row.TopsideWeight);
         },
+        Cell: ({ cell: { value } }) => (value ? value.toLocaleString() : "-"),
         sortMethod: (a, b) => {
           return parseInt(a.replace(',', '')) >= parseInt(b.replace(',', '')) ? 1 : -1;
         },
@@ -283,10 +265,9 @@ function InstallationTable() {
         Header: 'Substructure Weight (t)',
         id: 'Substructure Weight',
         accessor: row => {
-          let substructureWeight = row["SubStructureWeight"] ? row["SubStructureWeight"] : "-"
-          let totalWeight = substructureWeight;
-          return totalWeight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          return parseInt(row.SubStructureWeight);
         },
+        Cell: ({ cell: { value } }) => (value ? value.toLocaleString() : "-"),
         Footer: (row) => {
           let total = row.data.reduce((acc, installation) => {
             let weightToAdd = parseInt(installation._original["SubStructureWeight"]) || 0;
@@ -326,40 +307,24 @@ function InstallationTable() {
         //         return `${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}t`
         //       }} />
         //   </div>
-      },
-      {
+      }, {
         Header: 'Type',
-        id: 'Type',
-        accessor: row => { if (row.Type) { return row.Type } }
-      },
-      {
+        accessor: 'Type',
+        width: 80
+      }, {
         Header: 'Area',
-        id: 'Area',
-        accessor: row => { if (row.Area) { return row.Area } }
-      },
-      {
-        Header: 'Lat/Long',
-        id: 'Lat/Long',
-        accessor: row => (parseFloat(Math.round(row["X Long"] * 100) / 100).toFixed(2) + "/" + parseFloat(Math.round(row["Y Lat"] * 100) / 100).toFixed(2))
-      },
-      {
-        Header: 'Discovery Well',
-        accessor: 'Discovery Well'
-      },
-      {
-        Header: 'Water Depth',
-        id: 'Water Depth',
-        accessor: row => { if (row["Water Depth"]) { return row["Water Depth"] + 'm' } }
-      },
-      {
+        accessor: 'Area',
+        width: 60
+      }, {
         Header: 'Block',
-        accessor: 'Block'
+        accessor: 'Block',
+        width:80
       }
     ],
     []
   )
   const [{ installations },] = useStateValue();
-  const data = useMemo(() => [...installations.values()],[installations])
+  const data = useMemo(() => [...installations.values()], [installations])
 
   return (
     <Table columns={columns} data={data} />
