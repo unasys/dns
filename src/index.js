@@ -100,6 +100,11 @@ const reducer = (state, action) => {
                 ...state,
                 installationFilters: action.filters
             };
+        case "installationsVisible":
+            return {
+                ...state,
+                installationsVisible: action.installationsVisible
+            };
         default:
             return state;
     }

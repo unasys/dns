@@ -154,6 +154,12 @@ function Table({ columns, data }) {
     dispatch({ type: "installationFiltersChange", filters: state.filters });
   }, [dispatch, state.filters]);
 
+  useEffect(() => {
+    const ids = rows.map(row => row.original.Name);
+    dispatch({ type: "installationsVisible", installationsVisible: ids });
+  }, [dispatch, rows]);
+
+
   const RenderRow = React.useCallback(
     ({ index, style }) => {
       const row = rows[index];

@@ -540,7 +540,7 @@ const flyTo = (viewer, {west, south, east, north, pitch}) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year },] = useStateValue();
+    const [{ installations, pipelines, windfarms, decomYards, fields, showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year, installationsVisible },] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -573,6 +573,16 @@ const CesiumMap = () => {
         }
 
     }, [viewer, areas, eid, etype]);
+
+    useEffect(() => {
+        if(!viewer || !installationsVisible) return;
+        const dataSources = viewer.dataSources.getByName("Installation");
+        if (dataSources.length > 0) {
+            const dataSource = dataSources[0];
+            dataSource.entities.values.forEach(entity => entity.show = installationsVisible.includes(entity.originalData.Name))
+        }
+        viewer.scene.requestRender();
+    },[viewer, installationsVisible]);
 
     useEffect(() => {
         if (!viewer) return;
