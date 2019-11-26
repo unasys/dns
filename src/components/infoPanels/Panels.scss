@@ -1,0 +1,160 @@
+.sidePanel {
+    width: 500px;
+}
+
+.menu-panel{
+    width:400px;
+}
+
+.title-container {
+    background-color: rgb(0, 0, 0);
+    text-align: center;
+
+    .tag-title {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin: 0px;
+        color: #FFCE2F;
+        font-weight: 400;
+        font-size: 1em;
+        font-family: 'Roboto', sans-serif;
+        margin: 0px 0px 0px 0px;
+    }
+}
+
+.overview-thumbnail {
+    font-size: 0px;
+
+    img {
+        clip: rect(0px, 0px, 50px, 0px);
+        margin-left: 0px;
+        padding-left: 0px;
+        height: 200px;
+        width: 100%;
+    }
+}
+
+.overview-container {
+    width: 100%;
+    background-color: #2f484859;
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0px;
+
+    .overview-heading {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        font-size: 12px;
+        color: #fff;
+        margin-left: 20px;
+    }
+
+    .dropdown-icon {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+
+        i {
+            color: #fff;
+            font-size: 14px;
+        }
+    }
+}
+
+.activity-steps-box {
+    padding-left: 25px;
+    position: absolute;
+    top: 5%;
+    z-index: 1;
+    left: 35%;
+    width: 60%;
+    background: rgba(65, 68, 80, 0.318);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow-y: scroll;
+    height: 85%;
+
+    .title-bar {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 25px;
+        padding-top: 10px;
+        color: #A9A9AA;
+
+        .title {
+            padding-top: 15px;
+            padding-bottom: 5px;
+            margin-bottom: 0;
+            color: white;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+    }
+
+    .narrative {
+        color: white;
+        padding: 20px;
+    }
+}
+
+@import "../../../node_modules/react-toggle-switch/dist/css/switch.min.css";
+
+.layer-title {
+    color: #cccccc;
+    font-family: "Open Sans", sans-serif;
+    text-transform: uppercase;
+    font-weight:600;
+    font-size:11px;
+    margin-top:20px;
+    margin-bottom:15px;
+}
+
+.bathymetry-title {
+    display:flex;
+    flex-direction: column;
+    align-self:center;
+}
+
+.panel-title {
+    color:white;
+    font-weight:400;
+    font-size:12px;    
+    padding: 10px 24px;
+    text-align:center;
+    background: #2f484859;
+    border-top: 1px solid #666973;
+    border-bottom: 1px solid #666973;
+}
+
+.switch {
+    width:37px;
+    height:20px;
+    margin-right: 10px;
+    &.on {
+        .switch-toggle {
+            left:15px;
+        }
+    }
+    .switch-toggle {
+        width:20px;
+        height:24px;
+    }
+}
+
+.layer-container {
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    height:32px;
+    border-bottom:1px solid #666973;
+    .layer-content {
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+        padding:0 25px;
+        font-size:14px;
+        font-weight:200;
+        color: #ccc;
+        
+    }
+}
