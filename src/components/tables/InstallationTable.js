@@ -73,45 +73,44 @@ function NumberRangeColumnFilter({
   }
 }
 
-function DateRangeColumnFilter({
-  column: {filterValue=[], preFilteredRows, setFilter, id },
-}) {
-  const [min, max] = React.useMemo(() => {
-    const time = new Date().getTime()/SecondsPerDay;
-    let min = time;
-    let max = time;
-    preFilteredRows.forEach(row => {
-      if (row.values[id] && row.values[id] > 0) {
-        const days = row.values[id].getTime()/SecondsPerDay
-        min = Math.min(days, min);
-        max = Math.max(days, max);
-      }
-    })
-    return [min, max];
-  }, [id, preFilteredRows])
+// function DateRangeColumnFilter({
+//   column: {filterValue=[], preFilteredRows, setFilter, id },
+// }) {
+//   const [min, max] = React.useMemo(() => {
+//     const time = new Date().getTime()/SecondsPerDay;
+//     let min = time;
+//     let max = time;
+//     preFilteredRows.forEach(row => {
+//       if (row.values[id] && row.values[id] > 0) {
+//         const days = row.values[id].getTime()/SecondsPerDay
+//         min = Math.min(days, min);
+//         max = Math.max(days, max);
+//       }
+//     })
+//     return [min, max];
+//   }, [id, preFilteredRows])
 
-  const onChange = (e) => {
-    console.log(e);
-    if (e[0] === min && e[1] === max ) {
-      if(filterValue.length !== 0){
-        setFilter([]);
-      }
-    } else {
-      if(filterValue.length === 0 || filterValue[0] !== e[0] || filterValue[1] !== e[1]) {
-        setFilter(e);
-      }
-    }
-  }
+//   const onChange = (e) => {
+//     if (e[0] === min && e[1] === max ) {
+//       if(filterValue.length !== 0){
+//         setFilter([]);
+//       }
+//     } else {
+//       if(filterValue.length === 0 || filterValue[0] !== e[0] || filterValue[1] !== e[1]) {
+//         setFilter(e);
+//       }
+//     }
+//   }
 
-  if (min !== max) {
-    return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={[min, max]} onChange={onChange} handle={handle} tipFormatter={value => {
-      const date = new Date(value*SecondsPerDay);
-      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-    }} />
-  } else {
-    return <></>
-  }
-}
+//   if (min !== max) {
+//     return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={[min, max]} onChange={onChange} handle={handle} tipFormatter={value => {
+//       const date = new Date(value*SecondsPerDay);
+//       return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+//     }} />
+//   } else {
+//     return <></>
+//   }
+//}
 
 function Table({ columns, data }) {
   const history = useHistory();
@@ -242,7 +241,7 @@ const ButtonBar = (props) => {
       </div>
     </div>)
 }
-const SecondsPerDay = 60*60*24;
+
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(true);
   const history = useHistory();

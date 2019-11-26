@@ -251,7 +251,7 @@ const getPipelineColour = (pipeline) => {
 
     return colour;
 }
-const pipelineScale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+
 const mapPipeline = (pipeline) => {
     const minDiameter = 0;
     const maxDiameter = 1058;
@@ -275,7 +275,6 @@ const mapPipeline = (pipeline) => {
             }
             const scaledWidth = scaleBetween(pipeDiameter, 2, 4, minDiameter, maxDiameter);
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
-            const scaledTextDistance = scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
 
             const a = Math.floor((flatCoordinates.length - 1) / 2);
             let y = flatCoordinates[a];
@@ -289,21 +288,6 @@ const mapPipeline = (pipeline) => {
             }
             var position = window.Cesium.Cartesian3.fromDegrees(x, y);
 
-            const label =
-            {
-                text: pipeline["Pipeline Name"],
-                fillColor: window.Cesium.Color.WHITE,
-                style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                outlineColor: material.color,
-                outlineWidth: 1.5,
-                pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
-                horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, scaledTextDistance),
-                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                scaleByDistance: pipelineScale,
-                font: '14px sans-serif'
-            };
 
             let start = pipeline["Start Date"];
             if (start) {
@@ -612,6 +596,7 @@ const CesiumMap = () => {
         setViewer(viewer);
         flyHome(viewer);
         setupBlocks().then(dataSource => { dataSource.show = showBlocks; dataSource.name = "Block"; viewer.dataSources.add(dataSource) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -627,6 +612,7 @@ const CesiumMap = () => {
         const dataSource = setupInstallations(installations);
         dataSource.show = showInstallations;
         viewer.dataSources.add(dataSource);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, installations]);
 
     useEffect(() => {
@@ -634,6 +620,7 @@ const CesiumMap = () => {
         const dataSource = setupDecomyards(decomYards);
         dataSource.show = showDecomYards;
         viewer.dataSources.add(dataSource);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, decomYards]);
 
     useEffect(() => {
@@ -641,6 +628,7 @@ const CesiumMap = () => {
         const dataSource = setupPipelines(pipelines);
         dataSource.show = showPipelines;
         viewer.dataSources.add(dataSource);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, pipelines]);
 
     useEffect(() => {
@@ -648,6 +636,7 @@ const CesiumMap = () => {
         const dataSource = setupWindfarms(windfarms);
         dataSource.show = showWindfarms;
         viewer.dataSources.add(dataSource);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, windfarms]);
 
     useEffect(() => {
@@ -655,6 +644,7 @@ const CesiumMap = () => {
         const dataSource = setupFields(fields);
         dataSource.show = showFields;
         viewer.dataSources.add(dataSource);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, fields]);
 
     return (

@@ -1,22 +1,13 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
-
-// import InstallationTable from './components/pages/tables/installationTable/InstallationTable';
-// import DecomYardTable from './components/pages/tables/decomYardTable/DecomYardTable';
-// import PipelineTable from './components/pages/tables/pipelineTable/PipelineTable';
-// import WindfarmTable from './components/pages/tables/windfarmTable/WindfarmTable';
-// import FieldTable from './components/pages/tables/fieldsTable/FieldTable';
-// import DynamicWidthPage from './components/pages/oil&gas/DynamicWidthPage';
-
 import { useStateValue } from './utils/state';
 import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas } from './api/Installations';
 import { fetchFact } from './api/RandomFact';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
-import DynamicWidthPage from './components/pages/DynamicWidthPage';
 import InstallationTable from './components/tables/InstallationTable';
 
 const unique = (arr, prop) => {
@@ -44,7 +35,7 @@ const App = () => {
     fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "Name") }) });
     fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "name") }) });
     fetchFact().then(facts => { dispatch({ type: "setFacts", facts: facts }) });
-  }, []);
+  }, [dispatch]);
 
   return (
 
