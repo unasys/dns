@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useTable, useBlockLayout, useFilters, useSortBy } from 'react-table'
 import { FixedSizeList } from 'react-window'
 import { useStateValue } from '../../utils/state'
@@ -11,7 +11,6 @@ import 'rc-slider/assets/index.css';
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useHistory, useLocation } from 'react-router-dom';
 import Tooltip from 'rc-tooltip';
-import Handle from '../sliding-panels/handle/Handle';
 
 function DefaultColumnFilter({
   column: { filterValue, setFilter },
@@ -44,7 +43,7 @@ const handle = (props) => {
 };
 
 function NumberRangeColumnFilter({
-  column: { preFilteredRows, setFilter, id },
+  column: {filterValue=[], preFilteredRows, setFilter, id },
 }) {
   const [min, max] = React.useMemo(() => {
     let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
@@ -66,40 +65,47 @@ function NumberRangeColumnFilter({
     }
   }
 
+  const defaultValue=filterValue.length === 0 ?[min, max] : filterValue;
   if (min !== max) {
-    return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={[min, max]} onChange={onChange} handle={handle} tipFormatter={value => value.toLocaleString()} />
+    return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={defaultValue} onChange={onChange} handle={handle} tipFormatter={value => value.toLocaleString()} />
   } else {
     return <></>
   }
 }
 
 function DateRangeColumnFilter({
-  column: { preFilteredRows, setFilter, id },
+  column: {filterValue=[], preFilteredRows, setFilter, id },
 }) {
   const [min, max] = React.useMemo(() => {
-    const time = new Date().getTime();
+    const time = new Date().getTime()/SecondsPerDay;
     let min = time;
     let max = time;
     preFilteredRows.forEach(row => {
       if (row.values[id] && row.values[id] > 0) {
-        min = Math.min(row.values[id], min);
-        max = Math.max(row.values[id], max);
+        const days = row.values[id].getTime()/SecondsPerDay
+        min = Math.min(days, min);
+        max = Math.max(days, max);
       }
     })
     return [min, max];
   }, [id, preFilteredRows])
 
   const onChange = (e) => {
-    if (e[0] === min && e[1] === max) {
-      setFilter([]);
+    console.log(e);
+    if (e[0] === min && e[1] === max ) {
+      if(filterValue.length !== 0){
+        setFilter([]);
+      }
     } else {
-      setFilter(e);
+      if(filterValue.length === 0 || filterValue[0] !== e[0] || filterValue[1] !== e[1]) {
+        setFilter(e);
+      }
     }
   }
 
   if (min !== max) {
     return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={[min, max]} onChange={onChange} handle={handle} tipFormatter={value => {
-      const date = new Date(value);
+      const date = new Date(value*SecondsPerDay);
       return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     }} />
   } else {
@@ -108,6 +114,9 @@ function DateRangeColumnFilter({
 }
 
 function Table({ columns, data }) {
+  const history = useHistory();
+  const location = useLocation();
+  const [{ installationFilters }, dispatch] = useStateValue();
   const defaultColumn = React.useMemo(
     () => ({
       width: 150,
@@ -115,11 +124,16 @@ function Table({ columns, data }) {
     }),
     []
   );
+  let filters = {};
+  if(installationFilters){
+    filters = installationFilters
+  }
 
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
+    state,
     rows,
     totalColumnsWidth,
     prepareRow,
@@ -128,14 +142,17 @@ function Table({ columns, data }) {
       columns,
       data,
       defaultColumn,
+      initialState: { filters: filters },
     },
     useBlockLayout,
     useFilters,
     useSortBy
   );
 
-  const history = useHistory();
-  const location = useLocation();
+
+  useEffect(() => {
+    dispatch({ type: "installationFiltersChange", filters: state.filters });
+  }, [dispatch, state.filters]);
 
   const RenderRow = React.useCallback(
     ({ index, style }) => {
@@ -219,7 +236,7 @@ const ButtonBar = (props) => {
       </div>
     </div>)
 }
-
+const SecondsPerDay = 60*60*24;
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(true);
   const history = useHistory();
@@ -253,11 +270,11 @@ function InstallationTable() {
         Filter: NumberRangeColumnFilter,
         filter: "between",
         width: 60,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Status',
         accessor: 'Status',
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Field Type',
         id: 'Field Type',
@@ -265,13 +282,13 @@ function InstallationTable() {
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
         filter: 'contains',
         width: 80,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Operator',
         accessor: 'Operator',
         filter: 'contains',
         width: 185,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Producing',
         id: 'Producing',
@@ -281,7 +298,7 @@ function InstallationTable() {
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
         filter: 'contains',
         width: 90,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Planned COP',
         id: 'PlannedCOP',
@@ -293,10 +310,10 @@ function InstallationTable() {
             return "-"
           }
         },
-        Filter: DateRangeColumnFilter,
-        filter: "between",
+        
+        filter: "contains",
         width: 120,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Topside Weight (t)',
         id: 'Topside Weight',
@@ -306,7 +323,7 @@ function InstallationTable() {
         Cell: ({ cell: { value } }) => (value ? value.toLocaleString() : "-"),
         Filter: NumberRangeColumnFilter,
         filter: "between",
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Substructure Weight (t)',
         id: 'Substructure Weight',
@@ -317,25 +334,25 @@ function InstallationTable() {
         Filter: NumberRangeColumnFilter,
         filter: "between",
         width: 180,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Type',
         accessor: 'Type',
         filter: 'contains',
         width: 80,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Area',
         accessor: 'Area',
         filter: 'contains',
         width: 60,
-        show:isVisible
+        show: isVisible
       }, {
         Header: 'Block',
         accessor: 'Block',
         filter: 'contains',
         width: 80,
-        show:isVisible
+        show: isVisible
       }
     ],
     [isVisible]
@@ -348,16 +365,16 @@ function InstallationTable() {
   const collapse = () => {
     setIsVisible(false);
   }
-  
-  const back = () =>{
-    history.push({pathname:"/", search:`?${search.toString()}`})
+
+  const back = () => {
+    history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
   return (
     <div className="dns-panel">
-    <div className="dns-content-table">
-      <Table columns={columns} data={data} />
-    </div>
+      <div className="dns-content-table">
+        <Table columns={columns} data={data} />
+      </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
   )

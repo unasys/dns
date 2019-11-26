@@ -95,6 +95,11 @@ const reducer = (state, action) => {
                 ...state,
                 showBlocks: !state.showBlocks
             };
+        case "installationFiltersChange":
+            return {
+                ...state,
+                installationFilters: action.filters
+            };
         default:
             return state;
     }
