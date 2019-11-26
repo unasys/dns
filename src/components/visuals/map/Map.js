@@ -344,8 +344,8 @@ const mapWindfarm = (windfarm) => {
     if (!windfarm.LONGITUDE || !windfarm.LATITUDE) return;
 
     return {
-        id: windfarm["Name"],
-        name: windfarm["Name"],
+        id: windfarm["NAME"],
+        name: windfarm["NAME"],
         position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
         point: {
             pixelSize: 6,
@@ -358,7 +358,7 @@ const mapWindfarm = (windfarm) => {
             outlineWidth: 1,
         },
         label: {
-            text: windfarm["Name"],
+            text: windfarm["NAMENAMENAME"],
             fillColor: window.Cesium.Color.WHITE,
             style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
             outlineColor: window.Cesium.Color.BLACK,
