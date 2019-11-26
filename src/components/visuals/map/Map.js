@@ -1,21 +1,15 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import './Map.scss';
-import { changeCurrentEntity } from '../../../actions/installationActions';
-import ReactCursorPosition from 'react-cursor-position';
-import InstallationHoverCard from './InstallationHoverCard';
-import DecomyardHoverCard from './DecomyardHoverCard';
-import WindfarmHoverCard from './WindfarmHoverCard';
-import PipelineHoverCard from './PipelineHoverCard';
-import FieldHoverCard from './FieldHoverCard';
+import { useStateValue } from '../../../utils/state';
+import HoverCard from './HoverCard';
 
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
 
-let iconModels = {
+const iconModels = {
     "FPSO": assetsBaseUrl + "/models/platform-types/FPSO/lp_fpsoplat.gltf",
     "FPU": assetsBaseUrl + "/models/platform-types/FPU/fpu_lowpoly.gltf",
     "FPV": assetsBaseUrl + "/models/platform-types/FPV/lp_fpsoplat.gltf",
@@ -25,7 +19,7 @@ let iconModels = {
     "FSO": assetsBaseUrl + "/models/platform-types/FPU/fpu_lowpoly.gltf"
 };
 
-let pipelineColours = {
+const pipelineColours = {
     "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
     "condensate": window.Cesium.Color.fromBytes(132, 0, 168),
     "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
@@ -40,7 +34,7 @@ let pipelineColours = {
     "default": window.Cesium.Color.WHITE
 }
 
-let fieldColours = {
+const fieldColours = {
     "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
     "cond": window.Cesium.Color.fromBytes(154, 159, 167),
     "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
@@ -55,1020 +49,636 @@ let fieldColours = {
     "default": window.Cesium.Color.WHITE
 }
 
-class Map extends Component {
-    constructor(props) {
-        super(props)
-        this.mouseEvent = this.mouseEvent.bind(this);
-        this.setMousePosition = this.setMousePosition.bind(this);
-        this.getMousePosition = this.getMousePosition.bind(this);
-        this.getHandlerNull = this.getHandlerNull.bind(this);
-        this.setHandlerNull = this.setHandlerNull.bind(this);
-        this.setCurrentPath = this.setCurrentPath.bind(this);
-        this.getCurrentPath = this.getCurrentPath.bind(this);
-        this.addCurrentLabel = this.addCurrentLabel.bind(this);
-        this.getCurrentLabels = this.getCurrentLabels.bind(this);
-        this.setCurrentLabels = this.setCurrentLabels.bind(this);
-        this.getDynamicLengthlabel = this.getDynamicLengthlabel.bind(this);
-        this.setDynamicLengthLabel = this.setDynamicLengthLabel.bind(this);
-        this.updatePosition = this.updatePosition.bind(this);
-        this.flyTo = this.flyTo.bind(this);
-        this.state = {
-            viewer: null,
-            isHidden: false,
-            positions: [],
-            installations: [],
-            decomyards: [],
-            pipelines: [],
-            fields: [],
-            windfarms: [],
-            ukBlocks:null,
-            currentInstallationFilter: null,
-            currentDecomYardFilter: null,
-            currentPipelineFilter: null,
-            currentFieldFilter: null,
-            currentWindfarmFilter: null,
-            lastHoveredInstallation: null,
-            lastHoveredDecomyard: null,
-            lastHoveredWindfarm: null,
-            lastHoveredPipeline: null,
-            lastHoveredField: null,
-        }
+const setupCesium = (cesiumRef) => {
+    const terrainProvider = new window.Cesium.CesiumTerrainProvider({
+        url: bathymetryBaseUrl,
+        credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
+    });
 
-        this.quadrants = null;
+    const mapbox = new window.Cesium.MapboxImageryProvider({
+        mapId: 'mapbox.satellite',
+        accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
+    });
 
-        this.state.installations = this.props.cesiumInstallations;
-        if (this.props.cesiumDecomyards) {
-            this.state.decomyards = this.props.cesiumDecomyards;
-        }
-        if (this.props.cesiumPipelines) {
-            this.state.pipelines = this.props.cesiumPipelines;
-        }
-    }
+    // var maptiler = new window.Cesium.UrlTemplateImageryProvider({
+    //     url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=fU8GO3UjrAHXu6oeGQiM',
+    //     credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+    // });
 
-    updatePositions(positions) {
-        this.setState({
-            positions: positions
-        })
-        this.props.updatePositions(positions);
-    }
-
-    scaleBetween(unscaledNum, minAllowed, maxAllowed, min, max) {
-        return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.selectedPipeline !== this.props.selectedPipeline && this.props.selectedPipeline) {
-            if (!this.pipelinePoints) return;
-
-            let pipeline = this.pipelinePoints.find(pipeline => this.props.selectedPipeline._original["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
-            if (pipeline) {
-                this.state.viewer.flyTo(pipeline);
-            }
-            this.props.changeCurrentEntity({entity: this.props.selectedPipeline, type: "Pipeline"});
-        }
-        if (prevProps.selectedInstallation !== this.props.selectedInstallation && this.props.selectedInstallation) {
-            if (!this.installationPoints) return;
-
-            let installation = this.installationPoints.find(installation => this.props.selectedInstallation._original.Name === installation.installation.Name);
-            if (installation) {
-                this.state.viewer.flyTo(installation);
-            }
-            this.props.changeCurrentEntity({entity: this.props.selectedInstallation, type: "Installation"});
-        }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        if (nextProps.location.pathname !== this.props.location.pathname) {
-            return true;
-        }
-        if (nextProps.selectedPipeline !== this.props.selectedPipeline) {
-            return true;
-        }
-        if (nextProps.selectedInstallation !== this.props.selectedInstallation) {
-            return true;
-        }
-        // toggle quadrants 
-        if (this.props.showQuadrants !== nextProps.showQuadrants) {
-            let index = this.state.viewer.dataSources.indexOf(this.quadrants)
-            let dataSource = this.state.viewer.dataSources.get(index);
-            if (nextProps.showQuadrants) {
-                if (index === -1) {
-                    this.addQuadrantsToMap(this.state.viewer);
-                } else {
-                    dataSource.entities.show = true;                
-                }
-            } else {
-                dataSource.entities.show = false;
-            }
-            this.state.viewer.scene.requestRender()
-        }
-        // toggle quadrants
-
-        // toggle pipelines 
-        if (this.props.showPipelines !== nextProps.showPipelines) {
-            if (!this.pipelinePoints) {
-                this.loadUpPipelines(nextProps);
-            } else {
-                this.pipelinePoints.forEach(pipeline => {
-                    pipeline.show = nextProps.showPipelines
-                })
-            }   
-            this.state.viewer.scene.requestRender()
-
-        }
-        // toggle pipelines
-
-        // toggle fields 
-        if (this.props.showFields !== nextProps.showFields) {
-            if (!this.fieldPoints) {
-                this.loadUpFields(nextProps);
-            } else {
-                this.fieldPoints.forEach(field => {
-                    field.show = nextProps.showFields
-                })
-            }   
-            this.state.viewer.scene.requestRender()
-        }
-        // toggle fields
-
-        if (this.state.lastHoveredInstallation !== nextState.lastHoveredInstallation) {
-            return true;
-        }
-        if (this.state.lastHoveredDecomyard !== nextState.lastHoveredDecomyard) {
-            return true;
-        }
-        if (this.state.lastHoveredWindfarm !== nextState.lastHoveredWindfarm) {
-            return true;
-        }
-        if (this.state.lastHoveredPipeline !== nextState.lastHoveredPipeline) {
-            return true;
-        }
-        if (this.state.lastHoveredField !== nextState.lastHoveredField) {
-            return true;
-        }
-
-        if (this.state.viewer != null) {
-            //first run    
-            if (this.props.cesiumDecomyards.length === 0 && nextProps.cesiumDecomyards !== 0) {
-                this.decomyardsPoints = this.loadUpDecomyards(nextProps);
-            }
-            if (this.props.cesiumInstallations.length === 0 && nextProps.cesiumInstallations !== 0) {
-                this.installationPoints = this.loadUpInstallations(nextProps);
-            }
-            if (this.props.cesiumWindfarms.length === 0 && nextProps.cesiumWindfarms !== 0) {
-                this.windfarmPoints = this.loadUpWindfarms(nextProps);
-            }
-            // if (this.props.cesiumFields.length === 0 && nextProps.cesiumFields !== 0) {
-            //     this.fieldPoints = this.loadUpFields(nextProps);
-            // }
-            // if (this.props.cesiumPipelines.length === 0 && nextProps.cesiumPipelines !== 0) {
-            //     this.pipelinePoints = this.loadUpPipelines(nextProps);
-            // }
-
-            // handle update.
-            if (this.props.cesiumDecomyards.length !== nextProps.cesiumDecomyards.length) {
-                this.clearDecomYards();
-                this.loadUpDecomyards(nextProps);
-            }
-            if (this.props.cesiumInstallations.length !== nextProps.cesiumInstallations.length) {
-                this.clearInstallations();
-                this.loadUpInstallations(nextProps);
-            }
-            if (this.props.cesiumWindfarms.length !== nextProps.cesiumWindfarms.length) {
-                this.clearWindfarms();
-                this.loadUpWindfarms(nextProps);
-            }
-            if (this.props.cesiumFields.length !== nextProps.cesiumFields.length && this.props.showFields) {
-                this.clearFields();
-                this.loadUpFields(nextProps);
-            }
-            if (this.props.cesiumPipelines.length !== nextProps.cesiumPipelines.length && this.props.showPipelines) {
-                this.clearPipelines();
-                this.loadUpPipelines(nextProps);
-            }
-
-            if (this.props.decomYardFilter !== nextProps.decomYardFilter) {
-                this.filterDecomYards(nextProps.decomYardFilter);
-                return true;
-            }
-
-            if (this.props.pipelineFilter !== nextProps.pipelineFilter) {
-                this.filterPipelines(nextProps.pipelineFilter);
-                return true;
-            }
-
-            if (this.props.activeTab !== nextProps.activeTab || this.state.installations !== nextState.installations) {
-                return true;
-            }
-
-            if (this.props.currentInstallation !== nextProps.currentInstallation) {
-                if (nextProps.currentInstallation && nextProps.currentInstallation.CesiumId) {
-                    this.loadCesiumModelOntoMap(nextProps.currentInstallation.CesiumId)
-                }
-                return true;
-            }
-
-            if (this.props.year !== nextProps.year) {
-                // eslint-disable-next-line
-                this.state.viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601(""+nextProps.year);
-            }
-        }
-        return false;
-    }
-
-    addQuadrantsToMap(viewer) { 
-        let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
-        window.Cesium.GeoJsonDataSource.load(ukBlocks,{
-            fill:window.Cesium.Color.TRANSPARENT,
-            stroke:window.Cesium.Color.LIGHTCORAL
-        }).then((dataSource) => {
-                let self = this;
-                viewer.dataSources.add(dataSource);
-                var p = dataSource.entities.values;
-                for (var i = 0; i < p.length; i++) {
-                    let entity = p[i];
-                    let polygon = entity.polygon;
-                    if(polygon){
-                        //var position = entity.polygon.hierarchy.getValue().positions[0];
-                        var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
-                        window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
-                        entity.position = new window.Cesium.ConstantPositionProperty(center);;
-                    }
-                    entity.label = new window.Cesium.LabelGraphics({
-                        text:entity.properties.ALL_LABELS,
-                        //pixeloffset : new window.Cesium.Cartesian2(50, 50),
-                    //     verticalOrigin: window.Cesium.VerticalOrigin.TOP,
-                    // horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
-                    font: '12px sans-serif',
-                    scaleByDistance:scale
-                    //heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-                    });
-                    self.quadrants = dataSource;
-                }
-            }
-        ).otherwise(function(error) {
-            console.error(error);
-          });
-    }
-
-    initialiseViewer() {
-        var terrainProvider = new window.Cesium.CesiumTerrainProvider({
-            url: bathymetryBaseUrl,
-            credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
+    const viewer =
+        new window.Cesium.Viewer(cesiumRef.current, {
+            baseLayerPicker: false,
+            animation: false,
+            fullscreenButton: false,
+            shadows: false,
+            geocoder: false,
+            infoBox: false,
+            homeButton: false,
+            sceneModePicker: false,
+            selectionIndicator: false,
+            timeline: false,
+            navigationHelpButton: false,
+            terrainProvider: terrainProvider,
+            terrainExaggeration: 5,
+            requestRenderMode: true,
+            imageryProvider: mapbox
         });
 
-        var mapbox = new window.Cesium.MapboxImageryProvider({
-            mapId: 'mapbox.satellite',
-            accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
+    viewer.scene.globe.enableLighting = false;
+    viewer.scene.globe.depthTestAgainstTerrain = false;
+    return viewer;
+}
+
+const flyHome = (viewer) => {
+    var west = -10.0;
+    var south = 35.0;
+    var east = 10.0;
+    var north = 46.0;
+    var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
+    // fly to the north sea
+    viewer.camera.flyTo({
+        destination: rectangle,
+        duration: 3,
+        orientation: {
+            heading: 0.0,
+            pitch: window.Cesium.Math.toRadians(-50),
+            roll: 0.0
+        }
+    });
+}
+
+const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
+    return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+}
+
+const mapInstallation = (installation) => {
+    let start = installation.StartDate;
+    let end = installation.PlannedCOP;
+
+    if (start) {
+        start = window.Cesium.JulianDate.fromDate(new Date(start));
+    }
+    else {
+        start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+    }
+
+    if (end) {
+        end = window.Cesium.JulianDate.fromDate(new Date(end));
+    }
+    else {
+        end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+    }
+
+    const position = window.Cesium.Cartesian3.fromDegrees(installation.Longitude, installation.Latitude);
+    let availability = null;
+    if (start || end) {
+        const interval = new window.Cesium.TimeInterval({
+            start: start,
+            stop: end,
+            isStartIncluded: start !== null,
+            isStopIncluded: end !== null
         });
+        availability = new window.Cesium.TimeIntervalCollection([interval]);
+    }
 
-        var maptiler = new window.Cesium.UrlTemplateImageryProvider({
-            url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=fU8GO3UjrAHXu6oeGQiM',
-            credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
-        });
+    const point = {
+        pixelSize: 6,
+        color: installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD,
+        outlineColor: window.Cesium.Color.BLACK,
+        outlineWidth: 1,
+        eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+        translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+    };
 
-        this.terrainIsOn = true;
-        //eslint-disable-next-line
-        var viewer =
-            new window.Cesium.Viewer('cesiumContainer', {
-                baseLayerPicker: false,
-                animation: false,
-                fullscreenButton: false,
-                shadows: false,
-                geocoder: false,
-                infoBox: false,
-                homeButton: false,
-                sceneModePicker: false,
-                selectionIndicator: false,
-                timeline: false,
-                navigationHelpButton: false,
-                terrainProvider: terrainProvider,
-                terrainExaggeration: 5,
-                requestRenderMode: true,
-                imageryProvider: mapbox
-            });
-        viewer.camera.changed.addEventListener(
-            function () {
-                if (viewer.camera._suspendTerrainAdjustment && viewer.scene.mode === window.Cesium.SceneMode.SCENE3D) {
-                    viewer.camera._suspendTerrainAdjustment = false;
-                    viewer.camera._adjustHeightForTerrain();
-                }
+    const model = {
+        uri: iconModels[installation.Type],
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 100000),
+        scale: 0.18,
+        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+        shadows: window.Cesium.ShadowMode.DISABLED
+    };
+
+    const label = {
+        text: installation["Name"],
+        fillColor: window.Cesium.Color.WHITE,
+        style: window.Cesium.LabelStyle.FILL,
+        outlineColor: window.Cesium.Color.BLACK,
+        outlineWidth: 1.5,
+        pixelOffset: new window.Cesium.Cartesian2(25, 0),
+        verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+        horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
+        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+        scale: 0.7
+    };
+
+    return {
+        id: installation["Name"],
+        name: installation["Name"],
+        position: position,
+        availability: availability,
+        point: point,
+        model: model,
+        label: label,
+        originalData: installation
+    }
+}
+
+const setupInstallations = (installations) => {
+    const dataSource = new window.Cesium.CustomDataSource("Installation");
+    installations.forEach(i => dataSource.entities.add(mapInstallation(i)));
+    return dataSource;
+}
+
+const mapDecomyard = (decomyard) => {
+    const position = window.Cesium.Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat);
+    const point = {
+        pixelSize: 6,
+        color: window.Cesium.Color.AQUA,
+        eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+        translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+        outlineColor: window.Cesium.Color.BLACK,
+        outlineWidth: 1,
+    };
+    const label = {
+        text: decomyard["Name"],
+        fillColor: window.Cesium.Color.WHITE,
+        style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+        outlineColor: window.Cesium.Color.BLACK,
+        outlineWidth: 1.5,
+        pixelOffset: new window.Cesium.Cartesian2(25, 0),
+        verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
+        horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
+        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+    };
+    return {
+        id: decomyard["Name"],
+        name: decomyard["Name"],
+        position: position,
+        point: point,
+        label: label,
+        originalData: decomyard
+    }
+}
+
+const setupDecomyards = (decomyards) => {
+    const dataSource = new window.Cesium.CustomDataSource("DecomYard");
+    decomyards.forEach(i => dataSource.entities.add(mapDecomyard(i)));
+    return dataSource;
+}
+
+const getPipelineColour = (pipeline) => {
+    let pipelineFluid = pipeline["Fluid Conveyed"];
+    if (pipelineFluid) {
+        pipelineFluid = pipelineFluid.toLowerCase();
+    }
+
+    let colour = pipelineColours[pipelineFluid];
+    if (!colour) {
+        colour = pipelineColours["default"];
+    }
+
+    if (pipeline["Status"] !== "ACTIVE") {
+        colour = colour.withAlpha(0.5);
+    }
+
+    colour = colour.darken(0.5, new window.Cesium.Color());
+
+    return colour;
+}
+
+const mapPipeline = (pipeline) => {
+    const minDiameter = 0;
+    const maxDiameter = 1058;
+
+    const coordinates = pipeline.Coordinates;
+    if (Array.isArray(coordinates) && coordinates.length > 0) {
+        if (Array.isArray(coordinates[0])) {
+
+            let c = coordinates;
+            if (coordinates[0].length > 0 && Array.isArray(coordinates[0][0])) {
+                c = coordinates.flat();
             }
-        );
+            const flatCoordinates = c.flat();
 
-        viewer.scene.globe.enableLighting = false;
-        viewer.scene.globe.depthTestAgainstTerrain = false;
+            const material = getPipelineColour(pipeline);
 
-        //eslint-disable-next-line
-        this.state.viewer = viewer;
-    }
+            let pipeDiameter = parseInt(pipeline.Diameter) || 0
 
-    setMousePosition(p) {
-        this.mousePosition = p;
-    }
-
-    getMousePosition() {
-        return this.mousePosition;
-    }
-
-    setHandlerNull(isNull) {
-        this.handlerNull = isNull;
-    }
-
-    getHandlerNull() {
-        return this.handlerNull;
-    }
-
-    flyTo(west, south, east, north, pitch) {
-        var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
-        this.state.viewer.camera.flyTo({
-            destination: rectangle,
-            duration: 3,
-            orientation: {
-                heading: 0.0,
-                pitch: window.Cesium.Math.toRadians(pitch),
-                roll: 0.0
+            if (pipeline["Diameter Units"] === "inch") {
+                pipeDiameter = pipeDiameter * 25.4;
             }
-        });
-    }
+            const scaledWidth = scaleBetween(pipeDiameter, 2, 4, minDiameter, maxDiameter);
+            const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
 
-    componentDidMount() {
-        this.initialiseViewer();
-        var west = -10.0;
-        var south = 35.0;
-        var east = 10.0;
-        var north = 46.0;
-        var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
-        // fly to the north sea
-        this.state.viewer.camera.flyTo({
-            destination: rectangle,
-            duration: 3,
-            orientation: {
-                heading: 0.0,
-                pitch: window.Cesium.Math.toRadians(-50),
-                roll: 0.0
+            const a = Math.floor((flatCoordinates.length - 1) / 2);
+            let y = flatCoordinates[a];
+            let x = flatCoordinates[a + 1];
+
+            // swapping them here due to a problem with the data. seemed to be mixed up in some cases.
+            if (y < x) {
+                var tempY = y;
+                y = x;
+                x = tempY;
             }
-        });
-        this.addHighlightHandlers();
-    }
+            var position = window.Cesium.Cartesian3.fromDegrees(x, y);
 
 
-    clearInstallations() {
-        if (this.installationPoints !== undefined) {
-            for (var i = 0; i < this.installationPoints.length; i++) {
-                this.state.viewer.entities.remove(this.installationPoints[i]);
-            }
-        }
-    }
-
-    clearDecomYards() {
-        if (this.decomyardsPoints !== undefined) {
-            for (var i = 0; i < this.decomyardsPoints.length; i++) {
-                this.state.viewer.entities.remove(this.decomyardsPoints[i]);
-            }
-        }
-    }
-
-    clearPipelines() {
-        if (this.pipelinePoints !== undefined) {
-            for (var i = 0; i < this.pipelinePoints.length; i++) {
-                this.state.viewer.entities.remove(this.pipelinePoints[i]);
-            }
-        }
-    }
-
-    clearWindfarms() {
-        if (this.windfarmPoints !== undefined) {
-            for (var i = 0; i < this.windfarmPoints.length; i++) {
-                this.state.viewer.entities.remove(this.windfarmPoints[i]);
-            }
-        }
-    }
-
-    clearFields() {
-        if (this.fieldPoints !== undefined) {
-            for (var i = 0; i < this.fieldPoints.length; i++) {
-                this.state.viewer.entities.remove(this.fieldPoints[i]);
-            }
-        }
-    }
-
-    setCurrentPath(path) {
-        this.currentPath = path;
-    }
-
-    getCurrentPath() {
-        return this.currentPath;
-    }
-
-    addCurrentLabel(label) {
-        this.currentLabels.push(label);
-    }
-
-    getCurrentLabels() {
-        return this.currentLabels;
-    }
-
-    setCurrentLabels(labels) {
-        this.currentLabels = labels;
-    }
-
-    getDynamicLengthlabel() {
-        return this.dynamicLengthLabel;
-    }
-
-    setDynamicLengthLabel(dll) {
-        this.dynamicLengthLabel = dll;
-    }
-
-    updatePosition(position) {
-        this.position = position;
-        this.updatePositions(position);
-    }
-
-    addHighlightHandlers() {
-        var handler = new window.Cesium.ScreenSpaceEventHandler(this.state.viewer.scene.canvas);
-
-        var previousPickedEntity = undefined;
-
-        const viewer = this.state.viewer;
-        let self = this;
-        var element = document.getElementById('cesiumContainer');
-        // If the mouse is over a point of interest, change the entity billboard scale and color
-        handler.setInputAction(function (movement) {
-            var pickedPrimitive = viewer.scene.pick(movement.endPosition);
-            var pickedEntity = (window.Cesium.defined(pickedPrimitive)) ? pickedPrimitive.id : undefined;
-            // Unhighlight the previously picked entity
-            if (window.Cesium.defined(previousPickedEntity)) {
-                let color;
-                if (previousPickedEntity.installation) {
-                    color = previousPickedEntity.installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD;
-                } else if (previousPickedEntity.decomyard) {
-                    color = window.Cesium.Color.AQUA;
-                } else {
-                    color = window.Cesium.Color.WHITE;
-                }
-                previousPickedEntity.point.color = color;
-            }
-            if (self.state.lastHoveredInstallation || self.state.lastHoveredDecomyard || self.state.lastHoveredWindfarm || self.state.lastHoveredPipeline|| self.state.lastHoveredField) {
-                self.setState({
-                    lastHoveredInstallation: null,
-                    lastHoveredDecomyard: null,
-                    lastHoveredWindfarm: null,
-                    lastHoveredPipeline: null,
-                    lastHoveredField : null
-                })
-            }
-
-            // Highlight the currently picked entity
-            if(window.Cesium.defined(pickedEntity)){
-                element.style.cursor = 'pointer';
-                if (window.Cesium.defined(pickedEntity.point)) {
-                    viewer.scene.requestRender();
-                    pickedEntity.point.color = window.Cesium.Color.AZURE;
-                    previousPickedEntity = pickedEntity;
-                    self.setState({
-                        lastHoveredInstallation: pickedEntity.installation
-                    });
-                    self.setState({
-                        lastHoveredDecomyard: pickedEntity.decomyard
-                    });
-                    self.setState({
-                        lastHoveredWindfarm: pickedEntity.windfarm
-                    });
-                } else if (window.Cesium.defined(pickedEntity.pipeline)) {
-                    self.setState({
-                        lastHoveredPipeline: pickedEntity.pipeline
-                    });
-                } else if (window.Cesium.defined(pickedEntity.field)) {
-                    self.setState({
-                        lastHoveredField: pickedEntity.field
-                    });
-                }
+            let start = pipeline["Start Date"];
+            if (start) {
+                start = window.Cesium.JulianDate.fromDate(new Date(start));
             }
             else {
-                element.style.cursor = 'default';
+                start = window.Cesium.JulianDate.fromDate(new Date("1901"));
             }
-        }, window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    }
-
-    mouseEvent(e) {
-        const picked = this.state.viewer.scene.pick(e.position);
-        const id = picked ? picked.id || picked.primitive.id : null;
-        
-        if (picked && id) {
-            if (id.windfarm !== undefined) {
-                this.props.changeCurrentEntity({entity: id.windfarm, type: "Windfarm"});
-            }
-            if (id.pipeline !== undefined) {
-                let pipeline = this.pipelinePoints.find(pipeline => id.pipeline["Pipeline Id"] === pipeline.pipeline["Pipeline Id"]);
-                if (pipeline) {
-                    this.state.viewer.flyTo(pipeline);
-                }
-                this.props.changeCurrentEntity({entity: id.pipeline, type: "Pipeline"});
-            }
-            if (id.installation !== undefined) {
-                let installation = this.installationPoints.find(installation => id.installation.Name === installation.installation.Name);
-                if (installation) {
-                    this.state.viewer.flyTo(installation);
-                }
-
-                if (this.props.currentInstallation === id.installation) return; // if selecting already selected installation.
-                // dot has been clicked.
-                this.props.changeCurrentEntity({ entity:id.installation, type: "Installation"});
-            }
-        }
-    }
-
-    loadUpInstallations(nextProps) {
-        this.state.viewer.screenSpaceEventHandler.setInputAction(this.mouseEvent, window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        var installationPoints = [];
-        let installations;
-
-        if (nextProps.cesiumInstallations.length === 0) {
-            installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(this.state.installations) : this.state.installations;
-        } else {
-            installations = this.state.currentInstallationFilter ? this.state.currentInstallationFilter(nextProps.cesiumInstallations) : nextProps.cesiumInstallations;
-        }
-
-        for (var i = 0; i < installations.length; i++) {
-            var installation = installations[i];
-            var model = iconModels[installation.Type];
-            var start = installation.StartDate;
-            var end = installation.PlannedCOP;
-            
-            if (start){
-                start=window.Cesium.JulianDate.fromDate(new Date(start));
-            }
-            else {
-                start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
-            }
-           
+            let end = pipeline["End Date"];
             if (end) {
                 end = window.Cesium.JulianDate.fromDate(new Date(end));
             }
             else {
-                end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
+                end = window.Cesium.JulianDate.fromDate(new Date("2500"));
             }
-            
-            var availability = null;
-            if(start || end){
-                var interval = new window.Cesium.TimeInterval({
+
+            let availability = null;
+            if (start || end) {
+                const interval = new window.Cesium.TimeInterval({
                     start: start,
                     stop: end,
-                    isStartIncluded : start !== null,
-                    isStopIncluded : end !== null
+                    isStartIncluded: start !== null,
+                    isStopIncluded: end !== null
                 });
                 availability = new window.Cesium.TimeIntervalCollection([interval]);
             }
-            var point = this.state.viewer.entities.add({
-                name: installation["Name"],
-                position: window.Cesium.Cartesian3.fromDegrees(installation.Longitude, installation.Latitude),
-                availability:availability,
-                point: {
-                    pixelSize: 6,
-                    color: installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD,
-                    outlineColor: window.Cesium.Color.BLACK,
-                    outlineWidth: 1,
-                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+
+            return {
+                id: pipeline["Pipeline Id"],
+                name: pipeline["Pipeline Name"],
+                position: position,
+                availability: availability,
+                polyline: {
+                    positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                    material: material,
+                    width: scaledWidth,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance)
                 },
-                model: {
-                    uri: model,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 100000),
-                    scale: 0.18,
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    shadows: window.Cesium.ShadowMode.DISABLED
-                },
-                label: {
-                    text: installation["Name"],
-                    fillColor: window.Cesium.Color.WHITE,
-                    style: window.Cesium.LabelStyle.FILL,
-                    outlineColor: window.Cesium.Color.BLACK,
-                    outlineWidth: 1.5,
-                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    scale:0.7
-                }
-            });
-            point.installation = installation;
-            installationPoints.push(point);
+                //label: label,
+                originalData: pipeline
+            };
 
         }
-        this.installationPoints = installationPoints;
-        return installationPoints;
-    }
-
-    loadUpDecomyards(nextProps) {
-        var decomyardsPoints = [];
-        let decomyards;
-
-        if (nextProps.cesiumDecomyards.length === 0) {
-            decomyards = this.state.currentDecomYardFilter ? this.state.currentDecomYardFilter(this.state.decomyards) : this.state.decomyards;
-        } else {
-            decomyards = this.state.currentDecomYardFilter ? this.state.currentDecomYardFilter(nextProps.cesiumDecomyards) : nextProps.cesiumDecomyards;
-        }
-
-        if (!decomyards) return;
-
-        for (var i = 0; i < decomyards.length; i++) {
-            var decomyard = decomyards[i];
-
-            var point = this.state.viewer.entities.add({
-                name: decomyard["Name"],
-                position: window.Cesium.Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat),
-                point: {
-                    pixelSize: 6,
-                    color: window.Cesium.Color.AQUA,
-                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    outlineColor: window.Cesium.Color.BLACK,
-                    outlineWidth: 1,
-                },
-                label: {
-                    text: decomyard["Name"],
-                    fillColor: window.Cesium.Color.WHITE,
-                    style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                    outlineColor: window.Cesium.Color.BLACK,
-                    outlineWidth: 1.5,
-                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
-                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-                }
-            });
-            point.decomyard = decomyard;
-            decomyardsPoints.push(point);
-        }
-        this.decomyardsPoints = decomyardsPoints;
-        return decomyardsPoints;
-    }
-
-    computeCircle(radius) {
-        var positions = [];
-        for (var i = 0; i < 360; i++) {
-            var radians = window.Cesium.Math.toRadians(i);
-            positions.push(new window.Cesium.Cartesian2(radius * Math.cos(radians), radius * Math.sin(radians)));
-        }
-        return positions;
-    }
-
-    getPipelineColour(pipeline) {
-        let pipelineFluid = pipeline["Fluid Conveyed"];
-        if (pipelineFluid) {
-            pipelineFluid = pipelineFluid.toLowerCase();
-        }
-
-        let colour = pipelineColours[pipelineFluid];
-        if (!colour) {
-            colour = pipelineColours["default"];
-        }
-
-        if (pipeline["Status"] !== "ACTIVE") {
-            colour = colour.withAlpha(0.5);
-        }
-
-        colour = colour.darken(0.5, new window.Cesium.Color());
-
-        // var material = new window.Cesium.PolylineGlowMaterialProperty({
-        //     color:colour,
-        //     glowPower:0.2,
-        //     taperPower:1.0
-        // })
-        return colour;
-    }
-
-    getFieldColour(field) {
-        let hcType = field["Hydrocarbon Type"];
-        if (hcType) {
-            hcType = hcType.toLowerCase();
-        }
-        let colour = fieldColours[hcType];
-        if (!colour) {
-            colour = fieldColours["default"];
-        }
-        colour = colour.withAlpha(0.7);
-
-        return colour;
-    }
-
-    loadUpPipelines(nextProps) {
-        let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
-        var pipelinePolys = [];
-        let pipelines;
-
-        if (!nextProps.cesiumPipelines || nextProps.cesiumPipelines.length === 0) {
-            pipelines = this.state.currentPipelineFilter ? this.state.currentPipelineFilter(this.state.pipelines) : this.state.pipelines;
-        } else {
-            pipelines = this.state.currentPipelineFilter ? this.state.currentPipelineFilter(nextProps.cesiumPipelines) : nextProps.cesiumPipelines;
-        }
-
-        if (!pipelines) return;
-        //var shape = this.computeCircle(40.0);
-        var errors = [];
-        var minDiameter = 0;
-        var maxDiameter = 1058;
-        this.state.viewer.entities.suspendEvents();
-        for (var i = 0; i < pipelines.length; i++) {
-            var pipeline = pipelines[i];
-            var coordinates = pipeline.Coordinates;
-            if (Array.isArray(coordinates) && coordinates.length > 0) {
-                if (Array.isArray(coordinates[0])) {
-                    try {
-                        var c = coordinates;
-                        if (coordinates[0].length > 0 && Array.isArray(coordinates[0][0])) {
-                            c = coordinates.flat();
-                        }
-                        let flatCoordinates = c.flat();
-
-                        var material = this.getPipelineColour(pipeline);
-
-                        var pipeDiameter = parseInt(pipeline.Diameter) || 0
-
-                        if (pipeline["Diameter Units"] === "inch") {
-                            pipeDiameter = pipeDiameter * 25.4;
-                        }
-                        var scaledWidth = this.scaleBetween(pipeDiameter, 1, 2, minDiameter, maxDiameter);
-                        var scaledDistance = this.scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
-                        var scaledTextDistance = this.scaleBetween(pipeDiameter, 20000, 100000, minDiameter, maxDiameter);
-                        var label;
-                        var a = Math.floor((flatCoordinates.length - 1) / 2);
-                        var y = flatCoordinates[a];
-                        var x = flatCoordinates[a + 1];
-
-                        // swapping them here due to a problem with the data. seemed to be mixed up in some cases.
-                        if (y < x) {
-                            var tempY = y;
-                            y = x;
-                            x = tempY;
-                        }
-                        var position = window.Cesium.Cartesian3.fromDegrees(x, y);
- 
-                        label =
-                            {
-                                text: pipeline["Pipeline Name"],
-                                fillColor: window.Cesium.Color.WHITE,
-                                style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                                outlineColor: material.color,
-                                outlineWidth: 1.5,
-                                pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                                verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
-                                horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, scaledTextDistance),
-                                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                                scaleByDistance:scale,
-                                font: '14px sans-serif'
-                            };
-
-                        var start = pipeline["Start Date"];
-                        if(start){
-                            start=window.Cesium.JulianDate.fromDate(new Date(start));
-                        }
-                        else{
-                            start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
-                        }
-                        var end = pipeline["End Date"];
-                        if(end){
-                            end = window.Cesium.JulianDate.fromDate(new Date(end));
-                        }
-                        else{
-                            end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
-                        }
-                        
-                        var availability = null;
-                        if(start || end){
-                            var interval = new window.Cesium.TimeInterval({
-                                start: start,
-                                stop: end,
-                                isStartIncluded : start !== null,
-                                isStopIncluded : end !== null
-                            });
-                            availability=new window.Cesium.TimeIntervalCollection([interval]);
-                        }
-
-                        var poly = this.state.viewer.entities.add({
-                            name: pipeline["Pipeline Name"],
-                            position: position,
-                            availability:availability,
-                            polyline: {
-                                positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                                material: material,
-                                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                                width: scaledWidth,
-                                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
-                            },
-                            label: label
-                        });
-                        poly.pipeline = pipeline;
-                        pipelinePolys.push(poly);
-                    }
-                    catch (error) {
-                        errors.push({ error: error, coordinates: coordinates.flat() });
-                    }
-                }
-            }
-
-
-        }
-        if (errors.length > 0) {
-            console.error(errors);
-        }
-        this.state.viewer.entities.resumeEvents();
-
-        this.pipelinePoints = pipelinePolys;
-        return pipelinePolys;
-    }
-
-    loadUpWindfarms(nextProps) {
-        var windfarmPoints = [];
-        let windfarms;
-
-        if (nextProps.cesiumWindfarms.length === 0) {
-            windfarms = this.state.currentWindfarmFilter ? this.state.currentWindfarmFilter(this.state.windfarms) : this.state.windfarms;
-        } else {
-            windfarms = this.state.currentWindfarmFilter ? this.state.currentWindfarmFilter(nextProps.cesiumWindfarms) : nextProps.cesiumWindfarms;
-        }
-
-        if (!windfarms) return;
-
-        for (var i = 0; i < windfarms.length; i++) {
-            var windfarm = windfarms[i];
-
-            if (!windfarm.LONGITUDE || !windfarm.LATITUDE) continue;
-
-            var point = this.state.viewer.entities.add({
-                name: windfarm["Name"],
-                position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
-                point: {
-                    pixelSize: 6,
-                    color: window.Cesium.Color.WHITE,
-                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                    outlineColor: window.Cesium.Color.BLACK,
-                    outlineWidth: 1,
-                },
-                label: {
-                    text: windfarm["Name"],
-                    fillColor: window.Cesium.Color.WHITE,
-                    style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-                    outlineColor: window.Cesium.Color.BLACK,
-                    outlineWidth: 1.5,
-                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
-                    heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-                }
-            });
-            point.windfarm = windfarm;
-            windfarmPoints.push(point);
-        }
-        this.windfarmPoints = windfarmPoints;
-        return windfarmPoints;
-    }
-
-    loadUpFields(nextProps) {
-        var fieldPolys = [];
-        let fields;
-
-        if (nextProps.cesiumFields.length === 0) {
-            fields = this.state.currentFieldFilter ? this.state.currentFieldFilter(this.state.fields) : this.state.fields;
-        } else {
-            fields = this.state.currentFieldFilter ? this.state.currentFieldFilter(nextProps.cesiumFields) : nextProps.cesiumFields;
-        }
-
-        if (!fields) return;
-
-        for (var i = 0; i < fields.length; i++) {
-            var field = fields[i];
-            if(field.Coordinates){
-                var start = field["Discovery Date"];
-               
-                        if(start){
-                            start=window.Cesium.JulianDate.fromDate(new Date(start));
-                        }
-                        else{
-                            start=window.Cesium.JulianDate.fromDate(new Date("1901")); 
-                        }
-                        var end = 
-                            end=window.Cesium.JulianDate.fromDate(new Date("2500")); 
-                        
-                        
-                        var availability = null;
-                        if(start || end){
-                            var interval = new window.Cesium.TimeInterval({
-                                start: start,
-                                stop: end,
-                                isStartIncluded : start !== null,
-                                isStopIncluded : end !== null
-                            });
-                            availability=new window.Cesium.TimeIntervalCollection([interval]);
-                        }
-               
-                var material = this.getFieldColour(field);
-              //  var outline = material.brighten(0.5, new window.Cesium.Color());
-                var flatCoordinates = field.Coordinates.flat();
-                var poly = this.state.viewer.entities.add({
-                    name: field["Field Name"],
-                    //position: position,
-                    availability : availability,
-                    polygon: {
-                        hierarchy : window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                        height:0,
-                        material: material,
-                       // outline : true,
-                        //outlineColor : outline,
-                        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-                        //width: scaledWidth,
-                        //distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
-                    },
-                    //label: label
-                });
-                poly.field = field;
-                fieldPolys.push(poly);
-            }
-        }
-        this.fieldPoints = fieldPolys;
-        return fieldPolys;
-    }
-
-    
-
-    render() {
-        const divStyle = {
-            width: '100%',
-            height: '100%',
-            zIndex: 1,
-            pointerEvents: 'auto'
-        };
-        let hoveredInstallation = this.state.lastHoveredInstallation;
-        let hoveredDecomyard = this.state.lastHoveredDecomyard;
-        let hoveredWindfarm = this.state.lastHoveredWindfarm;
-        let hoveredPipeline = this.state.lastHoveredPipeline;
-        let hoveredField = this.state.lastHoveredField;
-    
-        return (
-            <div style={{ height: '100%', width: '100%' }}>
-                <ReactCursorPosition style={{ width: '100%', height: '100%', pointerEvents: 'none' }}>
-                    <div id="cesiumContainer" style={divStyle} >
-                    </div>
-                    <InstallationHoverCard hoveredInstallation={hoveredInstallation}></InstallationHoverCard>
-                    <DecomyardHoverCard hoveredDecomyard={hoveredDecomyard}></DecomyardHoverCard>
-                    <WindfarmHoverCard hoveredWindfarm={hoveredWindfarm}> </WindfarmHoverCard>
-                    <PipelineHoverCard hoveredPipeline={hoveredPipeline}></PipelineHoverCard>
-                    <FieldHoverCard hoveredField={hoveredField}></FieldHoverCard>
-                </ReactCursorPosition>
-                <MapContext.Provider value={{flyTo: this.flyTo}}>{this.props.children}</MapContext.Provider>
-            </div>
-        );
     }
 }
 
-export const MapContext = React.createContext();
+const setupPipelines = (pipelines) => {
+    const dataSource = new window.Cesium.CustomDataSource("Pipeline");
+    pipelines.forEach(i => dataSource.entities.add(mapPipeline(i)));
+    return dataSource;
+}
 
-function mapDispatchToProps(dispatch) {
+const mapWindfarm = (windfarm) => {
+    if (!windfarm.LONGITUDE || !windfarm.LATITUDE) return;
+
     return {
-        changeCurrentEntity: (currentEntity) => {
-            dispatch(changeCurrentEntity(currentEntity))
+        id: windfarm["Name"],
+        name: windfarm["Name"],
+        position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
+        point: {
+            pixelSize: 6,
+            color: window.Cesium.Color.WHITE,
+            eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+            translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+            heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+            outlineColor: window.Cesium.Color.BLACK,
+            outlineWidth: 1,
         },
+        label: {
+            text: windfarm["Name"],
+            fillColor: window.Cesium.Color.WHITE,
+            style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
+            outlineColor: window.Cesium.Color.BLACK,
+            outlineWidth: 1.5,
+            pixelOffset: new window.Cesium.Cartesian2(25, 0),
+            verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+            horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
+            heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+        },
+        originalData: windfarm
+    };
+}
+
+const setupWindfarms = (windfarms) => {
+    const dataSource = new window.Cesium.CustomDataSource("Windfarm");
+    windfarms.forEach(i => dataSource.entities.add(mapWindfarm(i)));
+    return dataSource;
+}
+
+const getFieldColour = (field) => {
+    let hcType = field["Hydrocarbon Type"];
+    if (hcType) {
+        hcType = hcType.toLowerCase();
+    }
+    let colour = fieldColours[hcType];
+    if (!colour) {
+        colour = fieldColours["default"];
+    }
+    colour = colour.withAlpha(0.7);
+
+    return colour;
+}
+
+const mapField = (field) => {
+    if (field.Coordinates) {
+        let start = field["Discovery Date"];
+        let end;;
+
+        if (start) {
+            start = window.Cesium.JulianDate.fromDate(new Date(start));
+        }
+        else {
+            start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+        }
+
+        if (end) {
+            end = window.Cesium.JulianDate.fromDate(new Date(end));
+        }
+        else {
+            end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+        }
+
+        let availability = null;
+        if (start || end) {
+            const interval = new window.Cesium.TimeInterval({
+                start: start,
+                stop: end,
+                isStartIncluded: start !== null,
+                isStopIncluded: end !== null
+            });
+            availability = new window.Cesium.TimeIntervalCollection([interval]);
+        }
+
+        const material = getFieldColour(field);
+        const flatCoordinates = field.Coordinates.flat();
+        return {
+            id: field["Field Name"],
+            name: field["Field Name"],
+            availability: availability,
+            polygon: {
+                hierarchy: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
+                height: 0,
+                material: material,
+                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+            },
+            originalData: field
+        };
     }
 }
 
-const mapStateToProps = (state) => {
-    let filterType = state.InstallationReducer.installationFilter
-    let decomYardFilterType = state.InstallationReducer.decomYardFilterType
-    let pipelineFilterType = state.InstallationReducer.pipelineFilterType
-    let windfarmFilterType = state.InstallationReducer.windfarmFilterType
-    let fieldFilterType = state.InstallationReducer.fieldFilterType
-    let year = state.MapReducer.year;
-    return {
-        currentInstallation: state.InstallationReducer.currentInstallation,
-        cesiumInstallations: state.InstallationReducer.cesiumInstallations,
-        cesiumDecomyards: state.InstallationReducer.cesiumDecomyards,
-        cesiumPipelines: state.InstallationReducer.cesiumPipelines,
-        cesiumFields: state.InstallationReducer.cesiumFields,
-        showQuadrants: state.BathymetryReducer.ogaQuadrantsSwitched,
-        showPipelines: state.BathymetryReducer.ogaPipelinesSwitched,
-        showFields: state.BathymetryReducer.ogaFieldsSwitched,
-        installationFilter: filterType,
-        decomYardFilter: decomYardFilterType,
-        pipelineFilterType: pipelineFilterType,
-        cesiumWindfarms: state.InstallationReducer.cesiumWindfarms,
-        windfarmFilter: windfarmFilterType,
-        fieldFilter: fieldFilterType,
-        year:year
+const setupFields = (fields) => {
+    const dataSource = new window.Cesium.CustomDataSource("Field");
+    fields.forEach(i => dataSource.entities.add(mapField(i)));
+    return dataSource;
+}
+
+const setupBlocks = async () => {
+    let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(ukBlocks, {
+        fill: window.Cesium.Color.TRANSPARENT,
+        stroke: window.Cesium.Color.LIGHTCORAL
+    });
+
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        let entity = p[i];
+        let polygon = entity.polygon;
+        if (polygon) {
+            var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+            window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+            entity.position = new window.Cesium.ConstantPositionProperty(center);;
+        }
+        entity.label = new window.Cesium.LabelGraphics({
+            text: entity.properties.ALL_LABELS,
+            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+            font: '12px sans-serif',
+            scaleByDistance: scale
+        });
+
+    }
+    return dataSource;
+}
+
+const leftClick = (viewer, history, location, search, e) => {
+    const picked = viewer.scene.pick(e.position);
+    const entity = picked ? picked.id || picked.primitive.id : null;
+    if (entity && entity.entityCollection && entity.entityCollection.owner) {
+        const type = entity.entityCollection.owner.name;
+        const id = entity.id;
+        search.set("eid", id);
+        search.set("etype", type);
+        history.push(location.pathname + `?${search.toString()}`);
     }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Map));
+let previousPickedEntity;
+
+const mouseMove = (viewer, setHover, movement) => {
+    const element = viewer.container;
+    const picked = viewer.scene.pick(movement.endPosition);
+    const entity = picked ? picked.id || picked.primitive.id : null;
+
+    // Highlight the currently picked entity
+    if (entity && entity.entityCollection && entity.entityCollection.owner) {
+        if (previousPickedEntity !== entity) {
+            element.style.cursor = 'pointer';
+            previousPickedEntity = entity;
+            if (entity.originalData) {
+                setHover({ entity: entity.originalData, type: entity.entityCollection.owner.name });
+            }
+        }
+    } else {
+        element.style.cursor = 'default';
+        if (!previousPickedEntity) {
+            setHover(null);
+        }
+        previousPickedEntity = null;
+    }
+}
+
+const flyTo = (viewer, { west, south, east, north, pitch }) => {
+    var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
+    viewer.camera.flyTo({
+        destination: rectangle,
+        duration: 3,
+        orientation: {
+            heading: 0.0,
+            pitch: window.Cesium.Math.toRadians(pitch),
+            roll: 0.0
+        }
+    });
+}
+
+const toggleEntityVisibility = (viewer, dataSourceName, visibilityList) => {
+    const dataSources = viewer.dataSources.getByName(dataSourceName);
+    if (dataSources.length > 0) {
+        const dataSource = dataSources[0];
+        dataSource.entities.values.forEach(entity => entity.show = visibilityList.includes(entity.id));
+    }
+    viewer.scene.requestRender();
+}
+
+const CesiumMap = () => {
+    const [{ installations, pipelines, windfarms, decomYards, fields,
+        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year,
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, decomnYardsVisible },] = useStateValue();
+    const cesiumRef = useRef(null);
+    const [viewer, setViewer] = useState(null);
+    const location = useLocation();
+    const history = useHistory();
+    const search = new URLSearchParams(location.search);
+    const eid = search.get("eid");
+    const etype = search.get("etype");
+    const [hover, setHover] = useState(null);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        if (!viewer) return;
+        switch (etype) {
+            case "Area":
+                let area = areas.get(eid);
+                if (area && area.coordinates) {
+                    flyTo(viewer, area.coordinates);
+                }
+                break;
+            default:
+
+                const dataSources = viewer.dataSources.getByName(etype);
+                if (dataSources.length !== 0) {
+                    const entity = dataSources[0].entities.getById(eid);
+                    if (entity) {
+                        viewer.flyTo(entity);
+                    }
+                }
+                break;
+        }
+
+    }, [viewer, areas, eid, etype]);
+
+    useEffect(() => {
+        if (!viewer || !installationsVisible) return;
+        toggleEntityVisibility(viewer, "Installation", installationsVisible);
+    }, [viewer, installationsVisible]);
+
+    useEffect(() => {
+        if (!viewer || !pipelinesVisible) return;
+        toggleEntityVisibility(viewer, "Pipeline", pipelinesVisible);
+    }, [viewer, pipelinesVisible]);
+
+    useEffect(() => {
+        if (!viewer || !windfarmsVisible) return;
+        toggleEntityVisibility(viewer, "Windfarm", windfarmsVisible);
+    }, [viewer, windfarmsVisible]);
+
+    useEffect(() => {
+        if (!viewer || !fieldsVisible) return;
+        toggleEntityVisibility(viewer, "Field", fieldsVisible);
+    }, [viewer, fieldsVisible]);
+
+    useEffect(() => {
+        if (!viewer || !decomnYardsVisible) return;
+        toggleEntityVisibility(viewer, "DecomYard", decomnYardsVisible);
+    }, [viewer, decomnYardsVisible]);
+
+    useEffect(() => {
+        if (!viewer) return;
+        const installation = viewer.dataSources.getByName("Installation");
+        if (installation.length > 0) installation[0].show = showInstallations;
+        const pipeline = viewer.dataSources.getByName("Pipeline");
+        if (pipeline.length > 0) pipeline[0].show = showPipelines;
+        const windfarms = viewer.dataSources.getByName("Windfarm");
+        if (windfarms.length > 0) windfarms[0].show = showWindfarms;
+        const decomYards = viewer.dataSources.getByName("DecomYard");
+        if (decomYards.length > 0) decomYards[0].show = showDecomYards;
+        const fields = viewer.dataSources.getByName("Field");
+        if (fields.length > 0) fields[0].show = showFields;
+        const blocks = viewer.dataSources.getByName("Block");
+        if (blocks.length > 0) blocks[0].show = showBlocks;
+        viewer.scene.requestRender();
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks]);
+
+    useEffect(() => {
+        if (viewer) {
+            viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601("" + year);
+        }
+    }, [viewer, year]);
+
+    useEffect(() => {
+        const viewer = setupCesium(cesiumRef);
+        setViewer(viewer);
+        flyHome(viewer);
+        setupBlocks().then(dataSource => { dataSource.show = showBlocks; dataSource.name = "Block"; viewer.dataSources.add(dataSource) });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (!viewer) return;
+        viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    }, [viewer, history, location, search]);
+
+    useEffect(() => {
+        if (!viewer || installations.size === 0) return;
+        const dataSource = setupInstallations(installations);
+        dataSource.show = showInstallations;
+        viewer.dataSources.add(dataSource);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, installations]);
+
+    useEffect(() => {
+        if (!viewer || decomYards.size === 0) return;
+        const dataSource = setupDecomyards(decomYards);
+        dataSource.show = showDecomYards;
+        viewer.dataSources.add(dataSource);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, decomYards]);
+
+    useEffect(() => {
+        if (!viewer || pipelines.size === 0) return;
+        const dataSource = setupPipelines(pipelines);
+        dataSource.show = showPipelines;
+        viewer.dataSources.add(dataSource);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, pipelines]);
+
+    useEffect(() => {
+        if (!viewer || windfarms.size === 0) return;
+        const dataSource = setupWindfarms(windfarms);
+        dataSource.show = showWindfarms;
+        viewer.dataSources.add(dataSource);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, windfarms]);
+
+    useEffect(() => {
+        if (!viewer || fields.size === 0) return;
+        const dataSource = setupFields(fields);
+        dataSource.show = showFields;
+        viewer.dataSources.add(dataSource);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, fields]);
+
+    return (
+        <div style={{ width: '100%', height: '100%' }} onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>
+            {hover && <HoverCard position={position} type={hover.type} entity={hover.entity} />}
+            <div id="cesiumContainer" ref={cesiumRef} />
+        </div >
+    );
+}
+
+export default CesiumMap;

@@ -1,22 +1,55 @@
-.content-container {
-    position:relative;
-    width:100%;
-    height:100%;
-    display:flex;
-    pointer-events: none;
-}
-
 .app-container {
-    position:relative;
-    display:flex;
+    position: relative;
+    display: flex;
     flex-direction: column;
+    height: 100%;
+}
+
+.content-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+#dns-panels {
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
     height:100%;
+    pointer-events: none;
+    .dns-panel {
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        pointer-events: all;
+        .dns-content{
+            overflow-y: auto;
+            background: rgb(51, 71, 92);
+            height: 100%;
+        }
+
+        .dns-content-table{
+            align-self: flex-start;
+            height: 100%;
+        }
+
+        &.left {
+            justify-items: left;
+        }
+
+        &.right {
+            justify-items: right;
+        }
+
+        .hidden {
+            display: none;
+        }
+    }
 }
 
-.flippy-front {
-    box-shadow: none !important;
-}
-
-.flippy-back {
-    box-shadow: none !important;
+::-webkit-scrollbar {
+    display: none;
 }
