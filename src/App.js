@@ -9,6 +9,10 @@ import { fetchFact } from './api/RandomFact';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
+import DecomYardTable from './components/tables/DecomYardTable';
+import FieldTable from './components/tables/FieldTable';
+import WindfarmTable from './components/tables/WindfarmTable';
+import PipelineTable from './components/tables/PipelineTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -50,62 +54,23 @@ const App = () => {
                 <MenuPanel />
               </Route>
               <Route path="/installations" exact >
-                  <InstallationTable />
+                <InstallationTable />
+              </Route>
+              <Route path="/decomyards" exact >
+                <DecomYardTable />
+              </Route>
+              <Route path="/fields" exact >
+                <FieldTable />
+              </Route>
+              <Route path="/windfarms" exact >
+                <WindfarmTable />
+              </Route>
+              <Route path="/pipelines" exact >
+                <PipelineTable />
               </Route>
             </Switch>
-
             <InfoPanel />
           </div>
-          {/* <Switch>
-            <Route path="/installations" render={(props) => {
-              return (
-                <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                  <InstallationTable {...props} setSelectedInstallation={this.setSelectedInstallation}></InstallationTable>
-                </DynamicWidthPage>
-              )
-            }} />
-            <Route path="/decomyards" render={(props) => {
-              return (
-                <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                  <DecomYardTable {...props}></DecomYardTable>
-                </DynamicWidthPage>
-              )
-            }} />
-            <Route path="/pipelines" render={(props) => {
-              return (
-                <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                  <PipelineTable {...props} setSelectedPipeline={this.setSelectedPipeline}></PipelineTable>
-                </DynamicWidthPage>
-              )
-            }} />
-            <Route path="/windfarms" render={(props) => {
-              return (
-                <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                  <WindfarmTable {...props}></WindfarmTable>
-                </DynamicWidthPage>
-              )
-            }} />
-            <Route path="/fields" render={(props) => {
-              return (
-                <DynamicWidthPage backgroundColor={'rgba(39, 43, 56, 0.34)'}>
-                  <FieldTable {...props}></FieldTable>
-                </DynamicWidthPage>
-              )
-            }} />
-          </Switch>
-          <Switch>
-            <Route path="/(installations|decomyards|windfarms|pipelines|fields)" render={(props) => {
-              return (
-                <OilandGas {...props} changeMainContent={this.changeMainContentIndex} hideSidePanel={true}></OilandGas>
-              )
-            }} />
-            <Route path="/" render={(props) => {
-              return (
-                <OilandGas {...props} changeMainContent={this.changeMainContentIndex}></OilandGas>
-              )
-            }} />
-          </Switch> */}
-
         </div>
       </div>
     </Router>

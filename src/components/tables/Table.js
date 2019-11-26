@@ -75,7 +75,7 @@ export default function Table({ columns, data, history, location, filters, onFil
     const defaultColumn = React.useMemo(
         () => ({
             width: 150,
-            Filter: DefaultColumnFilter,
+            Filter: DefaultColumnFilter
         }),
         []
     );

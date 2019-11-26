@@ -6,7 +6,8 @@ import Table, { NumberRangeColumnFilter, ButtonBar } from './Table';
 
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(true);
-  const [{installationFilters}, dispatch] = useStateValue();
+  const [{installations, installationFilters}, dispatch] = useStateValue();
+  const data = useMemo(() => [...installations.values()], [installations])
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -125,8 +126,7 @@ function InstallationTable() {
     ],
     [isVisible]
   )
-  const [{ installations },] = useStateValue();
-  const data = useMemo(() => [...installations.values()], [installations])
+  
   const expand = () => {
     setIsVisible(true);
   }

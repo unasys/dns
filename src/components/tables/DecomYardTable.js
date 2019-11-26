@@ -1,161 +1,62 @@
-import React, { Component } from 'react';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
-import './TableStyles.scss';
-import history from '../../../../history';
-import { fetchDecomyards } from '../../../../api/Installations.js';
-import { connect } from 'react-redux';
-import { changeDecomYardFilterType,  setCesiumDecomyards } from '../../../../actions/installationActions';
+import React, { useMemo, useState } from 'react'
+import { useStateValue } from '../../utils/state'
+import { useHistory, useLocation } from 'react-router-dom';
+import Table, { ButtonBar } from './Table';
 
-class DecomYardTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      shownColumns: ['Name'],
-      expandedLevel: 0,
-      rows: [],
-      currentDataLength: 0
-    }
-    this.reactTable = React.createRef();
-    this.addToShownColumns = this.addToShownColumns.bind(this);
-    this.removeFromShownColumns = this.removeFromShownColumns.bind(this);
-    this.expandColumns = this.expandColumns.bind(this);
-    this.fetchInstallations = this.fetchInstallations.bind(this);
-    this.onTableViewChange = this.onTableViewChange.bind(this);
-  }
-  
-
-
-  componentDidMount() {
-      this.fetchInstallations();
-  }
-
-  fetchInstallations() {
-      fetchDecomyards()
-          .then(payload => {
-
-              this.setState({
-                  rows: payload,
-                  currentDataLength: payload.length,
-              });
-                          
-          })
-  }
-
-  addToShownColumns(additionalColumn) {
-    let shownColumns = this.state.shownColumns;
-    this.setState({
-      shownColumns: shownColumns.concat(additionalColumn)
-    })
-  }
-
-  removeFromShownColumns(columnToRemove) {
-    let shownColumns = this.state.shownColumns;
-    var index = shownColumns.indexOf(columnToRemove);
-    if (index !== -1) shownColumns.splice(index, 1);
-    this.setState({
-      shownColumns: shownColumns
-    })
-  }
-
-  expandColumns() {
-    if (this.state.shownColumns.length === 1) {
-        this.addToShownColumns(['Lat/Long']);
-      }
-  }
-
-  collapseColumns() {
-    if (this.state.shownColumns.length === 2) {
-        this.removeFromShownColumns('Lat/Long')
-      }
-  }
-
-  onTableViewChange() {
-    if (this.reactTable.current) {
-      let currentRows = this.reactTable.current.getResolvedState().sortedData
-        let mappedRows = currentRows.map(row => {
-        return row._original;
-      })
-      this.props.setCesiumDecomyards(mappedRows);
-    }
-  }
-
-  render() {
-    const columns = [
-      {
-        Header: 'Name',
-        id: 'Name',
-        accessor: row => {
-          if (row.Name) {
-            return row.Name.toLowerCase()
-          }
-        },
-        Cell: row => (
-          <>
-            <div className="table-installation-title">
-              <p>
-                {row.value.toLowerCase()}
-              </p>
-            </div>
-          </>
-        ),
-        Footer: (row) => {
-          let total = row.data.length;
-          return (<span>
-            Totals:  {total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          </span>)
-        },
-        style: { color: '#fff', fontSize: '15px' },
-        show: this.state.shownColumns.includes('Name'),
-        minWidth: 300
-      },
-
-      {
-        Header: 'Lat/Long',
-        id: 'Lat/Long',
-        accessor: row => (parseFloat(Math.round(row["Long"] * 100) / 100).toFixed(2) + "/" + parseFloat(Math.round(row["Lat"] * 100) / 100).toFixed(2)),
-        show: this.state.shownColumns.includes('Lat/Long')
-      }
-    ]
-
-    return (
-      <>
-        <div className="ReactTable-container">
-          <ReactTable
-            filterable
-            defaultFilterMethod={(filter, row) =>
-              String(row[filter.id]).toLowerCase().includes(filter.value.toLowerCase())}
-            data={this.state.rows}
-            ref={this.reactTable}
-            columns={columns}
-            showPagination={false}
-            minRows={0}
-            pageSize={this.state.rows.length}
-            onFilteredChange={this.onTableViewChange}
-          />
-          <div className="button-bar">
-              <i className="fas fa-arrow-left backbutton" onClick={() => history.push("/")}></i>
-                <div className="outward-handle" onClick={() => this.expandColumns()}>
-                  <i className="fas fa-caret-right"></i>
-                </div>
-                <div className="outward-handle" onClick={() => this.collapseColumns()}>
-                  <i className="fas fa-caret-left"></i>
-                </div>
+function DecomYardTable() {
+  const [isVisible, setIsVisible] = useState(true);
+  const [{ decomYardFilters, decomYards }, dispatch] = useStateValue();
+  const data = useMemo(() => [...decomYards.values()], [decomYards])
+  const history = useHistory();
+  const location = useLocation();
+  const search = new URLSearchParams(location.search);
+  const columns = React.useMemo(
+    () => [{
+      Header: 'Name',
+      accessor: 'Name',
+      Cell: ({ cell: { value } }) => (
+          <div className="table-installation-title">
+            <p>
+              {value}
+            </p>
           </div>
-        </div>
-      </>
-    );
+      ),
+      minWidth: 300
+    }, {
+      Header: 'Lat/Long',
+      id: 'Lat/Long',
+      accessor: row => (parseFloat(Math.round(row["Long"] * 100) / 100).toFixed(2) + "/" + parseFloat(Math.round(row["Lat"] * 100) / 100).toFixed(2)),
+      show: isVisible
+    }],
+    [isVisible]
+  )
+  const expand = () => {
+    setIsVisible(true);
   }
+  const collapse = () => {
+    setIsVisible(false);
+  }
+
+  const back = () => {
+    history.push({ pathname: "/", search: `?${search.toString()}` })
+  }
+
+  const onFiltersChange = (filters) => {
+    dispatch({ type: "decomYardFiltersChange", filters: filters });
+  }
+
+  const onVisibleRowsChange = (decomYardsVisible) => {
+    dispatch({ type: "decomYardsVisible", decomYardsVisible: decomYardsVisible });
+  }
+
+  return (
+    <div className="dns-panel">
+      <div className="dns-content-table">
+        <Table columns={columns} data={data} history={history} location={location} filters={decomYardFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+      </div>
+      <ButtonBar expand={expand} collapse={collapse} back={back} />
+    </div>
+  )
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    changeDecomYardFilterType: (filterType, propertyName, filterOn) => {
-          dispatch(changeDecomYardFilterType(filterType, propertyName, filterOn))
-      },
-      setCesiumDecomyards: (rows) => {
-        dispatch(setCesiumDecomyards(rows))
-    }
-  }
-}
-export default connect(null, mapDispatchToProps)(DecomYardTable)
+export default DecomYardTable;

@@ -105,6 +105,36 @@ const reducer = (state, action) => {
                 ...state,
                 installationsVisible: action.installationsVisible
             };
+        case "decomYardFiltersChange":
+            return {
+                ...state,
+                decomYardFilters: action.filters
+            };
+        case "decomYardsVisible":
+            return {
+                ...state,
+                decomnYardsVisible: action.decomnYardsVisible
+            };
+        case "fieldFiltersChange":
+            return {
+                ...state,
+                fieldFilters: action.filters
+            };
+        case "fieldsVisible":
+            return {
+                ...state,
+                fieldsVisible: action.fieldsVisible
+            };
+        case "windfarmFiltersChange":
+            return {
+                ...state,
+                windfarmFilters: action.filters
+            };
+        case "windfarmsVisible":
+            return {
+                ...state,
+                windfarmsVisible: action.windfarmsVisible
+            };
         default:
             return state;
     }

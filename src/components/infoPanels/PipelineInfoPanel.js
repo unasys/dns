@@ -13,6 +13,8 @@ function PipelineInfoPanel(props) {
     let fluidConveyed = pipelineDetails["Fluid Conveyed"];
     let operator = pipelineDetails["Operator"];
     let status = pipelineDetails["Status"];
+    let from = pipelineDetails["From"];
+    let to = pipelineDetails["to"];
 
     let comments = pipelineDetails["QC Comments"];
 
@@ -29,6 +31,8 @@ function PipelineInfoPanel(props) {
                 <Entry title={"Fluid Conveyed"} subtitle={fluidConveyed}></Entry>
                 <Entry title={"Operator"} subtitle={operator}></Entry>
                 <Entry title={"Status"} subtitle={status}></Entry>
+                <Entry title={"From"} subtitle={from}></Entry>
+                <Entry title={"To"} subtitle={to}></Entry>
             </EntryContainer>
             {comments && <EntryContainer borderBottom>
                 <Entry title={"Comments"} subtitle={comments}></Entry>
