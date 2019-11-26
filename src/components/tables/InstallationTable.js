@@ -1,249 +1,12 @@
-import React, { useMemo, useState, useEffect } from 'react'
-import { useTable, useBlockLayout, useFilters, useSortBy } from 'react-table'
-import { FixedSizeList } from 'react-window'
+import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
-import './TableStyles.scss';
-import 'rc-slider/assets/index.css';
-import 'rc-tooltip/assets/bootstrap.css';
 import Circle01 from '../../assets/installationTable/circle01.js';
-import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
-import AutoSizer from "react-virtualized-auto-sizer";
 import { useHistory, useLocation } from 'react-router-dom';
-import Tooltip from 'rc-tooltip';
-
-function DefaultColumnFilter({
-  column: { filterValue, setFilter },
-}) {
-  return (
-    <input
-      value={filterValue || ''}
-      onChange={e => {
-        setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
-      }}
-    />
-  )
-}
-const createSliderWithTooltip = Slider.createSliderWithTooltip;
-const Range = createSliderWithTooltip(Slider.Range);
-const RangeHandle = Range.Handle;
-const handle = (props) => {
-  const { value, dragging, index, ...restProps } = props;
-  return (
-    <Tooltip
-      prefixCls="rc-slider-tooltip"
-      overlay={value}
-      visible={dragging}
-      placement="top"
-      key={index}
-    >
-      <RangeHandle value={value} {...restProps} />
-    </Tooltip>
-  );
-};
-
-function NumberRangeColumnFilter({
-  column: {filterValue=[], preFilteredRows, setFilter, id },
-}) {
-  const [min, max] = React.useMemo(() => {
-    let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
-    let max = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
-    preFilteredRows.forEach(row => {
-      if (row.values[id]) {
-        min = Math.min(row.values[id], min);
-        max = Math.max(row.values[id], max);
-      }
-    })
-    return [min, max];
-  }, [id, preFilteredRows])
-
-  const onChange = (e) => {
-    if (e[0] === min && e[1] === max) {
-      setFilter([]);
-    } else {
-      setFilter(e);
-    }
-  }
-
-  const defaultValue=filterValue.length === 0 ?[min, max] : filterValue;
-  if (min !== max) {
-    return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={defaultValue} onChange={onChange} handle={handle} tipFormatter={value => value.toLocaleString()} />
-  } else {
-    return <></>
-  }
-}
-
-// function DateRangeColumnFilter({
-//   column: {filterValue=[], preFilteredRows, setFilter, id },
-// }) {
-//   const [min, max] = React.useMemo(() => {
-//     const time = new Date().getTime()/SecondsPerDay;
-//     let min = time;
-//     let max = time;
-//     preFilteredRows.forEach(row => {
-//       if (row.values[id] && row.values[id] > 0) {
-//         const days = row.values[id].getTime()/SecondsPerDay
-//         min = Math.min(days, min);
-//         max = Math.max(days, max);
-//       }
-//     })
-//     return [min, max];
-//   }, [id, preFilteredRows])
-
-//   const onChange = (e) => {
-//     if (e[0] === min && e[1] === max ) {
-//       if(filterValue.length !== 0){
-//         setFilter([]);
-//       }
-//     } else {
-//       if(filterValue.length === 0 || filterValue[0] !== e[0] || filterValue[1] !== e[1]) {
-//         setFilter(e);
-//       }
-//     }
-//   }
-
-//   if (min !== max) {
-//     return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={[min, max]} onChange={onChange} handle={handle} tipFormatter={value => {
-//       const date = new Date(value*SecondsPerDay);
-//       return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-//     }} />
-//   } else {
-//     return <></>
-//   }
-//}
-
-function Table({ columns, data }) {
-  const history = useHistory();
-  const location = useLocation();
-  const [{ installationFilters }, dispatch] = useStateValue();
-  const defaultColumn = React.useMemo(
-    () => ({
-      width: 150,
-      Filter: DefaultColumnFilter,
-    }),
-    []
-  );
-  let filters = {};
-  if(installationFilters){
-    filters = installationFilters
-  }
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    state,
-    rows,
-    totalColumnsWidth,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-      defaultColumn,
-      initialState: { filters: filters },
-    },
-    useBlockLayout,
-    useFilters,
-    useSortBy
-  );
-
-
-  useEffect(() => {
-    dispatch({ type: "installationFiltersChange", filters: state.filters });
-  }, [dispatch, state.filters]);
-
-  useEffect(() => {
-    const ids = rows.map(row => row.original.Name);
-    dispatch({ type: "installationsVisible", installationsVisible: ids });
-  }, [dispatch, rows]);
-
-
-  const RenderRow = React.useCallback(
-    ({ index, style }) => {
-      const row = rows[index];
-      const search = new URLSearchParams(location.search);
-      const rowClick = () => {
-        search.set("etype", "Installation");
-        search.set("eid", row.original.Name);
-        history.push({ pathname: location.pathname, search: `?${search.toString()}` });
-      }
-      prepareRow(row)
-      return (
-        <div
-          {...row.getRowProps({
-            style,
-          })}
-          className={"tr" + (row.original.Name === search.get("eid") ? " highlighted" : "")}
-          onClick={rowClick} >
-          {row.cells.map(cell => {
-            return (
-              <div {...cell.getCellProps()} className="td" >
-                {cell.render('Cell')}
-              </div>
-            )
-          })}
-        </div>
-      )
-    },
-    [prepareRow, rows, history, location]
-  )
-  // Render the UI for your table
-  return (
-    <div {...getTableProps()} className="table">
-      <div className="thead">
-        {headerGroups.map(headerGroup => (
-          <div {...headerGroup.getHeaderGroupProps()} className="tr">
-            {headerGroup.headers.map(column => (
-              <div {...column.getHeaderProps(column.getSortByToggleProps())} className="th">
-                {column.render('Header')}
-                <span>
-                  {column.isSorted
-                    ? column.isSortedDesc
-                      ? ' 🔽'
-                      : ' 🔼'
-                    : ''}
-                </span>
-                <div className="filter">{column.canFilter ? column.render('Filter') : null}</div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-
-      <div className="tbody" {...getTableBodyProps()}>
-        <AutoSizer>
-          {({ height }) => (
-            <FixedSizeList
-              height={height}
-              itemCount={rows.length}
-              itemSize={40}
-              width={totalColumnsWidth}
-            >
-              {RenderRow}
-            </FixedSizeList>
-          )}
-        </AutoSizer>
-      </div>
-    </div>
-  )
-}
-
-const ButtonBar = (props) => {
-  return (
-    <div className="button-bar">
-      <i className="fas fa-arrow-left backbutton" onClick={() => props.back()}></i>
-      <div className="outward-handle" onClick={() => props.expand()}>
-        <i className="fas fa-caret-right"></i>
-      </div>
-      <div className="outward-handle" onClick={() => props.collapse()}>
-        <i className="fas fa-caret-left"></i>
-      </div>
-    </div>)
-}
+import Table, { NumberRangeColumnFilter, ButtonBar } from './Table';
 
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(true);
+  const [{installationFilters}, dispatch] = useStateValue();
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -375,10 +138,18 @@ function InstallationTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
+  const onFiltersChange = (filters) => {
+    dispatch({type:"installationFiltersChange", filters:filters});
+  }
+
+  const onVisibleRowsChange = (installationsVisible) => {
+    dispatch({type:"installationsVisible", installationsVisible:installationsVisible});
+  }
+
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} />
+        <Table columns={columns} data={data} history={history}  location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

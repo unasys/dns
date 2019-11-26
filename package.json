@@ -22,7 +22,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.2.0",
     "react-selectable-fast": "^3.0.0",
-    "react-table": "^7.0.0-beta.14",
+    "react-table": "^7.0.0-beta.15",
     "react-toggle-switch": "^3.0.4",
     "react-transition-group": "^4.3.0",
     "react-virtualized-auto-sizer": "^1.0.2",

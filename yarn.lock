@@ -9086,10 +9086,10 @@ react-selectable-fast@^3.0.0:
   resolved "https://registry.yarnpkg.com/react-selectable-fast/-/react-selectable-fast-3.0.0.tgz#24bd1bd10a840e852d3083505c1dddfa9bf5a374"
   integrity sha512-RYUqLoWjVhYL+chR1ScaP1mR87+lcvXF+U+iyzI+c6c3o2GwSb71meDzSBzuG6xnU9Ehq5+AlgA+epFTypmXpw==
 
-react-table@^7.0.0-beta.14:
-  version "7.0.0-beta.14"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.0.0-beta.14.tgz#17824db22de1b082ed9fdb8e3bcb21612abd6523"
-  integrity sha512-5pUAq+Dv/Dwo/iMZHRjxlBpphOclgDDJ0BBW26MgzWPZY+PfhqzIWVk7HnIFa8GJW8dzpMu20/jiWRhwav1N/A==
+react-table@^7.0.0-beta.15:
+  version "7.0.0-beta.15"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.0.0-beta.15.tgz#66dc4c71f9e77f5c92ac65a307341d6d3e045d33"
+  integrity sha512-Qr0HjVkYIPLi7BJiHm6ZfRIH00Ziu/bdonwouwKY10hsaqQi9AyH9kF4cXJChBQuspfjsnqnP9kQAjsEIoAeUQ==
 
 react-toggle-switch@^3.0.4:
   version "3.0.4"
