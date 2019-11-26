@@ -13,14 +13,7 @@ function WindfarmTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Name',
-      accessor: 'Name',
-      Cell: ({ cell: { value } }) => (
-        <div className="table-installation-title">
-          <p>
-            {value}
-          </p>
-        </div>
-      ),
+      accessor: 'NAME',
       minWidth: 300
     }, {
       Header: 'MW Cap',
@@ -95,7 +88,7 @@ function WindfarmTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Windfarm" keyField="Name" location={location} filters={windfarmFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Windfarm" keyField="NAME" location={location} filters={windfarmFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
