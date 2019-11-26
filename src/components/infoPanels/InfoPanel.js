@@ -6,7 +6,7 @@ import PipelineInfoPanel from './PipelineInfoPanel';
 import WindfarmInfoPanel from './WindfarmPanel';
 import AreaInfoPanel from './AreaInfoPanel';
 import './Panels.scss'
-import Handle from '../sliding-panels/handle/Handle';
+import Handle from '../handle/Handle';
 
 function InfoPanel() {
     const [{ installations, pipelines, windfarms, areas },] = useStateValue();

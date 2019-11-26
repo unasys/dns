@@ -14,18 +14,11 @@ function DecomYardTable() {
     () => [{
       Header: 'Name',
       accessor: 'Name',
-      Cell: ({ cell: { value } }) => (
-          <div className="table-installation-title">
-            <p>
-              {value}
-            </p>
-          </div>
-      ),
       minWidth: 300
     }, {
       Header: 'Lat/Long',
       id: 'Lat/Long',
-      accessor: row => (parseFloat(Math.round(row["Long"] * 100) / 100).toFixed(2) + "/" + parseFloat(Math.round(row["Lat"] * 100) / 100).toFixed(2)),
+      accessor: row => (parseFloat(Math.round(row["Lat"] * 100) / 100).toFixed(2) + "/" + parseFloat(Math.round(row["Long"] * 100) / 100).toFixed(2)),
       show: isVisible
     }],
     [isVisible]
@@ -52,7 +45,7 @@ function DecomYardTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} filters={decomYardFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} type="DecomYard" keyField="Name" history={history} location={location} filters={decomYardFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

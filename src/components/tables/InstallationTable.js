@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import Circle01 from '../../assets/installationTable/circle01.js';
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { NumberRangeColumnFilter, ButtonBar } from './Table';
+import Table, { NumberRangeColumnFilter, ButtonBar, DateCell, NumberCell } from './Table';
 
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(true);
@@ -17,7 +17,6 @@ function InstallationTable() {
         Header: 'Name',
         accessor: "Name",
         Cell: ({ cell: { value }, row: { original } }) => (
-          <>
             <div className="table-installation-title">
               <div className="table-installation-image">
                 {original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
@@ -27,7 +26,6 @@ function InstallationTable() {
                 {original.ePMID && <img style={{ width: '25px', cursor: 'pointer', marginLeft: '5px' }} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${original.ePMID}/`, "_blank")} />}
               </div>
             </div>
-          </>
         ),
         filter: 'contains',
         minWidth: 300
@@ -35,7 +33,7 @@ function InstallationTable() {
         Header: 'Age',
         id: "Age",
         accessor: row => parseInt(row.Age),
-        Cell: ({ cell: { value } }) => (value ? value : "-"),
+        Cell: NumberCell,
         Filter: NumberRangeColumnFilter,
         filter: "between",
         width: 60,
@@ -72,14 +70,7 @@ function InstallationTable() {
         Header: 'Planned COP',
         id: 'PlannedCOP',
         accessor: row => (row.PlannedCOP ? new Date(row.PlannedCOP) : null),
-        Cell: ({ cell: { value } }) => {
-          if (value) {
-            return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
-          } else {
-            return "-"
-          }
-        },
-        
+        Cell: DateCell,        
         filter: "contains",
         width: 120,
         show: isVisible
@@ -89,7 +80,7 @@ function InstallationTable() {
         accessor: row => {
           return parseInt(row.TopsideWeight);
         },
-        Cell: ({ cell: { value } }) => (value ? value.toLocaleString() : "-"),
+        Cell: NumberCell,
         Filter: NumberRangeColumnFilter,
         filter: "between",
         show: isVisible
@@ -99,7 +90,7 @@ function InstallationTable() {
         accessor: row => {
           return parseInt(row.SubStructureWeight);
         },
-        Cell: ({ cell: { value } }) => (value ? value.toLocaleString() : "-"),
+        Cell: NumberCell,
         Filter: NumberRangeColumnFilter,
         filter: "between",
         width: 180,
@@ -149,7 +140,7 @@ function InstallationTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history}  location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Installation" keyField="Name" location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

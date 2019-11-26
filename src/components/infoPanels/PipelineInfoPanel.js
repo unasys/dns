@@ -13,8 +13,8 @@ function PipelineInfoPanel(props) {
     let fluidConveyed = pipelineDetails["Fluid Conveyed"];
     let operator = pipelineDetails["Operator"];
     let status = pipelineDetails["Status"];
-    let from = pipelineDetails["From"];
-    let to = pipelineDetails["to"];
+    let from = pipelineDetails["Pipeline From"];
+    let to = pipelineDetails["Pipeline To"];
 
     let comments = pipelineDetails["QC Comments"];
 

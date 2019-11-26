@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar, NumberRangeColumnFilter } from './Table';
+import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell } from './Table';
 
 function PipelineTable() {
   const [isVisible, setIsVisible] = useState(true);
@@ -12,18 +12,13 @@ function PipelineTable() {
   const search = new URLSearchParams(location.search);
   const columns = React.useMemo(
     () => [{
-      Header: 'Name',
-      accessor: 'Name',
-      Cell: ({ cell: { value } }) => (
-        <div className="table-installation-title">
-          {value.toLowerCase()}
-        </div>
-      ),
-      minWidth: 300
+      Header: 'Pipeline Name',
+      accessor: 'Pipeline Name',
+      width:300
     }, {
       Header: 'Pipeline DTI No',
       accessor: 'Pipeline DTI No',
-      show: isVisible
+      show: isVisible,
     }, {
       Header: 'Status',
       accessor: "Status",
@@ -39,14 +34,6 @@ function PipelineTable() {
       accessor: 'Operator',
       show: isVisible
     }, {
-      Header: 'From',
-      accessor: 'From',
-      show: isVisible
-    }, {
-      Header: 'To',
-      accessor: 'To',
-      show: isVisible
-    }, {
       Header: 'Inst Type',
       accessor: "Inst Type",
       show: isVisible
@@ -54,26 +41,11 @@ function PipelineTable() {
       Header: 'Diameter (mm)',
       id: 'Diameter',
       accessor: row => (row.Diameter || 0).toFixed(0),
+      Cell: NumberCell,
       show: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
-    }, {
-      Header: 'Untrenched Flag',
-      accessor: 'Untrenched Flag',
-      Cell: ({ cell: { value } }) => value ? value : "?",
-      show: isVisible
-    }, {
-      Header: 'Start Date',
-      id: 'Start Date',
-      accessor: row => (row["Start Date"] ? new Date(row["Start Date"]) : null),
-      show: isVisible,
-      filter: "contains"
-    }, {
-      Header: 'End Date',
-      id: 'End Data',
-      accessor: row => (row["End Date"] ? new Date(row["End Date"]) : null),
-      show: isVisible,
-      filter: "contains"
+      width: 110
     }, {
       Header: 'Length [m]',
       id: 'Length [m]',
@@ -81,9 +53,27 @@ function PipelineTable() {
         let lengthValue = row["Length [m]"] ? row["Length [m]"] : 0
         return parseInt(lengthValue);
       },
+      Cell: NumberCell,
       show: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
+    }, {
+      Header: 'Start Date',
+      id: 'Start Date',
+      accessor: row => (row["Start Date"] ? new Date(row["Start Date"]) : null),
+      Cell: DateCell,
+      show: isVisible,
+      filter: "contains"
+    }, {
+      Header: 'From',
+      accessor: 'Pipeline From',
+      show: isVisible,
+      minWidth: 200
+    }, {
+      Header: 'To',
+      accessor: 'Pipeline To',
+      show: isVisible,
+      minWidth: 200
     }],
     [isVisible]
   )
@@ -109,7 +99,7 @@ function PipelineTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} filters={pipelineFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Pipeline" keyField="Pipeline Id" location={location} filters={pipelineFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

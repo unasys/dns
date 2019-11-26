@@ -70,12 +70,12 @@ export function NumberRangeColumnFilter({
     }
 }
 
-
-export default function Table({ columns, data, history, location, filters, onFiltersChange, onVisibleRowsChange }) {
+export default function Table({ columns, data, history, location, filters, type, onFiltersChange, onVisibleRowsChange, keyField }) {
     const defaultColumn = React.useMemo(
         () => ({
             width: 150,
-            Filter: DefaultColumnFilter
+            Filter: DefaultColumnFilter,
+            Cell: ({ cell: { value } }) => value ? value : "-",
         }),
         []
     );
@@ -111,9 +111,9 @@ export default function Table({ columns, data, history, location, filters, onFil
     }, [state.filters]);
 
     useEffect(() => {
-        const ids = rows.map(row => row.original.Name);
+        const ids = rows.map(row => row.original[keyField]);
         onVisibleRowsChange(ids);
-    }, [rows]);
+    }, [rows, keyField]);
 
 
     const RenderRow = React.useCallback(
@@ -121,8 +121,8 @@ export default function Table({ columns, data, history, location, filters, onFil
             const row = rows[index];
             const search = new URLSearchParams(location.search);
             const rowClick = () => {
-                search.set("etype", "Installation");
-                search.set("eid", row.original.Name);
+                search.set("etype", type);
+                search.set("eid", row.original[keyField]);
                 history.push({ pathname: location.pathname, search: `?${search.toString()}` });
             }
             prepareRow(row)
@@ -143,7 +143,7 @@ export default function Table({ columns, data, history, location, filters, onFil
                 </div>
             )
         },
-        [prepareRow, rows, history, location]
+        [prepareRow, rows, history, location, type, keyField]
     )
     // Render the UI for your table
     return (
@@ -152,15 +152,17 @@ export default function Table({ columns, data, history, location, filters, onFil
                 {headerGroups.map(headerGroup => (
                     <div {...headerGroup.getHeaderGroupProps()} className="tr">
                         {headerGroup.headers.map(column => (
-                            <div {...column.getHeaderProps(column.getSortByToggleProps())} className="th">
-                                {column.render('Header')}
-                                <span>
-                                    {column.isSorted
-                                        ? column.isSortedDesc
-                                            ? ' 🔽'
-                                            : ' 🔼'
-                                        : ''}
-                                </span>
+                            <div key={headerGroup.id} className="th">
+                                <div {...column.getHeaderProps(column.getSortByToggleProps())} >
+                                    {column.render('Header')}
+                                    <span>
+                                        {column.isSorted
+                                            ? column.isSortedDesc
+                                                ? ' 🔽'
+                                                : ' 🔼'
+                                            : ''}
+                                    </span>
+                                </div>
                                 <div className="filter">{column.canFilter ? column.render('Filter') : null}</div>
                             </div>
                         ))}
@@ -184,7 +186,7 @@ export default function Table({ columns, data, history, location, filters, onFil
             </div>
         </div>
     )
-}
+};
 
 export const ButtonBar = (props) => {
     return (
@@ -197,4 +199,14 @@ export const ButtonBar = (props) => {
                 <i className="fas fa-caret-left"></i>
             </div>
         </div>)
-}
+};
+
+export const DateCell = ({ cell: { value } }) => {
+    if (value) {
+        return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
+    } else {
+        return "-"
+    }
+};
+
+export const NumberCell = ({ cell: { value } }) => (value ? value.toLocaleString() : "-");

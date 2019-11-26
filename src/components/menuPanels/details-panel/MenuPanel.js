@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import NorthSeaAreaPanel from './north-sea-area-panel/NorthSeaAreaPanel';
-import Handle from '../../sliding-panels/handle/Handle';
+import Handle from '../../handle/Handle';
 import '../../infoPanels/Panels.scss';
 import { useStateValue } from '../../../utils/state';
 import Switch from 'react-toggle-switch'
