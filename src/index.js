@@ -135,6 +135,16 @@ const reducer = (state, action) => {
                 ...state,
                 windfarmsVisible: action.windfarmsVisible
             };
+        case "pipelineFiltersChange":
+            return {
+                ...state,
+                pipelineFilters: action.filters
+            };
+        case "pipelinesVisible":
+            return {
+                ...state,
+                pipelinesVisible: action.pipelinesVisible
+            };
         default:
             return state;
     }

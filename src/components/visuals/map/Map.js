@@ -510,7 +510,7 @@ const mouseMove = (viewer, setHover, movement) => {
     }
 }
 
-const flyTo = (viewer, {west, south, east, north, pitch}) => {
+const flyTo = (viewer, { west, south, east, north, pitch }) => {
     var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
     viewer.camera.flyTo({
         destination: rectangle,
@@ -523,8 +523,19 @@ const flyTo = (viewer, {west, south, east, north, pitch}) => {
     });
 }
 
+const toggleEntityVisibility = (viewer, dataSourceName, visibilityList) => {
+    const dataSources = viewer.dataSources.getByName(dataSourceName);
+    if (dataSources.length > 0) {
+        const dataSource = dataSources[0];
+        dataSource.entities.values.forEach(entity => entity.show = visibilityList.includes(entity.id));
+    }
+    viewer.scene.requestRender();
+}
+
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year, installationsVisible },] = useStateValue();
+    const [{ installations, pipelines, windfarms, decomYards, fields,
+        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year,
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, decomnYardsVisible },] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -541,7 +552,7 @@ const CesiumMap = () => {
             case "Area":
                 let area = areas.get(eid);
                 if (area && area.coordinates) {
-                    flyTo(viewer,area.coordinates);
+                    flyTo(viewer, area.coordinates);
                 }
                 break;
             default:
@@ -559,14 +570,29 @@ const CesiumMap = () => {
     }, [viewer, areas, eid, etype]);
 
     useEffect(() => {
-        if(!viewer || !installationsVisible) return;
-        const dataSources = viewer.dataSources.getByName("Installation");
-        if (dataSources.length > 0) {
-            const dataSource = dataSources[0];
-            dataSource.entities.values.forEach(entity => entity.show = installationsVisible.includes(entity.originalData.Name))
-        }
-        viewer.scene.requestRender();
-    },[viewer, installationsVisible]);
+        if (!viewer || !installationsVisible) return;
+        toggleEntityVisibility(viewer, "Installation", installationsVisible);
+    }, [viewer, installationsVisible]);
+
+    useEffect(() => {
+        if (!viewer || !pipelinesVisible) return;
+        toggleEntityVisibility(viewer, "Pipeline", pipelinesVisible);
+    }, [viewer, pipelinesVisible]);
+
+    useEffect(() => {
+        if (!viewer || !windfarmsVisible) return;
+        toggleEntityVisibility(viewer, "Windfarm", windfarmsVisible);
+    }, [viewer, windfarmsVisible]);
+
+    useEffect(() => {
+        if (!viewer || !fieldsVisible) return;
+        toggleEntityVisibility(viewer, "Field", fieldsVisible);
+    }, [viewer, fieldsVisible]);
+
+    useEffect(() => {
+        if (!viewer || !decomnYardsVisible) return;
+        toggleEntityVisibility(viewer, "DecomYard", decomnYardsVisible);
+    }, [viewer, decomnYardsVisible]);
 
     useEffect(() => {
         if (!viewer) return;
@@ -596,7 +622,7 @@ const CesiumMap = () => {
         setViewer(viewer);
         flyHome(viewer);
         setupBlocks().then(dataSource => { dataSource.show = showBlocks; dataSource.name = "Block"; viewer.dataSources.add(dataSource) });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -612,7 +638,7 @@ const CesiumMap = () => {
         const dataSource = setupInstallations(installations);
         dataSource.show = showInstallations;
         viewer.dataSources.add(dataSource);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, installations]);
 
     useEffect(() => {
@@ -620,7 +646,7 @@ const CesiumMap = () => {
         const dataSource = setupDecomyards(decomYards);
         dataSource.show = showDecomYards;
         viewer.dataSources.add(dataSource);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, decomYards]);
 
     useEffect(() => {
@@ -628,7 +654,7 @@ const CesiumMap = () => {
         const dataSource = setupPipelines(pipelines);
         dataSource.show = showPipelines;
         viewer.dataSources.add(dataSource);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, pipelines]);
 
     useEffect(() => {
@@ -636,7 +662,7 @@ const CesiumMap = () => {
         const dataSource = setupWindfarms(windfarms);
         dataSource.show = showWindfarms;
         viewer.dataSources.add(dataSource);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, windfarms]);
 
     useEffect(() => {
@@ -644,7 +670,7 @@ const CesiumMap = () => {
         const dataSource = setupFields(fields);
         dataSource.show = showFields;
         viewer.dataSources.add(dataSource);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, fields]);
 
     return (
