@@ -108,11 +108,13 @@ export default function Table({ columns, data, history, location, filters, type,
     useEffect(() => {
         onFiltersChange(state.filters);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.filters]);
 
     useEffect(() => {
         const ids = rows.map(row => row.original[keyField]);
         onVisibleRowsChange(ids);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rows, keyField]);
 
 
@@ -151,8 +153,8 @@ export default function Table({ columns, data, history, location, filters, type,
             <div className="thead">
                 {headerGroups.map(headerGroup => (
                     <div {...headerGroup.getHeaderGroupProps()} className="tr">
-                        {headerGroup.headers.map(column => (
-                            <div key={headerGroup.id} className="th">
+                        {headerGroup.headers.map((column,i) => (
+                            <div key={i} className="th">
                                 <div {...column.getHeaderProps(column.getSortByToggleProps())} >
                                     {column.render('Header')}
                                     <span>

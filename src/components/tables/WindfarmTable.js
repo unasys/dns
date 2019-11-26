@@ -13,14 +13,7 @@ function WindfarmTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Name',
-      accessor: 'Name',
-      Cell: ({ cell: { value } }) => (
-        <div className="table-installation-title">
-          <p>
-            {value}
-          </p>
-        </div>
-      ),
+      accessor: 'NAME',
       minWidth: 300
     }, {
       Header: 'MW Cap',
