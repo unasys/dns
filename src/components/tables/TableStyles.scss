@@ -3,7 +3,7 @@
     background-color: transparent;
     font-size: 13px;
     pointer-events: all;
-
+    height: 100%;
     .thead {
         background-color: #33475c;
         font-weight: 400;
@@ -36,12 +36,13 @@
 
     .tbody {
         background-color: #33475cf1;
-        height: 97.5%;
         font-weight: 400;
         padding-top: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid rgb(49, 55, 71);
-        overflow-y: auto;
+        min-height: 80px;
+        height: 96%;
+        
         cursor: pointer;
 
         .tr {
@@ -126,4 +127,33 @@
 .rc-tooltip,
 .rc-slider-tooltip {
     z-index: 5;
+}
+
+.button-bar {
+    display:flex;
+    z-index: 2;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items:center;
+    align-self: flex-start;
+    padding-left:10px;
+    padding-right:15px;
+    padding-top:15px;
+    padding-bottom:15px;
+    background:#33475c;
+    border: 1px solid rgba(243, 201, 201, 0.11);
+    border-top:none;
+    height:130px;
+    border-bottom-right-radius: 20px;
+    .backbutton { 
+        color:white;
+        padding-bottom:10px;
+        cursor: pointer;
+    }
+
+    .outward-handle {
+        color:white;
+        font-size:20px;
+        cursor: pointer;
+    }
 }

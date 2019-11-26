@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTable, useBlockLayout, useFilters, useSortBy } from 'react-table'
 import { FixedSizeList } from 'react-window'
 import { useStateValue } from '../../utils/state'
@@ -11,6 +11,7 @@ import 'rc-slider/assets/index.css';
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useHistory, useLocation } from 'react-router-dom';
 import Tooltip from 'rc-tooltip';
+import Handle from '../sliding-panels/handle/Handle';
 
 function DefaultColumnFilter({
   column: { filterValue, setFilter },
@@ -26,7 +27,7 @@ function DefaultColumnFilter({
 }
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
-const Handle = Range.Handle;
+const RangeHandle = Range.Handle;
 const handle = (props) => {
   const { value, dragging, index, ...restProps } = props;
   return (
@@ -37,7 +38,7 @@ const handle = (props) => {
       placement="top"
       key={index}
     >
-      <Handle value={value} {...restProps} />
+      <RangeHandle value={value} {...restProps} />
     </Tooltip>
   );
 };
@@ -206,7 +207,24 @@ function Table({ columns, data }) {
   )
 }
 
+const ButtonBar = (props) => {
+  return (
+    <div className="button-bar">
+      <i className="fas fa-arrow-left backbutton" onClick={() => props.back()}></i>
+      <div className="outward-handle" onClick={() => props.expand()}>
+        <i className="fas fa-caret-right"></i>
+      </div>
+      <div className="outward-handle" onClick={() => props.collapse()}>
+        <i className="fas fa-caret-left"></i>
+      </div>
+    </div>)
+}
+
 function InstallationTable() {
+  const [isVisible, setIsVisible] = useState(true);
+  const history = useHistory();
+  const location = useLocation();
+  const search = new URLSearchParams(location.search);
   const columns = React.useMemo(
     () => [
       {
@@ -234,22 +252,26 @@ function InstallationTable() {
         Cell: ({ cell: { value } }) => (value ? value : "-"),
         Filter: NumberRangeColumnFilter,
         filter: "between",
-        width: 60
+        width: 60,
+        show:isVisible
       }, {
         Header: 'Status',
         accessor: 'Status',
+        show:isVisible
       }, {
         Header: 'Field Type',
         id: 'Field Type',
         accessor: "FieldType",
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
         filter: 'contains',
-        width: 80
+        width: 80,
+        show:isVisible
       }, {
         Header: 'Operator',
         accessor: 'Operator',
         filter: 'contains',
-        width: 185
+        width: 185,
+        show:isVisible
       }, {
         Header: 'Producing',
         id: 'Producing',
@@ -258,7 +280,8 @@ function InstallationTable() {
         },
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
         filter: 'contains',
-        width: 90
+        width: 90,
+        show:isVisible
       }, {
         Header: 'Planned COP',
         id: 'PlannedCOP',
@@ -272,7 +295,8 @@ function InstallationTable() {
         },
         Filter: DateRangeColumnFilter,
         filter: "between",
-        width: 120
+        width: 120,
+        show:isVisible
       }, {
         Header: 'Topside Weight (t)',
         id: 'Topside Weight',
@@ -282,6 +306,7 @@ function InstallationTable() {
         Cell: ({ cell: { value } }) => (value ? value.toLocaleString() : "-"),
         Filter: NumberRangeColumnFilter,
         filter: "between",
+        show:isVisible
       }, {
         Header: 'Substructure Weight (t)',
         id: 'Substructure Weight',
@@ -291,31 +316,50 @@ function InstallationTable() {
         Cell: ({ cell: { value } }) => (value ? value.toLocaleString() : "-"),
         Filter: NumberRangeColumnFilter,
         filter: "between",
-        width:180
+        width: 180,
+        show:isVisible
       }, {
         Header: 'Type',
         accessor: 'Type',
         filter: 'contains',
-        width: 80
+        width: 80,
+        show:isVisible
       }, {
         Header: 'Area',
         accessor: 'Area',
         filter: 'contains',
-        width: 60
+        width: 60,
+        show:isVisible
       }, {
         Header: 'Block',
         accessor: 'Block',
         filter: 'contains',
-        width: 80
+        width: 80,
+        show:isVisible
       }
     ],
-    []
+    [isVisible]
   )
   const [{ installations },] = useStateValue();
   const data = useMemo(() => [...installations.values()], [installations])
+  const expand = () => {
+    setIsVisible(true);
+  }
+  const collapse = () => {
+    setIsVisible(false);
+  }
+  
+  const back = () =>{
+    history.push({pathname:"/", search:`?${search.toString()}`})
+  }
 
   return (
-    <Table columns={columns} data={data} />
+    <div className="dns-panel">
+    <div className="dns-content-table">
+      <Table columns={columns} data={data} />
+    </div>
+      <ButtonBar expand={expand} collapse={collapse} back={back} />
+    </div>
   )
 }
 
