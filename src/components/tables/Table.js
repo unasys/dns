@@ -128,12 +128,13 @@ export default function Table({ columns, data, history, location, filters, type,
                 history.push({ pathname: location.pathname, search: `?${search.toString()}` });
             }
             prepareRow(row)
+            
             return (
                 <div
                     {...row.getRowProps({
                         style,
                     })}
-                    className={"tr" + (row.original.Name === search.get("eid") ? " highlighted" : "")}
+                    className={"tr" + (row.original[keyField].toString() === search.get("eid") ? " highlighted" : "")}
                     onClick={rowClick} >
                     {row.cells.map(cell => {
                         return (

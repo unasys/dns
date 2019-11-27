@@ -2,8 +2,8 @@
     width: 500px;
 }
 
-.menu-panel{
-    width:400px;
+.menu-panel {
+    width: 400px;
 }
 
 .title-container {
@@ -103,58 +103,73 @@
     color: #cccccc;
     font-family: "Open Sans", sans-serif;
     text-transform: uppercase;
-    font-weight:600;
-    font-size:11px;
-    margin-top:20px;
-    margin-bottom:15px;
+    font-weight: 600;
+    font-size: 11px;
+    margin-top: 20px;
+    margin-bottom: 15px;
 }
 
 .bathymetry-title {
-    display:flex;
+    display: flex;
     flex-direction: column;
-    align-self:center;
+    align-self: center;
 }
 
 .panel-title {
-    color:white;
-    font-weight:400;
-    font-size:12px;    
+    color: white;
+    font-weight: 400;
+    font-size: 12px;
     padding: 10px 24px;
-    text-align:center;
+    text-align: center;
     background: #2f484859;
     border-top: 1px solid #666973;
     border-bottom: 1px solid #666973;
 }
 
 .switch {
-    width:37px;
-    height:20px;
+    width: 37px;
+    height: 20px;
     margin-right: 10px;
+
     &.on {
         .switch-toggle {
-            left:15px;
+            left: 15px;
         }
     }
+
     .switch-toggle {
-        width:20px;
-        height:24px;
+        width: 20px;
+        height: 24px;
     }
 }
 
 .layer-container {
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    height:32px;
-    border-bottom:1px solid #666973;
+    height: 32px;
+    border-bottom: 1px solid #666973;
+
     .layer-content {
-        display:flex;
+        display: flex;
         justify-content: space-between;
         align-items: center;
-        padding:0 25px;
-        font-size:14px;
-        font-weight:200;
+        padding: 0 25px;
+        font-size: 14px;
+        font-weight: 200;
         color: #ccc;
-        
+
+    }
+}
+
+.sketchfab-viewer {
+    padding-top: 20px;
+}
+
+.menu-container {
+    display: flex;
+
+    .menu-item {
+        width: 100%;
     }
 }

@@ -674,7 +674,7 @@ const CesiumMap = () => {
     }, [viewer, fields]);
 
     return (
-        <div style={{ width: '100%', height: '100%' }} onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>
+        <div onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>
             {hover && <HoverCard position={position} type={hover.type} entity={hover.entity} />}
             <div id="cesiumContainer" ref={cesiumRef} />
         </div >

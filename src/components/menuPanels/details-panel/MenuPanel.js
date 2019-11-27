@@ -10,8 +10,8 @@ const MapOptions = () => {
     const [{ showBlocks }, dispatch] = useStateValue();
 
     return (
-        <div style={{ display: 'flex' }}>
-            <div style={{ width: '100%' }}>
+        <div className="menu-container" style={{ display: 'flex' }}>
+            <div className="menu-item" style={{ width: '100%' }}>
                 <div className="panel-title">
                     Layer Visibility
                 </div>

@@ -119,7 +119,7 @@ function AreaInfoPanel(props) {
 
     let sketchfabModels = <></>;
     if (props.area.sketchfabModels) {
-        sketchfabModels = props.area.sketchfabModels.map(m => (<iframe key={m} title={m} style={{ paddingTop: '20px' }} id="view360Iframe" width="100%" height='350px' scrolling="0" src={`https://sketchfab.com/models/${m}/embed?ui_infos=0&amp;ui_watermark=0&amp;ui_help=0&amp;ui_settings=0&amp;ui_inspector=0&amp;ui_annotations=0&amp;ui_stop=0&amp;ui_vr=0&amp;preload=1&amp;autostart=1&amp;ui_hint=2&amp;autospin=0.2`} />))
+        sketchfabModels = props.area.sketchfabModels.map(m => (<iframe key={m} className="sketchfab-viewer" title={m} id="view360Iframe" width="100%" height='350px' scrolling="0" src={`https://sketchfab.com/models/${m}/embed?ui_infos=0&amp;ui_watermark=0&amp;ui_help=0&amp;ui_settings=0&amp;ui_inspector=0&amp;ui_annotations=0&amp;ui_stop=0&amp;ui_vr=0&amp;preload=1&amp;autostart=1&amp;ui_hint=2&amp;autospin=0.2`} />))
     }
 
     return (
