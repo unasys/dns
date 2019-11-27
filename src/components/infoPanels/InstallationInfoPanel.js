@@ -3,16 +3,6 @@ import './Panels.scss';
 import TitleBar from './TitleBar';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
-import Timeline from '../visuals/timeline/Timeline';
-
-function formatToAmericanDate(dateStr) {
-    const date = new Date(dateStr);
-    let year = date.getFullYear();
-    let month = (1 + date.getMonth()).toString().padStart(2, '0');
-    let day = date.getDate().toString().padStart(2, '0');
-
-    return month + '/' + day + '/' + year;
-}
 
 function InstallationInfoPanel(props) {
     let titleBar = (
@@ -151,30 +141,11 @@ function InstallationInfoPanel(props) {
     //     <Entry icon={<i className="fas fa-map-marker"></i>} title={"Location"} subtitle={props.installation && props.installation.Area}></Entry>
     // </EntryContainer>
 
-
-
-    let timeLineDates = [];
-    if (props.installation) {
-        if (props.installation.StartDate) {
-            timeLineDates.push(formatToAmericanDate(props.installation.StartDate))
-        }
-
-        if (props.installation.PlannedCOP) {
-            timeLineDates.push(formatToAmericanDate(props.installation.PlannedCOP))
-        }
-    }
-
-    let timeLine = (
-        <Timeline values={timeLineDates}></Timeline>
-    )
-
-
     return (
         <div style={{ margin: '10px', display: 'flex', flexDirection: 'column' }}>
             {titleBar}
             {doubleWidth}
             {props.installation && props.installation.ImageID ? <img style={{ alignSelf: 'center', maxWidth: '300px' }} src={`https://assets.digitalnorthsea.com/images/installations/${props.installation.ImageID}`} alt="overview-thumbnail" ></img> : <img style={{ alignSelf: 'center', maxWidth: '300px' }} src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
-            {timeLine}
         </div>
     );
 }
