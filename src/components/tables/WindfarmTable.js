@@ -25,7 +25,7 @@ function WindfarmTable() {
       show: isVisible,
       width: 250,
       Cell: ({ cell: { value } }) => (
-        <div style={{ overflowX: 'scroll' }}>
+        <div className="scroll-cell">
           <p>
             {value.toLowerCase()}
           </p>
@@ -41,7 +41,7 @@ function WindfarmTable() {
       show: isVisible,
       width: 200,
       Cell: ({ cell: { value } }) => (
-        <div style={{ overflowX: 'scroll' }}>
+        <div className="scroll-cell">
           <p>
             {value.toLowerCase()}
           </p>
