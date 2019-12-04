@@ -29,13 +29,13 @@ const pipelineColoursSimple = {
 }
 
 const installationColours = {
-    "removed" : window.Cesium.Color.GOLDENROD,
-    "default" : window.Cesium.Color.GOLD
+    "removed": window.Cesium.Color.GOLDENROD,
+    "default": window.Cesium.Color.GOLD
 }
 
 const installationColoursSimple = {
-    "removed" : window.Cesium.Color.fromCssColorString("#595436"),
-    "default" : window.Cesium.Color.fromCssColorString("#A9A9A9")
+    "removed": window.Cesium.Color.fromCssColorString("#595436"),
+    "default": window.Cesium.Color.fromCssColorString("#A9A9A9")
 }
 
 const fieldColours = {
@@ -80,7 +80,7 @@ const setupCesium = (cesiumRef) => {
             terrainProvider: terrainProvider,
             terrainExaggeration: 5,
             requestRenderMode: true,
-            imageryProvider:simpleImagery
+            imageryProvider: simpleImagery
         });
 
 
@@ -118,7 +118,7 @@ const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
     return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 }
 
-const getInstallationColour = (mapStyle, installation ) => {
+const getInstallationColour = (mapStyle, installation) => {
     let colours = installationColoursSimple;
     if (mapStyle === "satellite") {
         colours = installationColours;
@@ -623,18 +623,28 @@ const CesiumMap = () => {
                     flyTo(viewer, area.coordinates);
                 }
                 break;
-            default:
-
+            case "Pipeline": {
                 const dataSources = viewer.dataSources.getByName(etype);
                 if (dataSources.length !== 0) {
                     const entity = dataSources[0].entities.getById(eid);
                     if (entity) {
-                        viewer.flyTo(entity,{
-                            offset: new window.Cesium.HeadingPitchRange(0, -window.Cesium.Math.PI_OVER_FOUR, 3000)
+                        viewer.flyTo(entity);
+                    }
+                }
+                break;
+            }
+            default: {
+                const dataSources = viewer.dataSources.getByName(etype);
+                if (dataSources.length !== 0) {
+                    const entity = dataSources[0].entities.getById(eid);
+                    if (entity) {
+                        viewer.flyTo(entity, {
+                            offset: new window.Cesium.HeadingPitchRange(0, -window.Cesium.Math.PI_OVER_FOUR, 50000)
                         });
                     }
                 }
                 break;
+            }
         }
 
     }, [viewer, areas, eid, etype]);
