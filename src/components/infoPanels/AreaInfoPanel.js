@@ -127,7 +127,6 @@ function AreaInfoPanel(props) {
             {titleBar}
             {doubleWidth}
             {sketchfabModels}
-
         </div>
     );
 }

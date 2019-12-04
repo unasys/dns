@@ -629,7 +629,9 @@ const CesiumMap = () => {
                 if (dataSources.length !== 0) {
                     const entity = dataSources[0].entities.getById(eid);
                     if (entity) {
-                        viewer.flyTo(entity);
+                        viewer.flyTo(entity,{
+                            offset: new window.Cesium.HeadingPitchRange(0, -window.Cesium.Math.PI_OVER_FOUR, 3000)
+                        });
                     }
                 }
                 break;
