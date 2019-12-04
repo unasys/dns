@@ -36,10 +36,10 @@ function PipelineInfoPanel(props) {
     }
     let area = pipelineDetails["Area"];
     let subArea = pipelineDetails["Sub area"];
-    let basin = pipelineDetails["Basic"];
+    let basin = pipelineDetails["Basin"];
     let quadrant = pipelineDetails["Quadrant"];
-    let block = pipelineDetails["block"];
-    let field = pipelineDetails["field"];
+    let block = pipelineDetails["Block"];
+    let field = pipelineDetails["Field"];
 
     let titleBar = (
         <TitleBar
