@@ -10,7 +10,7 @@
     "react-infinite-scroller": "1.2.4",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.2.0",
-    "react-table": "^7.0.0-beta.15",
+    "react-table": "^7.0.0-beta.26",
     "react-toggle-switch": "^3.0.4",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5"
