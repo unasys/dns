@@ -19,6 +19,7 @@ const initialState = {
     showDecomYards: true,
     showFields: false,
     showBlocks: false,
+    mapStyle: "simple",
     year: 2019
 };
 
@@ -144,6 +145,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 pipelinesVisible: action.pipelinesVisible
+            };
+        case "changeMapStyle":
+            return {
+                ...state,
+                mapStyle: action.mapStyle
             };
         default:
             return state;

@@ -9,16 +9,6 @@ const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tile
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
 
-const iconModels = {
-    "FPSO": assetsBaseUrl + "/models/platform-types/FPSO/lp_fpsoplat.gltf",
-    "FPU": assetsBaseUrl + "/models/platform-types/FPU/fpu_lowpoly.gltf",
-    "FPV": assetsBaseUrl + "/models/platform-types/FPV/lp_fpsoplat.gltf",
-    "GravBase": assetsBaseUrl + "/models/platform-types/GravBase/lp_gravbase.gltf",
-    "Jacket": assetsBaseUrl + "/models/platform-types/Jacket/lp_jacket.gltf",
-    "Platform": assetsBaseUrl + "/models/platform-types/Jacket/lp_jacket.gltf",
-    "FSO": assetsBaseUrl + "/models/platform-types/FPU/fpu_lowpoly.gltf"
-};
-
 const pipelineColours = {
     "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
     "condensate": window.Cesium.Color.fromBytes(132, 0, 168),
@@ -32,6 +22,20 @@ const pipelineColours = {
     "water": window.Cesium.Color.fromBytes(0, 92, 230),
     "disused": window.Cesium.Color.fromBytes(128, 128, 128),
     "default": window.Cesium.Color.WHITE
+}
+
+const pipelineColoursSimple = {
+    "default": window.Cesium.Color.fromCssColorString("#DCDCDC")
+}
+
+const installationColours = {
+    "removed": window.Cesium.Color.GOLDENROD,
+    "default": window.Cesium.Color.GOLD
+}
+
+const installationColoursSimple = {
+    "removed": window.Cesium.Color.fromCssColorString("#595436"),
+    "default": window.Cesium.Color.fromCssColorString("#A9A9A9")
 }
 
 const fieldColours = {
@@ -55,15 +59,12 @@ const setupCesium = (cesiumRef) => {
         credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
     });
 
-    const mapbox = new window.Cesium.MapboxImageryProvider({
-        mapId: 'mapbox.satellite',
-        accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
-    });
-
-    // var maptiler = new window.Cesium.UrlTemplateImageryProvider({
-    //     url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=fU8GO3UjrAHXu6oeGQiM',
-    //     credit: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
-    // });
+    const simpleImagery = new window.Cesium.UrlTemplateImageryProvider({
+        url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=FSzrABzSMJXbH2n6FfZc',
+        tileWidth: 512,
+        tileHeight: 512,
+        credit: new window.Cesium.Credit('<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>', true)
+      })
 
     const viewer =
         new window.Cesium.Viewer(cesiumRef.current, {
@@ -81,9 +82,17 @@ const setupCesium = (cesiumRef) => {
             terrainProvider: terrainProvider,
             terrainExaggeration: 5,
             requestRenderMode: true,
-            imageryProvider: mapbox
+            imageryProvider: simpleImagery
         });
 
+
+    const sateliteImagery = new window.Cesium.MapboxImageryProvider({
+        mapId: 'mapbox.satellite',
+        accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
+    });
+
+    const satelliteLayer = viewer.imageryLayers.addImageryProvider(sateliteImagery);
+    satelliteLayer.show = false;
     viewer.scene.globe.enableLighting = false;
     viewer.scene.globe.depthTestAgainstTerrain = false;
     return viewer;
@@ -111,7 +120,26 @@ const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
     return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 }
 
-const mapInstallation = (installation) => {
+const getInstallationColour = (mapStyle, installation) => {
+    let colours = installationColoursSimple;
+    if (mapStyle === "satellite") {
+        colours = installationColours;
+    }
+
+    let status = installation.Status;
+    if (status) {
+        status = status.toLowerCase();
+    }
+
+    let colour = colours[status];
+    if (!colour) {
+        colour = colours["default"];
+    }
+
+    return colour;
+}
+
+const mapInstallation = (mapStyle, installation) => {
     let start = installation.StartDate;
     let end = installation.PlannedCOP;
 
@@ -143,21 +171,13 @@ const mapInstallation = (installation) => {
 
     const point = {
         pixelSize: 6,
-        color: installation.Status === "Removed" ? window.Cesium.Color.fromCssColorString("#595436") : window.Cesium.Color.GOLD,
+        color: getInstallationColour(mapStyle, installation),
         outlineColor: window.Cesium.Color.BLACK,
         outlineWidth: 1,
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
         heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-    };
-
-    const model = {
-        uri: iconModels[installation.Type],
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 100000),
-        scale: 0.18,
-        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-        shadows: window.Cesium.ShadowMode.DISABLED
     };
 
     const label = {
@@ -180,15 +200,14 @@ const mapInstallation = (installation) => {
         position: position,
         availability: availability,
         point: point,
-        model: model,
         label: label,
         originalData: installation
     }
 }
 
-const setupInstallations = (installations) => {
+const setupInstallations = (mapStyle, installations) => {
     const dataSource = new window.Cesium.CustomDataSource("Installation");
-    installations.forEach(i => dataSource.entities.add(mapInstallation(i)));
+    installations.forEach(i => dataSource.entities.add(mapInstallation(mapStyle, i)));
     return dataSource;
 }
 
@@ -232,15 +251,20 @@ const setupDecomyards = (decomyards) => {
     return dataSource;
 }
 
-const getPipelineColour = (pipeline) => {
+const getPipelineColour = (mapStyle, pipeline) => {
+    let colours = pipelineColoursSimple;
+    if (mapStyle === "satellite") {
+        colours = pipelineColours;
+    }
+
     let pipelineFluid = pipeline["Fluid Conveyed"];
     if (pipelineFluid) {
         pipelineFluid = pipelineFluid.toLowerCase();
     }
 
-    let colour = pipelineColours[pipelineFluid];
+    let colour = colours[pipelineFluid];
     if (!colour) {
-        colour = pipelineColours["default"];
+        colour = colours["default"];
     }
 
     if (pipeline["Status"] !== "ACTIVE") {
@@ -252,7 +276,7 @@ const getPipelineColour = (pipeline) => {
     return colour;
 }
 
-const mapPipeline = (pipeline) => {
+const mapPipeline = (mapStyle, pipeline) => {
     const minDiameter = 0;
     const maxDiameter = 1058;
 
@@ -266,14 +290,14 @@ const mapPipeline = (pipeline) => {
             }
             const flatCoordinates = c.flat();
 
-            const material = getPipelineColour(pipeline);
+            const material = getPipelineColour(pipeline, mapStyle);
 
             let pipeDiameter = parseInt(pipeline.Diameter) || 0
 
             if (pipeline["Diameter Units"] === "inch") {
                 pipeDiameter = pipeDiameter * 25.4;
             }
-            const scaledWidth = scaleBetween(pipeDiameter, 2, 4, minDiameter, maxDiameter);
+            const scaledWidth = scaleBetween(pipeDiameter, 0.5, 1, minDiameter, maxDiameter);
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
 
             const a = Math.floor((flatCoordinates.length - 1) / 2);
@@ -326,7 +350,6 @@ const mapPipeline = (pipeline) => {
                     width: scaledWidth,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance)
                 },
-                //label: label,
                 originalData: pipeline
             };
 
@@ -334,9 +357,26 @@ const mapPipeline = (pipeline) => {
     }
 }
 
-const setupPipelines = (pipelines) => {
+const updatePipelineStyle = (mapStyle, pipelines) => {
+    pipelines.forEach(pipeline => {
+        if (pipeline.originalData && pipeline.polyline) {
+            pipeline.polyline.material = getPipelineColour(mapStyle, pipeline.originalData);
+        }
+    });
+}
+
+const updateInstallationStyle = (mapStyle, installations) => {
+    installations.forEach(installation => {
+        if (installation.originalData) {
+            installation.point.color = getInstallationColour(mapStyle, installation.originalData);
+        }
+    });
+}
+
+
+const setupPipelines = (mapStyle, pipelines) => {
     const dataSource = new window.Cesium.CustomDataSource("Pipeline");
-    pipelines.forEach(i => dataSource.entities.add(mapPipeline(i)));
+    pipelines.forEach(i => dataSource.entities.add(mapPipeline(mapStyle, i)));
     return dataSource;
 }
 
@@ -532,10 +572,35 @@ const toggleEntityVisibility = (viewer, dataSourceName, visibilityList) => {
     viewer.scene.requestRender();
 }
 
+const switchStyle = (viewer, mapStyle) => {
+    switch (mapStyle) {
+        case "satellite": {
+            viewer.imageryLayers.get(1).show = true;
+            viewer.imageryLayers.get(0).show = false;
+            break;
+        }
+        default: {
+            viewer.imageryLayers.get(0).show = true;
+            viewer.imageryLayers.get(1).show = false;
+            break;
+        }
+    }
+
+    const pipelines = viewer.dataSources.getByName("Pipeline");
+    if (pipelines.length > 0) {
+        updatePipelineStyle(mapStyle, pipelines[0].entities.values);
+    }
+
+    const installations = viewer.dataSources.getByName("Installation");
+    if (installations.length > 0) {
+        updateInstallationStyle(mapStyle, installations[0].entities.values);
+    }
+}
+
 const CesiumMap = () => {
     const [{ installations, pipelines, windfarms, decomYards, fields,
         showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, decomnYardsVisible },] = useStateValue();
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, decomnYardsVisible, mapStyle },] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -548,6 +613,11 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer) return;
+        switchStyle(viewer, mapStyle);
+    }, [viewer, mapStyle]);
+
+    useEffect(() => {
+        if (!viewer) return;
         switch (etype) {
             case "Area":
                 let area = areas.get(eid);
@@ -555,8 +625,7 @@ const CesiumMap = () => {
                     flyTo(viewer, area.coordinates);
                 }
                 break;
-            default:
-
+            case "Pipeline": {
                 const dataSources = viewer.dataSources.getByName(etype);
                 if (dataSources.length !== 0) {
                     const entity = dataSources[0].entities.getById(eid);
@@ -565,6 +634,19 @@ const CesiumMap = () => {
                     }
                 }
                 break;
+            }
+            default: {
+                const dataSources = viewer.dataSources.getByName(etype);
+                if (dataSources.length !== 0) {
+                    const entity = dataSources[0].entities.getById(eid);
+                    if (entity) {
+                        viewer.flyTo(entity, {
+                            offset: new window.Cesium.HeadingPitchRange(0, -window.Cesium.Math.PI_OVER_FOUR, 50000)
+                        });
+                    }
+                }
+                break;
+            }
         }
 
     }, [viewer, areas, eid, etype]);
@@ -635,7 +717,7 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer || installations.size === 0) return;
-        const dataSource = setupInstallations(installations);
+        const dataSource = setupInstallations(mapStyle, installations);
         dataSource.show = showInstallations;
         viewer.dataSources.add(dataSource);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -651,7 +733,7 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer || pipelines.size === 0) return;
-        const dataSource = setupPipelines(pipelines);
+        const dataSource = setupPipelines(mapStyle, pipelines);
         dataSource.show = showPipelines;
         viewer.dataSources.add(dataSource);
         // eslint-disable-next-line react-hooks/exhaustive-deps

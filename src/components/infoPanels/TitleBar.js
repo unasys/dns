@@ -12,9 +12,6 @@ function TitleBar(props) {
                     {props.subtitle}
                 </div>
             </div>
-            <div className="title-bar-icons">
-                {props.installationtype}
-            </div>
         </div>
     )
 }

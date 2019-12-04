@@ -7,7 +7,7 @@ import { useStateValue } from '../../../utils/state';
 import Switch from 'react-toggle-switch'
 
 const MapOptions = () => {
-    const [{ showBlocks }, dispatch] = useStateValue();
+    const [{ showBlocks, mapStyle }, dispatch] = useStateValue();
 
     return (
         <div className="menu-container" style={{ display: 'flex' }}>
@@ -19,6 +19,12 @@ const MapOptions = () => {
                     <div className="layer-content">
                         <div className="bathymetry-title">Blocks</div>
                         <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBlocks" }) }} on={showBlocks} className={'bathymetry-title'} />
+                    </div>
+                </div>
+                <div className="layer-container">
+                    <div className="layer-content">
+                        <div className="bathymetry-title">Map Style ({mapStyle === "satellite" ? "satellite" : "simple"})</div>
+                        <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "changeMapStyle", mapStyle: mapStyle === "satellite" ? "simple" : "satellite" }) }} on={mapStyle === "satellite"} className={'bathymetry-title'} />
                     </div>
                 </div>
             </div>

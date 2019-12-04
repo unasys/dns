@@ -116,36 +116,14 @@ function InstallationInfoPanel(props) {
                     <Entry title={"Fuel"} subtitle={props.installation.Fuel} borderBottom></Entry>
                 </EntryContainer></>)
     }
-    //  <EntryContainer>
-    //     <Entry title={"Description"} subtitle={props.installation && props.installation.Description} borderBottom></Entry>
-    //     <Entry title={"Age"} subtitle={props.installation && props.installation.Age + " years"} borderBottom></Entry>
-    // </EntryContainer>
-    // <EntryContainer borderBottom>
-    //     <Entry title={"Installation Type"} subtitle={props.installation && props.installation.Type}></Entry>
-    //     <Entry title={"Subsea Tieback"} subtitle={"-"}></Entry>
-    // </EntryContainer>
-    // <EntryContainer>
-    //     <Entry icon={<i className="fas fa-dumbbell" style={{ fontSize: '20px' }}></i>} title={"Weight Topside"} subtitle={props.installation && props.installation.TopsideWeight + "te"} borderBottom></Entry>
-    //     <Entry title={"Weight substructure"} subtitle={props.installation && props.installation.SubStructureWeight + "te"} borderBottom></Entry>
-    // </EntryContainer>
-    // <EntryContainer borderBottom>
-    //     <Entry title={"Production wells"} subtitle={"-"}></Entry>
-    //     <Entry title={"Water injection wells"} subtitle={"-"}></Entry>
-    // </EntryContainer>
-    // <EntryContainer borderBottom>
-    //     <Entry icon={<i class="fas fa-dot-circle"></i>} title={"Manned"}></Entry>
-    //     <Entry icon={<i className="fas fa-cog"></i>} title={props.installation && props.installation.Status}></Entry>
-    //     <Entry icon={<i className="fas fa-male"></i>} title={"POB"} subtitle={props.installation && props.installation.PersonsOnBoard}></Entry>
-    // </EntryContainer>
-    // <EntryContainer>
-    //     <Entry icon={<i className="fas fa-map-marker"></i>} title={"Location"} subtitle={props.installation && props.installation.Area}></Entry>
-    // </EntryContainer>
 
+    const image = props.image ? props.image : "-1.jpg";
     return (
         <div style={{ margin: '10px', display: 'flex', flexDirection: 'column' }}>
             {titleBar}
+            <img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />
+
             {doubleWidth}
-            {props.installation && props.installation.ImageID ? <img style={{ alignSelf: 'center', maxWidth: '300px' }} src={`https://assets.digitalnorthsea.com/images/installations/${props.installation.ImageID}`} alt="overview-thumbnail" ></img> : <img style={{ alignSelf: 'center', maxWidth: '300px' }} src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
         </div>
     );
 }

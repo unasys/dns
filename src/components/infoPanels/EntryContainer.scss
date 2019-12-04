@@ -1,10 +1,11 @@
-.double-width-entry-container {
-    display:flex;    
-    flex-wrap: wrap;
-}
-.solid-border-top {
-    border-top:1px solid white;
-}
-.solid-border-bottom {
-    border-bottom:1px solid white;
+details {
+    summary {
+        color: white;
+        text-align: left;
+        padding: 10px 20px;
+        border-bottom: 1px solid #fff;
+        font-family: 'Roboto';
+        background-color: rgb(97, 115, 138);
+        cursor: pointer;
+    }
 }
