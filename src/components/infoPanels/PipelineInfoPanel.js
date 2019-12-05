@@ -80,7 +80,7 @@ function PipelineInfoPanel(props) {
     )
 
     let content = (
-        <div style={{ margin: '10px', display: 'flex', flexDirection: 'column' }}>
+        <div>
             {titleBar}
             {doubleWidth}
         </div>

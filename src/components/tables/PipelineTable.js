@@ -14,7 +14,8 @@ function PipelineTable() {
     () => [{
       Header: 'Pipeline Name',
       accessor: 'Pipeline Name',
-      width:300
+      width:300,
+      footer:"count"
     }, {
       Header: 'Pipeline DTI No',
       accessor: 'Pipeline DTI No',
@@ -57,6 +58,7 @@ function PipelineTable() {
       show: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
+      footer:"sum"
     }, {
       Header: 'Start Date',
       id: 'Start Date',

@@ -119,7 +119,7 @@ function InstallationInfoPanel(props) {
 
     const image = props.image ? props.image : "-1.jpg";
     return (
-        <div style={{ margin: '10px', display: 'flex', flexDirection: 'column' }}>
+        <div>
             {titleBar}
             <img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />
 

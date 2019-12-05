@@ -34,6 +34,24 @@
         }
     }
 
+    .tfoot {
+        background-color: #33475c;
+        font-weight: 400;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid rgb(49, 55, 71);
+        .td {
+            text-align: center;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:not(:last-child) {
+                border-right: 1px solid rgb(76, 89, 116);
+            }
+
+        }
+    }
+
     .tbody {
         background-color: #33475cf1;
         font-weight: 400;
