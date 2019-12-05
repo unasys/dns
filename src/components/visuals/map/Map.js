@@ -181,6 +181,7 @@ const mapInstallation = (mapStyle, installation) => {
 
     const label = {
         text: installation["Name"],
+        font:"20px Arial Narrow",
         fillColor: window.Cesium.Color.WHITE,
         style: window.Cesium.LabelStyle.FILL,
         outlineColor: window.Cesium.Color.BLACK,
@@ -214,13 +215,11 @@ const mapDecomyard = (decomyard) => {
     const position = window.Cesium.Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat);
     const point = {
         pixelSize: 4,
-        color: window.Cesium.Color.AQUA,
+        color: window.Cesium.Color.STEELBLUE  ,
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-        outlineColor: window.Cesium.Color.BLACK,
-        outlineWidth: 1,
+        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
     };
     const label = {
         text: decomyard["Name"],
@@ -387,14 +386,12 @@ const mapWindfarm = (windfarm) => {
         name: windfarm["NAME"],
         position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
         point: {
-            pixelSize: 6,
+            pixelSize: 4,
             color: window.Cesium.Color.WHITE,
             eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
             distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
             translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-            heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-            outlineColor: window.Cesium.Color.BLACK,
-            outlineWidth: 1,
+            heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
         },
         label: {
             text: windfarm["NAMENAMENAME"],
