@@ -28,7 +28,8 @@ function InstallationTable() {
             </div>
         ),
         filter: 'contains',
-        minWidth: 300
+        minWidth: 300,
+        footer:"count"
       }, {
         Header: 'Age',
         id: "Age",
@@ -83,7 +84,8 @@ function InstallationTable() {
         Cell: NumberCell,
         Filter: NumberRangeColumnFilter,
         filter: "between",
-        show: isVisible
+        show: isVisible,
+        footer:"sum"
       }, {
         Header: 'Substructure Weight (t)',
         id: 'Substructure Weight',
@@ -94,7 +96,8 @@ function InstallationTable() {
         Filter: NumberRangeColumnFilter,
         filter: "between",
         width: 180,
-        show: isVisible
+        show: isVisible,
+        footer:"sum"
       }, {
         Header: 'Type',
         accessor: 'Type',

@@ -104,17 +104,16 @@ export default function Table({ columns, data, history, location, filters, type,
         useSortBy
     );
 
-
     useEffect(() => {
         onFiltersChange(state.filters);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.filters]);
 
     useEffect(() => {
         const ids = rows.map(row => row.original[keyField]);
         onVisibleRowsChange(ids);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rows, keyField]);
 
 
@@ -128,7 +127,7 @@ export default function Table({ columns, data, history, location, filters, type,
                 history.push({ pathname: location.pathname, search: `?${search.toString()}` });
             }
             prepareRow(row)
-            
+
             return (
                 <div
                     {...row.getRowProps({
@@ -148,13 +147,32 @@ export default function Table({ columns, data, history, location, filters, type,
         },
         [prepareRow, rows, history, location, type, keyField]
     )
+
+    const RenderFooter = React.useCallback(
+        (column) =>{
+
+            switch (column.footer) {
+                case "sum":{
+                    const sum = column.filteredRows.map(row => row.values[column.id]).filter(value => Number.isInteger(value)).reduce((a, b) => a + b, 0);
+                    return sum.toLocaleString();
+                }
+                case "count":{
+                    const count = column.filteredRows.length;
+                    return count.toLocaleString();
+                }
+                default: return "";
+            }
+        },
+        []
+    );
+    const hasFooter = !headerGroups.every(headerGroup => headerGroup.headers.every(column => column.footer === undefined));
     // Render the UI for your table
     return (
         <div {...getTableProps()} className="table">
             <div className="thead">
                 {headerGroups.map(headerGroup => (
                     <div {...headerGroup.getHeaderGroupProps()} className="tr">
-                        {headerGroup.headers.map((column,i) => (
+                        {headerGroup.headers.map((column, i) => (
                             <div key={i} className="th">
                                 <div {...column.getHeaderProps(column.getSortByToggleProps())} >
                                     {column.render('Header')}
@@ -173,6 +191,19 @@ export default function Table({ columns, data, history, location, filters, type,
                 ))}
             </div>
 
+            {hasFooter && <div className="tfoot">
+                {headerGroups.map(headerGroup => (
+                    <div {...headerGroup.getHeaderGroupProps()} className="tr">
+                        {headerGroup.headers.map((column, i) => (
+                            <div key={i} className="td">
+                                <div {...column.getHeaderProps()} >
+                                    {RenderFooter(column)}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>}
             <div className="tbody" {...getTableBodyProps()}>
                 <AutoSizer>
                     {({ height }) => (
@@ -188,6 +219,7 @@ export default function Table({ columns, data, history, location, filters, type,
                 </AutoSizer>
             </div>
         </div>
+
     )
 };
 
