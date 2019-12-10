@@ -6,7 +6,7 @@ import Table, { NumberRangeColumnFilter, ButtonBar, DateCell, NumberCell } from 
 
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(true);
-  const [{installations, installationFilters}, dispatch] = useStateValue();
+  const [{ installations, installationFilters }, dispatch] = useStateValue();
   const data = useMemo(() => [...installations.values()], [installations])
   const history = useHistory();
   const location = useLocation();
@@ -17,19 +17,19 @@ function InstallationTable() {
         Header: 'Name',
         accessor: "Name",
         Cell: ({ cell: { value }, row: { original } }) => (
-            <div className="table-installation-title">
-              <div className="table-installation-image">
-                {original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
-              </div>
-              <div className="table-installation-name">
-                {value}
-                {original.ePMID && <img style={{ width: '25px', cursor: 'pointer', marginLeft: '5px' }} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${original.ePMID}/`, "_blank")} />}
-              </div>
+          <div className="table-installation-title">
+            <div className="table-installation-image">
+              {original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
             </div>
+            <div className="table-installation-name">
+              {value}
+              {original.ePMID && <img style={{ width: '25px', cursor: 'pointer', marginLeft: '5px' }} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${original.ePMID}/`, "_blank")} />}
+            </div>
+          </div>
         ),
         filter: 'contains',
         minWidth: 300,
-        footer:"count"
+        footer: "count"
       }, {
         Header: 'Age',
         id: "Age",
@@ -42,6 +42,16 @@ function InstallationTable() {
       }, {
         Header: 'Status',
         accessor: 'Status',
+        show: isVisible
+      }, {
+        Header: 'Producing',
+        id: 'Producing',
+        accessor: row => {
+          return row.Status.toLowerCase() === 'active' ? 'Y' : 'N'
+        },
+        Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
+        filter: 'contains',
+        width: 90,
         show: isVisible
       }, {
         Header: 'Field Type',
@@ -58,20 +68,18 @@ function InstallationTable() {
         width: 185,
         show: isVisible
       }, {
-        Header: 'Producing',
-        id: 'Producing',
-        accessor: row => {
-          return row.Status.toLowerCase() === 'active' ? 'Y' : 'N'
-        },
-        Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
-        filter: 'contains',
-        width: 90,
-        show: isVisible
-      }, {
         Header: 'Planned COP',
         id: 'PlannedCOP',
         accessor: row => (row.PlannedCOP ? new Date(row.PlannedCOP) : null),
-        Cell: DateCell,        
+        Cell: ({ cell: { value }, row: { original } }) => {
+          if (value && original.ICOP) {
+            return (<a href={original.ICOP} alt="ICOP" target="_blank" rel="noopener noreferrer">{value.getFullYear()}-{value.getMonth() + 1}-{value.getDate()} <i class="fas fa-external-link-alt"></i></a>)
+          } else if (value) {
+            return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
+          } else {
+            return "-"
+          }
+        },
         filter: "contains",
         width: 120,
         show: isVisible
@@ -85,7 +93,7 @@ function InstallationTable() {
         Filter: NumberRangeColumnFilter,
         filter: "between",
         show: isVisible,
-        footer:"sum"
+        footer: "sum"
       }, {
         Header: 'Substructure Weight (t)',
         id: 'Substructure Weight',
@@ -97,7 +105,7 @@ function InstallationTable() {
         filter: "between",
         width: 180,
         show: isVisible,
-        footer:"sum"
+        footer: "sum"
       }, {
         Header: 'Type',
         accessor: 'Type',
@@ -120,7 +128,7 @@ function InstallationTable() {
     ],
     [isVisible]
   )
-  
+
   const expand = () => {
     setIsVisible(true);
   }
@@ -133,11 +141,11 @@ function InstallationTable() {
   }
 
   const onFiltersChange = (filters) => {
-    dispatch({type:"installationFiltersChange", filters:filters});
+    dispatch({ type: "installationFiltersChange", filters: filters });
   }
 
   const onVisibleRowsChange = (installationsVisible) => {
-    dispatch({type:"installationsVisible", installationsVisible:installationsVisible});
+    dispatch({ type: "installationsVisible", installationsVisible: installationsVisible });
   }
 
   return (
