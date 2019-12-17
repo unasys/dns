@@ -70,6 +70,38 @@ export function NumberRangeColumnFilter({
     }
 }
 
+export function SelectColumnFilter({
+    column: { filterValue, setFilter, preFilteredRows, id },
+}) {
+    // Calculate the options for filtering
+    // using the preFilteredRows
+    const options = React.useMemo(() => {
+        const options = new Set()
+        preFilteredRows.forEach(row => {
+            options.add(row.values[id])
+        })
+        return [...options.values()].sort();
+    }, [id, preFilteredRows])
+
+    // Render a multi-select box
+    return (
+        <select
+            value={filterValue}
+            onChange={e => {
+                setFilter(e.target.value || undefined)
+            }}
+        >
+            <option value="">All</option>
+            {options.map((option, i) => (
+                <option key={i} value={option}>
+                    {option}
+                </option>
+            ))}
+        </select>
+    )
+}
+
+
 export default function Table({ columns, data, history, location, filters, type, onFiltersChange, onVisibleRowsChange, keyField }) {
     const defaultColumn = React.useMemo(
         () => ({
@@ -81,7 +113,7 @@ export default function Table({ columns, data, history, location, filters, type,
     );
 
     if (!filters) {
-        filters = {}
+        filters = [];
     }
 
     const {
@@ -149,14 +181,14 @@ export default function Table({ columns, data, history, location, filters, type,
     )
 
     const RenderFooter = React.useCallback(
-        (column) =>{
+        (column) => {
 
             switch (column.footer) {
-                case "sum":{
+                case "sum": {
                     const sum = column.filteredRows.map(row => row.values[column.id]).filter(value => Number.isInteger(value)).reduce((a, b) => a + b, 0);
                     return sum.toLocaleString();
                 }
-                case "count":{
+                case "count": {
                     const count = column.filteredRows.length;
                     return count.toLocaleString();
                 }
