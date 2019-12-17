@@ -3,10 +3,10 @@ import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
-function SurfaceTable() {
+function SubsurfaceTable() {
   const [isVisible, setIsVisible] = useState(true);
-  const [{ surfaceFilters, surfaces }, dispatch] = useStateValue();
-  const data = useMemo(() => [...surfaces.values()], [surfaces])
+  const [{ subsurfaceFilters, subsurfaces }, dispatch] = useStateValue();
+  const data = useMemo(() => [...subsurfaces.values()], [subsurfaces])
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -62,21 +62,21 @@ function SurfaceTable() {
   }
 
   const onFiltersChange = (filters) => {
-    dispatch({ type: "surfaceFiltersChange", filters: filters });
+    dispatch({ type: "subsurfaceFiltersChange", filters: filters });
   }
 
-  const onVisibleRowsChange = (surfacesVisible) => {
-    dispatch({ type: "surfacesVisible", surfacesVisible: surfacesVisible });
+  const onVisibleRowsChange = (subsurfacesVisible) => {
+    dispatch({ type: "subsurfacesVisible", subsurfacesVisible: subsurfacesVisible });
   }
 
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Surface" keyField="id" filters={surfaceFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} type="Subsurface" keyField="id" filters={subsurfaceFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
   )
 }
 
-export default SurfaceTable;
+export default SubsurfaceTable;

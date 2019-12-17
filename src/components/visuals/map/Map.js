@@ -249,8 +249,8 @@ const setupDecomyards = (decomyards) => {
     return dataSource;
 }
 
-const mapSurface = (surface) => {
-    const position = window.Cesium.Cartesian3.fromDegrees(surface.coordinates[0], surface.coordinates[1]);
+const mapSubsurface = (subsurface) => {
+    const position = window.Cesium.Cartesian3.fromDegrees(subsurface.coordinates[0], subsurface.coordinates[1]);
     const point = {
         pixelSize: 4,
         color: window.Cesium.Color.MINTCREAM ,
@@ -261,17 +261,17 @@ const mapSurface = (surface) => {
     };
 
     return {
-        id: surface.id,
-        name: surface.name,
+        id: subsurface.id,
+        name: subsurface.name,
         position: position,
         point: point,
-        originalData: surface
+        originalData: subsurface
     }
 }
 
-const setupSurfacess = (surfaces) => {
-    const dataSource = new window.Cesium.CustomDataSource("Surface");
-    surfaces.forEach(i => dataSource.entities.add(mapSurface(i)));
+const setupSubsurfaces = (subsurfaces) => {
+    const dataSource = new window.Cesium.CustomDataSource("Subsurface");
+    subsurfaces.forEach(i => dataSource.entities.add(mapSubsurface(i)));
     return dataSource;
 }
 
@@ -620,9 +620,9 @@ const switchStyle = (viewer, mapStyle) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, surfaces,
-        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSurfaces, showBlocks, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, surfacesVisible, decomnYardsVisible, mapStyle },] = useStateValue();
+    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces,
+        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, year,
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, decomnYardsVisible, mapStyle },] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -694,9 +694,9 @@ const CesiumMap = () => {
     }, [viewer, fieldsVisible]);
 
     useEffect(() => {
-        if (!viewer || !surfacesVisible) return;
-        toggleEntityVisibility(viewer, "Surface", surfacesVisible);
-    }, [viewer, surfacesVisible]);
+        if (!viewer || !subsurfacesVisible) return;
+        toggleEntityVisibility(viewer, "Subsurface", subsurfacesVisible);
+    }, [viewer, subsurfacesVisible]);
 
     useEffect(() => {
         if (!viewer || !decomnYardsVisible) return;
@@ -715,12 +715,12 @@ const CesiumMap = () => {
         if (decomYards.length > 0) decomYards[0].show = showDecomYards;
         const fields = viewer.dataSources.getByName("Field");
         if (fields.length > 0) fields[0].show = showFields;
-        const surfaces = viewer.dataSources.getByName("Surface");
-        if (surfaces.length > 0) surfaces[0].show = showSurfaces;
+        const subsurfaces = viewer.dataSources.getByName("Subsurface");
+        if (subsurfaces.length > 0) subsurfaces[0].show = showSubsurfaces;
         const blocks = viewer.dataSources.getByName("Block");
         if (blocks.length > 0) blocks[0].show = showBlocks;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSurfaces]);
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces]);
 
     useEffect(() => {
         if (viewer) {
@@ -785,12 +785,12 @@ const CesiumMap = () => {
     }, [viewer, fields]);
 
     useEffect(() => {
-        if (!viewer || surfaces.size === 0) return;
-        const dataSource = setupSurfacess(surfaces);
-        dataSource.show = showSurfaces;
+        if (!viewer || subsurfaces.size === 0) return;
+        const dataSource = setupSubsurfaces(subsurfaces);
+        dataSource.show = showSubsurfaces;
         viewer.dataSources.add(dataSource);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [viewer, surfaces]);
+    }, [viewer, subsurfaces]);
 
     return (
         <div onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>
