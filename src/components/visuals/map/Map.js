@@ -249,6 +249,32 @@ const setupDecomyards = (decomyards) => {
     return dataSource;
 }
 
+const mapSurface = (surface) => {
+    const position = window.Cesium.Cartesian3.fromDegrees(surface.coordinates[0], surface.coordinates[1]);
+    const point = {
+        pixelSize: 4,
+        color: window.Cesium.Color.MINTCREAM ,
+        eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+        translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+    };
+
+    return {
+        id: surface.id,
+        name: surface.name,
+        position: position,
+        point: point,
+        originalData: surface
+    }
+}
+
+const setupSurfacess = (surfaces) => {
+    const dataSource = new window.Cesium.CustomDataSource("Surface");
+    surfaces.forEach(i => dataSource.entities.add(mapSurface(i)));
+    return dataSource;
+}
+
 const getPipelineColour = (mapStyle, pipeline) => {
     let colours = pipelineColoursSimple;
     if (mapStyle === "satellite") {
@@ -594,9 +620,9 @@ const switchStyle = (viewer, mapStyle) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields,
-        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, decomnYardsVisible, mapStyle },] = useStateValue();
+    const [{ installations, pipelines, windfarms, decomYards, fields, surfaces,
+        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSurfaces, showBlocks, year,
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, surfacesVisible, decomnYardsVisible, mapStyle },] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -668,6 +694,11 @@ const CesiumMap = () => {
     }, [viewer, fieldsVisible]);
 
     useEffect(() => {
+        if (!viewer || !surfacesVisible) return;
+        toggleEntityVisibility(viewer, "Surface", surfacesVisible);
+    }, [viewer, surfacesVisible]);
+
+    useEffect(() => {
         if (!viewer || !decomnYardsVisible) return;
         toggleEntityVisibility(viewer, "DecomYard", decomnYardsVisible);
     }, [viewer, decomnYardsVisible]);
@@ -684,10 +715,12 @@ const CesiumMap = () => {
         if (decomYards.length > 0) decomYards[0].show = showDecomYards;
         const fields = viewer.dataSources.getByName("Field");
         if (fields.length > 0) fields[0].show = showFields;
+        const surfaces = viewer.dataSources.getByName("Surface");
+        if (surfaces.length > 0) surfaces[0].show = showSurfaces;
         const blocks = viewer.dataSources.getByName("Block");
         if (blocks.length > 0) blocks[0].show = showBlocks;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks]);
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSurfaces]);
 
     useEffect(() => {
         if (viewer) {
@@ -750,6 +783,14 @@ const CesiumMap = () => {
         viewer.dataSources.add(dataSource);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, fields]);
+
+    useEffect(() => {
+        if (!viewer || surfaces.size === 0) return;
+        const dataSource = setupSurfacess(surfaces);
+        dataSource.show = showSurfaces;
+        viewer.dataSources.add(dataSource);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, surfaces]);
 
     return (
         <div onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>

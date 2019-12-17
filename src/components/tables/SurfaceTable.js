@@ -38,11 +38,11 @@ function SurfaceTable() {
       accessor: 'operator',
       show: isVisible
     }, {
-      Header: 'Coordinates',
+      Header: 'Lat/Long',
       show: isVisible,
       accessor: row => {
         if (row.coordinates?.length === 2) {
-          return `${row.coordinates[0]}/${row.coordinates[1]}`;
+          return `${row.coordinates[0].toFixed(2)}/${row.coordinates[1].toFixed(2)}`;
         }
 
         return "-";

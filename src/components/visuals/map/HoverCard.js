@@ -4,6 +4,7 @@ import PipelineHoverCard from "./PipelineHoverCard"
 import DecomyardHoverCard from "./DecomyardHoverCard"
 import FieldHoverCard from "./FieldHoverCard"
 import WindfarmHoverCard from "./WindfarmHoverCard"
+import SurfaceHoverCard from "./SurfaceHoverCard"
 
 const HoverCard = (props) => {
     switch (props.type) {
@@ -17,6 +18,8 @@ const HoverCard = (props) => {
             return <FieldHoverCard position={props.position} hoveredField={props.entity} />
         case "Windfarm":
             return <WindfarmHoverCard position={props.position} hoveredWindfarm={props.entity} />
+        case "Surface":
+            return <SurfaceHoverCard position={props.position} hoveredSurface={props.entity} />
         default:
             return <></>
     }
