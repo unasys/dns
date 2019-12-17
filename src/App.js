@@ -13,7 +13,7 @@ import DecomYardTable from './components/tables/DecomYardTable';
 import FieldTable from './components/tables/FieldTable';
 import WindfarmTable from './components/tables/WindfarmTable';
 import PipelineTable from './components/tables/PipelineTable';
-import SurfaceTable from './components/tables/SurfaceTable';
+import SubsurfaceTable from './components/tables/SubsurfaceTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -39,7 +39,7 @@ const App = () => {
     fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "Pipeline Id") }) });
     fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "NAME") }) });
     fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "name") }) });
-    fetchSubsurface().then(surfaces => { dispatch({ type: "setSurfaces", surfaces: unique(surfaces, "id") }) });
+    fetchSubsurface().then(subsurfaces => { dispatch({ type: "setSubsurfaces", subsurfaces: unique(subsurfaces, "id") }) });
     fetchFact().then(facts => { dispatch({ type: "setFacts", facts: facts }) });
   }, [dispatch]);
 
@@ -70,8 +70,8 @@ const App = () => {
               <Route path="/pipelines" exact >
                 <PipelineTable />
               </Route>
-              <Route path="/surfaces" exact >
-                <SurfaceTable />
+              <Route path="/subsurfaces" exact >
+                <SubsurfaceTable />
               </Route>
             </Switch>
             <InfoPanel />
