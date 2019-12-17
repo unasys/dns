@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell } from './Table';
+import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell, SelectColumnFilter } from './Table';
 
 function PipelineTable() {
   const [isVisible, setIsVisible] = useState(true);
@@ -24,12 +24,16 @@ function PipelineTable() {
       Header: 'Status',
       accessor: "Status",
       show: isVisible,
+      Filter: SelectColumnFilter,
+      filter: 'includes',
       minWidth: 150
     }, {
       Header: 'Fluid Conveyed',
       accessor: "Fluid Conveyed",
       show: isVisible,
-      minWidth: 180
+      Filter: SelectColumnFilter,
+      filter: 'includes',
+      minWidth: 190
     }, {
       Header: 'Operator',
       accessor: 'Operator',
@@ -37,6 +41,8 @@ function PipelineTable() {
     }, {
       Header: 'Inst Type',
       accessor: "Inst Type",
+      Filter: SelectColumnFilter,
+      filter: 'includes',
       show: isVisible
     }, {
       Header: 'Diameter (mm)',

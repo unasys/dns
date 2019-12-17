@@ -4,7 +4,7 @@ import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas } from './api/Installations';
+import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface } from './api/Installations';
 import { fetchFact } from './api/RandomFact';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
@@ -13,6 +13,7 @@ import DecomYardTable from './components/tables/DecomYardTable';
 import FieldTable from './components/tables/FieldTable';
 import WindfarmTable from './components/tables/WindfarmTable';
 import PipelineTable from './components/tables/PipelineTable';
+import SurfaceTable from './components/tables/SurfaceTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -38,6 +39,7 @@ const App = () => {
     fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "Pipeline Id") }) });
     fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "NAME") }) });
     fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "name") }) });
+    fetchSubsurface().then(surfaces => { dispatch({ type: "setSurfaces", surfaces: unique(surfaces, "id") }) });
     fetchFact().then(facts => { dispatch({ type: "setFacts", facts: facts }) });
   }, [dispatch]);
 
@@ -67,6 +69,9 @@ const App = () => {
               </Route>
               <Route path="/pipelines" exact >
                 <PipelineTable />
+              </Route>
+              <Route path="/surfaces" exact >
+                <SurfaceTable />
               </Route>
             </Switch>
             <InfoPanel />

@@ -12,6 +12,7 @@ const initialState = {
     pipelines: new Map(),
     windfarms: new Map(),
     areas: new Map(),
+    surfaces: new Map(),
     facts: [],
     showInstallations: true,
     showPipelines: false,
@@ -19,6 +20,7 @@ const initialState = {
     showDecomYards: true,
     showFields: false,
     showBlocks: false,
+    showSurfaces: false,
     mapStyle: "simple",
     year: 2019
 };
@@ -41,6 +43,12 @@ const reducer = (state, action) => {
                 ...state,
                 fields: action.fields
             };
+        case 'setSurfaces': {
+            return {
+                ...state,
+                surfaces: action.surfaces
+            };
+        }
         case 'setPipelines':
             return {
                 ...state,
@@ -91,6 +99,11 @@ const reducer = (state, action) => {
                 ...state,
                 showFields: !state.showFields
             };
+        case 'toggleSurfaces':
+            return {
+                ...state,
+                showSurfaces: !state.showSurfaces
+            };
         case 'toggleBlocks':
             return {
                 ...state,
@@ -135,6 +148,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 windfarmsVisible: action.windfarmsVisible
+            };
+        case "surfaceFiltersChange":
+            return {
+                ...state,
+                surfaceFilters: action.filters
+            };
+        case "surfacesVisible":
+            return {
+                ...state,
+                surfacesVisible: action.windfarmsVisible
             };
         case "pipelineFiltersChange":
             return {

@@ -47,13 +47,13 @@ const NavigationHeading = (props) => {
 
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
-    const [{ showInstallations, showDecomYards, showPipelines, showFields, showWindfarms }, dispatch] = useStateValue();
+    const [{ showInstallations, showDecomYards, showPipelines, showFields, showWindfarms, showSurfaces }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
                 <aside className="menu-panel">
                     <div className="overview-thumbnail">
-                        <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>
+                        <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" />
                     </div>
                     <NorthSeaAreaPanel />
                     <NavigationHeading heading={'Installations'} url="installations" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleInstallations" }) }} on={showInstallations} className={'bathymetry-title'} />} />
@@ -61,6 +61,7 @@ function MenuPanel() {
                     <NavigationHeading heading={'Pipelines'} url="pipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "togglePipelines" }) }} on={showPipelines} className={'bathymetry-title'} />} />
                     <NavigationHeading heading={'Windfarms'} url="windfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWindfarms" }) }} on={showWindfarms} className={'bathymetry-title'} />} />
                     <NavigationHeading heading={'Fields'} url="fields" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleFields" }) }} on={showFields} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading={'Surface'} url="surfaces" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleSurfaces" }) }} on={showSurfaces} className={'bathymetry-title'} />} />
                     <MapOptions />
                 </aside>
             </div>

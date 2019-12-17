@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import Circle01 from '../../assets/installationTable/circle01.js';
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { NumberRangeColumnFilter, ButtonBar, DateCell, NumberCell } from './Table';
+import Table, { NumberRangeColumnFilter, ButtonBar, SelectColumnFilter, NumberCell } from './Table';
 
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(true);
@@ -42,7 +42,9 @@ function InstallationTable() {
       }, {
         Header: 'Status',
         accessor: 'Status',
-        show: isVisible
+        show: isVisible,
+        Filter: SelectColumnFilter,
+        filter: 'includes',
       }, {
         Header: 'Producing',
         id: 'Producing',
@@ -50,17 +52,19 @@ function InstallationTable() {
           return row.Status.toLowerCase() === 'active' ? 'Y' : 'N'
         },
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
-        filter: 'contains',
         width: 90,
-        show: isVisible
+        show: isVisible,
+        Filter: SelectColumnFilter,
+        filter: 'includes'
       }, {
         Header: 'Field Type',
         id: 'Field Type',
         accessor: "FieldType",
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
-        filter: 'contains',
-        width: 80,
-        show: isVisible
+        width: 110,
+        show: isVisible,
+        Filter: SelectColumnFilter,
+        filter: 'includes'
       }, {
         Header: 'Operator',
         accessor: 'Operator',
@@ -109,9 +113,10 @@ function InstallationTable() {
       }, {
         Header: 'Type',
         accessor: 'Type',
-        filter: 'contains',
-        width: 80,
-        show: isVisible
+        width: 100,
+        show: isVisible,
+        Filter: SelectColumnFilter,
+        filter: 'includes'
       }, {
         Header: 'Area',
         accessor: 'Area',

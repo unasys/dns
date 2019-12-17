@@ -35,6 +35,13 @@ export async function fetchFields() {
     return data;
 }
 
+export async function fetchSubsurface() {
+    let url = assetsBaseUrl + `/data/subsurface/Subsurface.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+}
+
 export async function fetchAreas() {
     return [{
         name: "North Sea",
