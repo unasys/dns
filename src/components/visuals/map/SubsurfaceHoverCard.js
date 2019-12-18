@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class SubsurfaceHoverCard extends Component {
     render() {
-        const { hoveredSurface: hoveredSubsurface } = this.props;
+        const { hoveredSubsurface } = this.props;
 
         if (!hoveredSubsurface) {
             return <div></div>;
