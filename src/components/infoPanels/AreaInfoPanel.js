@@ -1,5 +1,4 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import './Panels.scss';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
@@ -19,8 +18,6 @@ function groupBy(list, keyGetter) {
 }
 
 function AreaInfoPanel(props) {
-    const history = useHistory();
-
     if (!props.area) return <div>Area not supported.</div>;
     let areaName = props.area.name;
     let areaCode = props.area.areaCode;

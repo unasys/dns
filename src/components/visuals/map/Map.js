@@ -34,9 +34,8 @@ const installationColours = {
 }
 
 const installationColoursSimple = {
-    "removed": window.Cesium.Color.fromCssColorString("#595436"),
-    "removed": window.Cesium.Color.DIMGREY  ,
-    "default": window.Cesium.Color.DIMGREY  
+    "removed": window.Cesium.Color.DIMGREY,
+    "default": window.Cesium.Color.DIMGREY
 }
 
 const fieldColours = {
@@ -65,7 +64,7 @@ const setupCesium = (cesiumRef) => {
         tileWidth: 512,
         tileHeight: 512,
         credit: new window.Cesium.Credit('<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>', true)
-      })
+    })
 
     const viewer =
         new window.Cesium.Viewer(cesiumRef.current, {
@@ -115,6 +114,134 @@ const flyHome = (viewer) => {
             roll: 0.0
         }
     });
+}
+
+const setupRadius = (viewer) => {
+    viewer.entities.add({
+        id: "25KM",
+        name: "25KM",
+        // label: {
+        //     text: "25KM",
+        //     font: "20px Arial Narrow",
+        //     fillColor: window.Cesium.Color.WHITE,
+        //     style: window.Cesium.LabelStyle.FILL,
+        //     outlineColor: window.Cesium.Color.BLACK,
+        //     outlineWidth: 1.5,
+        //     pixelOffset: new window.Cesium.Cartesian2(50, 0),
+        //     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+        //     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+        //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
+        //     scale: 0.65
+        // },
+        ellipse: {
+            semiMinorAxis: 25000,
+            semiMajorAxis: 25000,
+            fill: true,
+            outline: true,
+            material: window.Cesium.Color.RED.withAlpha(0.5),
+            outlineColor: window.Cesium.Color.RED,
+            outlineWidth: 10
+        }
+    });
+    viewer.entities.add({
+        id: "50KM",
+        name: "50KM",
+        // label: {
+        //     text: "50KM",
+        //     font: "20px Arial Narrow",
+        //     fillColor: window.Cesium.Color.WHITE,
+        //     style: window.Cesium.LabelStyle.FILL,
+        //     outlineColor: window.Cesium.Color.BLACK,
+        //     outlineWidth: 1.5,
+        //     pixelOffset: new window.Cesium.Cartesian2(200, 0),
+        //     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+        //     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+        //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
+        //     scale: 0.65
+        // },
+        ellipse: {
+            semiMinorAxis: 50000,
+            semiMajorAxis: 50000,
+            fill: true,
+            outline: true,
+            material: window.Cesium.Color.YELLOW.withAlpha(0.4),
+            outlineColor: window.Cesium.Color.YELLOW,
+            outlineWidth: 10
+        }
+    });
+    viewer.entities.add({
+        id: "100KM",
+        name: "100KM",
+        // label: {
+        //     text: "100KM",
+        //     font: "20px Arial Narrow",
+        //     fillColor: window.Cesium.Color.WHITE,
+        //     style: window.Cesium.LabelStyle.FILL,
+        //     outlineColor: window.Cesium.Color.BLACK,
+        //     outlineWidth: 1.5,
+        //     pixelOffset: new window.Cesium.Cartesian2(400, 0),
+        //     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+        //     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+        //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
+        //     scale: 0.65
+        // },
+        ellipse: {
+            semiMinorAxis: 100000,
+            semiMajorAxis: 100000,
+            fill: true,
+            outline: true,
+            material: window.Cesium.Color.GREEN.withAlpha(0.3),
+            outlineColor: window.Cesium.Color.GREEN,
+            outlineWidth: 10
+        }
+    });
+}
+
+const moveRadius = (viewer, position) => {
+    const radius25KM = viewer.entities.getById("25KM");
+    const radius50KM = viewer.entities.getById("50KM");
+    const radius100KM = viewer.entities.getById("100KM");
+    if (radius25KM) {
+        radius25KM.position = position;
+    }
+    if (radius50KM) {
+        radius50KM.position = position;
+    }
+    if (radius100KM) {
+        radius100KM.position = position;
+    }
+    viewer.scene.requestRender();
+}
+
+var groupBy = function(xs, key) {
+    return xs.reduce(function(rv, x) {
+      (rv[x[key]] = rv[x[key]] || []).push(x);
+      return rv;
+    }, {});
+  };
+
+const findEntitiesInRange = (viewer, position, dispatch) => {
+    const withIn25KM = [];
+    const withIn50KM = [];
+    const withIn100KM = [];
+    for (let i = 0; i < viewer.dataSources.length; i++) {
+        const dataSource = viewer.dataSources.get(i);
+        dataSource.entities.values.forEach(entity => {
+            if (!entity.position || !entity.originalData) return;
+            const distance = window.Cesium.Cartesian3.distance(entity.position.getValue(), position);
+            const distanceAbs = Math.abs(distance);
+            const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
+            if (distanceAbs <= 25000) {
+                withIn25KM.push(entityToAdd);
+            } else if (distanceAbs <= 50000) {
+                withIn50KM.push(entityToAdd);
+            } else if (distanceAbs <= 100000) {
+                withIn100KM.push(entityToAdd);
+            }
+        });
+    }
+
+    dispatch({ type: "setRadius", withIn25KM:groupBy(withIn25KM, "type"), withIn50KM:groupBy(withIn50KM, "type"), withIn100KM:groupBy(withIn100KM, "type")});
 }
 
 const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
@@ -181,7 +308,7 @@ const mapInstallation = (mapStyle, installation) => {
 
     const label = {
         text: installation["Name"],
-        font:"20px Arial Narrow",
+        font: "20px Arial Narrow",
         fillColor: window.Cesium.Color.WHITE,
         style: window.Cesium.LabelStyle.FILL,
         outlineColor: window.Cesium.Color.BLACK,
@@ -191,7 +318,7 @@ const mapInstallation = (mapStyle, installation) => {
         horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
         heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
-        scale: 0.5
+        scale: 0.65
     };
 
     return {
@@ -215,7 +342,7 @@ const mapDecomyard = (decomyard) => {
     const position = window.Cesium.Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat);
     const point = {
         pixelSize: 4,
-        color: window.Cesium.Color.STEELBLUE  ,
+        color: window.Cesium.Color.STEELBLUE,
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
@@ -253,7 +380,7 @@ const mapSubsurface = (subsurface) => {
     const position = window.Cesium.Cartesian3.fromDegrees(subsurface.coordinates[0], subsurface.coordinates[1]);
     const point = {
         pixelSize: 4,
-        color: window.Cesium.Color.MINTCREAM ,
+        color: window.Cesium.Color.MINTCREAM,
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
@@ -420,7 +547,7 @@ const mapWindfarm = (windfarm) => {
             heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
         },
         label: {
-            text: windfarm["NAMENAMENAME"],
+            text: windfarm["Name"],
             fillColor: window.Cesium.Color.WHITE,
             style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
             outlineColor: window.Cesium.Color.BLACK,
@@ -535,7 +662,12 @@ const setupBlocks = async () => {
     return dataSource;
 }
 
-const leftClick = (viewer, history, location, search, e) => {
+const leftClick = (viewer, history, location, search,dispatch, e) => {
+    var position = viewer.camera.pickEllipsoid(e.position);
+    var cartographicPosition = window.Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
+    var y = cartographicPosition.latitude;
+    var x = cartographicPosition.longitude;
+    let pos = window.Cesium.Cartesian3.fromRadians(x, y)
     const picked = viewer.scene.pick(e.position);
     const entity = picked ? picked.id || picked.primitive.id : null;
     if (entity && entity.entityCollection && entity.entityCollection.owner) {
@@ -545,6 +677,8 @@ const leftClick = (viewer, history, location, search, e) => {
         search.set("etype", type);
         history.push(location.pathname + `?${search.toString()}`);
     }
+    moveRadius(viewer, pos);
+    findEntitiesInRange(viewer, pos,dispatch)
 }
 
 let previousPickedEntity;
@@ -557,10 +691,12 @@ const mouseMove = (viewer, setHover, movement) => {
     // Highlight the currently picked entity
     if (entity && entity.entityCollection && entity.entityCollection.owner) {
         if (previousPickedEntity !== entity) {
-            element.style.cursor = 'pointer';
             previousPickedEntity = entity;
             if (entity.originalData) {
+                element.style.cursor = 'pointer';
                 setHover({ entity: entity.originalData, type: entity.entityCollection.owner.name });
+            } else {
+                setHover(null);
             }
         }
     } else {
@@ -622,7 +758,7 @@ const switchStyle = (viewer, mapStyle) => {
 const CesiumMap = () => {
     const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces,
         showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, decomnYardsVisible, mapStyle },] = useStateValue();
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, decomnYardsVisible, mapStyle },dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -662,6 +798,7 @@ const CesiumMap = () => {
                 if (dataSources.length !== 0) {
                     const entity = dataSources[0].entities.getById(eid);
                     if (entity) {
+
                         viewer.flyTo(entity, {
                             offset: new window.Cesium.HeadingPitchRange(0, -window.Cesium.Math.PI_OVER_FOUR, 50000)
                         });
@@ -731,6 +868,7 @@ const CesiumMap = () => {
     useEffect(() => {
         const viewer = setupCesium(cesiumRef);
         setViewer(viewer);
+        setupRadius(viewer);
         flyHome(viewer);
         setupBlocks().then(dataSource => { dataSource.show = showBlocks; dataSource.name = "Block"; viewer.dataSources.add(dataSource) });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -740,9 +878,9 @@ const CesiumMap = () => {
         if (!viewer) return;
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search,dispatch, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    }, [viewer, history, location, search]);
+    }, [viewer, history, location, search, dispatch]);
 
     useEffect(() => {
         if (!viewer || installations.size === 0) return;

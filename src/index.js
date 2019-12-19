@@ -22,7 +22,10 @@ const initialState = {
     showBlocks: false,
     showSubsurfaces: false,
     mapStyle: "simple",
-    year: 2019
+    year: 2019,
+    withInDistance: {
+
+    }
 };
 
 const reducer = (state, action) => {
@@ -173,6 +176,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 mapStyle: action.mapStyle
+            };
+        case "setRadius":
+            return {
+                ...state,
+                withInDistance: { "25KM": action.withIn25KM, "50KM": action.withIn50KM, "100KM": action.withIn100KM }
             };
         default:
             return state;
