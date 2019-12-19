@@ -123,7 +123,7 @@ function InstallationInfoPanel(props) {
         <div>
             {titleBar}
             <img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />
-            <WithInDistance />
+            {/* <WithInDistance /> */}
 
             {doubleWidth}
         </div>

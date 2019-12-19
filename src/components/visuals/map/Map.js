@@ -880,7 +880,7 @@ const CesiumMap = () => {
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search,dispatch, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    }, [viewer, history, location, search]);
+    }, [viewer, history, location, search, dispatch]);
 
     useEffect(() => {
         if (!viewer || installations.size === 0) return;

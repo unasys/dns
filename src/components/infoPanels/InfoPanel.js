@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState,  } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
@@ -10,7 +10,7 @@ import Handle from '../handle/Handle';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
 
-function WithInDistance() {
+export function WithInDistance() {
     const [{ withInDistance },] = useStateValue();
     const output = [];
     for (const property in withInDistance) {
