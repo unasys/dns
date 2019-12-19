@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
@@ -7,6 +7,23 @@ import WindfarmInfoPanel from './WindfarmPanel';
 import AreaInfoPanel from './AreaInfoPanel';
 import './Panels.scss'
 import Handle from '../handle/Handle';
+import EntryContainer from './EntryContainer';
+import Entry from './Entry';
+
+function WithInDistance() {
+    const [{ withInDistance },] = useStateValue();
+    const output = [];
+    for (const property in withInDistance) {
+        const value = withInDistance[property];
+        output.push(<EntryContainer title={`With In: ${property} (${value.length})`} borderBottom>
+            {value.map(e => <Entry title={`${e.entity.Name} (${e.type})`} subtitle={e.distance} borderBottom />)}
+        </EntryContainer>);
+    }
+
+    return (
+        { output }
+    );
+}
 
 function InfoPanel() {
     const [{ installations, pipelines, windfarms, areas },] = useStateValue();
@@ -21,7 +38,7 @@ function InfoPanel() {
         case "Installation": {
             const entity = installations.get(eid);
             if (entity) {
-                panel = <InstallationInfoPanel installation={entity} />;
+                panel = <InstallationInfoPanel nstallation={entity} />;
             }
             break;
         }
@@ -42,7 +59,7 @@ function InfoPanel() {
         case "Area": {
             const entity = areas.get(eid);
             if (entity) {
-                panel = <AreaInfoPanel installations={installations} area={entity} />;
+                panel = <AreaInfoPanel nstallations={installations} area={entity} />;
             }
             break;
         }
