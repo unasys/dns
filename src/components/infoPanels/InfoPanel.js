@@ -38,7 +38,7 @@ function InfoPanel() {
         case "Installation": {
             const entity = installations.get(eid);
             if (entity) {
-                panel = <InstallationInfoPanel nstallation={entity} />;
+                panel = <InstallationInfoPanel installation={entity} />;
             }
             break;
         }
