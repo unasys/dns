@@ -1,4 +1,4 @@
-import React, { useState,  } from 'react';
+import React, { useState, } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
@@ -10,18 +10,23 @@ import Handle from '../handle/Handle';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
 
-export function WithInDistance() {
+function WithInDistance() {
     const [{ withInDistance },] = useStateValue();
     const output = [];
-    for (const property in withInDistance) {
-        const value = withInDistance[property];
-        output.push(<EntryContainer title={`With In: ${property} (${value.length})`} borderBottom>
-            {value.map(e => <Entry title={`${e.entity.Name} (${e.type})`} subtitle={e.distance} borderBottom />)}
-        </EntryContainer>);
+    for (const p in withInDistance) {
+        const value = withInDistance[p];
+        for (const p2 in value) {
+            const entities = value[p2];
+            output.push(<EntryContainer title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
+                {entities.map(e => <Entry title={`${e.entity.Name}`} subtitle={e.distance.toFixed(2).toLocaleString()} borderBottom />)}
+            </EntryContainer>);
+        }
     }
 
     return (
-        { output }
+        <>
+            {output}
+        </>
     );
 }
 
@@ -59,7 +64,7 @@ function InfoPanel() {
         case "Area": {
             const entity = areas.get(eid);
             if (entity) {
-                panel = <AreaInfoPanel nstallations={installations} area={entity} />;
+                panel = <AreaInfoPanel area={entity} />;
             }
             break;
         }
@@ -75,7 +80,10 @@ function InfoPanel() {
         <div className="dns-panel right">
             <Handle onHandleClick={() => setIsVisible(!isVisible)} isFacingLeft={false} isOpen={isVisible} />
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
-                <aside className="sidePanel">{panel}</aside>
+                <aside className="sidePanel">
+                    {panel}
+                    <WithInDistance />
+                </aside>
             </div>
         </div>
     );
