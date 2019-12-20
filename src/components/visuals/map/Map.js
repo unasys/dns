@@ -670,7 +670,7 @@ const leftClick = (viewer, history, location, search,dispatch, e) => {
     let pos = window.Cesium.Cartesian3.fromRadians(x, y)
     const picked = viewer.scene.pick(e.position);
     const entity = picked ? picked.id || picked.primitive.id : null;
-    if (entity && entity.entityCollection && entity.entityCollection.owner) {
+    if (entity && entity.entityCollection && entity.entityCollection.owner && entity.entityCollection.owner.name) {
         const type = entity.entityCollection.owner.name;
         const id = entity.id;
         search.set("eid", id);

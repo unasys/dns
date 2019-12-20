@@ -3,7 +3,6 @@ import './Panels.scss';
 import TitleBar from './TitleBar';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
-import WithInDistance from './InfoPanel';
 
 function InstallationInfoPanel(props) {
     let titleBar = (
@@ -123,7 +122,6 @@ function InstallationInfoPanel(props) {
         <div>
             {titleBar}
             <img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />
-            {/* <WithInDistance /> */}
 
             {doubleWidth}
         </div>
