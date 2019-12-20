@@ -64,7 +64,7 @@ function InfoPanel() {
         case "Area": {
             const entity = areas.get(eid);
             if (entity) {
-                panel = <AreaInfoPanel area={entity} />;
+                panel = <AreaInfoPanel installations={installations} area={entity} />;
             }
             break;
         }
