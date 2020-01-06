@@ -307,7 +307,7 @@ const mapInstallation = (mapStyle, installation) => {
     };
 
     const label = {
-        text: installation["Name"],
+        text: installation.name,
         font: "20px Arial Narrow",
         fillColor: window.Cesium.Color.WHITE,
         style: window.Cesium.LabelStyle.FILL,
@@ -322,8 +322,8 @@ const mapInstallation = (mapStyle, installation) => {
     };
 
     return {
-        id: installation["Name"],
-        name: installation["Name"],
+        id: installation.id,
+        name: installation.name,
         position: position,
         availability: availability,
         point: point,
@@ -349,7 +349,7 @@ const mapDecomyard = (decomyard) => {
         heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
     };
     const label = {
-        text: decomyard["Name"],
+        text: decomyard.name,
         fillColor: window.Cesium.Color.WHITE,
         style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
         outlineColor: window.Cesium.Color.BLACK,
@@ -361,8 +361,8 @@ const mapDecomyard = (decomyard) => {
         heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
     };
     return {
-        id: decomyard["Name"],
-        name: decomyard["Name"],
+        id: decomyard.id,
+        name: decomyard.name,
         position: position,
         point: point,
         label: label,
@@ -491,8 +491,8 @@ const mapPipeline = (mapStyle, pipeline) => {
             }
 
             return {
-                id: pipeline["Pipeline Id"],
-                name: pipeline["Pipeline Name"],
+                id: pipeline.id,
+                name: pipeline.name,
                 position: position,
                 availability: availability,
                 polyline: {
@@ -535,8 +535,8 @@ const mapWindfarm = (windfarm) => {
     if (!windfarm.LONGITUDE || !windfarm.LATITUDE) return;
 
     return {
-        id: windfarm["NAME"],
-        name: windfarm["NAME"],
+        id: windfarm.id,
+        name: windfarm.name,
         position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
         point: {
             pixelSize: 4,
@@ -547,7 +547,7 @@ const mapWindfarm = (windfarm) => {
             heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
         },
         label: {
-            text: windfarm["Name"],
+            text: windfarm.name,
             fillColor: window.Cesium.Color.WHITE,
             style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
             outlineColor: window.Cesium.Color.BLACK,
@@ -615,8 +615,8 @@ const mapField = (field) => {
         const material = getFieldColour(field);
         const flatCoordinates = field.Coordinates.flat();
         return {
-            id: field["Field Name"],
-            name: field["Field Name"],
+            id: field.id,
+            name: field.name,
             availability: availability,
             polygon: {
                 hierarchy: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
