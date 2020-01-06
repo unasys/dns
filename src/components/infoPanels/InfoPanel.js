@@ -17,8 +17,8 @@ function WithInDistance() {
         const value = withInDistance[p];
         for (const p2 in value) {
             const entities = value[p2];
-            output.push(<EntryContainer title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
-                {entities.map(e => <Entry title={`${e.entity.Name}`} subtitle={e.distance.toFixed(2).toLocaleString()} borderBottom />)}
+            output.push(<EntryContainer key={`${p}${p2}`} title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
+                {entities.map(e => <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance/1000).toFixed(2).toLocaleString()}km`} borderBottom />)}
             </EntryContainer>);
         }
     }
@@ -29,6 +29,37 @@ function WithInDistance() {
         </>
     );
 }
+function getEntity(installations, pipelines, windfarms, areas, eType, eId) {
+    switch (eType) {
+        case "Installation": return installations.get(eId);
+        case "Pipeline": return pipelines.get(eId);
+        case "Windfarm": return windfarms.get(eId);
+        case "Area": return areas.get(eId);
+        case "Field":
+        case "DecomYard":
+        default:
+            return null;
+    }
+}
+
+function choosePanel(installations, areas, eType, entity) {
+    if (!entity) {
+        const northSea = areas.get("North Sea");
+        return <AreaInfoPanel installations={installations} area={northSea} />;
+    } else {
+        switch (eType) {
+            case "Installation": return <InstallationInfoPanel installation={entity} />;
+            case "Pipeline": return <PipelineInfoPanel pipeline={entity} />;
+            case "Windfarm": return <WindfarmInfoPanel windfarm={entity} />;
+            case "Area": return <AreaInfoPanel installations={installations} area={entity} />;
+            case "Field":
+            case "DecomYard":
+            default:
+                const northSea = areas.get("North Sea");
+                return <AreaInfoPanel installations={installations} area={northSea} />;
+        }
+    }
+}
 
 function InfoPanel() {
     const [{ installations, pipelines, windfarms, areas },] = useStateValue();
@@ -38,42 +69,8 @@ function InfoPanel() {
     const eid = search.get("eid");
     const etype = search.get("etype");
 
-    let panel = null;
-    switch (etype) {
-        case "Installation": {
-            const entity = installations.get(eid);
-            if (entity) {
-                panel = <InstallationInfoPanel installation={entity} />;
-            }
-            break;
-        }
-        case "Pipeline": {
-            const entity = pipelines.get(eid);
-            if (entity) {
-                panel = <PipelineInfoPanel pipeline={entity} />;
-            }
-            break;
-        }
-        case "Windfarm": {
-            const entity = windfarms.get(eid);
-            if (entity) {
-                panel = <WindfarmInfoPanel windfarm={entity} />;
-            }
-            break;
-        }
-        case "Area": {
-            const entity = areas.get(eid);
-            if (entity) {
-                panel = <AreaInfoPanel installations={installations} area={entity} />;
-            }
-            break;
-        }
-        case "Field":
-        case "DecomYard":
-        default:
-            break;
-    }
-
+    let entity = getEntity(installations, pipelines, windfarms, areas, etype, eid);
+    let panel = choosePanel(installations, areas, etype, entity);
 
     return (
         panel &&

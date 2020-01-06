@@ -77,7 +77,7 @@ function InstallationTable() {
         accessor: row => (row.PlannedCOP ? new Date(row.PlannedCOP) : null),
         Cell: ({ cell: { value }, row: { original } }) => {
           if (value && original.ICOP) {
-            return (<a href={original.ICOP} alt="ICOP" target="_blank" rel="noopener noreferrer">{value.getFullYear()}-{value.getMonth() + 1}-{value.getDate()} <i class="fas fa-external-link-alt"></i></a>)
+            return (<a href={original.ICOP} alt="ICOP" target="_blank" rel="noopener noreferrer">{value.getFullYear()}-{value.getMonth() + 1}-{value.getDate()} <i className="fas fa-external-link-alt"></i></a>)
           } else if (value) {
             return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
           } else {
@@ -156,7 +156,7 @@ function InstallationTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Installation" keyField="Name" location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Installation" location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
