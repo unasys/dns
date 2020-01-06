@@ -72,7 +72,7 @@ function SubsurfaceTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Subsurface" keyField="id" filters={subsurfaceFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} type="Subsurface" filters={subsurfaceFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

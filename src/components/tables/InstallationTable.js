@@ -156,7 +156,7 @@ function InstallationTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Installation" keyField="Name" location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Installation" location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

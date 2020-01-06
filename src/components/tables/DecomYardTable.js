@@ -45,7 +45,7 @@ function DecomYardTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} type="DecomYard" keyField="Name" history={history} location={location} filters={decomYardFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} type="DecomYard" history={history} location={location} filters={decomYardFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

@@ -102,7 +102,7 @@ export function SelectColumnFilter({
 }
 
 
-export default function Table({ columns, data, history, location, filters, type, onFiltersChange, onVisibleRowsChange, keyField }) {
+export default function Table({ columns, data, history, location, filters, type, onFiltersChange, onVisibleRowsChange }) {
     const defaultColumn = React.useMemo(
         () => ({
             width: 150,
@@ -143,10 +143,10 @@ export default function Table({ columns, data, history, location, filters, type,
     }, [state.filters]);
 
     useEffect(() => {
-        const ids = rows.map(row => row.original[keyField]);
+        const ids = rows.map(row => row.original.id);
         onVisibleRowsChange(ids);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [rows, keyField]);
+    }, [rows]);
 
 
     const RenderRow = React.useCallback(
@@ -155,7 +155,7 @@ export default function Table({ columns, data, history, location, filters, type,
             const search = new URLSearchParams(location.search);
             const rowClick = () => {
                 search.set("etype", type);
-                search.set("eid", row.original[keyField]);
+                search.set("eid", row.original.id);
                 history.push({ pathname: location.pathname, search: `?${search.toString()}` });
             }
             prepareRow(row)
@@ -165,7 +165,7 @@ export default function Table({ columns, data, history, location, filters, type,
                     {...row.getRowProps({
                         style,
                     })}
-                    className={"tr" + (row.original[keyField].toString() === search.get("eid") ? " highlighted" : "")}
+                    className={"tr" + (row.original.id.toString() === search.get("eid") ? " highlighted" : "")}
                     onClick={rowClick} >
                     {row.cells.map(cell => {
                         return (
@@ -177,7 +177,7 @@ export default function Table({ columns, data, history, location, filters, type,
                 </div>
             )
         },
-        [prepareRow, rows, history, location, type, keyField]
+        [prepareRow, rows, history, location, type]
     )
 
     const RenderFooter = React.useCallback(
