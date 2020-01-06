@@ -5,7 +5,6 @@ import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
 import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface } from './api/Installations';
-import { fetchFact } from './api/RandomFact';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
@@ -33,14 +32,13 @@ const App = () => {
   const [, dispatch] = useStateValue();
 
   useEffect(() => {
-    fetchInstallations().then(installations => { dispatch({ type: "setInstallations", installations: unique(installations, "Name") }) });
-    fetchDecomyards().then(decomYards => { dispatch({ type: "setDecomYards", decomYards: unique(decomYards, "Name") }) });
-    fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "Field Name") }) });
-    fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "Pipeline Id") }) });
-    fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "NAME") }) });
-    fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "name") }) });
+    fetchInstallations().then(installations => { dispatch({ type: "setInstallations", installations: unique(installations, "id") }) });
+    fetchDecomyards().then(decomYards => { dispatch({ type: "setDecomYards", decomYards: unique(decomYards, "id") }) });
+    fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "id") }) });
+    fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "id") }) });
+    fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "id") }) });
+    fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "id") }) });
     fetchSubsurface().then(subsurfaces => { dispatch({ type: "setSubsurfaces", subsurfaces: unique(subsurfaces, "id") }) });
-    fetchFact().then(facts => { dispatch({ type: "setFacts", facts: facts }) });
   }, [dispatch]);
 
   return (

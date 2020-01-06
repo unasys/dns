@@ -77,7 +77,7 @@ function InstallationTable() {
         accessor: row => (row.PlannedCOP ? new Date(row.PlannedCOP) : null),
         Cell: ({ cell: { value }, row: { original } }) => {
           if (value && original.ICOP) {
-            return (<a href={original.ICOP} alt="ICOP" target="_blank" rel="noopener noreferrer">{value.getFullYear()}-{value.getMonth() + 1}-{value.getDate()} <i class="fas fa-external-link-alt"></i></a>)
+            return (<a href={original.ICOP} alt="ICOP" target="_blank" rel="noopener noreferrer">{value.getFullYear()}-{value.getMonth() + 1}-{value.getDate()} <i className="fas fa-external-link-alt"></i></a>)
           } else if (value) {
             return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
           } else {

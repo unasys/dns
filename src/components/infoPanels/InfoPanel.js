@@ -17,8 +17,8 @@ function WithInDistance() {
         const value = withInDistance[p];
         for (const p2 in value) {
             const entities = value[p2];
-            output.push(<EntryContainer title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
-                {entities.map(e => <Entry title={`${e.entity.Name}`} subtitle={e.distance.toFixed(2).toLocaleString()} borderBottom />)}
+            output.push(<EntryContainer key={`${p}${p2}`} title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
+                {entities.map(e => <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance/1000).toFixed(2).toLocaleString()}km`} borderBottom />)}
             </EntryContainer>);
         }
     }
