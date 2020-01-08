@@ -180,7 +180,10 @@ const findEntitiesInRange = (viewer, position, dispatch) => {
         const dataSource = viewer.dataSources.get(i);
         dataSource.entities.values.forEach(entity => {
             if (!entity.position || !entity.originalData) return;
-            const distance = window.Cesium.Cartesian3.distance(entity.position.getValue(), position);
+            const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(entity.position.getValue());
+            const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
+            const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint,endCartographicPoint);
+            const distance = ellipsoidGeodesic.surfaceDistance;
             const distanceAbs = Math.abs(distance);
             const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
             if (distanceAbs <= 25000) {
