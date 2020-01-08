@@ -117,12 +117,11 @@ function InstallationInfoPanel(props) {
                 </EntryContainer></>)
     }
 
-    const image = props.image ? props.image : "-1.jpg";
+    const image = props.installation.ImageID ? props.installation.ImageID : "-1.jpg";
     return (
         <div>
             {titleBar}
             <img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />
-
             {doubleWidth}
         </div>
     );

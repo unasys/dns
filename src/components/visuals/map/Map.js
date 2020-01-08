@@ -64,7 +64,7 @@ const setupCesium = (cesiumRef) => {
         tileWidth: 512,
         tileHeight: 512,
         credit: new window.Cesium.Credit('<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>', true)
-    })
+    });
 
     const viewer =
         new window.Cesium.Viewer(cesiumRef.current, {
@@ -120,79 +120,31 @@ const setupRadius = (viewer) => {
     viewer.entities.add({
         id: "25KM",
         name: "25KM",
-        // label: {
-        //     text: "25KM",
-        //     font: "20px Arial Narrow",
-        //     fillColor: window.Cesium.Color.WHITE,
-        //     style: window.Cesium.LabelStyle.FILL,
-        //     outlineColor: window.Cesium.Color.BLACK,
-        //     outlineWidth: 1.5,
-        //     pixelOffset: new window.Cesium.Cartesian2(50, 0),
-        //     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-        //     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
-        //     scale: 0.65
-        // },
         ellipse: {
             semiMinorAxis: 25000,
             semiMajorAxis: 25000,
             fill: true,
-            outline: true,
-            material: window.Cesium.Color.RED.withAlpha(0.5),
-            outlineColor: window.Cesium.Color.RED,
-            outlineWidth: 10
+            material: window.Cesium.Color.RED.withAlpha(0.5)
         }
     });
     viewer.entities.add({
         id: "50KM",
         name: "50KM",
-        // label: {
-        //     text: "50KM",
-        //     font: "20px Arial Narrow",
-        //     fillColor: window.Cesium.Color.WHITE,
-        //     style: window.Cesium.LabelStyle.FILL,
-        //     outlineColor: window.Cesium.Color.BLACK,
-        //     outlineWidth: 1.5,
-        //     pixelOffset: new window.Cesium.Cartesian2(200, 0),
-        //     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-        //     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
-        //     scale: 0.65
-        // },
         ellipse: {
             semiMinorAxis: 50000,
             semiMajorAxis: 50000,
             fill: true,
-            outline: true,
-            material: window.Cesium.Color.YELLOW.withAlpha(0.4),
-            outlineColor: window.Cesium.Color.YELLOW,
-            outlineWidth: 10
+            material: window.Cesium.Color.YELLOW.withAlpha(0.4)
         }
     });
     viewer.entities.add({
         id: "100KM",
         name: "100KM",
-        // label: {
-        //     text: "100KM",
-        //     font: "20px Arial Narrow",
-        //     fillColor: window.Cesium.Color.WHITE,
-        //     style: window.Cesium.LabelStyle.FILL,
-        //     outlineColor: window.Cesium.Color.BLACK,
-        //     outlineWidth: 1.5,
-        //     pixelOffset: new window.Cesium.Cartesian2(400, 0),
-        //     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-        //     horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        //     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
-        //     scale: 0.65
-        // },
         ellipse: {
             semiMinorAxis: 100000,
             semiMajorAxis: 100000,
             fill: true,
-            outline: true,
-            material: window.Cesium.Color.GREEN.withAlpha(0.3),
-            outlineColor: window.Cesium.Color.GREEN,
-            outlineWidth: 10
+            material: window.Cesium.Color.GREEN.withAlpha(0.3)
         }
     });
 }
@@ -798,7 +750,6 @@ const CesiumMap = () => {
                 if (dataSources.length !== 0) {
                     const entity = dataSources[0].entities.getById(eid);
                     if (entity) {
-
                         viewer.flyTo(entity, {
                             offset: new window.Cesium.HeadingPitchRange(0, -window.Cesium.Math.PI_OVER_FOUR, 50000)
                         });

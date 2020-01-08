@@ -7,17 +7,27 @@ span {
 .entry-container {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
     width: 100%;
+
+    a {
+        .entry {
+            &:hover {
+                background-color: rgb(97, 115, 138);
+            }
+        }
+    }
+
     .entry {
         display: flex;
-        width: 40%;
         color: white;
         padding: 10px 20px;
-        margin-bottom: 5px ;
+        margin-bottom: 5px;
         background-image: linear-gradient(to right, white 33%, rgba(255, 255, 255, 0) 0%);
         background-position: bottom;
         background-size: 4px 1px;
         background-repeat: repeat-x;
+
 
         .entry-icon {
             padding-right: 10px;
