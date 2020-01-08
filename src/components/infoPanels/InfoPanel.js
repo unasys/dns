@@ -1,5 +1,5 @@
 import React, { useState, } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
 import PipelineInfoPanel from './PipelineInfoPanel';
@@ -10,15 +10,41 @@ import Handle from '../handle/Handle';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
 
+function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, collection) {
+    switch (collection) {
+        case "Installation": return showInstallations
+        case "Pipeline": return showPipelines
+        case "Windfarm": return showWindfarms
+        case "Area": return true;
+        case "Field": return showFields;
+        case "DecomYard": return showDecomYards;
+        case "Subsurface": return showSubsurfaces;
+        default:
+            return false;
+    }
+}
+
 function WithInDistance() {
-    const [{ withInDistance },] = useStateValue();
+    const [{ withInDistance, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces },] = useStateValue();
     const output = [];
     for (const p in withInDistance) {
         const value = withInDistance[p];
         for (const p2 in value) {
             const entities = value[p2];
             output.push(<EntryContainer key={`${p}${p2}`} title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
-                {entities.map(e => <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance/1000).toFixed(2).toLocaleString()}km`} borderBottom />)}
+                {entities.map(e => {
+                    const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, p2);
+                    if (isClickable) {
+                        return (<Link key={`${e.entity.id}`} to={location => ({ ...location, search: `?etype=${p2}&eid=${e.entity.id}` })}>
+                            <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
+                        </Link>)
+                    } else {
+                        return (
+                            <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
+                        )
+                    }
+
+                })}
             </EntryContainer>);
         }
     }
