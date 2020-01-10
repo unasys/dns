@@ -165,12 +165,31 @@ const moveRadius = (viewer, position) => {
     viewer.scene.requestRender();
 }
 
-var groupBy = function(xs, key) {
-    return xs.reduce(function(rv, x) {
-      (rv[x[key]] = rv[x[key]] || []).push(x);
-      return rv;
+const groupBy = function (xs, key) {
+    return xs.reduce(function (rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
     }, {});
-  };
+};
+
+const minBy = (arr, iteratee) => {
+    const func = typeof iteratee === 'function' ? iteratee : item => item[iteratee]
+    const min = Math.min(...arr.map(func))
+    return arr.find(item => func(item) === min)
+  }
+  
+const nearestPosition = (entity, position) => {
+    if (entity.positions) {
+        return minBy(entity.positions, p => {
+            const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(p);
+            const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
+            const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
+            return ellipsoidGeodesic.surfaceDistance;
+        });
+    }
+
+    return entity.position.getValue();
+}
 
 const findEntitiesInRange = (viewer, position, dispatch) => {
     const withIn25KM = [];
@@ -180,11 +199,12 @@ const findEntitiesInRange = (viewer, position, dispatch) => {
         const dataSource = viewer.dataSources.get(i);
         dataSource.entities.values.forEach(entity => {
             if (!entity.position || !entity.originalData) return;
-            const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(entity.position.getValue());
+            const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(nearestPosition(entity, position));
             const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
-            const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint,endCartographicPoint);
+            const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
             const distance = ellipsoidGeodesic.surfaceDistance;
             const distanceAbs = Math.abs(distance);
+            console.log(startCartographicPoint, endCartographicPoint);
             const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
             if (distanceAbs <= 25000) {
                 withIn25KM.push(entityToAdd);
@@ -196,7 +216,7 @@ const findEntitiesInRange = (viewer, position, dispatch) => {
         });
     }
 
-    dispatch({ type: "setRadius", withIn25KM:groupBy(withIn25KM, "type"), withIn50KM:groupBy(withIn50KM, "type"), withIn100KM:groupBy(withIn100KM, "type")});
+    dispatch({ type: "setRadius", withIn25KM: groupBy(withIn25KM, "type"), withIn50KM: groupBy(withIn50KM, "type"), withIn100KM: groupBy(withIn100KM, "type") });
 }
 
 const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
@@ -617,7 +637,7 @@ const setupBlocks = async () => {
     return dataSource;
 }
 
-const leftClick = (viewer, history, location, search,dispatch, e) => {
+const leftClick = (viewer, history, location, search, dispatch, e) => {
     var position = viewer.camera.pickEllipsoid(e.position);
     var cartographicPosition = window.Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
     var y = cartographicPosition.latitude;
@@ -633,7 +653,7 @@ const leftClick = (viewer, history, location, search,dispatch, e) => {
         history.push(location.pathname + `?${search.toString()}`);
     }
     moveRadius(viewer, pos);
-    findEntitiesInRange(viewer, pos,dispatch)
+    findEntitiesInRange(viewer, pos, dispatch)
 }
 
 let previousPickedEntity;
@@ -713,7 +733,7 @@ const switchStyle = (viewer, mapStyle) => {
 const CesiumMap = () => {
     const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces,
         showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, decomnYardsVisible, mapStyle },dispatch] = useStateValue();
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, decomnYardsVisible, mapStyle }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -832,7 +852,7 @@ const CesiumMap = () => {
         if (!viewer) return;
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search,dispatch, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search, dispatch, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     }, [viewer, history, location, search, dispatch]);
 
