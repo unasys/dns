@@ -8,7 +8,7 @@ import SubsurfaceHoverCard from "./SubsurfaceHoverCard"
 
 const DataDrivenValue = ({ value }) => {
     return (
-        <div className="installation-text-value">
+        <div key={value.name} className="installation-text-value">
             <div className="installation-hover-card-heading">{value.name}</div>
             <div className="installation-hover-card-value">{value.values}</div>
         </div>
@@ -16,7 +16,7 @@ const DataDrivenValue = ({ value }) => {
 }
 
 const DataDrivenHoverCard = ({ name, hoverDetails, position }) => {
-    const detailContainers = hoverDetails.map(c => <div className="text-block-container">{c.values.map(v => <DataDrivenValue value={v} />)}</div>);
+    const detailContainers = hoverDetails.map(c => <div key={c.name} className="text-block-container">{c.values.map(v => <DataDrivenValue key={v.name} value={v} />)}</div>);
     return (
         <div className="installation-hover-card" style={{ top: position.y, left: position.x }}>
             <div className="installation-hover-card-title">
