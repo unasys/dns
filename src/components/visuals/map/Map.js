@@ -176,8 +176,8 @@ const minBy = (arr, iteratee) => {
     const func = typeof iteratee === 'function' ? iteratee : item => item[iteratee]
     const min = Math.min(...arr.map(func))
     return arr.find(item => func(item) === min)
-  }
-  
+}
+
 const nearestPosition = (entity, position) => {
     if (entity.positions) {
         return minBy(entity.positions, p => {
@@ -636,6 +636,40 @@ const setupBlocks = async () => {
     return dataSource;
 }
 
+const setupWells = async (wells) => {
+    const features = [...wells.values()].map(well => ({ type: "feature", geometry: well.Geometry, properties: { id: well.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson, {
+        fill: window.Cesium.Color.BLACK,
+        stroke: window.Cesium.Color.BLACK
+    });
+    dataSource.name = "Well";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        if (entity.billboard) {
+            entity.billboard = undefined;
+            entity.point = new window.Cesium.PointGraphics({
+                pixelSize: 4,
+                color: window.Cesium.Color.BLACK,
+                eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+            });
+        }
+
+
+        const rawEntity = wells.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+        }
+
+    }
+    return dataSource;
+
+}
+
 const leftClick = (viewer, history, location, search, dispatch, e) => {
     var position = viewer.camera.pickEllipsoid(e.position);
     var cartographicPosition = window.Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
@@ -646,7 +680,7 @@ const leftClick = (viewer, history, location, search, dispatch, e) => {
     const entity = picked ? picked.id || picked.primitive.id : null;
     if (entity && entity.entityCollection && entity.entityCollection.owner && entity.entityCollection.owner.name) {
         const type = entity.entityCollection.owner.name;
-        const id = entity.id;
+        const id = entity.originalData?.id;
         search.set("eid", id);
         search.set("etype", type);
         history.push(location.pathname + `?${search.toString()}`);
@@ -730,9 +764,9 @@ const switchStyle = (viewer, mapStyle) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces,
-        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, decomnYardsVisible, mapStyle }, dispatch] = useStateValue();
+    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces, wells,
+        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, showWells, year,
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, mapStyle }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -814,6 +848,11 @@ const CesiumMap = () => {
     }, [viewer, decomnYardsVisible]);
 
     useEffect(() => {
+        if (!viewer || !wellsVisible) return;
+        toggleEntityVisibility(viewer, "Well", wellsVisible);
+    }, [viewer, wellsVisible]);
+
+    useEffect(() => {
         if (!viewer) return;
         const installation = viewer.dataSources.getByName("Installation");
         if (installation.length > 0) installation[0].show = showInstallations;
@@ -829,8 +868,10 @@ const CesiumMap = () => {
         if (subsurfaces.length > 0) subsurfaces[0].show = showSubsurfaces;
         const blocks = viewer.dataSources.getByName("Block");
         if (blocks.length > 0) blocks[0].show = showBlocks;
+        const wells = viewer.dataSources.getByName("Well");
+        if (wells.length > 0) wells[0].show = showWells;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces]);
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells]);
 
     useEffect(() => {
         if (viewer) {
@@ -902,6 +943,17 @@ const CesiumMap = () => {
         viewer.dataSources.add(dataSource);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, subsurfaces]);
+
+    useEffect(() => {
+        if (!viewer || wells.size === 0) return;
+        async function loadWells() {
+            const dataSource = await setupWells(wells);
+            dataSource.show = showWells;
+            viewer.dataSources.add(dataSource);
+        }
+        loadWells();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, wells]);
 
     return (
         <div onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>
