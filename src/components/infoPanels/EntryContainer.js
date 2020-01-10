@@ -3,7 +3,7 @@ import React from 'react';
 
 function EntryContainer(props) {
     return (
-        <details open>
+        <details open={props.open??true}>
             <summary>
                 {props.title}
             </summary>

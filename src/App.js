@@ -4,7 +4,7 @@ import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface } from './api/Installations';
+import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells } from './api/Installations';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
@@ -13,6 +13,7 @@ import FieldTable from './components/tables/FieldTable';
 import WindfarmTable from './components/tables/WindfarmTable';
 import PipelineTable from './components/tables/PipelineTable';
 import SubsurfaceTable from './components/tables/SubsurfaceTable';
+import WellTable from './components/tables/WellTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -39,6 +40,7 @@ const App = () => {
     fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "id") }) });
     fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "id") }) });
     fetchSubsurface().then(subsurfaces => { dispatch({ type: "setSubsurfaces", subsurfaces: unique(subsurfaces, "id") }) });
+    fetchWells().then(wells => { dispatch({ type: "setWells", wells: unique(wells, "id") }) });
   }, [dispatch]);
 
   return (
@@ -70,6 +72,9 @@ const App = () => {
               </Route>
               <Route path="/subsurfaces" exact >
                 <SubsurfaceTable />
+              </Route>
+              <Route path="/wells" exact >
+                <WellTable />
               </Route>
             </Switch>
             <InfoPanel />

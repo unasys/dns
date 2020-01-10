@@ -13,6 +13,7 @@ const initialState = {
     windfarms: new Map(),
     areas: new Map(),
     subsurfaces: new Map(),
+    wells: new Map(),
     facts: [],
     showInstallations: true,
     showPipelines: false,
@@ -21,6 +22,7 @@ const initialState = {
     showFields: false,
     showBlocks: false,
     showSubsurfaces: false,
+    showWells: false,
     mapStyle: "simple",
     year: 2019,
     withInDistance: {
@@ -72,6 +74,11 @@ const reducer = (state, action) => {
                 ...state,
                 facts: action.facts
             };
+        case 'setWells':
+            return {
+                ...state,
+                wells: action.wells
+            };
         case 'changeYear':
             return {
                 ...state,
@@ -111,6 +118,10 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 showBlocks: !state.showBlocks
+            }; case 'toggleWells':
+            return {
+                ...state,
+                showWells: !state.showWells
             };
         case "installationFiltersChange":
             return {
@@ -171,6 +182,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 pipelinesVisible: action.pipelinesVisible
+            };
+        case "wellFiltersChange":
+            return {
+                ...state,
+                wellFilters: action.filters
+            };
+        case "wellsVisible":
+            return {
+                ...state,
+                wellsVisible: action.wellsVisible
             };
         case "changeMapStyle":
             return {

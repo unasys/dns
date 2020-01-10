@@ -87,6 +87,22 @@ export async function fetchSubsurface() {
     return data;
 }
 
+export async function fetchWells() {
+    let url = assetsBaseUrl + `/data/wells/wells.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.GID;
+        }
+
+        if (!entity.name) {
+            entity.name = entity["Well Name"];
+        }
+    });
+    return data;
+}
+
 export async function fetchAreas() {
     return [{
         name: "North Sea",
