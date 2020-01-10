@@ -637,12 +637,9 @@ const setupBlocks = async () => {
 }
 
 const setupWells = async (wells) => {
-    const features = [...wells.values()].map(well => ({ type: "feature", geometry: well.Geometry, properties: { id: well.id } }));
+    const features = [...wells.values()].map(well => ({ type: "Feature", id: well.id, name: well.name, geometry: well.Geometry, properties: { id: well.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson, {
-        fill: window.Cesium.Color.BLACK,
-        stroke: window.Cesium.Color.BLACK
-    });
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
     dataSource.name = "Well";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
