@@ -204,7 +204,6 @@ const findEntitiesInRange = (viewer, position, dispatch) => {
             const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
             const distance = ellipsoidGeodesic.surfaceDistance;
             const distanceAbs = Math.abs(distance);
-            console.log(startCartographicPoint, endCartographicPoint);
             const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
             if (distanceAbs <= 25000) {
                 withIn25KM.push(entityToAdd);
