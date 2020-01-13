@@ -52,7 +52,7 @@ export function NumberRangeColumnFilter({
                 max = Math.max(row.values[id], max);
             }
         })
-        return [min, max];
+        return [ Math.floor(min), Math.ceil(max)];
     }, [id, preFilteredRows])
 
     const onChange = (e) => {
