@@ -40,7 +40,8 @@ const handle = (props) => {
 };
 
 export function NumberRangeColumnFilter({
-    column: { filterValue = [], preFilteredRows, setFilter, id },
+    preFilteredRows,
+    column: {  setFilter, id },
 }) {
     const [min, max] = React.useMemo(() => {
         let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
@@ -62,7 +63,7 @@ export function NumberRangeColumnFilter({
         }
     }
 
-    const defaultValue = filterValue.length === 0 ? [min, max] : filterValue;
+    const defaultValue = [min, max] ;//filterValue.length === 0 ? [min, max] : filterValue;
     if (min !== max) {
         return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={defaultValue} onChange={onChange} handle={handle} tipFormatter={value => value.toLocaleString()} />
     } else {

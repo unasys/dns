@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar, NumberRangeColumnFilter, DateCell, NumberCell } from './Table';
+import Table, { ButtonBar, NumberRangeColumnFilter, DateCell, NumberCell, SelectColumnFilter } from './Table';
 
 function FieldTable() {
   const [isVisible, setIsVisible] = useState(true);
@@ -17,11 +17,15 @@ function FieldTable() {
     }, {
       Header: 'Field Type',
       accessor: 'Field Type',
-      show: isVisible
+      show: isVisible,
+      Filter: SelectColumnFilter,
+      filter: 'includes'
     }, {
       Header: 'Field Status',
       accessor: "Field Status",
       show: isVisible,
+      Filter: SelectColumnFilter,
+      filter: 'includes'
     }, {
       Header: 'Current Operator',
       accessor: 'Current Operator',
@@ -31,14 +35,16 @@ function FieldTable() {
       Header: 'Depth (m)',
       id: 'Depth (m)',
       accessor: row => (row["Depth (m)"] || 0).toFixed(0),
-      Cell:NumberCell,
+      Cell: NumberCell,
       show: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
     }, {
       Header: 'Hydrocarbon Type',
       accessor: 'Hydrocarbon Type',
-      show: isVisible
+      show: isVisible,
+      Filter: SelectColumnFilter,
+      filter: 'includes'
     }, {
       Header: 'Current Licence',
       accessor: 'Current Licence',
