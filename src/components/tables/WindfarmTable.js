@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar } from './Table';
+import Table, { ButtonBar, NumberRangeColumnFilter } from './Table';
 
 function WindfarmTable() {
   const [isVisible, setIsVisible] = useState(true);
@@ -19,6 +19,8 @@ function WindfarmTable() {
       Header: 'MW Cap',
       accessor: 'MW CAP',
       show: isVisible,
+      Filter: NumberRangeColumnFilter,
+      filter: "between"
     }, {
       Header: 'Turbines',
       accessor: 'TURBINES',
@@ -34,7 +36,7 @@ function WindfarmTable() {
     }, {
       Header: 'Capacity Factor',
       accessor: 'CAPACITY FACTOR',
-      show: isVisible,
+      show: isVisible
     }, {
       Header: 'Status',
       accessor: 'STATUS',
@@ -55,6 +57,8 @@ function WindfarmTable() {
       Header: 'KM to shore',
       accessor: 'KM TO SHORE',
       show: isVisible,
+      Filter: NumberRangeColumnFilter,
+      filter: "between"
     }, {
       Header: 'First Power',
       accessor: 'First Power',
@@ -63,6 +67,8 @@ function WindfarmTable() {
       Header: <div>Area (km<sup>2</sup>)</div>,
       accessor: 'Area (km2)',
       show: isVisible,
+      Filter: NumberRangeColumnFilter,
+      filter: "between"
     },],
     [isVisible]
   )

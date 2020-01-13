@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar, SelectColumnFilter, DateCell, NumberCell } from './Table';
+import Table, { ButtonBar, SelectColumnFilter, DateCell, NumberCell, NumberRangeColumnFilter } from './Table';
 import Circle01 from '../../assets/installationTable/circle01';
 
 function WellTable() {
@@ -28,17 +28,23 @@ function WellTable() {
       Header: 'Quad',
       accessor: "Quad",
       show: isVisible,
-      width:90
+      width: 90,
+      Filter: NumberRangeColumnFilter,
+      filter: "between"
     }, {
       Header: 'Block',
       accessor: "Block",
       show: isVisible,
-      width:90
+      width: 90,
+      Filter: NumberRangeColumnFilter,
+      filter: "between"
     }, {
       Header: 'Water Depth (m)',
       accessor: "Water Depth m",
       show: isVisible,
-      Cell: NumberCell
+      Cell: NumberCell,
+      Filter: NumberRangeColumnFilter,
+      filter: "between"
     }, {
       Header: 'Operator',
       accessor: "Current Owner",
@@ -61,14 +67,14 @@ function WellTable() {
       show: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
-    },  {
+    }, {
       Header: 'Spud Date',
       id: 'Spud Date',
       accessor: row => (row["Spud Date"] ? new Date(row["Spud Date"]) : null),
       Cell: DateCell,
       show: isVisible,
       filter: "contains"
-    },{
+    }, {
       Header: 'Lat/Long',
       show: isVisible,
       accessor: row => {
