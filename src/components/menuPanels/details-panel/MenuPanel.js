@@ -12,9 +12,7 @@ const MapOptions = () => {
     return (
         <div className="menu-container" style={{ display: 'flex' }}>
             <div className="menu-item" style={{ width: '100%' }}>
-                <div className="panel-title">
-                    Layer Visibility
-                </div>
+
                 <div className="layer-container">
                     <div className="layer-content">
                         <div className="bathymetry-title">Blocks</div>
@@ -52,9 +50,6 @@ function MenuPanel() {
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
                 <aside className="menu-panel">
-                    <div className="overview-thumbnail">
-                        <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" />
-                    </div>
                     <NorthSeaAreaPanel />
                     <NavigationHeading heading='Installations' url="installations" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleInstallations" }) }} on={showInstallations} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Decom Yards' url="decomyards" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleDecomYards" }) }} on={showDecomYards} className={'bathymetry-title'} />} />
