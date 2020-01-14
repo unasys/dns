@@ -1,11 +1,20 @@
 details {
+    &:not([open]){
+        border-bottom: 1px solid;
+        border-image: linear-gradient(90deg, rgba(59, 64, 82, 0) 0%, rgb(255, 255, 255) 33%, rgb(255, 255, 255) 66%, rgba(59, 64, 82,0) 100%) 1;
+    }
     summary {
         color: white;
         text-align: left;
         padding: 10px 20px;
-        border-bottom: 1px solid #fff;
         font-family: 'Roboto';
-        background-color: rgb(97, 115, 138);
         cursor: pointer;
+        outline:none;
+        list-style: none;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    summary::-webkit-details-marker{
+        display: none;
     }
 }

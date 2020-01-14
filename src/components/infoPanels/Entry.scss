@@ -28,7 +28,6 @@ span {
         background-size: 4px 1px;
         background-repeat: repeat-x;
 
-
         .entry-icon {
             padding-right: 10px;
             padding-top: 3px;
@@ -40,14 +39,12 @@ span {
             justify-content: center;
 
             .entry-title {
-                font-size: 16px;
-                font-weight: 400;
+                font-size: 14px;
+                color: white;
             }
 
             .entry-subtitle {
                 font-size: 12px;
-                font-weight: 100;
-                color: rgb(196, 196, 196);
             }
         }
     }
