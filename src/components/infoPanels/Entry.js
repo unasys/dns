@@ -9,9 +9,9 @@ function Entry(props) {
                     {props.icon}
                 </div>}
             <div className="entry-content">
-                <div className="entry-title">
+                <strong className="entry-title">
                     {props.title}
-                </div>
+                </strong>
                 <div className="entry-subtitle">
                     {props.subtitle}
                 </div>
