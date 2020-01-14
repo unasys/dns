@@ -3,7 +3,7 @@
 }
 
 .menu-panel {
-    width: 400px;
+    width: 250px;
 }
 
 .title-container {
@@ -36,7 +36,7 @@
 
 .overview-container {
     width: 100%;
-    background-color: #2f484859;
+
     display: flex;
     justify-content: space-between;
     padding: 6px 0px;
@@ -135,6 +135,7 @@
         .switch-toggle {
             left: 15px;
         }
+        background: #8a8c92;
     }
 
     .switch-toggle {
@@ -148,7 +149,8 @@
     flex-direction: column;
     justify-content: center;
     height: 32px;
-    border-bottom: 1px solid #666973;
+    border-bottom: 1px solid;
+    border-image: linear-gradient(90deg, rgba(59, 64, 82, 0) 0%, rgb(255, 255, 255) 33%, rgb(255, 255, 255) 66%, rgba(59, 64, 82, 0) 100%) 1;
 
     .layer-content {
         display: flex;
@@ -173,7 +175,8 @@
         width: 100%;
     }
 }
-.installation-image{
+
+.installation-image {
     align-self: center;
     margin: 5px;
 }

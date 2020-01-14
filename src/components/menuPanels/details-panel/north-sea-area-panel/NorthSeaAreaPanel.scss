@@ -2,22 +2,22 @@
     .area-result-item-container {
 
         .area-result-item {
-            border-top: 1px solid gray;
+            border-bottom: 1px solid;
+            border-image: linear-gradient(90deg, rgba(59, 64, 82, 0) 0%, rgb(255, 255, 255) 33%, rgb(255, 255, 255) 66%, rgba(59, 64, 82,0) 100%) 1;
             color:rgba(247, 247, 247, 0.822);
             font-size:13px;
             padding-left:20px;
             padding-top: 7px;
             padding-bottom: 7px;
             &:hover{
-                background: rgb(97, 115, 138);
+                background: rgb(138,140,146);
             }
             cursor: pointer;
             &.highlighted  {
-                background: rgb(97, 115, 138);
+                background: rgb(138,140,146);
                 color:white;
             }
         }
     }
     margin-top:1px;
-    border-bottom: 1px solid gray;
 }
