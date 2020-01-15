@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar, NumberRangeColumnFilter, SelectColumnFilter } from './Table';
+import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function WindfarmTable() {
   const [isVisible, setIsVisible] = useState(true);
