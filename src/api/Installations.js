@@ -54,11 +54,11 @@ export async function fetchWindfarms() {
     const data = await response.json();
     data.forEach(entity => {
         if (!entity.id) {
-            entity.id = entity.NAME;
+            entity.id = entity.Name;
         }
 
         if (!entity.name) {
-            entity.name = entity.NAME;
+            entity.name = entity.Name;
         }
     });
     return data;
