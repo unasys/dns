@@ -18,20 +18,28 @@
     justify-content: space-between;
     position: absolute;
     width: 100%;
-    height:100%;
+    height: 100%;
     pointer-events: none;
+
     .dns-panel {
-        display:flex;
+        display: flex;
         flex-direction: row;
         align-items: center;
         pointer-events: all;
-        .dns-content{
+
+        .dns-split {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;;
+            height:100%;
+        }
+
+        .dns-content {
             overflow-y: auto;
-            background: rgba(68, 70, 73, 0.75);
             height: 100%;
         }
 
-        .dns-content-table{
+        .dns-content-table {
             align-self: flex-start;
             height: 100%;
         }

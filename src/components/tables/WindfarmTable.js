@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar, NumberRangeColumnFilter } from './Table';
+import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function WindfarmTable() {
   const [isVisible, setIsVisible] = useState(true);
@@ -13,33 +13,32 @@ function WindfarmTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Name',
-      accessor: 'NAME',
+      accessor: 'Name',
       minWidth: 300
     }, {
-      Header: 'MW Cap',
-      accessor: 'MW CAP',
-      show: isVisible,
-      Filter: NumberRangeColumnFilter,
-      filter: "between"
+      Header: 'Description',
+      accessor: 'Description',
+      show: isVisible
     }, {
-      Header: 'Turbines',
-      accessor: 'TURBINES',
+      Header: 'Type',
+      accessor: 'Type',
       show: isVisible,
-      width: 250,
-      Cell: ({ cell: { value } }) => (
-        <div className="scroll-cell">
-          <p>
-            {value.toLowerCase()}
-          </p>
-        </div>
-      ),
+      Filter: SelectColumnFilter,
+      filter: 'includes'
+    },
+    {
+      Header: 'Lease Type',
+      accessor: 'Lease Type',
+      show: isVisible,
+      Filter: SelectColumnFilter,
+      filter: 'includes'
     }, {
-      Header: 'Capacity Factor',
-      accessor: 'CAPACITY FACTOR',
+      Header: 'Round',
+      accessor: 'Round',
       show: isVisible
     }, {
       Header: 'Status',
-      accessor: 'STATUS',
+      accessor: 'Status',
       show: isVisible,
       width: 200,
       Cell: ({ cell: { value } }) => (
@@ -49,27 +48,9 @@ function WindfarmTable() {
           </p>
         </div>
       ),
-    }, {
-      Header: 'Depth (M)',
-      accessor: 'DEPTH',
-      show: isVisible,
-    }, {
-      Header: 'KM to shore',
-      accessor: 'KM TO SHORE',
-      show: isVisible,
-      Filter: NumberRangeColumnFilter,
-      filter: "between"
-    }, {
-      Header: 'First Power',
-      accessor: 'First Power',
-      show: isVisible,
-    }, {
-      Header: <div>Area (km<sup>2</sup>)</div>,
-      accessor: 'Area (km2)',
-      show: isVisible,
-      Filter: NumberRangeColumnFilter,
-      filter: "between"
-    },],
+      Filter: SelectColumnFilter,
+      filter: 'includes'
+    }],
     [isVisible]
   )
   const expand = () => {

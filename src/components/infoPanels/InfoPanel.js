@@ -3,7 +3,6 @@ import { useLocation, Link } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
 import PipelineInfoPanel from './PipelineInfoPanel';
-import WindfarmInfoPanel from './WindfarmPanel';
 import AreaInfoPanel from './AreaInfoPanel';
 import './Panels.scss'
 import Handle from '../handle/Handle';
@@ -33,9 +32,9 @@ function WithInDistance() {
         const value = withInDistance[p];
         for (const p2 in value) {
             const entities = value[p2];
-            output.push(<EntryContainer key={`${p}${p2}`} title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
+            output.push(<EntryContainer open={false} key={`${p}${p2}`} title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
                 {entities.map(e => {
-                    const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces,showWells, p2);
+                    const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, p2);
                     if (isClickable) {
                         return (<Link key={`${e.entity.id}`} to={location => ({ ...location, search: `?etype=${p2}&eid=${e.entity.id}` })}>
                             <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
@@ -81,7 +80,6 @@ function choosePanel(installations, areas, eType, entity) {
         switch (eType) {
             case "Installation": return <InstallationInfoPanel installation={entity} />;
             case "Pipeline": return <PipelineInfoPanel pipeline={entity} />;
-            case "Windfarm": return <WindfarmInfoPanel windfarm={entity} />;
             case "Area": return <AreaInfoPanel installations={installations} area={entity} />;
             case "Field":
             case "DecomYard":
@@ -121,10 +119,16 @@ function InfoPanel() {
         panel &&
         <div className="dns-panel right">
             <Handle onHandleClick={() => setIsVisible(!isVisible)} isFacingLeft={false} isOpen={isVisible} />
-            <div className={isVisible ? "dns-content" : "dns-content hidden"}>
+            <div className={isVisible ? "dns-split" : "dns-split hidden"}>
                 <aside className="sidePanel">
-                    {panel}
-                    <WithInDistance />
+                    <div className="dns-content">
+                        {panel}
+                    </div>
+                </aside>
+                <aside className="nearby">
+                    <div className="dns-content">
+                        <WithInDistance />
+                    </div>
                 </aside>
             </div>
         </div>

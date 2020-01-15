@@ -505,41 +505,23 @@ const setupPipelines = (mapStyle, pipelines) => {
     return dataSource;
 }
 
-const mapWindfarm = (windfarm) => {
-    if (!windfarm.LONGITUDE || !windfarm.LATITUDE) return;
+const setupWindfarms = async (windfarms) => {
+    const features = [...windfarms.values()].map(windfarm => ({ type: "Feature", id: windfarm.id, name: windfarm.name, geometry: windfarm.Geometry, properties: { id: windfarm.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "Windfarm";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
 
-    return {
-        id: windfarm.id,
-        name: windfarm.name,
-        position: window.Cesium.Cartesian3.fromDegrees(windfarm.LONGITUDE, windfarm.LATITUDE),
-        point: {
-            pixelSize: 4,
-            color: window.Cesium.Color.WHITE,
-            eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-            translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-            heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-        },
-        label: {
-            text: windfarm.name,
-            fillColor: window.Cesium.Color.WHITE,
-            style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-            outlineColor: window.Cesium.Color.BLACK,
-            outlineWidth: 1.5,
-            pixelOffset: new window.Cesium.Cartesian2(25, 0),
-            verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-            horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
-            heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
-        },
-        originalData: windfarm
-    };
-}
+        const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+        }
 
-const setupWindfarms = (windfarms) => {
-    const dataSource = new window.Cesium.CustomDataSource("Windfarm");
-    windfarms.forEach(i => dataSource.entities.add(mapWindfarm(i)));
+    }
     return dataSource;
+
 }
 
 const getFieldColour = (field) => {
