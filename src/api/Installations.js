@@ -103,6 +103,22 @@ export async function fetchWells() {
     return data;
 }
 
+export async function fetchWrecks() {
+    let url = assetsBaseUrl + `/data/wrecks/wrecks.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.GID;
+        }
+
+        if (!entity.name) {
+            entity.name = entity.Name;
+        }
+    });
+    return data;
+}
+
 export async function fetchAreas() {
     return [{
         name: "North Sea",
