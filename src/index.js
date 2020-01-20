@@ -14,6 +14,7 @@ const initialState = {
     areas: new Map(),
     subsurfaces: new Map(),
     wells: new Map(),
+    wrecks: new Map(),
     facts: [],
     showInstallations: true,
     showPipelines: false,
@@ -23,6 +24,7 @@ const initialState = {
     showBlocks: false,
     showSubsurfaces: false,
     showWells: false,
+    showWrecks: false,
     mapStyle: "simple",
     year: 2019,
     withInDistance: {
@@ -79,6 +81,11 @@ const reducer = (state, action) => {
                 ...state,
                 wells: action.wells
             };
+        case 'setWrecks':
+            return {
+                ...state,
+                wrecks: action.wrecks
+            };
         case 'changeYear':
             return {
                 ...state,
@@ -118,10 +125,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 showBlocks: !state.showBlocks
-            }; case 'toggleWells':
+            };
+        case 'toggleWells':
             return {
                 ...state,
                 showWells: !state.showWells
+            };
+        case 'toggleWrecks':
+            return {
+                ...state,
+                showWrecks: !state.showWrecks
             };
         case "installationFiltersChange":
             return {
@@ -192,6 +205,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 wellsVisible: action.wellsVisible
+            };
+        case "wreckFiltersChange":
+            return {
+                ...state,
+                wreckFilters: action.filters
+            };
+        case "wrecksVisible":
+            return {
+                ...state,
+                wrecksVisible: action.wrecksVisible
             };
         case "changeMapStyle":
             return {
