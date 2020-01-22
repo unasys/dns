@@ -44,7 +44,7 @@ function WindfarmTable() {
       Cell: ({ cell: { value } }) => (
         <div className="scroll-cell">
           <p>
-            {value.toLowerCase()}
+            {value?.toLowerCase()}
           </p>
         </div>
       ),
