@@ -14,7 +14,18 @@ function WindfarmTable() {
     () => [{
       Header: 'Name',
       accessor: 'Name',
-      minWidth: 300
+      minWidth: 300,
+      Cell: ({ cell: { value }, row: { original } }) => (
+        <div className="table-installation-title">
+          <div className="table-installation-image">
+            {original.ImageID ? <img src={`https://assets.digitalnorthsea.com/images/installations/${original.ImageID}`} alt="overview-thumbnail" ></img> : <img src={`https://assets.digitalnorthsea.com/images/installations/-1.jpg`} alt="overview-thumbnail" ></img>}
+          </div>
+          <div className="table-installation-name">
+            {value}
+            {original.ePMID && <img style={{ width: '25px', cursor: 'pointer', marginLeft: '5px' }} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${original.ePMID}/`, "_blank")} />}
+          </div>
+        </div>
+      ),
     }, {
       Header: 'Description',
       accessor: 'Description',
