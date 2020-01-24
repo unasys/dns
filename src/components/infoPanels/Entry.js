@@ -6,7 +6,7 @@ function Entry(props) {
     let content = null;
     switch (props.type) {
         case "url":
-            content = <Link to={props.subtitle}>{props.subtitle}</Link>
+            content = <a target="_blank" rel="noopener noreferrer" href={props.subtitle}>{props.subtitle}</a>
             break;
         default:
             content = props.subtitle;
