@@ -224,7 +224,7 @@ const reducer = (state, action) => {
         case "setRadius":
             return {
                 ...state,
-                withInDistance: { "25KM": action.withIn25KM, "50KM": action.withIn50KM, "100KM": action.withIn100KM }
+                withInDistance: { "500M": action.withIn500M, "5KM": action.withIn5KM, "25KM": action.withIn25KM }
             };
         default:
             return state;
