@@ -118,31 +118,31 @@ const flyHome = (viewer) => {
 
 const setupRadius = (viewer) => {
     viewer.entities.add({
-        id: "25KM",
-        name: "25KM",
+        id: "500M",
+        name: "500KM",
         ellipse: {
-            semiMinorAxis: 25000,
-            semiMajorAxis: 25000,
+            semiMinorAxis: 500,
+            semiMajorAxis: 500,
             fill: true,
             material: window.Cesium.Color.RED.withAlpha(0.5)
         }
     });
     viewer.entities.add({
-        id: "50KM",
-        name: "50KM",
+        id: "5KM",
+        name: "5KM",
         ellipse: {
-            semiMinorAxis: 50000,
-            semiMajorAxis: 50000,
+            semiMinorAxis: 5000,
+            semiMajorAxis: 5000,
             fill: true,
             material: window.Cesium.Color.YELLOW.withAlpha(0.4)
         }
     });
     viewer.entities.add({
-        id: "100KM",
-        name: "100KM",
+        id: "25KM",
+        name: "25KM",
         ellipse: {
-            semiMinorAxis: 100000,
-            semiMajorAxis: 100000,
+            semiMinorAxis: 25000,
+            semiMajorAxis: 25000,
             fill: true,
             material: window.Cesium.Color.GREEN.withAlpha(0.3)
         }
@@ -151,16 +151,16 @@ const setupRadius = (viewer) => {
 
 const moveRadius = (viewer, position) => {
     const radius25KM = viewer.entities.getById("25KM");
-    const radius50KM = viewer.entities.getById("50KM");
-    const radius100KM = viewer.entities.getById("100KM");
+    const radius5KM = viewer.entities.getById("5KM");
+    const radius500M = viewer.entities.getById("500M");
+    if (radius500M) {
+        radius500M.position = position;
+    }
+    if (radius5KM) {
+        radius5KM.position = position;
+    }
     if (radius25KM) {
         radius25KM.position = position;
-    }
-    if (radius50KM) {
-        radius50KM.position = position;
-    }
-    if (radius100KM) {
-        radius100KM.position = position;
     }
     viewer.scene.requestRender();
 }
@@ -192,9 +192,9 @@ const nearestPosition = (entity, position) => {
 }
 
 const findEntitiesInRange = (viewer, position, dispatch) => {
+    const withIn500M = [];
+    const withIn5KM = [];
     const withIn25KM = [];
-    const withIn50KM = [];
-    const withIn100KM = [];
     for (let i = 0; i < viewer.dataSources.length; i++) {
         const dataSource = viewer.dataSources.get(i);
         dataSource.entities.values.forEach(entity => {
@@ -205,17 +205,17 @@ const findEntitiesInRange = (viewer, position, dispatch) => {
             const distance = ellipsoidGeodesic.surfaceDistance;
             const distanceAbs = Math.abs(distance);
             const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
-            if (distanceAbs <= 25000) {
+            if (distanceAbs <= 500) {
+                withIn500M.push(entityToAdd);
+            } else if (distanceAbs <= 5000) {
+                withIn5KM.push(entityToAdd);
+            } else if (distanceAbs <= 25000) {
                 withIn25KM.push(entityToAdd);
-            } else if (distanceAbs <= 50000) {
-                withIn50KM.push(entityToAdd);
-            } else if (distanceAbs <= 100000) {
-                withIn100KM.push(entityToAdd);
             }
         });
     }
 
-    dispatch({ type: "setRadius", withIn25KM: groupBy(withIn25KM, "type"), withIn50KM: groupBy(withIn50KM, "type"), withIn100KM: groupBy(withIn100KM, "type") });
+    dispatch({ type: "setRadius", withIn25KM: groupBy(withIn25KM, "type"), withIn5KM: groupBy(withIn5KM, "type"), withIn500M: groupBy(withIn500M, "type") });
 }
 
 const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
@@ -658,7 +658,7 @@ const setupWrecks = async (wrecks) => {
             entity.billboard = undefined;
             entity.point = new window.Cesium.PointGraphics({
                 pixelSize: 4,
-                color: window.Cesium.Color.SLATEGREY  ,
+                color: window.Cesium.Color.SLATEGREY,
                 eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
                 distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                 translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
@@ -882,7 +882,7 @@ const CesiumMap = () => {
         const wrecks = viewer.dataSources.getByName("Wreck");
         if (wrecks.length > 0) wrecks[0].show = showWrecks;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells,showWrecks ]);
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks]);
 
     useEffect(() => {
         if (viewer) {

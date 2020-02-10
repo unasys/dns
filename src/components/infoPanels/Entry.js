@@ -1,6 +1,5 @@
 import "./Entry.scss";
 import React from 'react';
-import { Link } from "react-router-dom";
 
 function Entry(props) {
     let content = null;
