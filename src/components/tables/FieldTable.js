@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, NumberRangeColumnFilter, DateCell, NumberCell, SelectColumnFilter } from './Table';
 
 function FieldTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ fieldFilters, fields }, dispatch] = useStateValue();
   const data = useMemo(() => [...fields.values()], [fields])
   const history = useHistory();

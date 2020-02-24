@@ -12,6 +12,7 @@ const initialState = {
     pipelines: new Map(),
     windfarms: new Map(),
     areas: new Map(),
+    basins: new Map(),
     subsurfaces: new Map(),
     wells: new Map(),
     wrecks: new Map(),
@@ -25,7 +26,11 @@ const initialState = {
     showSubsurfaces: false,
     showWells: false,
     showWrecks: false,
+    showAreas: false,
+    showBasins: false,
     mapStyle: "simple",
+    enableTerrain: false,
+    globe3D: true,
     year: 2019,
     withInDistance: {
 
@@ -71,6 +76,11 @@ const reducer = (state, action) => {
                 ...state,
                 areas: action.areas
             };
+        case 'setBasins':
+            return {
+                ...state,
+                basins: action.basins
+            };
         case 'setFacts':
             return {
                 ...state,
@@ -90,6 +100,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 year: action.year
+            };
+        case 'toggle3D':
+            return {
+                ...state,
+                globe3D: !state.globe3D
+            };
+        case 'toggleTerrain':
+            return {
+                ...state,
+                enableTerrain: !state.enableTerrain
             };
         case 'togglePipelines':
             return {
@@ -115,6 +135,16 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 showFields: !state.showFields
+            };
+        case 'toggleAreas':
+            return {
+                ...state,
+                showAreas: !state.showAreas
+            };
+        case 'toggleBasins':
+            return {
+                ...state,
+                showBasins: !state.showBasins
             };
         case 'toggleSubsurfaces':
             return {
@@ -165,6 +195,26 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 fieldsVisible: action.fieldsVisible
+            };
+        case "areaFiltersChange":
+            return {
+                ...state,
+                areaFilters: action.filters
+            };
+        case "areasVisible":
+            return {
+                ...state,
+                areasVisible: action.areasVisible
+            };
+        case "basinFiltersChange":
+            return {
+                ...state,
+                basinFilters: action.filters
+            };
+        case "basinsVisible":
+            return {
+                ...state,
+                basinsVisible: action.basinsVisible
             };
         case "windfarmFiltersChange":
             return {

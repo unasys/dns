@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar } from './Table';
 
 function DecomYardTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ decomYardFilters, decomYards }, dispatch] = useStateValue();
   const data = useMemo(() => [...decomYards.values()], [decomYards])
   const history = useHistory();

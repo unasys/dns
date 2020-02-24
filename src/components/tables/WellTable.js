@@ -5,7 +5,7 @@ import Table, { ButtonBar, SelectColumnFilter, DateCell, NumberCell, NumberRange
 import Circle01 from '../../assets/installationTable/circle01';
 
 function WellTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ wellFilters, wells }, dispatch] = useStateValue();
   const data = useMemo(() => [...wells.values()], [wells])
   const history = useHistory();

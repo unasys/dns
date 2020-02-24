@@ -53,11 +53,20 @@ const fieldColours = {
     "default": window.Cesium.Color.WHITE
 }
 
+let heightReference = window.Cesium.HeightReference.NONE;
+
+const dynamicHeightReference = new window.Cesium.CallbackProperty(function () {
+    return heightReference;
+}, false);
+
+const terrainProvider = new window.Cesium.CesiumTerrainProvider({
+    url: bathymetryBaseUrl,
+    credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
+});
+
+const defaultTerrainProvider = new window.Cesium.EllipsoidTerrainProvider();
+
 const setupCesium = (cesiumRef) => {
-    const terrainProvider = new window.Cesium.CesiumTerrainProvider({
-        url: bathymetryBaseUrl,
-        credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
-    });
 
     const simpleImagery = new window.Cesium.UrlTemplateImageryProvider({
         url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=FSzrABzSMJXbH2n6FfZc',
@@ -79,10 +88,10 @@ const setupCesium = (cesiumRef) => {
             selectionIndicator: false,
             timeline: false,
             navigationHelpButton: false,
-            terrainProvider: terrainProvider,
-            terrainExaggeration: 5,
             requestRenderMode: true,
-            imageryProvider: simpleImagery
+            imageryProvider: simpleImagery,
+            terrainProvider: defaultTerrainProvider,
+            sceneMode: window.Cesium.SceneMode.SCENE3D
         });
 
 
@@ -277,7 +286,7 @@ const mapInstallation = (mapStyle, installation) => {
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+        heightReference: dynamicHeightReference
     };
 
     const label = {
@@ -291,7 +300,7 @@ const mapInstallation = (mapStyle, installation) => {
         verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
         horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
-        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+        heightReference: dynamicHeightReference,
         scale: 0.65
     };
 
@@ -320,7 +329,7 @@ const mapDecomyard = (decomyard) => {
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+        heightReference: dynamicHeightReference
     };
     const label = {
         text: decomyard.name,
@@ -332,7 +341,7 @@ const mapDecomyard = (decomyard) => {
         verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
         horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
-        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+        heightReference: dynamicHeightReference
     };
     return {
         id: decomyard.id,
@@ -358,7 +367,7 @@ const mapSubsurface = (subsurface) => {
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+        heightReference: dynamicHeightReference
     };
 
     return {
@@ -473,7 +482,8 @@ const mapPipeline = (mapStyle, pipeline) => {
                     positions: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
                     material: material,
                     width: scaledWidth,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance)
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
+                    //clampToGround : true
                 },
                 originalData: pipeline
             };
@@ -577,7 +587,7 @@ const mapField = (field) => {
                 hierarchy: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
                 height: 0,
                 material: material,
-                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND,
+                heightReference: dynamicHeightReference,
             },
             originalData: field
         };
@@ -604,7 +614,7 @@ const setupBlocks = async () => {
         if (polygon) {
             var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
             window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
-            entity.position = new window.Cesium.ConstantPositionProperty(center);;
+            entity.position = new window.Cesium.ConstantPositionProperty(center);
         }
         entity.label = new window.Cesium.LabelGraphics({
             text: entity.properties.ALL_LABELS,
@@ -630,10 +640,9 @@ const setupWells = async (wells) => {
             entity.point = new window.Cesium.PointGraphics({
                 pixelSize: 4,
                 color: window.Cesium.Color.BLACK,
-                eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
                 distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                 translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+                heightReference: dynamicHeightReference
             });
         }
 
@@ -659,10 +668,9 @@ const setupWrecks = async (wrecks) => {
             entity.point = new window.Cesium.PointGraphics({
                 pixelSize: 4,
                 color: window.Cesium.Color.SLATEGREY,
-                eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
                 distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                 translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                heightReference: window.Cesium.HeightReference.CLAMP_TO_GROUND
+                heightReference: dynamicHeightReference
             });
         }
         const rawEntity = wrecks.get(entity.properties.id.getValue().toString());
@@ -670,6 +678,65 @@ const setupWrecks = async (wrecks) => {
             entity.originalData = rawEntity;
         }
 
+    }
+    return dataSource;
+}
+
+const setupAreas = async (areas) => {
+    let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+    const features = [...areas.values()].map(area => ({ type: "Feature", id: area.id, name: area.name, geometry: area.Geometry, properties: { id: area.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "Area";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        let polygon = entity.polygon;
+        if (polygon) {
+            var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+            window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+            entity.position = new window.Cesium.ConstantPositionProperty(center);
+        }
+        entity.label = new window.Cesium.LabelGraphics({
+            text: entity.name,
+            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+            font: '12px sans-serif',
+            scaleByDistance: scale
+        });
+        const rawEntity = areas.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+        }
+    }
+    return dataSource;
+}
+
+const setupBasins = async (basins) => {
+    let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+    const features = [...basins.values()].map(basin => ({ type: "Feature", id: basin.id, name: basin.name, geometry: basin.Geometry, properties: { id: basin.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "Basin";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        let polygon = entity.polygon;
+        if (polygon) {
+            var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+            window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+            entity.position = new window.Cesium.ConstantPositionProperty(center);
+        }
+
+        entity.label = new window.Cesium.LabelGraphics({
+            text: entity.name,
+            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+            font: '12px sans-serif',
+            scaleByDistance: scale
+        });
+        const rawEntity = basins.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+        }
     }
     return dataSource;
 }
@@ -720,19 +787,6 @@ const mouseMove = (viewer, setHover, movement) => {
     }
 }
 
-const flyTo = (viewer, { west, south, east, north, pitch }) => {
-    var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
-    viewer.camera.flyTo({
-        destination: rectangle,
-        duration: 3,
-        orientation: {
-            heading: 0.0,
-            pitch: window.Cesium.Math.toRadians(pitch),
-            roll: 0.0
-        }
-    });
-}
-
 const toggleEntityVisibility = (viewer, dataSourceName, visibilityList) => {
     const dataSources = viewer.dataSources.getByName(dataSourceName);
     if (dataSources.length > 0) {
@@ -768,9 +822,10 @@ const switchStyle = (viewer, mapStyle) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces, wells, wrecks,
-        showInstallations, areas, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, showWells, showWrecks, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, mapStyle }, dispatch] = useStateValue();
+    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces, wells, wrecks, areas, basins,
+        showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, year,
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible,
+        mapStyle, enableTerrain, globe3D }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -790,11 +845,7 @@ const CesiumMap = () => {
         if (!viewer) return;
         switch (etype) {
             case "Area":
-                let area = areas.get(eid);
-                if (area && area.coordinates) {
-                    flyTo(viewer, area.coordinates);
-                }
-                break;
+            case "Basin":
             case "Pipeline": {
                 const dataSources = viewer.dataSources.getByName(etype);
                 if (dataSources.length !== 0) {
@@ -860,6 +911,14 @@ const CesiumMap = () => {
         if (!viewer || !wrecksVisible) return;
         toggleEntityVisibility(viewer, "Wreck", wrecksVisible);
     }, [viewer, wrecksVisible]);
+    useEffect(() => {
+        if (!viewer || !areasVisible) return;
+        toggleEntityVisibility(viewer, "Area", areasVisible);
+    }, [viewer, areasVisible]);
+    useEffect(() => {
+        if (!viewer || !basinsVisible) return;
+        toggleEntityVisibility(viewer, "Basin", basinsVisible);
+    }, [viewer, basinsVisible]);
 
     useEffect(() => {
         if (!viewer) return;
@@ -881,14 +940,38 @@ const CesiumMap = () => {
         if (wells.length > 0) wells[0].show = showWells;
         const wrecks = viewer.dataSources.getByName("Wreck");
         if (wrecks.length > 0) wrecks[0].show = showWrecks;
+        const areas = viewer.dataSources.getByName("Area");
+        if (areas.length > 0) areas[0].show = showAreas;
+        const basins = viewer.dataSources.getByName("Basin");
+        if (basins.length > 0) basins[0].show = showBasins;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks]);
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks,showAreas, showBasins]);
 
     useEffect(() => {
         if (viewer) {
             viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601("" + year);
         }
     }, [viewer, year]);
+
+    useEffect(() => {
+        if (!viewer) return;
+        if (enableTerrain) {
+            viewer.terrainProvider = terrainProvider;
+            heightReference = window.Cesium.HeightReference.CLAMP_TO_GROUND;
+        } else {
+            viewer.terrainProvider = defaultTerrainProvider;
+            heightReference = window.Cesium.HeightReference.NONE;
+        }
+    }, [viewer, enableTerrain]);
+
+    useEffect(() => {
+        if (!viewer) return;
+        if (globe3D) {
+            viewer.scene.morphTo3D();
+        } else {
+            viewer.scene.morphTo2D();
+        }
+    }, [viewer, globe3D]);
 
     useEffect(() => {
         const viewer = setupCesium(cesiumRef);
@@ -976,6 +1059,28 @@ const CesiumMap = () => {
         loadWrecks();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, wrecks]);
+
+    useEffect(() => {
+        if (!viewer || areas.size === 0) return;
+        async function loadAreas() {
+            const dataSource = await setupAreas(areas);
+            dataSource.show = showAreas;
+            viewer.dataSources.add(dataSource);
+        }
+        loadAreas();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, areas]);
+
+    useEffect(() => {
+        if (!viewer || basins.size === 0) return;
+        async function loadBasins() {
+            const dataSource = await setupBasins(basins);
+            dataSource.show = showBasins;
+            viewer.dataSources.add(dataSource);
+        }
+        loadBasins();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, basins]);
 
     return (
         <div onMouseMove={(e => { if (hover) { setPosition({ x: e.nativeEvent.offsetX + 5, y: e.nativeEvent.offsetY + 5 }) } })}>

@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { NumberRangeColumnFilter, ButtonBar, SelectColumnFilter, NumberCell } from './Table';
 
 function InstallationTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ installations, installationFilters }, dispatch] = useStateValue();
   const data = useMemo(() => [...installations.values()], [installations])
   const history = useHistory();

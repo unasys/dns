@@ -260,12 +260,12 @@ export const ButtonBar = (props) => {
     return (
         <div className="button-bar">
             <i className="fas fa-arrow-left backbutton" onClick={() => props.back()}></i>
-            <div className="outward-handle" onClick={() => props.expand()}>
+            {props.expand &&<div className="outward-handle" onClick={() => props.expand()}>
                 <i className="fas fa-caret-right"></i>
-            </div>
-            <div className="outward-handle" onClick={() => props.collapse()}>
+            </div>}
+            {props.collapse &&<div className="outward-handle" onClick={() => props.collapse()}>
                 <i className="fas fa-caret-left"></i>
-            </div>
+            </div>}
         </div>)
 };
 

@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function WindfarmTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ windfarmFilters, windfarms }, dispatch] = useStateValue();
   const data = useMemo(() => [...windfarms.values()], [windfarms])
   const history = useHistory();

@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell, SelectColumnFilter } from './Table';
 
 function PipelineTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ pipelineFilters, pipelines }, dispatch] = useStateValue();
   const data = useMemo(() => [...pipelines.values()], [pipelines])
   const history = useHistory();

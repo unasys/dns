@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function SubsurfaceTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ subsurfaceFilters, subsurfaces }, dispatch] = useStateValue();
   const data = useMemo(() => [...subsurfaces.values()], [subsurfaces])
   const history = useHistory();
