@@ -60,7 +60,7 @@
         padding-bottom: 5px;
         border-bottom: 1px solid rgb(49, 55, 71);
         min-height: 80px;
-        height: 96%;
+        height: 93%;
         
         cursor: pointer;
 
@@ -83,9 +83,12 @@
                 border-bottom: 1px solid #313747;
             }
 
+            height: 50px;
+            display: flex;
+            justify-content: center;
+                align-items: center;
             .td {
-                padding: 5px 5px;
-                height: 50px;
+                padding: 5px;
                 text-transform: capitalize;
                 text-align: center;
                 display: flex;

@@ -248,7 +248,7 @@ export default function Table({ columns, data, history, location, filters, type,
                         <FixedSizeList
                             height={height}
                             itemCount={rows.length}
-                            itemSize={40}
+                            itemSize={50}
                             width={totalColumnsWidth}
                         >
                             {RenderRow}
