@@ -4,7 +4,7 @@ import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks } from './api/Installations';
+import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins } from './api/Installations';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
@@ -15,6 +15,8 @@ import PipelineTable from './components/tables/PipelineTable';
 import SubsurfaceTable from './components/tables/SubsurfaceTable';
 import WellTable from './components/tables/WellTable';
 import WreckTable from './components/tables/WreckTable';
+import AreaTable from './components/tables/AreaTable';
+import BasinTable from './components/tables/BasinTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -40,6 +42,7 @@ const App = () => {
     fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "id") }) });
     fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "id") }) });
     fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "id") }) });
+    fetchBasins().then(basins => { dispatch({ type: "setBasins", basins: unique(basins, "id") }) });
     fetchSubsurface().then(subsurfaces => { dispatch({ type: "setSubsurfaces", subsurfaces: unique(subsurfaces, "id") }) });
     fetchWells().then(wells => { dispatch({ type: "setWells", wells: unique(wells, "id") }) });
     fetchWrecks().then(wrecks => { dispatch({ type: "setWrecks", wrecks: unique(wrecks, "id") }) });
@@ -59,6 +62,12 @@ const App = () => {
               </Route>
               <Route path="/installations" exact >
                 <InstallationTable />
+              </Route>
+              <Route path="/areas" exact >
+                <AreaTable />
+              </Route>
+              <Route path="/basins" exact >
+                <BasinTable />
               </Route>
               <Route path="/decomyards" exact >
                 <DecomYardTable />

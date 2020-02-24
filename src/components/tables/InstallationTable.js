@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { NumberRangeColumnFilter, ButtonBar, SelectColumnFilter, NumberCell } from './Table';
 
 function InstallationTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ installations, installationFilters }, dispatch] = useStateValue();
   const data = useMemo(() => [...installations.values()], [installations])
   const history = useHistory();
@@ -15,6 +15,7 @@ function InstallationTable() {
     () => [
       {
         Header: 'Name',
+        id: 'Name',
         accessor: "Name",
         Cell: ({ cell: { value }, row: { original } }) => (
           <div className="table-installation-title">
@@ -38,11 +39,12 @@ function InstallationTable() {
         Filter: NumberRangeColumnFilter,
         filter: "between",
         width: 60,
-        show: isVisible
+        isVisible: isVisible
       }, {
         Header: 'Status',
         accessor: 'Status',
-        show: isVisible,
+        id: 'Status',
+        isVisible: isVisible,
         Filter: SelectColumnFilter,
         filter: 'includes',
       }, {
@@ -53,7 +55,7 @@ function InstallationTable() {
         },
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
         width: 90,
-        show: isVisible,
+        isVisible: isVisible,
         Filter: SelectColumnFilter,
         filter: 'includes'
       }, {
@@ -62,15 +64,16 @@ function InstallationTable() {
         accessor: "FieldType",
         Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
         width: 110,
-        show: isVisible,
+        isVisible: isVisible,
         Filter: SelectColumnFilter,
         filter: 'includes'
       }, {
         Header: 'Operator',
         accessor: 'Operator',
+        id: 'Operator',
         filter: 'contains',
         width: 185,
-        show: isVisible
+        isVisible: isVisible
       }, {
         Header: 'Planned COP',
         id: 'PlannedCOP',
@@ -86,7 +89,7 @@ function InstallationTable() {
         },
         filter: "contains",
         width: 120,
-        show: isVisible
+        isVisible: isVisible
       }, {
         Header: 'Topside Weight (t)',
         id: 'Topside Weight',
@@ -96,7 +99,7 @@ function InstallationTable() {
         Cell: NumberCell,
         Filter: NumberRangeColumnFilter,
         filter: "between",
-        show: isVisible,
+        isVisible: isVisible,
         footer: "sum"
       }, {
         Header: 'Substructure Weight (t)',
@@ -108,27 +111,30 @@ function InstallationTable() {
         Filter: NumberRangeColumnFilter,
         filter: "between",
         width: 180,
-        show: isVisible,
+        isVisible: isVisible,
         footer: "sum"
       }, {
         Header: 'Type',
         accessor: 'Type',
+        id: 'Type',
         width: 100,
-        show: isVisible,
+        isVisible: isVisible,
         Filter: SelectColumnFilter,
         filter: 'includes'
       }, {
         Header: 'Area',
         accessor: 'Area',
+        id: 'Area',
         filter: 'contains',
         width: 60,
-        show: isVisible
+        isVisible: isVisible
       }, {
         Header: 'Block',
+        id: 'Block',
         accessor: 'Block',
         filter: 'contains',
         width: 80,
-        show: isVisible
+        isVisible: isVisible
       }
     ],
     [isVisible]

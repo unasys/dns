@@ -5,7 +5,7 @@ import Table, { ButtonBar, SelectColumnFilter, DateCell, NumberCell, NumberRange
 import Circle01 from '../../assets/installationTable/circle01';
 
 function WellTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ wellFilters, wells }, dispatch] = useStateValue();
   const data = useMemo(() => [...wells.values()], [wells])
   const history = useHistory();
@@ -14,57 +14,67 @@ function WellTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Well Name',
+      id: 'Well Name',
       accessor: 'name',
       footer: "count"
     }, {
       Header: 'Parent Well',
+      id: 'Parent Well',
       accessor: 'Parent Well',
-      show: isVisible,
+      isVisible: isVisible,
     }, {
       Header: 'Field',
+      id: 'Field',
       accessor: 'Field',
-      show: isVisible,
+      isVisible: isVisible,
     }, {
       Header: 'Quad',
+      id: 'Quad',
       accessor: "Quad",
-      show: isVisible,
+      isVisible: isVisible,
       width: 90,
       Filter: NumberRangeColumnFilter,
       filter: "between"
     }, {
       Header: 'Block',
+      id: 'Block',
       accessor: "Block",
-      show: isVisible,
+      isVisible: isVisible,
       width: 90,
       Filter: NumberRangeColumnFilter,
       filter: "between"
     }, {
       Header: 'Water Depth (m)',
+      id: 'Water Depth (m)',
       accessor: "Water Depth m",
-      show: isVisible,
+      isVisible: isVisible,
       Cell: NumberCell,
       Filter: NumberRangeColumnFilter,
       filter: "between"
     }, {
       Header: 'Operator',
+      id: 'Operator',
       accessor: "Current Owner",
-      show: isVisible,
+      isVisible: isVisible,
     }, {
       Header: 'Platform',
+      id: 'Platform',
       accessor: "Platform",
-      show: isVisible,
+      isVisible: isVisible,
     }, {
       Header: 'Well Status',
+      id: 'Well Status',
       accessor: 'Well Status',
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes',
     }, {
       Header: 'Suspended',
+      id: 'Suspended',
       accessor: 'Suspended',
       Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
       width: 90,
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     }, {
@@ -72,11 +82,12 @@ function WellTable() {
       id: 'Spud Date',
       accessor: row => (row["Spud Date"] ? new Date(row["Spud Date"]) : null),
       Cell: DateCell,
-      show: isVisible,
+      isVisible: isVisible,
       filter: "contains"
     }, {
       Header: 'Lat/Long',
-      show: isVisible,
+      id: 'Lat/Long',
+      isVisible: isVisible,
       accessor: row => {
         if (row.Lat && row.Long) {
           return `${row.Lat.toFixed(2)}/${row.Long.toFixed(2)}`;

@@ -124,18 +124,23 @@ export default function Table({ columns, data, history, location, filters, type,
         state,
         rows,
         totalColumnsWidth,
+        setHiddenColumns,
         prepareRow,
     } = useTable(
         {
             columns,
             data,
             defaultColumn,
-            initialState: { filters: filters },
+            initialState: { filters: filters, hiddenColumns:columns.filter(column => column.isVisible === false).map(column => column.id) },
         },
         useBlockLayout,
         useFilters,
         useSortBy
     );
+
+    useEffect(() =>{
+        setHiddenColumns(columns.filter(column => column.isVisible === false).map(column => column.id));
+    },[columns, setHiddenColumns]);
 
     useEffect(() => {
         onFiltersChange(state.filters);
@@ -243,7 +248,7 @@ export default function Table({ columns, data, history, location, filters, type,
                         <FixedSizeList
                             height={height}
                             itemCount={rows.length}
-                            itemSize={40}
+                            itemSize={50}
                             width={totalColumnsWidth}
                         >
                             {RenderRow}
@@ -260,12 +265,12 @@ export const ButtonBar = (props) => {
     return (
         <div className="button-bar">
             <i className="fas fa-arrow-left backbutton" onClick={() => props.back()}></i>
-            <div className="outward-handle" onClick={() => props.expand()}>
+            {props.expand &&<div className="outward-handle" onClick={() => props.expand()}>
                 <i className="fas fa-caret-right"></i>
-            </div>
-            <div className="outward-handle" onClick={() => props.collapse()}>
+            </div>}
+            {props.collapse &&<div className="outward-handle" onClick={() => props.collapse()}>
                 <i className="fas fa-caret-left"></i>
-            </div>
+            </div>}
         </div>)
 };
 

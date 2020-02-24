@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function WreckTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ wreckFilters, wrecks }, dispatch] = useStateValue();
   const data = useMemo(() => [...wrecks.values()], [wrecks])
   const history = useHistory();
@@ -13,18 +13,21 @@ function WreckTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Name',
+      id: 'Name',
       accessor: 'name',
       footer: "count"
     }, {
       Header: 'Wreck Type',
+      id: 'Wreck Type',
       accessor: 'Wreck Type',
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     }, {
       Header: 'Sounding',
+      id: 'Sounding',
       accessor: 'Sounding',
-      show: isVisible
+      isVisible: isVisible
     }],
     [isVisible]
   )

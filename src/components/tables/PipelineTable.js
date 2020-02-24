@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell, SelectColumnFilter } from './Table';
 
 function PipelineTable() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [{ pipelineFilters, pipelines }, dispatch] = useStateValue();
   const data = useMemo(() => [...pipelines.values()], [pipelines])
   const history = useHistory();
@@ -13,43 +13,49 @@ function PipelineTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Pipeline Name',
+      id: 'Pipeline Name',
       accessor: 'Pipeline Name',
       width:300,
       footer:"count"
     }, {
       Header: 'Pipeline DTI No',
+      id: 'Pipeline DTI No',
       accessor: 'Pipeline DTI No',
-      show: isVisible,
+      isVisible: isVisible,
     }, {
       Header: 'Status',
+      id: 'Status',
       accessor: "Status",
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes',
       minWidth: 150
     }, {
       Header: 'Fluid Conveyed',
+      id: 'Fluid Conveyed',
       accessor: "Fluid Conveyed",
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes',
       minWidth: 190
     }, {
       Header: 'Operator',
+      id: 'Operator',
       accessor: 'Operator',
-      show: isVisible
+      isVisible: isVisible
     }, {
       Header: 'Inst Type',
+      id: 'Inst Type',
       accessor: "Inst Type",
       Filter: SelectColumnFilter,
       filter: 'includes',
-      show: isVisible
+      isVisible: isVisible
     }, {
       Header: 'Diameter (mm)',
       id: 'Diameter',
       accessor: row => (row.Diameter || 0).toFixed(0),
       Cell: NumberCell,
-      show: isVisible,
+      isVisible: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
       width: 110
@@ -61,7 +67,7 @@ function PipelineTable() {
         return parseInt(lengthValue);
       },
       Cell: NumberCell,
-      show: isVisible,
+      isVisible: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
       footer:"sum"
@@ -70,17 +76,19 @@ function PipelineTable() {
       id: 'Start Date',
       accessor: row => (row["Start Date"] ? new Date(row["Start Date"]) : null),
       Cell: DateCell,
-      show: isVisible,
+      isVisible: isVisible,
       filter: "contains"
     }, {
       Header: 'From',
       accessor: 'Pipeline From',
-      show: isVisible,
+      id: 'Pipeline From',
+      isVisible: isVisible,
       minWidth: 200
     }, {
       Header: 'To',
       accessor: 'Pipeline To',
-      show: isVisible,
+      id: 'Pipeline To',
+      isVisible: isVisible,
       minWidth: 200
     }],
     [isVisible]
