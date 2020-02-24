@@ -13,62 +13,70 @@ function FieldTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Field Name',
+      id: 'Field Name',
       accessor: 'Field Name',
     }, {
       Header: 'Field Type',
       accessor: 'Field Type',
-      show: isVisible,
+      id: 'Field Type',
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     }, {
       Header: 'Field Status',
+      id: "Field Status",
       accessor: "Field Status",
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     }, {
       Header: 'Current Operator',
+      id: 'Current Operator',
       accessor: 'Current Operator',
-      show: isVisible,
+      isVisible: isVisible,
       minWidth: 260
     }, {
       Header: 'Depth (m)',
       id: 'Depth (m)',
       accessor: row => (row["Depth (m)"] || 0).toFixed(0),
       Cell: NumberCell,
-      show: isVisible,
+      isVisible: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
     }, {
       Header: 'Hydrocarbon Type',
+      id: 'Hydrocarbon Type',
       accessor: 'Hydrocarbon Type',
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     }, {
       Header: 'Current Licence',
+      id: 'Current Licence',
       accessor: 'Current Licence',
-      show: isVisible
+      isVisible: isVisible
     }, {
       Header: 'Discovery Date',
       accessor: row => (row["Discovery Date"] ? new Date(row["Discovery Date"]) : null),
       id: 'Discovery Date',
       Cell: DateCell,
-      show: isVisible
+      isVisible: isVisible
     }, {
       Header: 'Production Start Date',
       accessor: row => (row["Production Start Date"] ? new Date(row["Production Start Date"]) : null),
       id: 'Production Start Date',
       Cell: DateCell,
-      show: isVisible,
+      isVisible: isVisible,
     }, {
       Header: 'Discovery Well Name',
+      id: 'Discovery Well Name',
       accessor: 'Discovery Well Name',
-      show: isVisible
+      isVisible: isVisible
     }, {
       Header: 'Determination Status',
+      id: 'Determination Status',
       accessor: 'Determination Status',
-      show: isVisible
+      isVisible: isVisible
     }],
     [isVisible]
   )

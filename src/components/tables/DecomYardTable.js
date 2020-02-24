@@ -13,13 +13,14 @@ function DecomYardTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Name',
+      id: 'Name',
       accessor: 'Name',
       minWidth: 300
     }, {
       Header: 'Lat/Long',
       id: 'Lat/Long',
       accessor: row => (parseFloat(Math.round(row["Lat"] * 100) / 100).toFixed(2) + "/" + parseFloat(Math.round(row["Long"] * 100) / 100).toFixed(2)),
-      show: isVisible
+      isVisible: isVisible
     }],
     [isVisible]
   )

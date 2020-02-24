@@ -13,18 +13,21 @@ function WreckTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Name',
+      id: 'Name',
       accessor: 'name',
       footer: "count"
     }, {
       Header: 'Wreck Type',
+      id: 'Wreck Type',
       accessor: 'Wreck Type',
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     }, {
       Header: 'Sounding',
+      id: 'Sounding',
       accessor: 'Sounding',
-      show: isVisible
+      isVisible: isVisible
     }],
     [isVisible]
   )

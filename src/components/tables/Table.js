@@ -124,18 +124,23 @@ export default function Table({ columns, data, history, location, filters, type,
         state,
         rows,
         totalColumnsWidth,
+        setHiddenColumns,
         prepareRow,
     } = useTable(
         {
             columns,
             data,
             defaultColumn,
-            initialState: { filters: filters },
+            initialState: { filters: filters, hiddenColumns:columns.filter(column => column.isVisible === false).map(column => column.id) },
         },
         useBlockLayout,
         useFilters,
         useSortBy
     );
+
+    useEffect(() =>{
+        setHiddenColumns(columns.filter(column => column.isVisible === false).map(column => column.id));
+    },[columns, setHiddenColumns]);
 
     useEffect(() => {
         onFiltersChange(state.filters);

@@ -13,6 +13,7 @@ function WindfarmTable() {
   const columns = React.useMemo(
     () => [{
       Header: 'Name',
+      id: 'Name',
       accessor: 'Name',
       minWidth: 300,
       Cell: ({ cell: { value }, row: { original } }) => (
@@ -28,29 +29,34 @@ function WindfarmTable() {
       ),
     }, {
       Header: 'Description',
+      id: 'Description',
       accessor: 'Description',
-      show: isVisible
+      isVisible: isVisible
     }, {
       Header: 'Type',
+      id: 'Type',
       accessor: 'Type',
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     },
     {
       Header: 'Lease Type',
+      id: 'Lease Type',
       accessor: 'Lease Type',
-      show: isVisible,
+      isVisible: isVisible,
       Filter: SelectColumnFilter,
       filter: 'includes'
     }, {
       Header: 'Round',
+      id: 'Round',
       accessor: 'Round',
-      show: isVisible
+      isVisible: isVisible
     }, {
       Header: 'Status',
+      id: 'Status',
       accessor: 'Status',
-      show: isVisible,
+      isVisible: isVisible,
       width: 200,
       Cell: ({ cell: { value } }) => (
         <div className="scroll-cell">
