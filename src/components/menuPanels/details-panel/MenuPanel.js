@@ -56,13 +56,13 @@ const NavigationHeading = (props) => {
 
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
-    const [{ showInstallations, showDecomYards, showPipelines, showFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins }, dispatch] = useStateValue();
+    const [{ showInstallations, showPipelines, showFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
                 <aside className="menu-panel">
                     <NavigationHeading heading='Installations' url="installations" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleInstallations" }) }} on={showInstallations} className={'bathymetry-title'} />} />
-                    <NavigationHeading heading='Decom Yards' url="decomyards" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleDecomYards" }) }} on={showDecomYards} className={'bathymetry-title'} />} />
+                    {/* <NavigationHeading heading='Decom Yards' url="decomyards" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleDecomYards" }) }} on={showDecomYards} className={'bathymetry-title'} />} /> */}
                     <NavigationHeading heading='Pipelines' url="pipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "togglePipelines" }) }} on={showPipelines} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Windfarms' url="windfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWindfarms" }) }} on={showWindfarms} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Basins' url="basins" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBasins" }) }} on={showBasins} className={'bathymetry-title'} />} />
