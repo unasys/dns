@@ -1,21 +1,32 @@
 details {
-    &:not([open]){
-        border-bottom: 1px solid;
-        border-image: linear-gradient(90deg, rgba(59, 64, 82, 0) 0%, rgb(255, 255, 255) 33%, rgb(255, 255, 255) 66%, rgba(59, 64, 82,0) 100%) 1;
-    }
+    margin-bottom: 5px;
     summary {
         color: white;
         text-align: left;
         padding: 10px 20px;
+        padding-left: 30px;
         font-family: 'Roboto';
         cursor: pointer;
         outline:none;
         list-style: none;
         font-weight: 600;
         font-size: 16px;
-        background: rgba(#000000,0.5);
+        background: rgba(#000000,085);
+
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+
+        .summary-title {
+            width: 50%;
+        }
+
+        .summary-subtitle {
+            width: 50%;
+        }
     }
     summary::-webkit-details-marker{
         display: none;
     }
+
 }

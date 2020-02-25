@@ -24,7 +24,6 @@ function InstallationTable() {
             </div>
             <div className="table-installation-name">
               {value}
-              {original.ePMID && <img style={{ width: '25px', cursor: 'pointer', marginLeft: '5px' }} src="https://epm.unasys.com/icon.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${original.ePMID}/`, "_blank")} />}
             </div>
           </div>
         ),

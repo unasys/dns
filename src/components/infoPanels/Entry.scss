@@ -5,6 +5,7 @@ span {
 }
 
 .entry-container {
+    margin-left: 30px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -21,12 +22,14 @@ span {
     .entry {
         display: flex;
         color: white;
-        padding: 10px 20px;
+        padding: 10px 0px;
         margin-bottom: 5px;
-        background-image: linear-gradient(to right, white 33%, rgba(255, 255, 255, 0) 0%);
-        background-position: bottom;
-        background-size: 4px 1px;
-        background-repeat: repeat-x;
+        &:not(:last-child){
+            background-image: linear-gradient(to right, white 33%, rgba(255, 255, 255, 0) 0%);
+            background-position: bottom;
+            background-size: 4px 1px;
+            background-repeat: repeat-x;
+        }
 
         .entry-icon {
             padding-right: 10px;
@@ -34,17 +37,19 @@ span {
         }
 
         .entry-content {
+            width: 100%;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-direction: row;
 
             .entry-title {
                 font-size: 14px;
                 color: white;
+                width: 50%;
             }
 
             .entry-subtitle {
-                font-size: 12px;
+                font-size: 14px;
+                width: 50%;
             }
         }
     }

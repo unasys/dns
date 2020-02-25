@@ -7,9 +7,10 @@ import Entry from './Entry';
 function InstallationInfoPanel(props) {
     let titleBar = (
         <TitleBar
-            title={props.installation && props.installation.Name}
-            subtitle={"Operator " + (props.installation && props.installation.Operator)}
-            installationtype={props.installation && props.installation.FieldType}>
+            title={props.installation?.Name}
+            subtitle={props.installation?.Operator}
+            image={props.installation?.ImageID}
+            epm={props.installation?.ePMID}>
         </TitleBar>
     )
 
@@ -116,12 +117,9 @@ function InstallationInfoPanel(props) {
                     <Entry title={"Fuel"} subtitle={props.installation.Fuel} borderBottom></Entry>
                 </EntryContainer></>)
     }
-
-    const image = props.installation.ImageID ? props.installation.ImageID : "-1.jpg";
     return (
         <div>
-            {titleBar}
-            <img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />
+            {titleBar}       
             {doubleWidth}
         </div>
     );
