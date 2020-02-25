@@ -15,7 +15,7 @@ const DataDrivenValue = ({ value }) => {
     );
 }
 
-const DataDrivenHoverCard = ({ name, hoverDetails, position }) => {
+const DataDrivenHoverCard = ({ name, hoverDetails, position, image }) => {
     const detailContainers = hoverDetails.map(c => <div key={c.name} className="text-block-container">{c.values.map(v => <DataDrivenValue key={v.name} value={v} />)}</div>);
     return (
         <div className="hover-card" style={{ top: position.y, left: position.x }}>
@@ -24,6 +24,7 @@ const DataDrivenHoverCard = ({ name, hoverDetails, position }) => {
                     <div className="hover-card-heading">Name</div>
                     <div className="hover-card-value">{name}</div>
                 </div>
+                {image && <img className="hover-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />}
             </div>
 
             <div className="hover-card-body">

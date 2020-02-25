@@ -699,10 +699,12 @@ const setupAreas = async (areas) => {
         if (polygon) {
             if (rawEntity) {
                 try {
-                    polygon.material = window.Cesium.Color.fromCssColorString(rawEntity.Colour).withAlpha(0.8);
+                    const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
+                    polygon.material = colour.withAlpha(0.7);
+                    polygon.outlineColor = colour;
                 } catch (e) {
                 }
-                
+
             }
             var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
             window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
@@ -735,7 +737,9 @@ const setupBasins = async (basins) => {
         if (polygon) {
             if (rawEntity) {
                 try {
-                    polygon.material = window.Cesium.Color.fromCssColorString(rawEntity.Colour).withAlpha(0.8);
+                    const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
+                    polygon.material = colour.withAlpha(0.6);
+                    polygon.outlineColor = colour;
                 } catch (e) {
                 }
             }
