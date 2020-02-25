@@ -32,14 +32,20 @@ const initialState = {
     enableTerrain: false,
     globe3D: true,
     year: 2019,
+    radius:10,
     withInDistance: {
 
     }
 };
 
 const reducer = (state, action) => {
-
+    
     switch (action.type) {
+        case 'changeRadius':
+            return {
+                ...state,
+                radius: action.radius
+            }
         case 'setInstallations':
             return {
                 ...state,

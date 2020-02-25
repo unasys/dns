@@ -8,6 +8,22 @@
     width: 400px;
     height:24%;
     background: rgba(51,57,62, 0.95);
+    .radius{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 15px;
+        #outer-circle {
+            width:50px;
+            height:50px;
+            border-radius:50%;
+            background-color:#CE1126;
+            background-clip:content-box;
+            padding:10px;
+            border:10px solid #00247D;
+          }
+    }
 }
 
 .menu-panel {
