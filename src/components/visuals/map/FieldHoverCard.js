@@ -9,11 +9,11 @@ class FieldHoverCard extends Component {
         }
         
         return (
-            <div className="installation-hover-card" style={{top: this.props.position.y, left: this.props.position.x}}>
-                <div className="installation-hover-card-title">
-                    <div className="installation-text-value">
-                        <div className="installation-hover-card-heading">Name</div>
-                        <div className="installation-hover-card-value">{hoveredField["Field Name"]}</div>
+            <div className="hover-card" style={{top: this.props.position.y, left: this.props.position.x}}>
+                <div className="hover-card-title">
+                    <div className="hover-text-value">
+                        <div className="hover-card-heading">Name</div>
+                        <div className="hover-card-value">{hoveredField["Field Name"]}</div>
                     </div>
                 </div>
             </div>

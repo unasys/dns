@@ -1,62 +1,72 @@
-.installation-hover-card {
+.hover-card {
   position: absolute;
   z-index: 2;
-  width: 300px;
+  width: 400px;
   border: 1px solid grey;
   font-family: "Roboto", sans-serif;
   color: white;
-  background-color: rgba(65, 68, 80, 0.85);
+  background-color: rgba(51, 57, 62, 0.95);
 
-  .installation-text-value {
+  .hover-card-title {
     display: flex;
-    padding-right: 10px;
+    flex-direction: column;
+    padding: 10px 30px;
 
-    .installation-hover-card-heading {
-      padding-right: 7px;
-      font-weight: 200;
-    }
+    justify-content: space-between;
+    font-family: 'Roboto';
 
-    .installation-hover-card-value {
-      font-weight: 600;
+    .hover-text-value {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      color: white;
+      text-align: left;
+      border-bottom: 1px solid #fff;
+      margin-bottom: 2px;
+
+      .hover-card-heading {
+        font-size: 20px;
+        margin-bottom: 3px;
+      }
+
+      .hover-card-value {
+        font-size: 15px;
+        font-weight: 100;
+        color: rgb(212, 212, 212);
+        margin-bottom: 3px;
+
+      }
     }
   }
 
-  .installation-hover-card-title {
+  .hover-card-body {
+    margin-left: 30px;
     display: flex;
-    border-bottom: 1px solid grey;
-    padding-top: 5px;
-    padding-left: 20px;
-    margin-bottom: 5px;
-  }
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
 
-  .installation-hover-card-body {
-    padding: 0px 20px;
-
-    .image-block-container {
+    .hover-text-value {
       display: flex;
-      border-bottom: 1px dotted grey;
-      padding-bottom: 10px;
-
-      .image {
-        img {
-          width: 100px;
-          margin-top: 15px;
-          border-radius: 10px;
-        }
-      }
-
-      .text-block {
-        padding-left: 20px;
-        margin-top: 10px;
-      }
+        color: white;
+        padding: 10px 0px;
+        margin-bottom: 5px;
+      &:not(:last-child){
+        background-image: linear-gradient(to right, white 33%, rgba(255, 255, 255, 0) 0%);
+        background-position: bottom;
+        background-size: 4px 1px;
+        background-repeat: repeat-x;
+    }
+      .hover-card-heading {
+        font-size: 14px;
+        color: white;
+        width: 50%;
     }
 
-    .text-block-container {
-      display: flex;
-      flex-wrap: wrap;
-      border-bottom: 1px dotted grey;
-      padding-top: 10px;
-      padding-bottom: 10px;
+    .hover-card-value {
+        font-size: 14px;
+        width: 50%;
+    }
     }
   }
 }
