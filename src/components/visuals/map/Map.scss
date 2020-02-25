@@ -1,27 +1,27 @@
-.installation-hover-card {
+.hover-card {
   position: absolute;
   z-index: 2;
-  width: 300px;
+  width: 400px;
   border: 1px solid grey;
   font-family: "Roboto", sans-serif;
   color: white;
-  background-color: rgba(65, 68, 80, 0.85);
+  background-color: rgba(51,57,62, 0.95);
 
-  .installation-text-value {
+  .hover-text-value {
     display: flex;
     padding-right: 10px;
 
-    .installation-hover-card-heading {
+    .hover-card-heading {
       padding-right: 7px;
       font-weight: 200;
     }
 
-    .installation-hover-card-value {
+    .hover-card-value {
       font-weight: 600;
     }
   }
 
-  .installation-hover-card-title {
+  .hover-card-title {
     display: flex;
     border-bottom: 1px solid grey;
     padding-top: 5px;
@@ -29,7 +29,7 @@
     margin-bottom: 5px;
   }
 
-  .installation-hover-card-body {
+  .hover-card-body {
     padding: 0px 20px;
 
     .image-block-container {

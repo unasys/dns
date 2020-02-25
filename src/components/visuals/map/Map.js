@@ -692,7 +692,18 @@ const setupAreas = async (areas) => {
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
         let polygon = entity.polygon;
+        const rawEntity = areas.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+        }
         if (polygon) {
+            if (rawEntity) {
+                try {
+                    polygon.material = window.Cesium.Color.fromCssColorString(rawEntity.Colour).withAlpha(0.8);
+                } catch (e) {
+                }
+                
+            }
             var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
             window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
             entity.position = new window.Cesium.ConstantPositionProperty(center);
@@ -703,10 +714,6 @@ const setupAreas = async (areas) => {
             font: '12px sans-serif',
             scaleByDistance: scale
         });
-        const rawEntity = areas.get(entity.properties.id.getValue().toString());
-        if (rawEntity) {
-            entity.originalData = rawEntity;
-        }
     }
     return dataSource;
 }
@@ -720,8 +727,18 @@ const setupBasins = async (basins) => {
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
+        const rawEntity = basins.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+        }
         let polygon = entity.polygon;
         if (polygon) {
+            if (rawEntity) {
+                try {
+                    polygon.material = window.Cesium.Color.fromCssColorString(rawEntity.Colour).withAlpha(0.8);
+                } catch (e) {
+                }
+            }
             var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
             window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
             entity.position = new window.Cesium.ConstantPositionProperty(center);
@@ -733,10 +750,6 @@ const setupBasins = async (basins) => {
             font: '12px sans-serif',
             scaleByDistance: scale
         });
-        const rawEntity = basins.get(entity.properties.id.getValue().toString());
-        if (rawEntity) {
-            entity.originalData = rawEntity;
-        }
     }
     return dataSource;
 }
@@ -945,7 +958,7 @@ const CesiumMap = () => {
         const basins = viewer.dataSources.getByName("Basin");
         if (basins.length > 0) basins[0].show = showBasins;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks,showAreas, showBasins]);
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins]);
 
     useEffect(() => {
         if (viewer) {

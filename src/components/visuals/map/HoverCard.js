@@ -8,9 +8,9 @@ import SubsurfaceHoverCard from "./SubsurfaceHoverCard"
 
 const DataDrivenValue = ({ value }) => {
     return (
-        <div key={value.name} className="installation-text-value">
-            <div className="installation-hover-card-heading">{value.name}</div>
-            <div className="installation-hover-card-value">{value.values}</div>
+        <div key={value.name} className="hover-text-value">
+            <div className="hover-card-heading">{value.name}</div>
+            <div className="hover-card-value">{value.values}</div>
         </div>
     );
 }
@@ -18,15 +18,15 @@ const DataDrivenValue = ({ value }) => {
 const DataDrivenHoverCard = ({ name, hoverDetails, position }) => {
     const detailContainers = hoverDetails.map(c => <div key={c.name} className="text-block-container">{c.values.map(v => <DataDrivenValue key={v.name} value={v} />)}</div>);
     return (
-        <div className="installation-hover-card" style={{ top: position.y, left: position.x }}>
-            <div className="installation-hover-card-title">
-                <div className="installation-text-value">
-                    <div className="installation-hover-card-heading">Name</div>
-                    <div className="installation-hover-card-value">{name}</div>
+        <div className="hover-card" style={{ top: position.y, left: position.x }}>
+            <div className="hover-card-title">
+                <div className="hover-text-value">
+                    <div className="hover-card-heading">Name</div>
+                    <div className="hover-card-value">{name}</div>
                 </div>
             </div>
 
-            <div className="installation-hover-card-body">
+            <div className="hover-card-body">
                 {detailContainers}
             </div>
         </div>
