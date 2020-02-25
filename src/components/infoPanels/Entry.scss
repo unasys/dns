@@ -1,15 +1,8 @@
-span {
-    .entry {
-        width: 100%;
-    }
-}
-
 .entry-container {
-    margin-left: 30px;
+    margin: 0px 30px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    width: 100%;
 
     a {
         .entry {
@@ -24,7 +17,9 @@ span {
         color: white;
         padding: 10px 0px;
         margin-bottom: 5px;
-        &:not(:last-child){
+        height: 20px;
+
+        &:not(:last-child) {
             background-image: linear-gradient(to right, white 33%, rgba(255, 255, 255, 0) 0%);
             background-position: bottom;
             background-size: 4px 1px;
@@ -50,6 +45,8 @@ span {
             .entry-subtitle {
                 font-size: 14px;
                 width: 50%;
+                font-weight: 100;
+                color: rgb(212, 212, 212);
             }
         }
     }
