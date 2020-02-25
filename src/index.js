@@ -20,7 +20,7 @@ const initialState = {
     showInstallations: true,
     showPipelines: false,
     showWindfarms: true,
-    showDecomYards: true,
+    showDecomYards: false,
     showFields: false,
     showBlocks: false,
     showSubsurfaces: false,
