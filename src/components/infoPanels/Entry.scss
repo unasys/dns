@@ -15,9 +15,9 @@
     .entry {
         display: flex;
         color: white;
-        padding: 10px 0px;
+        padding: 5px 0px;
         margin-bottom: 5px;
-        height: 20px;
+        min-height: 25px;
 
         &:not(:last-child) {
             background-image: linear-gradient(to right, white 33%, rgba(255, 255, 255, 0) 0%);
@@ -35,6 +35,7 @@
             width: 100%;
             display: flex;
             flex-direction: row;
+            align-items: center;
 
             .entry-title {
                 font-size: 14px;
