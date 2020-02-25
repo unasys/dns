@@ -1,20 +1,36 @@
 .title-bar-container {
     display:flex;
-    padding: 10px 20px;
-    border-bottom: 1px solid #fff;
+    flex-direction: column;
+    padding: 10px 30px;
+    
     justify-content: space-between;
     font-family: 'Roboto';
-    .keane-title-container {
+    .titles {
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
         color:white;
         text-align:left;
+        border-bottom: 1px solid #fff;
         .main-title{
             font-size:20px;
+            margin-bottom: 3px;
         }
-        .keane-subtitle {
+        .main-subtitle {
             font-size:15px;
             font-weight:100;
             color:rgb(212, 212, 212);
+            margin-bottom: 3px;
+
         }
+        .project-icon{
+            cursor: pointer;
+            width: 20px;
+            margin-bottom: 3px;
+
+        }
+        margin-bottom: 2px;
+
     }
     .title-bar-icons {
         color:white;
