@@ -15,14 +15,14 @@ const DataDrivenValue = ({ value }) => {
     );
 }
 
-const DataDrivenHoverCard = ({ name, hoverDetails, position, image }) => {
+const DataDrivenHoverCard = ({ name, type, hoverDetails, position, image }) => {
     const detailContainers = hoverDetails.map(c => <div key={c.name} className="text-block-container">{c.values.map(v => <DataDrivenValue key={v.name} value={v} />)}</div>);
     return (
         <div className="hover-card" style={{ top: position.y, left: position.x }}>
             <div className="hover-card-title">
                 <div className="hover-text-value">
-                    <div className="hover-card-heading">Name</div>
-                    <div className="hover-card-value">{name}</div>
+                    <div className="hover-card-heading">{name}</div>
+                    <div className="hover-card-value">{type}</div>
                 </div>
                 {image && <img className="hover-image" src={`https://assets.digitalnorthsea.com/images/installations/${image}`} alt="overview-thumbnail" />}
             </div>
@@ -36,7 +36,7 @@ const DataDrivenHoverCard = ({ name, hoverDetails, position, image }) => {
 
 const HoverCard = (props) => {
     if (props.entity?.Hover) {
-        return <DataDrivenHoverCard position={props.position} hoverDetails={props.entity.Hover} name={props.entity.name} />
+        return <DataDrivenHoverCard position={props.position} type={props.type} hoverDetails={props.entity.Hover} name={props.entity.name} />
     }
 
     switch (props.type) {
