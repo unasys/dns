@@ -127,33 +127,11 @@ const flyHome = (viewer) => {
 
 const setupRadius = (viewer) => {
     viewer.entities.add({
-        id: "500M",
-        name: "500KM",
+        id: "SOI",
+        name: "SOI",
         ellipse: {
-            semiMinorAxis: 500,
-            semiMajorAxis: 500,
-            fill: true,
-            material: window.Cesium.Color.RED.withAlpha(0.5),
-            zIndex: 99
-        }
-    });
-    viewer.entities.add({
-        id: "5KM",
-        name: "5KM",
-        ellipse: {
-            semiMinorAxis: 5000,
-            semiMajorAxis: 5000,
-            fill: true,
-            material: window.Cesium.Color.YELLOW.withAlpha(0.4),
-            zIndex: 99
-        }
-    });
-    viewer.entities.add({
-        id: "25KM",
-        name: "25KM",
-        ellipse: {
-            semiMinorAxis: 25000,
-            semiMajorAxis: 25000,
+            semiMinorAxis: 10000,
+            semiMajorAxis: 10000,
             fill: true,
             material: window.Cesium.Color.GREEN.withAlpha(0.3),
             zIndex: 99
@@ -161,18 +139,25 @@ const setupRadius = (viewer) => {
     });
 }
 
+const changeRadiusSize = (viewer, size) => {
+    const radius = viewer.entities.getById("SOI");
+    if (radius) {
+        if (size === 0) {
+            radius.show = false;
+        } else {
+            radius.ellipse.semiMinorAxis = size;
+            radius.ellipse.semiMajorAxis = size;
+            radius.show = true;
+        }
+
+        viewer.scene.requestRender();
+    }
+}
+
 const moveRadius = (viewer, position) => {
-    const radius25KM = viewer.entities.getById("25KM");
-    const radius5KM = viewer.entities.getById("5KM");
-    const radius500M = viewer.entities.getById("500M");
-    if (radius500M) {
-        radius500M.position = position;
-    }
-    if (radius5KM) {
-        radius5KM.position = position;
-    }
-    if (radius25KM) {
-        radius25KM.position = position;
+    const radius = viewer.entities.getById("SOI");
+    if (radius) {
+        radius.position = position;
     }
     viewer.scene.requestRender();
 }
@@ -203,31 +188,33 @@ const nearestPosition = (entity, position) => {
     return entity.position.getValue();
 }
 
-const findEntitiesInRange = (viewer, position, dispatch) => {
-    const withIn500M = [];
-    const withIn5KM = [];
-    const withIn25KM = [];
-    for (let i = 0; i < viewer.dataSources.length; i++) {
-        const dataSource = viewer.dataSources.get(i);
-        dataSource.entities.values.forEach(entity => {
-            if (!entity.position || !entity.originalData) return;
-            const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(nearestPosition(entity, position));
-            const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
-            const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
-            const distance = ellipsoidGeodesic.surfaceDistance;
-            const distanceAbs = Math.abs(distance);
-            const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
-            if (distanceAbs <= 500) {
-                withIn500M.push(entityToAdd);
-            } else if (distanceAbs <= 5000) {
-                withIn5KM.push(entityToAdd);
-            } else if (distanceAbs <= 25000) {
-                withIn25KM.push(entityToAdd);
+const findEntitiesInRange = (viewer, radiusDistance, dispatch) => {
+    const radius = viewer.entities.getById("SOI");
+    if (radius) {
+        const position = radius.position?.getValue();
+        if (radiusDistance === 0 || !position) {
+            dispatch({ type: "clearWithIn" });
+        } else {
+            const withIn = [];
+            for (let i = 0; i < viewer.dataSources.length; i++) {
+                const dataSource = viewer.dataSources.get(i);
+                dataSource.entities.values.forEach(entity => {
+                    if (!entity.position || !entity.originalData) return;
+                    const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(nearestPosition(entity,position ));
+                    const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
+                    const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
+                    const distance = ellipsoidGeodesic.surfaceDistance;
+                    const distanceAbs = Math.abs(distance);
+                    const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
+                    if (distanceAbs <= radiusDistance) {
+                        withIn.push(entityToAdd);
+                    }
+                });
             }
-        });
-    }
 
-    dispatch({ type: "setRadius", withIn25KM: groupBy(withIn25KM, "type"), withIn5KM: groupBy(withIn5KM, "type"), withIn500M: groupBy(withIn500M, "type") });
+            dispatch({ type: "setWithIn", withIn: groupBy(withIn, "type") });
+        }
+    }
 }
 
 const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
@@ -491,8 +478,8 @@ const mapPipeline = (mapStyle, pipeline) => {
                     material: material,
                     width: scaledWidth,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
-                    zIndex: 50
-                    //clampToGround : true
+                    zIndex: 50,
+                    clampToGround : true
                 },
                 originalData: pipeline
             };
@@ -532,7 +519,7 @@ const setupWindfarms = async (windfarms) => {
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-        if(entity.polygon){
+        if (entity.polygon) {
             entity.polygon.zIndex = 40;
         }
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
@@ -623,7 +610,7 @@ const setupBlocks = async () => {
         let entity = p[i];
         let polygon = entity.polygon;
         if (polygon) {
-            polygon.zIndex= 30;
+            polygon.zIndex = 30;
             var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
             window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
             entity.position = new window.Cesium.ConstantPositionProperty(center);
@@ -711,13 +698,13 @@ const setupAreas = async (areas) => {
             entity.originalData = rawEntity;
         }
         if (polygon) {
-            polygon.zIndex= 1;
+            polygon.zIndex = 1;
             if (rawEntity) {
                 try {
                     const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
                     polygon.material = colour.withAlpha(0.7);
                     polygon.outlineColor = colour;
-                    
+
                 } catch (e) {
                 }
 
@@ -751,7 +738,7 @@ const setupBasins = async (basins) => {
         }
         let polygon = entity.polygon;
         if (polygon) {
-            polygon.zIndex= 20;
+            polygon.zIndex = 20;
             if (rawEntity) {
                 try {
                     const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
@@ -775,7 +762,7 @@ const setupBasins = async (basins) => {
     return dataSource;
 }
 
-const leftClick = (viewer, history, location, search, dispatch, e) => {
+const leftClick = (viewer, distance, history, location, search, dispatch, e) => {
     var position = viewer.camera.pickEllipsoid(e.position);
     var cartographicPosition = window.Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
     var y = cartographicPosition.latitude;
@@ -790,8 +777,9 @@ const leftClick = (viewer, history, location, search, dispatch, e) => {
         search.set("etype", type);
         history.push(location.pathname + `?${search.toString()}`);
     }
+
     moveRadius(viewer, pos);
-    findEntitiesInRange(viewer, pos, dispatch)
+    findEntitiesInRange(viewer, distance, dispatch)
 }
 
 let previousPickedEntity;
@@ -859,7 +847,7 @@ const CesiumMap = () => {
     const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces, wells, wrecks, areas, basins,
         showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, year,
         installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible,
-        mapStyle, enableTerrain, globe3D }, dispatch] = useStateValue();
+        mapStyle, enableTerrain, globe3D, radius }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -1020,9 +1008,16 @@ const CesiumMap = () => {
         if (!viewer) return;
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, history, location, search, dispatch, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, radius, history, location, search, dispatch, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    }, [viewer, history, location, search, dispatch]);
+    }, [viewer, history, location, search, radius, dispatch]);
+
+    useEffect(() => {
+        if (viewer) {
+            changeRadiusSize(viewer, radius);
+            findEntitiesInRange(viewer, radius, dispatch)
+        }
+    }, [viewer, radius, dispatch]);
 
     useEffect(() => {
         if (!viewer || installations.size === 0) return;

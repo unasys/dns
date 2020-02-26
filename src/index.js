@@ -32,19 +32,19 @@ const initialState = {
     enableTerrain: false,
     globe3D: true,
     year: 2019,
-    radius:10,
+    radius: 10000,
     withInDistance: {
 
     }
 };
 
 const reducer = (state, action) => {
-    
+
     switch (action.type) {
         case 'changeRadius':
             return {
                 ...state,
-                radius: action.radius
+                radius: action.radius*1000
             }
         case 'setInstallations':
             return {
@@ -277,10 +277,15 @@ const reducer = (state, action) => {
                 ...state,
                 mapStyle: action.mapStyle
             };
-        case "setRadius":
+        case "setWithIn":
             return {
                 ...state,
-                withInDistance: { "500M": action.withIn500M, "5KM": action.withIn5KM, "25KM": action.withIn25KM }
+                withInDistance: action.withIn
+            };
+        case "clearWithIn":
+            return {
+                ...state,
+                withInDistance: {}
             };
         default:
             return state;
