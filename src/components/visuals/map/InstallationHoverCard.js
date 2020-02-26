@@ -12,16 +12,12 @@ class InstallationHoverCard extends Component {
             <div className="hover-card" style={{ top: this.props.position.y, left: this.props.position.x }}>
                 <div className="hover-card-title">
                     <div className="hover-text-value">
-                        <div className="hover-card-heading">Field Type</div>
+                        <div className="hover-card-heading">{hoveredInstallation["Name"]}</div>
                         <div className="hover-card-value">{hoveredInstallation["FieldType"]}</div>
                     </div>
                     {hoveredInstallation["ImageID"] && <img className="hover-image" src={`https://assets.digitalnorthsea.com/images/installations/${hoveredInstallation["ImageID"]}`} alt="overview-thumbnail" />}
                 </div>
                 <div className="hover-card-body">
-                    <div className="hover-text-value">
-                        <div className="hover-card-heading">Installation Name</div>
-                        <div className="hover-card-value">{hoveredInstallation["Name"]}</div>
-                    </div>
                     <div className="hover-text-value">
                         <div className="hover-card-heading">Block Number</div>
                         <div className="hover-card-value">{hoveredInstallation["Block"]}</div>
