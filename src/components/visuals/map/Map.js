@@ -133,7 +133,8 @@ const setupRadius = (viewer) => {
             semiMinorAxis: 500,
             semiMajorAxis: 500,
             fill: true,
-            material: window.Cesium.Color.RED.withAlpha(0.5)
+            material: window.Cesium.Color.RED.withAlpha(0.5),
+            zIndex: 99
         }
     });
     viewer.entities.add({
@@ -143,7 +144,8 @@ const setupRadius = (viewer) => {
             semiMinorAxis: 5000,
             semiMajorAxis: 5000,
             fill: true,
-            material: window.Cesium.Color.YELLOW.withAlpha(0.4)
+            material: window.Cesium.Color.YELLOW.withAlpha(0.4),
+            zIndex: 99
         }
     });
     viewer.entities.add({
@@ -153,7 +155,8 @@ const setupRadius = (viewer) => {
             semiMinorAxis: 25000,
             semiMajorAxis: 25000,
             fill: true,
-            material: window.Cesium.Color.GREEN.withAlpha(0.3)
+            material: window.Cesium.Color.GREEN.withAlpha(0.3),
+            zIndex: 99
         }
     });
 }
@@ -286,7 +289,8 @@ const mapInstallation = (mapStyle, installation) => {
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: dynamicHeightReference
+        heightReference: dynamicHeightReference,
+        zIndex: 60
     };
 
     const label = {
@@ -301,7 +305,8 @@ const mapInstallation = (mapStyle, installation) => {
         horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
         heightReference: dynamicHeightReference,
-        scale: 0.65
+        scale: 0.65,
+        zIndex: 60
     };
 
     return {
@@ -329,7 +334,8 @@ const mapDecomyard = (decomyard) => {
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: dynamicHeightReference
+        heightReference: dynamicHeightReference,
+        zIndex: 60
     };
     const label = {
         text: decomyard.name,
@@ -341,7 +347,8 @@ const mapDecomyard = (decomyard) => {
         verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
         horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
-        heightReference: dynamicHeightReference
+        heightReference: dynamicHeightReference,
+        zIndex: 60
     };
     return {
         id: decomyard.id,
@@ -367,7 +374,8 @@ const mapSubsurface = (subsurface) => {
         eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
         distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
         translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: dynamicHeightReference
+        heightReference: dynamicHeightReference,
+        zIndex: 50
     };
 
     return {
@@ -483,6 +491,7 @@ const mapPipeline = (mapStyle, pipeline) => {
                     material: material,
                     width: scaledWidth,
                     distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0, scaledDistance),
+                    zIndex: 50
                     //clampToGround : true
                 },
                 originalData: pipeline
@@ -523,7 +532,9 @@ const setupWindfarms = async (windfarms) => {
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-
+        if(entity.polygon){
+            entity.polygon.zIndex = 40;
+        }
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
@@ -612,6 +623,7 @@ const setupBlocks = async () => {
         let entity = p[i];
         let polygon = entity.polygon;
         if (polygon) {
+            polygon.zIndex= 30;
             var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
             window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
             entity.position = new window.Cesium.ConstantPositionProperty(center);
@@ -642,7 +654,8 @@ const setupWells = async (wells) => {
                 color: window.Cesium.Color.BLACK,
                 distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                 translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                heightReference: dynamicHeightReference
+                heightReference: dynamicHeightReference,
+                zIndex: 50
             });
         }
 
@@ -670,7 +683,8 @@ const setupWrecks = async (wrecks) => {
                 color: window.Cesium.Color.SLATEGREY,
                 distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
                 translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                heightReference: dynamicHeightReference
+                heightReference: dynamicHeightReference,
+                zIndex: 50
             });
         }
         const rawEntity = wrecks.get(entity.properties.id.getValue().toString());
@@ -697,11 +711,13 @@ const setupAreas = async (areas) => {
             entity.originalData = rawEntity;
         }
         if (polygon) {
+            polygon.zIndex= 1;
             if (rawEntity) {
                 try {
                     const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
                     polygon.material = colour.withAlpha(0.7);
                     polygon.outlineColor = colour;
+                    
                 } catch (e) {
                 }
 
@@ -735,6 +751,7 @@ const setupBasins = async (basins) => {
         }
         let polygon = entity.polygon;
         if (polygon) {
+            polygon.zIndex= 20;
             if (rawEntity) {
                 try {
                     const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
