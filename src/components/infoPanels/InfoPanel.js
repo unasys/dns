@@ -32,25 +32,21 @@ function WithInDistance() {
     const [{ withInDistance, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins },] = useStateValue();
     const output = [];
     for (const p in withInDistance) {
-        const value = withInDistance[p];
-        for (const p2 in value) {
-            const entities = value[p2];
-            output.push(<EntryContainer open={false} key={`${p}${p2}`} title={`With In: ${p} : ${p2} (${entities.length.toLocaleString()})`} borderBottom>
-                {entities.map(e => {
-                    const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, p2);
-                    if (isClickable) {
-                        return (<Link key={`${e.entity.id}`} to={location => ({ ...location, search: `?etype=${p2}&eid=${e.entity.id}` })}>
-                            <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
-                        </Link>)
-                    } else {
-                        return (
-                            <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
-                        )
-                    }
-
-                })}
-            </EntryContainer>);
-        }
+        const entities = withInDistance[p];
+        output.push(<EntryContainer open={false} key={`${p}`} title={`${p}  (${entities.length.toLocaleString()})`} borderBottom>
+            {entities.map(e => {
+                const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, p);
+                if (isClickable) {
+                    return (<Link key={`${e.entity.id}`} to={location => ({ ...location, search: `?etype=${p}&eid=${e.entity.id}` })}>
+                        <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
+                    </Link>)
+                } else {
+                    return (
+                        <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
+                    )
+                }
+            })}
+        </EntryContainer>);
     }
 
     return (
@@ -145,14 +141,14 @@ function InfoPanel() {
                     <div className="dns-content">
                         <div className="radius">
                             <svg viewBox="0 0 10 10" width="60px">
-                                <circle cx="5" cy="5" r="4" stroke-width="1.5" stroke="#fff" fill="#fff" fill-opacity="0.0" />
+                                <circle cx="5" cy="5" r="4" strokeWidth="1.5" stroke="#fff" fill="#fff" fillOpacity="0.0" />
                                 <circle cx="5" cy="5" r="2" fill="#61626c" />
                             </svg>
                             <Slider min={0} max={30} marks={marks} defaultValue={10} onChange={e => dispatch({ type: "changeRadius", radius: e })}
                                 railStyle={{ backgroundColor: '#61626c' }}
-                                trackStyle={{ backgroundColor: '#fff'}}
-                                dotStyle={{display: 'none'}}
-                                activeDotStyle={{display: 'none'}}
+                                trackStyle={{ backgroundColor: '#fff' }}
+                                dotStyle={{ display: 'none' }}
+                                activeDotStyle={{ display: 'none' }}
                                 handleStyle={{
                                     borderColor: '#fff',
                                     backgroundColor: 'green'
