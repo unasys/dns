@@ -20,7 +20,7 @@ const initialState = {
     showInstallations: true,
     showPipelines: false,
     showWindfarms: true,
-    showDecomYards: true,
+    showDecomYards: false,
     showFields: false,
     showBlocks: false,
     showSubsurfaces: false,
@@ -32,14 +32,20 @@ const initialState = {
     enableTerrain: false,
     globe3D: true,
     year: 2019,
+    radius:10,
     withInDistance: {
 
     }
 };
 
 const reducer = (state, action) => {
-
+    
     switch (action.type) {
+        case 'changeRadius':
+            return {
+                ...state,
+                radius: action.radius
+            }
         case 'setInstallations':
             return {
                 ...state,

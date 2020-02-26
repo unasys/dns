@@ -11,11 +11,12 @@ details {
         list-style: none;
         font-weight: 600;
         font-size: 16px;
-        background: rgba(#000000,085);
+        background: rgba(18,22,27,085);
 
         width: 100%;
         display: flex;
         flex-direction: row;
+        align-items: center;
 
         .summary-title {
             width: 50%;

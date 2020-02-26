@@ -9,6 +9,7 @@ import Handle from '../handle/Handle';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
 import TitleBar from './TitleBar';
+import Slider from 'rc-slider';
 
 function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, collection) {
     switch (collection) {
@@ -95,12 +96,12 @@ function choosePanel(installations, areas, eType, entity) {
 }
 
 
-function DataDriveInfoPanel({ name, type, details, image,epm }) {
+function DataDriveInfoPanel({ name, type, details, image, epm }) {
     return (
         <div>
             <TitleBar title={name} subtitle={type} image={image} epm={epm} />
 
-            {details.map(d => (<EntryContainer key={d.name} title={d.name} subtitle={d.value}  open={d.expaned ?? false} borderBottom>
+            {details.map(d => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
                 {d.values.map(v => (<Entry key={v.name} title={v.name} subtitle={v.values} type={v.type} borderBottom />))}
 
             </EntryContainer>))}
@@ -108,8 +109,19 @@ function DataDriveInfoPanel({ name, type, details, image,epm }) {
     );
 }
 
+const marks = {
+    0: 0,
+    5: 5,
+    10: 10,
+    15: 15,
+    20: 20,
+    25: 25,
+    30: 30
+};
+
+
 function InfoPanel() {
-    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins },] = useStateValue();
+    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
@@ -131,6 +143,21 @@ function InfoPanel() {
                 </aside>
                 <aside className="nearby">
                     <div className="dns-content">
+                        <div className="radius">
+                            <svg viewBox="0 0 10 10" width="60px">
+                                <circle cx="5" cy="5" r="4" stroke-width="1.5" stroke="#fff" fill="#fff" fill-opacity="0.0" />
+                                <circle cx="5" cy="5" r="2" fill="#61626c" />
+                            </svg>
+                            <Slider min={0} max={30} marks={marks} defaultValue={10} onChange={e => dispatch({ type: "changeRadius", radius: e })}
+                                railStyle={{ backgroundColor: '#61626c' }}
+                                trackStyle={{ backgroundColor: '#fff'}}
+                                dotStyle={{display: 'none'}}
+                                activeDotStyle={{display: 'none'}}
+                                handleStyle={{
+                                    borderColor: '#fff',
+                                    backgroundColor: 'green'
+                                }}></Slider>
+                        </div>
                         <WithInDistance />
                     </div>
                 </aside>
