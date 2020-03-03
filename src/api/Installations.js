@@ -38,11 +38,11 @@ export async function fetchPipelines() {
     const data = await response.json();
     data.forEach(entity => {
         if (!entity.id) {
-            entity.id = entity["Pipeline Id"];
+            entity.id = entity.pipeline_id;
         }
-
+console.log(entity.id);
         if (!entity.name) {
-            entity.name = entity["Pipeline Name"];
+            entity.name = entity["pipeline_name"];
         }
     });
     return data;
