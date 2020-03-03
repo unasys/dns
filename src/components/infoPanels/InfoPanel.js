@@ -2,7 +2,6 @@ import React, { useState, } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
 import InstallationInfoPanel from './InstallationInfoPanel';
-import PipelineInfoPanel from './PipelineInfoPanel';
 import AreaInfoPanel from './AreaInfoPanel';
 import './Panels.scss'
 import Handle from '../handle/Handle';
@@ -80,7 +79,6 @@ function choosePanel(installations, areas, eType, entity) {
     } else {
         switch (eType) {
             case "Installation": return <InstallationInfoPanel installation={entity} />;
-            case "Pipeline": return <PipelineInfoPanel pipeline={entity} />;
             case "Area": return <AreaInfoPanel installations={installations} area={entity} />;
             case "Field":
             case "DecomYard":
