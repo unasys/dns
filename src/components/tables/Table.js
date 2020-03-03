@@ -171,7 +171,7 @@ export default function Table({ columns, data, history, location, filters, type,
                     {...row.getRowProps({
                         style,
                     })}
-                    className={"tr" + (row.original.id.toString() === search.get("eid") ? " highlighted" : "")}
+                    className={"tr" + (row.original?.id?.toString() === search.get("eid") ? " highlighted" : "")}
                     onClick={rowClick} >
                     {row.cells.map(cell => {
                         return (

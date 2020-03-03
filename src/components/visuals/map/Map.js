@@ -200,7 +200,7 @@ const findEntitiesInRange = (viewer, radiusDistance, dispatch) => {
                 const dataSource = viewer.dataSources.get(i);
                 dataSource.entities.values.forEach(entity => {
                     if (!entity.position || !entity.originalData) return;
-                    const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(nearestPosition(entity,position ));
+                    const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(nearestPosition(entity, position));
                     const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
                     const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
                     const distance = ellipsoidGeodesic.surfaceDistance;
@@ -425,33 +425,33 @@ const updateInstallationStyle = (mapStyle, installations) => {
 const setupPipelines = async (pipelines) => {
     const minDiameter = 0;
     const maxDiameter = 1058;
-    const features = [...pipelines.values()].map(windfarm => ({ type: "Feature", id: windfarm.id, name: windfarm.name, geometry: windfarm.Geometry, properties: { id: windfarm.id } }));
+    const features = [...pipelines.values()].map(pipeline => ({ type: "Feature", id: pipeline.id, name: pipeline.name, geometry: pipeline.Geometry, properties: { id: pipeline.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
     let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
     dataSource.name = "Pipeline";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-        const rawEntity = pipelines.get(entity.properties.id.getValue().toString());
+        const rawEntity = pipelines.get(entity.properties.id?.getValue()?.toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
-        }
-        
-        let start = rawEntity["start_date"];
-        if (start) {
-            start = window.Cesium.JulianDate.fromDate(new Date(start));
-        }
-        else {
-            start = window.Cesium.JulianDate.fromDate(new Date("1901"));
-        }
-        let end = rawEntity["end_date"];
-        if (end) {
-            end = window.Cesium.JulianDate.fromDate(new Date(end));
-        }
-        else {
+
+
+            let start = rawEntity["start_date"];
+            if (start) {
+                start = window.Cesium.JulianDate.fromDate(new Date(start));
+            }
+            else {
+                start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+            }
+            let end = rawEntity["end_date"];
+            if (end) {
+                end = window.Cesium.JulianDate.fromDate(new Date(end));
+            }
+            else {
                 end = window.Cesium.JulianDate.fromDate(new Date("2500"));
             }
-            
+
             if (start || end) {
                 const interval = new window.Cesium.TimeInterval({
                     start: start,
@@ -461,20 +461,23 @@ const setupPipelines = async (pipelines) => {
                 });
                 entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
             }
-            
+
             const pipeDiameter = parseInt(rawEntity.diameter_value) || 0
-            
+
             const scaledWidth = scaleBetween(pipeDiameter, 0.5, 1, minDiameter, maxDiameter);
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
-            if (entity.polygon) {
-                entity.polygon.material= pipelineColoursSimple.default;
-                entity.polygon.width= scaledWidth;
-                entity.polygon.distanceDisplayCondition= new window.Cesium.DistanceDisplayCondition(0, scaledDistance);
-                entity.polygon.zIndex= 50;
+
+            if (entity.polyline) {
+                entity.polyline.material = getPipelineColour("", rawEntity);
+                entity.polyline.width = scaledWidth;
+                entity.polyline.distanceDisplayCondition = new window.Cesium.DistanceDisplayCondition(0, scaledDistance);
+                entity.polyline.zIndex = 50;
+                entity.polyline.clampToGround = true;
             }
-            
         }
-        return dataSource;
+
+    }
+    return dataSource;
 }
 
 const setupWindfarms = async (windfarms) => {
@@ -1004,7 +1007,7 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || pipelines.size === 0) return;
         async function loadPipelines() {
-            const dataSource = await setupPipelines(wells);
+            const dataSource = await setupPipelines(pipelines);
             dataSource.show = showPipelines;
             viewer.dataSources.add(dataSource);
         }

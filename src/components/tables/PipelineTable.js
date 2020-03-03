@@ -6,7 +6,8 @@ import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell, Select
 function PipelineTable() {
   const [isVisible, setIsVisible] = useState(false);
   const [{ pipelineFilters, pipelines }, dispatch] = useStateValue();
-  const data = useMemo(() => [...pipelines.values()], [pipelines])
+  const data = useMemo(() => [...pipelines.values()], [pipelines]);
+  
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
