@@ -514,56 +514,54 @@ const getFieldColour = (field) => {
     return colour;
 }
 
-const mapField = (field) => {
-    if (field.Coordinates) {
-        let start = field["Discovery Date"];
-        let end;;
+const setupFields = async (fields) => {
+    const features = [...fields.values()].map(field => ({ type: "Feature", id: field.id, name: field.name, geometry: field.Geometry, properties: { id: field.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "Field";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        if (entity.polygon) {
+            entity.polygon.zIndex = 30;
+        }
+        const rawEntity = fields.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+            if (entity.polygon) {
+                let start = rawEntity["Discovery Date"];
+                let end;
 
-        if (start) {
-            start = window.Cesium.JulianDate.fromDate(new Date(start));
-        }
-        else {
-            start = window.Cesium.JulianDate.fromDate(new Date("1901"));
-        }
+                if (start) {
+                    start = window.Cesium.JulianDate.fromDate(new Date(start));
+                }
+                else {
+                    start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+                }
 
-        if (end) {
-            end = window.Cesium.JulianDate.fromDate(new Date(end));
-        }
-        else {
-            end = window.Cesium.JulianDate.fromDate(new Date("2500"));
-        }
+                if (end) {
+                    end = window.Cesium.JulianDate.fromDate(new Date(end));
+                }
+                else {
+                    end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+                }
 
-        let availability = null;
-        if (start || end) {
-            const interval = new window.Cesium.TimeInterval({
-                start: start,
-                stop: end,
-                isStartIncluded: start !== null,
-                isStopIncluded: end !== null
-            });
-            availability = new window.Cesium.TimeIntervalCollection([interval]);
-        }
+                if (start || end) {
+                    const interval = new window.Cesium.TimeInterval({
+                        start: start,
+                        stop: end,
+                        isStartIncluded: start !== null,
+                        isStopIncluded: end !== null
+                    });
+                    entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
+                }
 
-        const material = getFieldColour(field);
-        const flatCoordinates = field.Coordinates.flat();
-        return {
-            id: field.id,
-            name: field.name,
-            availability: availability,
-            polygon: {
-                hierarchy: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                height: 0,
-                material: material,
-                heightReference: dynamicHeightReference,
-            },
-            originalData: field
-        };
+                const material = getFieldColour(rawEntity);
+                entity.polygon.material = material;
+                entity.polygon.outline = false;
+            }
+        }
     }
-}
-
-const setupFields = (fields) => {
-    const dataSource = new window.Cesium.CustomDataSource("Field");
-    fields.forEach(i => dataSource.entities.add(mapField(i)));
     return dataSource;
 }
 
@@ -1025,9 +1023,12 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer || fields.size === 0) return;
-        const dataSource = setupFields(fields);
-        dataSource.show = showFields;
-        viewer.dataSources.add(dataSource);
+        async function loadFields() {
+            const dataSource = await setupFields(fields);
+            dataSource.show = showFields;
+            viewer.dataSources.add(dataSource);
+        }
+        loadFields();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, fields]);
 
