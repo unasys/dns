@@ -290,7 +290,7 @@ const mapInstallation = (mapStyle, installation) => {
         pixelOffset: new window.Cesium.Cartesian2(25, 0),
         verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
         horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 300000),
         heightReference: dynamicHeightReference,
         scale: 0.65,
         zIndex: 60
@@ -464,12 +464,12 @@ const setupPipelines = async (pipelines) => {
 
             const pipeDiameter = parseInt(rawEntity.diameter_value) || 0
 
-            const scaledWidth = scaleBetween(pipeDiameter, 0.5, 1, minDiameter, maxDiameter);
+            //const scaledWidth = scaleBetween(pipeDiameter, 0.5, 1, minDiameter, maxDiameter);
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
 
             if (entity.polyline) {
-                entity.polyline.material = getPipelineColour("", rawEntity);
-                entity.polyline.width = scaledWidth;
+                entity.polyline.material = getPipelineColour("satellite", rawEntity);
+                entity.polyline.width = 2;
                 entity.polyline.distanceDisplayCondition = new window.Cesium.DistanceDisplayCondition(0, scaledDistance);
                 entity.polyline.zIndex = 50;
                 entity.polyline.clampToGround = true;
