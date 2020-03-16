@@ -54,7 +54,7 @@ function WithInDistance() {
         </>
     );
 }
-function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, eType, eId) {
+function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins,fields, eType, eId) {
     switch (eType) {
         case "Installation": return installations.get(eId);
         case "Pipeline": return pipelines.get(eId);
@@ -63,7 +63,7 @@ function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, ba
         case "Basin": return basins.get(eId);
         case "Well": return wells.get(eId);
         case "Wreck": return wrecks.get(eId);
-        case "Field":
+        case "Field":return fields.get(eId);
         case "DecomYard":
         default:
             return null;
@@ -80,7 +80,6 @@ function choosePanel(installations, areas, eType, entity) {
         switch (eType) {
             case "Installation": return <InstallationInfoPanel installation={entity} />;
             case "Area": return <AreaInfoPanel installations={installations} area={entity} />;
-            case "Field":
             case "DecomYard":
             default:
                 const northSea = areas.get("North Sea");
@@ -96,7 +95,7 @@ function DataDriveInfoPanel({ name, type, details, image, epm }) {
             <TitleBar title={name} subtitle={type} image={image} epm={epm} />
 
             {details.map(d => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
-                {d.values.map(v => (<Entry key={v.name} title={v.name} subtitle={v.values} type={v.type} borderBottom />))}
+                {d.values.map(v => (<Entry key={v.name} title={v.name} subtitle={v.values??v.value} type={v.type} borderBottom />))}
 
             </EntryContainer>))}
         </div>
@@ -115,14 +114,14 @@ const marks = {
 
 
 function InfoPanel() {
-    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins }, dispatch] = useStateValue();
+    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins, fields }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
     const eid = search.get("eid");
     const etype = search.get("etype");
 
-    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, etype, eid);
+    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins,fields, etype, eid);
     let panel = choosePanel(installations, areas, etype, entity);
 
     return (

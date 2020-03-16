@@ -290,7 +290,7 @@ const mapInstallation = (mapStyle, installation) => {
         pixelOffset: new window.Cesium.Cartesian2(25, 0),
         verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
         horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 700000),
+        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 300000),
         heightReference: dynamicHeightReference,
         scale: 0.65,
         zIndex: 60
@@ -307,9 +307,83 @@ const mapInstallation = (mapStyle, installation) => {
     }
 }
 
-const setupInstallations = (mapStyle, installations) => {
-    const dataSource = new window.Cesium.CustomDataSource("Installation");
-    installations.forEach(i => dataSource.entities.add(mapInstallation(mapStyle, i)));
+// const setupInstallations = (mapStyle, installations) => {
+//     const dataSource = new window.Cesium.CustomDataSource("Installation");
+//     installations.forEach(i => dataSource.entities.add(mapInstallation(mapStyle, i)));
+//     return dataSource;
+// }
+
+const setupInstallations = async (installations) => {
+    const features = [...installations.values()].map(installation => ({ type: "Feature", id: installation.id, name: installation.name, geometry: installation.Geometry, properties: { id: installation.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "Installation";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        const rawEntity = installations.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+            if (entity.billboard) {
+                entity.billboard = undefined;
+
+                let start = rawEntity.StartDate;
+                let end = rawEntity.PlannedCOP;
+
+                if (start) {
+                    start = window.Cesium.JulianDate.fromDate(new Date(start));
+                }
+                else {
+                    start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+                }
+
+                if (end) {
+                    end = window.Cesium.JulianDate.fromDate(new Date(end));
+                }
+                else {
+                    end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+                }
+
+                if (start || end) {
+                    const interval = new window.Cesium.TimeInterval({
+                        start: start,
+                        stop: end,
+                        isStartIncluded: start !== null,
+                        isStopIncluded: end !== null
+                    });
+                    entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
+                }
+
+                entity.point = {
+                    pixelSize: 4,
+                    color: getInstallationColour("", rawEntity),
+                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                    heightReference: dynamicHeightReference,
+                    zIndex: 60
+                };
+
+                entity.label = {
+                    text: rawEntity.name,
+                    font: "20px Arial Narrow",
+                    fillColor: window.Cesium.Color.WHITE,
+                    style: window.Cesium.LabelStyle.FILL,
+                    outlineColor: window.Cesium.Color.BLACK,
+                    outlineWidth: 1.5,
+                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
+                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 300000),
+                    heightReference: dynamicHeightReference,
+                    scale: 0.65,
+                    zIndex: 60
+                };
+            }
+
+        }
+
+    }
     return dataSource;
 }
 
@@ -464,12 +538,12 @@ const setupPipelines = async (pipelines) => {
 
             const pipeDiameter = parseInt(rawEntity.diameter_value) || 0
 
-            const scaledWidth = scaleBetween(pipeDiameter, 0.5, 1, minDiameter, maxDiameter);
+            //const scaledWidth = scaleBetween(pipeDiameter, 0.5, 1, minDiameter, maxDiameter);
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
 
             if (entity.polyline) {
-                entity.polyline.material = getPipelineColour("", rawEntity);
-                entity.polyline.width = scaledWidth;
+                entity.polyline.material = getPipelineColour("satellite", rawEntity);
+                entity.polyline.width = 2;
                 entity.polyline.distanceDisplayCondition = new window.Cesium.DistanceDisplayCondition(0, scaledDistance);
                 entity.polyline.zIndex = 50;
                 entity.polyline.clampToGround = true;
@@ -514,56 +588,54 @@ const getFieldColour = (field) => {
     return colour;
 }
 
-const mapField = (field) => {
-    if (field.Coordinates) {
-        let start = field["Discovery Date"];
-        let end;;
+const setupFields = async (fields) => {
+    const features = [...fields.values()].map(field => ({ type: "Feature", id: field.id, name: field.name, geometry: field.Geometry, properties: { id: field.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "Field";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        if (entity.polygon) {
+            entity.polygon.zIndex = 30;
+        }
+        const rawEntity = fields.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+            if (entity.polygon) {
+                let start = rawEntity["Discovery Date"];
+                let end;
 
-        if (start) {
-            start = window.Cesium.JulianDate.fromDate(new Date(start));
-        }
-        else {
-            start = window.Cesium.JulianDate.fromDate(new Date("1901"));
-        }
+                if (start) {
+                    start = window.Cesium.JulianDate.fromDate(new Date(start));
+                }
+                else {
+                    start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+                }
 
-        if (end) {
-            end = window.Cesium.JulianDate.fromDate(new Date(end));
-        }
-        else {
-            end = window.Cesium.JulianDate.fromDate(new Date("2500"));
-        }
+                if (end) {
+                    end = window.Cesium.JulianDate.fromDate(new Date(end));
+                }
+                else {
+                    end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+                }
 
-        let availability = null;
-        if (start || end) {
-            const interval = new window.Cesium.TimeInterval({
-                start: start,
-                stop: end,
-                isStartIncluded: start !== null,
-                isStopIncluded: end !== null
-            });
-            availability = new window.Cesium.TimeIntervalCollection([interval]);
-        }
+                if (start || end) {
+                    const interval = new window.Cesium.TimeInterval({
+                        start: start,
+                        stop: end,
+                        isStartIncluded: start !== null,
+                        isStopIncluded: end !== null
+                    });
+                    entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
+                }
 
-        const material = getFieldColour(field);
-        const flatCoordinates = field.Coordinates.flat();
-        return {
-            id: field.id,
-            name: field.name,
-            availability: availability,
-            polygon: {
-                hierarchy: window.Cesium.Cartesian3.fromDegreesArray(flatCoordinates),
-                height: 0,
-                material: material,
-                heightReference: dynamicHeightReference,
-            },
-            originalData: field
-        };
+                const material = getFieldColour(rawEntity);
+                entity.polygon.material = material;
+                entity.polygon.outline = false;
+            }
+        }
     }
-}
-
-const setupFields = (fields) => {
-    const dataSource = new window.Cesium.CustomDataSource("Field");
-    fields.forEach(i => dataSource.entities.add(mapField(i)));
     return dataSource;
 }
 
@@ -990,9 +1062,12 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer || installations.size === 0) return;
-        const dataSource = setupInstallations(mapStyle, installations);
-        dataSource.show = showInstallations;
-        viewer.dataSources.add(dataSource);
+        async function loadInstallations() {
+            const dataSource = await setupInstallations(installations);
+            dataSource.show = showInstallations;
+            viewer.dataSources.add(dataSource);
+        }
+        loadInstallations();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, installations]);
 
@@ -1025,9 +1100,12 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer || fields.size === 0) return;
-        const dataSource = setupFields(fields);
-        dataSource.show = showFields;
-        viewer.dataSources.add(dataSource);
+        async function loadFields() {
+            const dataSource = await setupFields(fields);
+            dataSource.show = showFields;
+            viewer.dataSources.add(dataSource);
+        }
+        loadFields();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, fields]);
 

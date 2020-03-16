@@ -69,7 +69,7 @@ export async function fetchFields() {
     const data = await response.json();
     data.forEach(entity => {
         if (!entity.id) {
-            entity.id = entity.ShapeObjectId;
+            entity.id = entity.GID;
         }
 
         if (!entity.name) {
