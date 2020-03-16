@@ -8,7 +8,7 @@ const DataDrivenValue = ({ value }) => {
     return (
         <div key={value.name} className="hover-text-value">
             <div className="hover-card-heading">{value.name}</div>
-            <div className="hover-card-value">{value.values}</div>
+            <div className="hover-card-value">{value.values??value.value}</div>
         </div>
     );
 }

@@ -95,7 +95,7 @@ function DataDriveInfoPanel({ name, type, details, image, epm }) {
             <TitleBar title={name} subtitle={type} image={image} epm={epm} />
 
             {details.map(d => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
-                {d.values.map(v => (<Entry key={v.name} title={v.name} subtitle={v.values} type={v.type} borderBottom />))}
+                {d.values.map(v => (<Entry key={v.name} title={v.name} subtitle={v.values??v.value} type={v.type} borderBottom />))}
 
             </EntryContainer>))}
         </div>

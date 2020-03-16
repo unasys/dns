@@ -307,9 +307,83 @@ const mapInstallation = (mapStyle, installation) => {
     }
 }
 
-const setupInstallations = (mapStyle, installations) => {
-    const dataSource = new window.Cesium.CustomDataSource("Installation");
-    installations.forEach(i => dataSource.entities.add(mapInstallation(mapStyle, i)));
+// const setupInstallations = (mapStyle, installations) => {
+//     const dataSource = new window.Cesium.CustomDataSource("Installation");
+//     installations.forEach(i => dataSource.entities.add(mapInstallation(mapStyle, i)));
+//     return dataSource;
+// }
+
+const setupInstallations = async (installations) => {
+    const features = [...installations.values()].map(installation => ({ type: "Feature", id: installation.id, name: installation.name, geometry: installation.Geometry, properties: { id: installation.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "Installation";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        const rawEntity = installations.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+            if (entity.billboard) {
+                entity.billboard = undefined;
+
+                let start = rawEntity.StartDate;
+                let end = rawEntity.PlannedCOP;
+
+                if (start) {
+                    start = window.Cesium.JulianDate.fromDate(new Date(start));
+                }
+                else {
+                    start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+                }
+
+                if (end) {
+                    end = window.Cesium.JulianDate.fromDate(new Date(end));
+                }
+                else {
+                    end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+                }
+
+                if (start || end) {
+                    const interval = new window.Cesium.TimeInterval({
+                        start: start,
+                        stop: end,
+                        isStartIncluded: start !== null,
+                        isStopIncluded: end !== null
+                    });
+                    entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
+                }
+
+                entity.point = {
+                    pixelSize: 4,
+                    color: getInstallationColour("", rawEntity),
+                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                    heightReference: dynamicHeightReference,
+                    zIndex: 60
+                };
+
+                entity.label = {
+                    text: rawEntity.name,
+                    font: "20px Arial Narrow",
+                    fillColor: window.Cesium.Color.WHITE,
+                    style: window.Cesium.LabelStyle.FILL,
+                    outlineColor: window.Cesium.Color.BLACK,
+                    outlineWidth: 1.5,
+                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
+                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 300000),
+                    heightReference: dynamicHeightReference,
+                    scale: 0.65,
+                    zIndex: 60
+                };
+            }
+
+        }
+
+    }
     return dataSource;
 }
 
@@ -988,9 +1062,12 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer || installations.size === 0) return;
-        const dataSource = setupInstallations(mapStyle, installations);
-        dataSource.show = showInstallations;
-        viewer.dataSources.add(dataSource);
+        async function loadInstallations() {
+            const dataSource = await setupInstallations(installations);
+            dataSource.show = showInstallations;
+            viewer.dataSources.add(dataSource);
+        }
+        loadInstallations();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, installations]);
 

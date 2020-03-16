@@ -3,6 +3,9 @@ import React from 'react';
 
 function Entry(props) {
     let content = null;
+    if(Array.isArray (props.subtitle)){
+        content = props.subtitle.map(v => <Entry key={v.name} title={v.name} subtitle={v.values??v.value} type={v.type} borderBottom />);
+    } else {
     switch (props.type) {
         case "url":
             content = <a target="_blank" rel="noopener noreferrer" href={props.subtitle}>{props.subtitle}</a>
@@ -11,6 +14,7 @@ function Entry(props) {
             content = props.subtitle;
             break;
     }
+}
     return (
         <div className="entry">
             {props.icon &&
