@@ -11,6 +11,17 @@ function InstallationTable() {
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
+  let localFilters = [];
+  const areaIdFilter = search.get("areaId");
+  const basinIdFilter = search.get("basinId");
+  const typeIdFilter = search.get("type");
+
+  if(areaIdFilter){ localFilters.push({id:"areaId", value:areaIdFilter}); }
+  if(basinIdFilter){ localFilters.push({id:"basinId", value:basinIdFilter}); }
+  if(typeIdFilter){ localFilters.push({id:"Type", value:typeIdFilter}); }
+
+  localFilters = installationFilters ? localFilters.concat(installationFilters) : localFilters;
+  console.log(localFilters, installationFilters);
   const columns = React.useMemo(
     () => [
       {
@@ -150,10 +161,6 @@ function InstallationTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "installationFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (installationsVisible) => {
     dispatch({ type: "installationsVisible", installationsVisible: installationsVisible });
   }
@@ -161,7 +168,7 @@ function InstallationTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Installation" location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Installation" location={location} globalFilter={localFilters} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
