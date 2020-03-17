@@ -240,79 +240,6 @@ const getInstallationColour = (mapStyle, installation) => {
     return colour;
 }
 
-const mapInstallation = (mapStyle, installation) => {
-    let start = installation.StartDate;
-    let end = installation.PlannedCOP;
-
-    if (start) {
-        start = window.Cesium.JulianDate.fromDate(new Date(start));
-    }
-    else {
-        start = window.Cesium.JulianDate.fromDate(new Date("1901"));
-    }
-
-    if (end) {
-        end = window.Cesium.JulianDate.fromDate(new Date(end));
-    }
-    else {
-        end = window.Cesium.JulianDate.fromDate(new Date("2500"));
-    }
-
-    const position = window.Cesium.Cartesian3.fromDegrees(installation.Longitude, installation.Latitude);
-    let availability = null;
-    if (start || end) {
-        const interval = new window.Cesium.TimeInterval({
-            start: start,
-            stop: end,
-            isStartIncluded: start !== null,
-            isStopIncluded: end !== null
-        });
-        availability = new window.Cesium.TimeIntervalCollection([interval]);
-    }
-
-    const point = {
-        pixelSize: 4,
-        color: getInstallationColour(mapStyle, installation),
-        eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-        translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-        heightReference: dynamicHeightReference,
-        zIndex: 60
-    };
-
-    const label = {
-        text: installation.name,
-        font: "20px Arial Narrow",
-        fillColor: window.Cesium.Color.WHITE,
-        style: window.Cesium.LabelStyle.FILL,
-        outlineColor: window.Cesium.Color.BLACK,
-        outlineWidth: 1.5,
-        pixelOffset: new window.Cesium.Cartesian2(25, 0),
-        verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-        horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 300000),
-        heightReference: dynamicHeightReference,
-        scale: 0.65,
-        zIndex: 60
-    };
-
-    return {
-        id: installation.id,
-        name: installation.name,
-        position: position,
-        availability: availability,
-        point: point,
-        label: label,
-        originalData: installation
-    }
-}
-
-// const setupInstallations = (mapStyle, installations) => {
-//     const dataSource = new window.Cesium.CustomDataSource("Installation");
-//     installations.forEach(i => dataSource.entities.add(mapInstallation(mapStyle, i)));
-//     return dataSource;
-// }
-
 const setupInstallations = async (installations) => {
     const features = [...installations.values()].map(installation => ({ type: "Feature", id: installation.id, name: installation.name, geometry: installation.Geometry, properties: { id: installation.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
@@ -367,9 +294,9 @@ const setupInstallations = async (installations) => {
                 entity.label = {
                     text: rawEntity.name,
                     font: "20px Arial Narrow",
-                    fillColor: window.Cesium.Color.WHITE,
+                    fillColor: window.Cesium.Color.BLACK,
                     style: window.Cesium.LabelStyle.FILL,
-                    outlineColor: window.Cesium.Color.BLACK,
+                    outlineColor: window.Cesium.Color.WHITE,
                     outlineWidth: 1.5,
                     pixelOffset: new window.Cesium.Cartesian2(25, 0),
                     verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
@@ -460,7 +387,7 @@ const getPipelineColour = (mapStyle, pipeline) => {
         colours = pipelineColours;
     }
 
-    let pipelineFluid = pipeline["Fluid Conveyed"];
+    let pipelineFluid = pipeline.fluid_conveyed;
     if (pipelineFluid) {
         pipelineFluid = pipelineFluid.toLowerCase();
     }
@@ -470,11 +397,13 @@ const getPipelineColour = (mapStyle, pipeline) => {
         colour = colours["default"];
     }
 
-    if (pipeline["Status"] !== "ACTIVE") {
+    if (pipeline.status !== "ACTIVE") {
         colour = colour.withAlpha(0.5);
     }
 
-    colour = colour.darken(0.5, new window.Cesium.Color());
+    //console.log(pipeline, colours, pipelineFluid,mapStyle);
+
+    //colour = colour.darken(0.5, new window.Cesium.Color());
 
     return colour;
 }
@@ -659,8 +588,16 @@ const setupBlocks = async () => {
         entity.label = new window.Cesium.LabelGraphics({
             text: entity.properties.ALL_LABELS,
             distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
-            font: '12px sans-serif',
-            scaleByDistance: scale
+            font: '20px Arial Narrow"',
+            scaleByDistance: scale,
+            fillColor: window.Cesium.Color.BLACK,
+            style: window.Cesium.LabelStyle.FILL,
+            outlineColor: window.Cesium.Color.WHITE,
+            outlineWidth: 1.5,
+ 
+            heightReference: dynamicHeightReference,
+            scale: 0.65,
+            zIndex: 60
         });
 
     }
@@ -757,8 +694,19 @@ const setupAreas = async (areas) => {
         entity.label = new window.Cesium.LabelGraphics({
             text: entity.name,
             distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
-            font: '12px sans-serif',
-            scaleByDistance: scale
+            font: '20px Arial Narrow"',
+            scaleByDistance: scale,
+            fillColor: window.Cesium.Color.BLACK,
+            style: window.Cesium.LabelStyle.FILL,
+            outlineColor: window.Cesium.Color.WHITE,
+            outlineWidth: 1.5,
+            pixelOffset: new window.Cesium.Cartesian2(25, 0),
+            verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+            horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+            heightReference: dynamicHeightReference,
+            scale: 0.65,
+            zIndex: 60
+            
         });
     }
     return dataSource;
@@ -796,8 +744,18 @@ const setupBasins = async (basins) => {
         entity.label = new window.Cesium.LabelGraphics({
             text: entity.name,
             distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
-            font: '12px sans-serif',
-            scaleByDistance: scale
+            font: '20px Arial Narrow"',
+            scaleByDistance: scale,
+            fillColor: window.Cesium.Color.BLACK,
+            style: window.Cesium.LabelStyle.FILL,
+            outlineColor: window.Cesium.Color.WHITE,
+            outlineWidth: 1.5,
+            pixelOffset: new window.Cesium.Cartesian2(25, 0),
+            verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
+            horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+            heightReference: dynamicHeightReference,
+            scale: 0.65,
+            zIndex: 60
         });
     }
     return dataSource;
