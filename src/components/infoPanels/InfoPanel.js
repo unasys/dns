@@ -9,6 +9,7 @@ import EntryContainer from './EntryContainer';
 import Entry from './Entry';
 import TitleBar from './TitleBar';
 import Slider from 'rc-slider';
+import { groupBy } from '../../utils/utils';
 
 function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, collection) {
     switch (collection) {
@@ -54,7 +55,7 @@ function WithInDistance() {
         </>
     );
 }
-function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins,fields, eType, eId) {
+function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, eType, eId) {
     switch (eType) {
         case "Installation": return installations.get(eId);
         case "Pipeline": return pipelines.get(eId);
@@ -63,7 +64,7 @@ function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, ba
         case "Basin": return basins.get(eId);
         case "Well": return wells.get(eId);
         case "Wreck": return wrecks.get(eId);
-        case "Field":return fields.get(eId);
+        case "Field": return fields.get(eId);
         case "DecomYard":
         default:
             return null;
@@ -75,7 +76,7 @@ function choosePanel(installations, areas, eType, entity) {
         const northSea = { name: "North Sea" };
         return <AreaInfoPanel installations={installations} area={northSea} />;
     } else if (entity.InfoPanel) {
-        return <DataDriveInfoPanel name={entity.name} image={entity.ImageID} epm={entity.ePMID} type={eType} details={entity.InfoPanel} />
+        return <DataDriveInfoPanel entity={entity} installations={installations}  name={entity.name} image={entity.ImageID} epm={entity.ePMID} type={eType} details={entity.InfoPanel} />
     } else {
         switch (eType) {
             case "Installation": return <InstallationInfoPanel installation={entity} />;
@@ -88,14 +89,62 @@ function choosePanel(installations, areas, eType, entity) {
     }
 }
 
+function InstallationInfo({ installations, searchParams }) {
+    const search = new URLSearchParams(searchParams);
+    const installationTypes = groupBy(installations, installation => installation.Type);
+    
+    let installationTypeEntries = [];
 
-function DataDriveInfoPanel({ name, type, details, image, epm }) {
+    installationTypes.forEach((value, key) => {
+        search.set("type",key);
+        installationTypeEntries.push(<Entry key={key} type="link" link={{pathname:"installations",search:search.toString()}} title={key} subtitle={value.length} borderBottom></Entry>);
+    });
+    search.delete("type");
+
+    return (
+        <EntryContainer title="Installations" subtitle={installations.length} type="link" link={{pathname:"installations",search:search.toString()}} open={false} borderBottom>
+            {installationTypeEntries}
+        </EntryContainer>);
+}
+
+function AreaInfo({ area, installations }) {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("areaId", area.id);
+    const installationsInArea = [...installations.values()].filter(installation => area.id === installation.areaId);
+    return (
+        <InstallationInfo installations={installationsInArea} searchParams={searchParams}/>
+    )
+}
+
+function BasinInfo({ basin, installations }) {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const installationsInBasin = [...installations.values()].filter(installation => basin.id === installation.basinId);
+    searchParams.set("basinId", basin.id);
+    return (
+        <InstallationInfo installations={installationsInBasin} searchParams={searchParams}/>
+    )
+}
+
+function TypeSepcificInfo({ type, entity, installations }) {
+
+    switch (type) {
+        case "Area": return <AreaInfo installations={installations} area={entity}  />;
+        case "Basin": return <BasinInfo  installations={installations} basin={entity} />;
+        default: return null;
+    }
+
+}
+
+
+function DataDriveInfoPanel({ name, type, details, image, epm, entity, installations }) {
     return (
         <div>
             <TitleBar title={name} subtitle={type} image={image} epm={epm} />
-
-            {details.map(d => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
-                {d.values.map(v => (<Entry key={v.name} title={v.name} subtitle={v.values??v.value} type={v.type} borderBottom />))}
+            <TypeSepcificInfo type={type} installations={installations} entity={entity}  />
+            {details.map((d,i) => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
+                {d.values.map(v => (<Entry key={v.name + i} title={v.name} subtitle={v.values ?? v.value} type={v.type} borderBottom />))}
 
             </EntryContainer>))}
         </div>
@@ -121,7 +170,7 @@ function InfoPanel() {
     const eid = search.get("eid");
     const etype = search.get("etype");
 
-    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins,fields, etype, eid);
+    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, etype, eid);
     let panel = choosePanel(installations, areas, etype, entity);
 
     return (

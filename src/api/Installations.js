@@ -9,6 +9,14 @@ export async function fetchInstallations() {
             entity.id = entity.Name;
         }
 
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
         if (!entity.name) {
             entity.name = entity.Name;
         }
@@ -23,6 +31,14 @@ export async function fetchDecomyards() {
     data.forEach(entity => {
         if (!entity.id) {
             entity.id = entity.Name;
+        }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
         }
 
         if (!entity.name) {
@@ -40,6 +56,14 @@ export async function fetchPipelines() {
         if (!entity.id) {
             entity.id = entity.pipeline_id;
         }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
         if (!entity.name) {
             entity.name = entity["pipeline_name"];
         }
@@ -54,6 +78,14 @@ export async function fetchWindfarms() {
     data.forEach(entity => {
         if (!entity.id) {
             entity.id = entity.Name;
+        }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
         }
 
         if (!entity.name) {
@@ -72,6 +104,14 @@ export async function fetchFields() {
             entity.id = entity.GID;
         }
 
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
         if (!entity.name) {
             entity.name = entity["Field Name"];
         }
@@ -83,6 +123,19 @@ export async function fetchSubsurface() {
     let url = assetsBaseUrl + `/data/subsurface/Subsurface.json`;
     const response = await fetch(url);
     const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.GID;
+        }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+    });
     return data;
 }
 
@@ -95,7 +148,13 @@ export async function fetchWells() {
             entity.id = entity.GID;
         }
 
-   
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
 
         if(entity.Geometry.coordinates){
             entity.Geometry.coordinates = entity.Geometry.coordinates.slice(0,2);
@@ -117,6 +176,14 @@ export async function fetchWrecks() {
             entity.id = entity.GID;
         }
 
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
         if (!entity.name) {
             entity.name = entity.Name;
         }
@@ -131,6 +198,10 @@ export async function fetchAreas() {
     data.forEach(entity => {
         if (!entity.id) {
             entity.id = entity.GID;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
         }
 
         if (!entity.name) {
