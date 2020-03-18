@@ -103,7 +103,7 @@ export function SelectColumnFilter({
 }
 
 
-export default function Table({ columns, data, history, location, filters, globalFilter, type, onFiltersChange, onVisibleRowsChange }) {
+export default function Table({ columns, data, history, location, filters, type, onVisibleRowsChange }) {
     const defaultColumn = React.useMemo(
         () => ({
             width: 150,
@@ -116,24 +116,25 @@ export default function Table({ columns, data, history, location, filters, globa
     if (!filters) {
         filters = [];
     }
-    if (!globalFilter) {
-        globalFilter = [];
-    }
+
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        state,
         rows,
         totalColumnsWidth,
         setHiddenColumns,
         prepareRow,
+        setAllFilters
     } = useTable(
         {
             columns,
             data,
             defaultColumn,
-            initialState: { filters: filters, hiddenColumns: columns.filter(column => column.isVisible === false).map(column => column.id), globalFilter:globalFilter },
+            initialState: {
+                filters: filters,
+                hiddenColumns: columns.filter(column => column.isVisible === false).map(column => column.id)
+            },
         },
         useBlockLayout,
         useGlobalFilter,
@@ -150,6 +151,11 @@ export default function Table({ columns, data, history, location, filters, globa
         onVisibleRowsChange(ids);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rows]);
+
+    useEffect(() => {
+        setAllFilters(filters);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters, setAllFilters]);
 
 
     const RenderRow = React.useCallback(
