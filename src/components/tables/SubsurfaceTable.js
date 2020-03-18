@@ -5,7 +5,7 @@ import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function SubsurfaceTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ subsurfaceFilters, subsurfaces }, dispatch] = useStateValue();
+  const [{ subsurfaces }, dispatch] = useStateValue();
   const data = useMemo(() => [...subsurfaces.values()], [subsurfaces])
   const history = useHistory();
   const location = useLocation();
@@ -67,10 +67,6 @@ function SubsurfaceTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "subsurfaceFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (subsurfacesVisible) => {
     dispatch({ type: "subsurfacesVisible", subsurfacesVisible: subsurfacesVisible });
   }
@@ -78,7 +74,7 @@ function SubsurfaceTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Subsurface" filters={subsurfaceFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

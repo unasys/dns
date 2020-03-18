@@ -5,7 +5,7 @@ import Table, { ButtonBar, NumberRangeColumnFilter, DateCell, NumberCell, Select
 
 function FieldTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ fieldFilters, fields }, dispatch] = useStateValue();
+  const [{ fields }, dispatch] = useStateValue();
   const data = useMemo(() => [...fields.values()], [fields])
   const history = useHistory();
   const location = useLocation();
@@ -91,10 +91,6 @@ function FieldTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "fieldFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (fieldsVisible) => {
     dispatch({ type: "fieldsVisible", fieldsVisible: fieldsVisible });
   }
@@ -102,7 +98,7 @@ function FieldTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Field" filters={fieldFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} type="Field" onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

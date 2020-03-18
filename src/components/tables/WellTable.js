@@ -6,11 +6,22 @@ import Circle01 from '../../assets/installationTable/circle01';
 
 function WellTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ wellFilters, wells }, dispatch] = useStateValue();
+  const [{ wells }, dispatch] = useStateValue();
   const data = useMemo(() => [...wells.values()], [wells])
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
+  const areaIdFilter = search.get("areaId");
+  const basinIdFilter = search.get("basinId");
+  const wellStatus = search.get("wellStatus");
+  const localFilters = React.useMemo(() => {
+    const filters = [];
+
+    if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
+    if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (wellStatus) { filters.push({ id: "Well Status", value: wellStatus }); }
+    return filters;
+  }, [areaIdFilter, basinIdFilter, wellStatus]);
   const columns = React.useMemo(
     () => [{
       Header: 'Well Name',
@@ -95,6 +106,16 @@ function WellTable() {
 
         return "-";
       }
+    }, {
+      accessor: 'areaId',
+      id: 'areaId',
+      isVisible: false,
+      filter: 'exact',
+    }, {
+      accessor: 'basinId',
+      id: 'basinId',
+      isVisible: false,
+      filter: 'exact',
     }],
     [isVisible]
   )
@@ -109,10 +130,6 @@ function WellTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "wellFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (wellsVisible) => {
     dispatch({ type: "wellsVisible", wellsVisible: wellsVisible });
   }
@@ -120,7 +137,7 @@ function WellTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Well" filters={wellFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} type="Well" filters={localFilters} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

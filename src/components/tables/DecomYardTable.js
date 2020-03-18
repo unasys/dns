@@ -5,7 +5,7 @@ import Table, { ButtonBar } from './Table';
 
 function DecomYardTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ decomYardFilters, decomYards }, dispatch] = useStateValue();
+  const [{ decomYards }, dispatch] = useStateValue();
   const data = useMemo(() => [...decomYards.values()], [decomYards])
   const history = useHistory();
   const location = useLocation();
@@ -35,10 +35,6 @@ function DecomYardTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "decomYardFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (decomYardsVisible) => {
     dispatch({ type: "decomYardsVisible", decomYardsVisible: decomYardsVisible });
   }
@@ -46,7 +42,7 @@ function DecomYardTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} type="DecomYard" history={history} location={location} filters={decomYardFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} type="DecomYard" history={history} location={location} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

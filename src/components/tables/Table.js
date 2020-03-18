@@ -113,10 +113,6 @@ export default function Table({ columns, data, history, location, filters, type,
         []
     );
 
-    if (!filters) {
-        filters = [];
-    }
-
     const {
         getTableProps,
         getTableBodyProps,
@@ -132,7 +128,7 @@ export default function Table({ columns, data, history, location, filters, type,
             data,
             defaultColumn,
             initialState: {
-                filters: filters,
+                filters: filters??[],
                 hiddenColumns: columns.filter(column => column.isVisible === false).map(column => column.id)
             },
         },
@@ -153,7 +149,7 @@ export default function Table({ columns, data, history, location, filters, type,
     }, [rows]);
 
     useEffect(() => {
-        setAllFilters(filters);
+        setAllFilters(filters??[]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters, setAllFilters]);
 
