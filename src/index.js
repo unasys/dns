@@ -172,100 +172,50 @@ const reducer = (state, action) => {
                 ...state,
                 showWrecks: !state.showWrecks
             };
-        case "installationFiltersChange":
-            return {
-                ...state,
-                installationFilters: action.filters
-            };
         case "installationsVisible":
             return {
                 ...state,
                 installationsVisible: action.installationsVisible
-            };
-        case "decomYardFiltersChange":
-            return {
-                ...state,
-                decomYardFilters: action.filters
             };
         case "decomYardsVisible":
             return {
                 ...state,
                 decomnYardsVisible: action.decomnYardsVisible
             };
-        case "fieldFiltersChange":
-            return {
-                ...state,
-                fieldFilters: action.filters
-            };
         case "fieldsVisible":
             return {
                 ...state,
                 fieldsVisible: action.fieldsVisible
-            };
-        case "areaFiltersChange":
-            return {
-                ...state,
-                areaFilters: action.filters
             };
         case "areasVisible":
             return {
                 ...state,
                 areasVisible: action.areasVisible
             };
-        case "basinFiltersChange":
-            return {
-                ...state,
-                basinFilters: action.filters
-            };
         case "basinsVisible":
             return {
                 ...state,
                 basinsVisible: action.basinsVisible
-            };
-        case "windfarmFiltersChange":
-            return {
-                ...state,
-                windfarmFilters: action.filters
             };
         case "windfarmsVisible":
             return {
                 ...state,
                 windfarmsVisible: action.windfarmsVisible
             };
-        case "subsurfaceFiltersChange":
-            return {
-                ...state,
-                subsurfaceFilters: action.filters
-            };
         case "subsurfacesVisible":
             return {
                 ...state,
                 subsurfacesVisible: action.subsurfacesVisible
-            };
-        case "pipelineFiltersChange":
-            return {
-                ...state,
-                pipelineFilters: action.filters
             };
         case "pipelinesVisible":
             return {
                 ...state,
                 pipelinesVisible: action.pipelinesVisible
             };
-        case "wellFiltersChange":
-            return {
-                ...state,
-                wellFilters: action.filters
-            };
         case "wellsVisible":
             return {
                 ...state,
                 wellsVisible: action.wellsVisible
-            };
-        case "wreckFiltersChange":
-            return {
-                ...state,
-                wreckFilters: action.filters
             };
         case "wrecksVisible":
             return {

@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar } from './Table';
 
 function AreaTable() {
-  const [{ areaFilters, areas }, dispatch] = useStateValue();
+  const [{ areas }, dispatch] = useStateValue();
   const data = useMemo(() => [...areas.values()], [areas])
   const history = useHistory();
   const location = useLocation();
@@ -22,10 +22,6 @@ function AreaTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "areaFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (areasVisible) => {
     dispatch({ type: "areasVisible", fieldsVisible: areasVisible });
   }
@@ -33,7 +29,7 @@ function AreaTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Area" filters={areaFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} type="Area" onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar back={back} />
     </div>

@@ -5,7 +5,7 @@ import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function WreckTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ wreckFilters, wrecks }, dispatch] = useStateValue();
+  const [{ wrecks }, dispatch] = useStateValue();
   const data = useMemo(() => [...wrecks.values()], [wrecks])
   const history = useHistory();
   const location = useLocation();
@@ -42,10 +42,6 @@ function WreckTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "wreckFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (wrecksVisible) => {
     dispatch({ type: "wrecksVisible", wrecksVisible: wrecksVisible });
   }
@@ -53,7 +49,7 @@ function WreckTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Wreck" filters={wreckFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} type="Wreck" onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

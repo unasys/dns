@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar} from './Table';
 
 function BasinTable() {
-  const [{ basinFilters, basins }, dispatch] = useStateValue();
+  const [{ basins }, dispatch] = useStateValue();
   const data = useMemo(() => [...basins.values()], [basins])
   const history = useHistory();
   const location = useLocation();
@@ -27,10 +27,6 @@ function BasinTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "basinFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (basinsVisible) => {
     dispatch({ type: "basinsVisible", basinsVisible: basinsVisible });
   }
@@ -38,7 +34,7 @@ function BasinTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Basin" filters={basinFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} location={location} type="Basin" onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar  back={back} />
     </div>

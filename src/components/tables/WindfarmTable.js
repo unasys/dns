@@ -5,7 +5,7 @@ import Table, { ButtonBar, SelectColumnFilter } from './Table';
 
 function WindfarmTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ windfarmFilters, windfarms }, dispatch] = useStateValue();
+  const [{ windfarms }, dispatch] = useStateValue();
   const data = useMemo(() => [...windfarms.values()], [windfarms])
   const history = useHistory();
   const location = useLocation();
@@ -81,10 +81,6 @@ function WindfarmTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "windfarmFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (windfarmsVisible) => {
     dispatch({ type: "windfarmsVisible", windfarmsVisible: windfarmsVisible });
   }
@@ -92,7 +88,7 @@ function WindfarmTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Windfarm" location={location} filters={windfarmFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Windfarm" location={location} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

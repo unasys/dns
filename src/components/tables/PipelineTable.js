@@ -5,7 +5,7 @@ import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell, Select
 
 function PipelineTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ pipelineFilters, pipelines }, dispatch] = useStateValue();
+  const [{ pipelines }, dispatch] = useStateValue();
   const data = useMemo(() => [...pipelines.values()], [pipelines]);
   
   const history = useHistory();
@@ -105,10 +105,6 @@ function PipelineTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "pipelineFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (pipelinesVisible) => {
     dispatch({ type: "pipelinesVisible", pipelinesVisible: pipelinesVisible });
   }
@@ -116,7 +112,7 @@ function PipelineTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Pipeline" location={location} filters={pipelineFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Pipeline" location={location} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
