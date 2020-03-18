@@ -6,11 +6,24 @@ import Table, { NumberRangeColumnFilter, ButtonBar, SelectColumnFilter, NumberCe
 
 function InstallationTable() {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ installations, installationFilters }, dispatch] = useStateValue();
+  const [{ installations }, dispatch] = useStateValue();
   const data = useMemo(() => [...installations.values()], [installations])
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
+  const areaIdFilter = search.get("areaId");
+  const basinIdFilter = search.get("basinId");
+  const typeIdFilter = search.get("type");
+  const localFilters = React.useMemo(() => {
+    const filters = [];
+
+    if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
+    if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (typeIdFilter) { filters.push({ id: "Type", value: typeIdFilter }); }
+    return filters;
+  }, [areaIdFilter, basinIdFilter, typeIdFilter]);
+
+
   const columns = React.useMemo(
     () => [
       {
@@ -119,7 +132,7 @@ function InstallationTable() {
         width: 100,
         isVisible: isVisible,
         Filter: SelectColumnFilter,
-        filter: 'includes'
+        filter: 'exact'
       }, {
         Header: 'Area',
         accessor: 'Area',
@@ -134,6 +147,16 @@ function InstallationTable() {
         filter: 'contains',
         width: 80,
         isVisible: isVisible
+      }, {
+        accessor: 'areaId',
+        id: 'areaId',
+        isVisible: false,
+        filter: 'exact',
+      }, {
+        accessor: 'basinId',
+        id: 'basinId',
+        isVisible: false,
+        filter: 'exact',
       }
     ],
     [isVisible]
@@ -150,10 +173,6 @@ function InstallationTable() {
     history.push({ pathname: "/", search: `?${search.toString()}` })
   }
 
-  const onFiltersChange = (filters) => {
-    dispatch({ type: "installationFiltersChange", filters: filters });
-  }
-
   const onVisibleRowsChange = (installationsVisible) => {
     dispatch({ type: "installationsVisible", installationsVisible: installationsVisible });
   }
@@ -161,7 +180,7 @@ function InstallationTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Installation" location={location} filters={installationFilters} onFiltersChange={onFiltersChange} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Installation" location={location} filters={localFilters} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>

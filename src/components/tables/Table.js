@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useTable, useBlockLayout, useFilters, useSortBy } from 'react-table'
+import { useTable, useBlockLayout, useFilters, useSortBy, useGlobalFilter } from 'react-table'
 import { FixedSizeList } from 'react-window'
 import AutoSizer from "react-virtualized-auto-sizer";
 import './TableStyles.scss';
@@ -41,7 +41,7 @@ const handle = (props) => {
 
 export function NumberRangeColumnFilter({
     preFilteredRows,
-    column: {  setFilter, id },
+    column: { setFilter, id },
 }) {
     const [min, max] = React.useMemo(() => {
         let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0
@@ -52,7 +52,7 @@ export function NumberRangeColumnFilter({
                 max = Math.max(row.values[id], max);
             }
         })
-        return [ Math.floor(min), Math.ceil(max)];
+        return [Math.floor(min), Math.ceil(max)];
     }, [id, preFilteredRows])
 
     const onChange = (e) => {
@@ -63,7 +63,7 @@ export function NumberRangeColumnFilter({
         }
     }
 
-    const defaultValue = [min, max] ;//filterValue.length === 0 ? [min, max] : filterValue;
+    const defaultValue = [min, max];//filterValue.length === 0 ? [min, max] : filterValue;
     if (min !== max) {
         return <Range pushable={true} allowCross={false} min={min} max={max} defaultValue={defaultValue} onChange={onChange} handle={handle} tipFormatter={value => value.toLocaleString()} />
     } else {
@@ -103,7 +103,7 @@ export function SelectColumnFilter({
 }
 
 
-export default function Table({ columns, data, history, location, filters, type, onFiltersChange, onVisibleRowsChange }) {
+export default function Table({ columns, data, history, location, filters, type, onVisibleRowsChange }) {
     const defaultColumn = React.useMemo(
         () => ({
             width: 150,
@@ -121,38 +121,41 @@ export default function Table({ columns, data, history, location, filters, type,
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        state,
         rows,
         totalColumnsWidth,
         setHiddenColumns,
         prepareRow,
+        setAllFilters
     } = useTable(
         {
             columns,
             data,
             defaultColumn,
-            initialState: { filters: filters, hiddenColumns:columns.filter(column => column.isVisible === false).map(column => column.id) },
+            initialState: {
+                filters: filters,
+                hiddenColumns: columns.filter(column => column.isVisible === false).map(column => column.id)
+            },
         },
         useBlockLayout,
+        useGlobalFilter,
         useFilters,
         useSortBy
     );
 
-    useEffect(() =>{
-        setHiddenColumns(columns.filter(column => column.isVisible === false).map(column => column.id));
-    },[columns, setHiddenColumns]);
-
     useEffect(() => {
-        onFiltersChange(state.filters);
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.filters]);
+        setHiddenColumns(columns.filter(column => column.isVisible === false).map(column => column.id));
+    }, [columns, setHiddenColumns]);
 
     useEffect(() => {
         const ids = rows.map(row => row.original.id);
         onVisibleRowsChange(ids);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rows]);
+
+    useEffect(() => {
+        setAllFilters(filters);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters, setAllFilters]);
 
 
     const RenderRow = React.useCallback(
@@ -265,10 +268,10 @@ export const ButtonBar = (props) => {
     return (
         <div className="button-bar">
             <i className="fas fa-arrow-left backbutton" onClick={() => props.back()}></i>
-            {props.expand &&<div className="outward-handle" onClick={() => props.expand()}>
+            {props.expand && <div className="outward-handle" onClick={() => props.expand()}>
                 <i className="fas fa-caret-right"></i>
             </div>}
-            {props.collapse &&<div className="outward-handle" onClick={() => props.collapse()}>
+            {props.collapse && <div className="outward-handle" onClick={() => props.collapse()}>
                 <i className="fas fa-caret-left"></i>
             </div>}
         </div>)

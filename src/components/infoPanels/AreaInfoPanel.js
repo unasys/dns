@@ -2,20 +2,8 @@ import React from 'react';
 import './Panels.scss';
 import EntryContainer from './EntryContainer';
 import Entry from './Entry';
-
-function groupBy(list, keyGetter) {
-    const map = new Map();
-    list.forEach((item) => {
-        const key = keyGetter(item);
-        const collection = map.get(key);
-        if (!collection) {
-            map.set(key, [item]);
-        } else {
-            collection.push(item);
-        }
-    });
-    return map;
-}
+import TitleBar from './TitleBar';
+import { groupBy } from '../../utils/utils';
 
 function AreaInfoPanel(props) {
     if (!props.area) return <div>Area not supported.</div>;
@@ -23,7 +11,6 @@ function AreaInfoPanel(props) {
     let areaCode = props.area.areaCode;
 
     let numberOfInstallations;
-    let averageAge;
     let installationsInArea;
     let installationTypes;
 
@@ -34,7 +21,6 @@ function AreaInfoPanel(props) {
     }
 
     numberOfInstallations = installationsInArea.length
-    averageAge = installationsInArea.map(installation => installation.Age).reduce((acc, age) => age + acc, 0) / installationsInArea.length;
     installationTypes = groupBy(installationsInArea, installation => installation.Type);
 
     let installationTypeEntries = [];
@@ -51,21 +37,21 @@ function AreaInfoPanel(props) {
     var next10Years = new Date(year + 10, month, day);
 
     let decomNext5Years = installationsInArea.filter(installation => {
-        let plannedCOP = new Date(installation.PlannedCOP);
+        let plannedCOP = new Date(installation["End Date"]);
         return plannedCOP > dateNow && plannedCOP < next5Years;
     }).length
 
     let decomNext10Years = installationsInArea.filter(installation => {
-        let plannedCOP = new Date(installation.PlannedCOP);
+        let plannedCOP = new Date(installation["End Date"]);
         return plannedCOP > dateNow && plannedCOP < next10Years;
     }).length
 
     let weightInArea = installationsInArea.reduce((acc, installation) => {
         return acc + installation.TopsideWeight + installation.SubStructureWeight
-    }, 0)
+    }, 0);
 
-    let averageWaterDepth = installationsInArea.reduce((acc, installation) => acc + installation.WaterDepth, 0) / installationsInArea.length
-    let maxWaterDepth = Math.max(...installationsInArea.map(installation => installation.WaterDepth));
+    let averageWaterDepth = installationsInArea.reduce((acc, installation) => acc + installation["Water Depth"] ?? 0, 0) / installationsInArea.length
+    let maxWaterDepth = Math.max(...installationsInArea.map(installation => installation["Water Depth"]));
 
     let sketchfabModels = <></>;
     if (props.area.sketchfabModels) {
@@ -74,11 +60,8 @@ function AreaInfoPanel(props) {
 
     return (
         <div>
-            <EntryContainer title={areaName} borderBottom>
-                <Entry title={"Installations"} subtitle={numberOfInstallations}></Entry>
-                <Entry title={"Avg Age"} subtitle={Math.round(averageAge) + " years"}></Entry>
-            </EntryContainer>
-            <EntryContainer title="Installations" borderBottom>
+            <TitleBar title={areaName} image="-1.jpg" />
+            <EntryContainer title="Installations" subtitle={numberOfInstallations} borderBottom>
                 {installationTypeEntries}
             </EntryContainer>
             <EntryContainer title="Decommissioning" borderBottom>
@@ -86,16 +69,16 @@ function AreaInfoPanel(props) {
                 <Entry title={"Decom next 10 years"} subtitle={decomNext10Years}></Entry>
             </EntryContainer>
             <EntryContainer title="Weight" borderBottom>
-                <Entry icon={<i className="fas fa-dumbbell" style={{ fontSize: '20px' }}></i>} title={"Total Weight"} subtitle={weightInArea + " te"}></Entry>
+                <Entry icon={<i className="fas fa-dumbbell" style={{ fontSize: '20px' }}></i>} title={"Total Weight"} subtitle={weightInArea?.toLocaleString() + " te"}></Entry>
             </EntryContainer>
             <EntryContainer title="Sea" borderBottom>
                 <Entry title={"Avg Water Depth"} subtitle={Math.round(averageWaterDepth) + "m"}></Entry>
                 <Entry title={"Max Water Depth"} subtitle={maxWaterDepth + "m"}></Entry>
             </EntryContainer>
-            <EntryContainer title="Location" >
-                <Entry icon={<i className="fas fa-map-marker"></i>} title={"Location"} ></Entry>
-            </EntryContainer>
-            {sketchfabModels}
+            {props.area.sketchfabModels && <EntryContainer title="Location" >
+                {sketchfabModels}
+            </EntryContainer>}
+
         </div>
     );
 }
