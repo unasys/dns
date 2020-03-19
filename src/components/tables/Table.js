@@ -122,8 +122,6 @@ export default function Table({ columns, data, history, location, filters, type,
         []
     );
 
-    
-
     const {
         getTableProps,
         getTableBodyProps,

@@ -1,5 +1,17 @@
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
+function sortByName(a, b) {
+    var nameA = a.name?.toUpperCase(); // ignore upper and lowercase
+    var nameB = b.name?.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+        return -1;
+    }
+    if (nameA > nameB) {
+        return 1;
+    }
 
+    // names must be equal
+    return 0;
+}
 export async function fetchInstallations() {
     let url = assetsBaseUrl + `/data/installations.json`;
     const response = await fetch(url);
@@ -21,6 +33,7 @@ export async function fetchInstallations() {
             entity.name = entity.Name;
         }
     });
+    data.sort(sortByName);
     return data;
 }
 
@@ -45,7 +58,7 @@ export async function fetchDecomyards() {
             entity.name = entity.Name;
         }
     });
-    return data;
+    return data.sort(sortByName);
 }
 
 export async function fetchPipelines() {
@@ -58,17 +71,17 @@ export async function fetchPipelines() {
         }
 
         if (!entity.areaIds) {
-            entity.areaIds = entity.Areaid??[];
+            entity.areaIds = entity.Areaid ?? [];
         }
 
         if (!entity.basinIds) {
-            entity.basinIds = entity.Basinid??[];
+            entity.basinIds = entity.Basinid ?? [];
         }
         if (!entity.name) {
             entity.name = entity["pipeline_name"];
         }
     });
-    return data;
+    return data.sort(sortByName);
 }
 
 export async function fetchWindfarms() {
@@ -92,7 +105,7 @@ export async function fetchWindfarms() {
             entity.name = entity.Name;
         }
     });
-    return data;
+    return data.sort(sortByName);
 }
 
 export async function fetchFields() {
@@ -116,7 +129,7 @@ export async function fetchFields() {
             entity.name = entity["Field Name"];
         }
     });
-    return data;
+    return data.sort(sortByName);
 }
 
 export async function fetchSubsurface() {
@@ -156,15 +169,15 @@ export async function fetchWells() {
             entity.basinId = entity.Basinid;
         }
 
-        if(entity.Geometry.coordinates){
-            entity.Geometry.coordinates = entity.Geometry.coordinates.slice(0,2);
+        if (entity.Geometry.coordinates) {
+            entity.Geometry.coordinates = entity.Geometry.coordinates.slice(0, 2);
         }
 
         if (!entity.name) {
             entity.name = entity["Well Name"];
         }
     });
-    return data;
+    return data.sort(sortByName);
 }
 
 export async function fetchWrecks() {
@@ -188,7 +201,7 @@ export async function fetchWrecks() {
             entity.name = entity.Name;
         }
     });
-    return data;
+    return data.sort(sortByName);
 }
 
 export async function fetchAreas() {
@@ -208,7 +221,7 @@ export async function fetchAreas() {
             entity.name = entity["Area Name"];
         }
     });
-    return data;
+    return data.sort(sortByName);
 }
 
 export async function fetchBasins() {
@@ -224,5 +237,5 @@ export async function fetchBasins() {
             entity.name = entity["Basin Name"];
         }
     });
-    return data;
+    return data.sort(sortByName);
 }

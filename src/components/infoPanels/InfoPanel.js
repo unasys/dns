@@ -9,7 +9,7 @@ import EntryContainer from './EntryContainer';
 import Entry from './Entry';
 import TitleBar from './TitleBar';
 import Slider from 'rc-slider';
-import { groupBy } from '../../utils/utils';
+import { groupBy, groupByAndSort } from '../../utils/utils';
 
 function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, collection) {
     switch (collection) {
@@ -91,7 +91,7 @@ function choosePanel(installations, wells, areas, pipelines, eType, entity) {
 
 function InstallationInfo({ installations, searchParams }) {
     const search = new URLSearchParams(searchParams);
-    const installationTypes = groupBy(installations, installation => installation.Type);
+    const installationTypes = groupByAndSort(installations, installation => installation.Type);
 
     const installationTypeEntries = [];
 
@@ -109,7 +109,7 @@ function InstallationInfo({ installations, searchParams }) {
 
 function WellInfo({ wells, searchParams }) {
     const search = new URLSearchParams(searchParams);
-    const wellStatus = groupBy(wells, well => well["Well Status"]);
+    const wellStatus = groupByAndSort(wells, well => well["Well Status"]);
 
     const wellStatusEntries = [];
 
@@ -127,7 +127,7 @@ function WellInfo({ wells, searchParams }) {
 
 function PipelineInfo({ pipelines, searchParams }) {
     const search = new URLSearchParams(searchParams);
-    const pipelineTypes = groupBy(pipelines, pipeline => pipeline.inst_type);
+    const pipelineTypes = groupByAndSort(pipelines, pipeline => pipeline.inst_type);
 
     const pipelineTypeEntries = [];
 
@@ -190,8 +190,8 @@ function DataDriveInfoPanel({ name, type, details, image, epm, entity, installat
         <div>
             <TitleBar title={name} subtitle={type} image={image} epm={epm} />
             <TypeSepcificInfo type={type} installations={installations} entity={entity} wells={wells} pipelines={pipelines} />
-            {details.map((d, i) => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
-                {d.values.map(v => (<Entry key={v.name + i} title={v.name} subtitle={v.values ?? v.value} type={v.type} borderBottom />))}
+            {details.map((d) => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
+                {d.values.map((v, i) => (<Entry key={`${v.name}${i}`} title={v.name} subtitle={v.values ?? v.value} type={v.type} borderBottom />))}
             </EntryContainer>))}
         </div>
     );
