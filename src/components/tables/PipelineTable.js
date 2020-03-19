@@ -17,8 +17,8 @@ function PipelineTable() {
   const localFilters = React.useMemo(() => {
     const filters = [];
 
-    if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
-    if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (areaIdFilter) { filters.push({ id: "areaIds", value: parseInt(areaIdFilter) }); }
+    if (basinIdFilter) { filters.push({ id: "basinIds", value: parseInt(basinIdFilter) }); }
     if (instType) { filters.push({ id: "Inst Type", value: instType }); }
     return filters;
   }, [areaIdFilter, basinIdFilter, instType]);
@@ -103,15 +103,15 @@ function PipelineTable() {
       isVisible: isVisible,
       minWidth: 200
     }, {
-      accessor: 'areaId',
-      id: 'areaId',
+      accessor: 'areaIds',
+      id: 'areaIds',
       isVisible: false,
-      filter: 'exact',
+      filter: 'includes',
     }, {
-      accessor: 'basinId',
-      id: 'basinId',
+      accessor: 'basinIds',
+      id: 'basinIds',
       isVisible: false,
-      filter: 'exact',
+      filter: 'includes',
     }],
     [isVisible]
   )

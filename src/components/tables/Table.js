@@ -102,6 +102,15 @@ export function SelectColumnFilter({
     )
 }
 
+const filterTypes = {
+    includes: (rows, id, filterValue) => {
+      return rows.filter(row => {
+        const rowValue = row.values[id];
+        return rowValue.includes(filterValue);
+      });
+    }
+  };
+
 
 export default function Table({ columns, data, history, location, filters, type, onVisibleRowsChange }) {
     const defaultColumn = React.useMemo(
@@ -112,6 +121,8 @@ export default function Table({ columns, data, history, location, filters, type,
         }),
         []
     );
+
+    
 
     const {
         getTableProps,
@@ -127,6 +138,7 @@ export default function Table({ columns, data, history, location, filters, type,
             columns,
             data,
             defaultColumn,
+            filterTypes:filterTypes,
             initialState: {
                 filters: filters??[],
                 hiddenColumns: columns.filter(column => column.isVisible === false).map(column => column.id)

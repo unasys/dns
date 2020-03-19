@@ -97,12 +97,12 @@ function InstallationInfo({ installations, searchParams }) {
 
     installationTypes.forEach((value, key) => {
         search.set("type", key);
-        installationTypeEntries.push(<Entry key={key} type="link" link={{ pathname: "installations", search: search.toString() }} title={key} subtitle={value.length} borderBottom></Entry>);
+        installationTypeEntries.push(<Entry key={key} type="link" link={{ pathname: "installations", search: search.toString() }} title={key} subtitle={value.length.toLocaleString()} borderBottom></Entry>);
     });
     search.delete("type");
 
     return (
-        <EntryContainer title="Installations" subtitle={installations.length} type="link" link={{ pathname: "installations", search: search.toString() }} open={false} borderBottom>
+        <EntryContainer title="Installations" subtitle={installations.length.toLocaleString()} type="link" link={{ pathname: "installations", search: search.toString() }} open={false} borderBottom>
             {installationTypeEntries}
         </EntryContainer>);
 }
@@ -115,12 +115,12 @@ function WellInfo({ wells, searchParams }) {
 
     wellStatus.forEach((value, key) => {
         search.set("wellStatus", key);
-        wellStatusEntries.push(<Entry key={key} type="link" link={{ pathname: "wells", search: search.toString() }} title={key} subtitle={value.length} borderBottom></Entry>);
+        wellStatusEntries.push(<Entry key={key} type="link" link={{ pathname: "wells", search: search.toString() }} title={key} subtitle={value.length.toLocaleString()} borderBottom></Entry>);
     });
     search.delete("wellStatus");
 
     return (
-        <EntryContainer title="Wells" subtitle={wells.length} type="link" link={{ pathname: "wells", search: search.toString() }} open={false} borderBottom>
+        <EntryContainer title="Wells" subtitle={wells.length.toLocaleString()} type="link" link={{ pathname: "wells", search: search.toString() }} open={false} borderBottom>
             {wellStatusEntries}
         </EntryContainer>);
 }
@@ -133,12 +133,12 @@ function PipelineInfo({ pipelines, searchParams }) {
 
     pipelineTypes.forEach((value, key) => {
         search.set("instType", key);
-        pipelineTypeEntries.push(<Entry key={key} type="link" link={{ pathname: "pipelines", search: search.toString() }} title={key} subtitle={value.length} borderBottom></Entry>);
+        pipelineTypeEntries.push(<Entry key={key} type="link" link={{ pathname: "pipelines", search: search.toString() }} title={key} subtitle={value.length.toLocaleString()} borderBottom></Entry>);
     });
     search.delete("instType");
 
     return (
-        <EntryContainer title="Pipelines" subtitle={pipelines.length} type="link" link={{ pathname: "pipelines", search: search.toString() }} open={false} borderBottom>
+        <EntryContainer title="Pipelines" subtitle={pipelines.length.toLocaleString()} type="link" link={{ pathname: "pipelines", search: search.toString() }} open={false} borderBottom>
             {pipelineTypeEntries}
         </EntryContainer>);
 }
