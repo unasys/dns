@@ -11,3 +11,17 @@ export function groupBy(list, keyGetter) {
     });
     return map;
 }
+
+export function groupByAndSort(list, keyGetter) {
+    const map = new Map();
+    list.forEach((item) => {
+        const key = keyGetter(item);
+        const collection = map.get(key);
+        if (!collection) {
+            map.set(key, [item]);
+        } else {
+            collection.push(item);
+        }
+    });
+    return new Map([...map.entries()].sort());
+}

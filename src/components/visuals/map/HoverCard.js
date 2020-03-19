@@ -5,10 +5,16 @@ import WindfarmHoverCard from "./WindfarmHoverCard";
 import SubsurfaceHoverCard from "./SubsurfaceHoverCard";
 
 const DataDrivenValue = ({ value }) => {
+    let hoverValue = value.values ?? value.value;
+    if (hoverValue === true) {
+        hoverValue = "yes";
+    } else if (hoverValue === false) {
+        hoverValue = "no";
+    }
     return (
         <div key={value.name} className="hover-text-value">
             <div className="hover-card-heading">{value.name}</div>
-            <div className="hover-card-value">{value.values??value.value}</div>
+            <div className="hover-card-value">{hoverValue}</div>
         </div>
     );
 }
