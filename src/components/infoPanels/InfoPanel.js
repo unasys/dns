@@ -71,12 +71,12 @@ function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, ba
     }
 }
 
-function choosePanel(installations, wells, areas, eType, entity) {
+function choosePanel(installations, wells, areas, pipelines, eType, entity) {
     if (!entity) {
         const northSea = { name: "North Sea" };
         return <AreaInfoPanel installations={installations} area={northSea} />;
     } else if (entity.InfoPanel) {
-        return <DataDriveInfoPanel entity={entity} installations={installations} wells={wells} name={entity.name} image={entity.ImageID} epm={entity.ePMID} type={eType} details={entity.InfoPanel} />
+        return <DataDriveInfoPanel entity={entity} installations={installations} wells={wells} pipelines={pipelines} name={entity.name} image={entity.ImageID} epm={entity.ePMID} type={eType} details={entity.InfoPanel} />
     } else {
         switch (eType) {
             case "Installation": return <InstallationInfoPanel installation={entity} />;
@@ -125,48 +125,71 @@ function WellInfo({ wells, searchParams }) {
         </EntryContainer>);
 }
 
-function AreaInfo({ area, installations, wells }) {
+function PipelineInfo({ pipelines, searchParams }) {
+    const search = new URLSearchParams(searchParams);
+    const pipelineTypes = groupBy(pipelines, pipeline => pipeline.inst_type);
+
+    const pipelineTypeEntries = [];
+
+    pipelineTypes.forEach((value, key) => {
+        search.set("instType", key);
+        pipelineTypeEntries.push(<Entry key={key} type="link" link={{ pathname: "pipelines", search: search.toString() }} title={key} subtitle={value.length} borderBottom></Entry>);
+    });
+    search.delete("instType");
+
+    return (
+        <EntryContainer title="Pipelines" subtitle={pipelines.length} type="link" link={{ pathname: "pipelines", search: search.toString() }} open={false} borderBottom>
+            {pipelineTypeEntries}
+        </EntryContainer>);
+}
+
+function AreaInfo({ area, installations, wells, pipelines }) {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("areaId", area.id);
     const installationsInArea = [...installations.values()].filter(installation => area.id === installation.areaId);
     const wellsInArea = [...wells.values()].filter(well => area.id === well.areaId);
+    const pipelinesInArea = [...pipelines.values()].filter(pipeline => pipeline.areaIds.includes(area.id));
     return (
         <>
             <InstallationInfo installations={installationsInArea} searchParams={searchParams} />
             <WellInfo wells={wellsInArea} searchParams={searchParams} />
+            <PipelineInfo pipelines={pipelinesInArea} searchParams={searchParams} />
         </>
     )
 }
 
-function BasinInfo({ basin, installations, wells }) {
+function BasinInfo({ basin, installations, wells, pipelines }) {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const installationsInBasin = [...installations.values()].filter(installation => basin.id === installation.basinId);
-    const wellsInArea = [...wells.values()].filter(well => basin.id === well.basinId);
+    const wellsInBasin = [...wells.values()].filter(well => basin.id === well.basinId);
+    const pipelinesInBasin = [...pipelines.values()].filter(pipeline => pipeline.basinIds.includes(basin.id));
     searchParams.set("basinId", basin.id);
     return (
         <>
             <InstallationInfo installations={installationsInBasin} searchParams={searchParams} />
-            <WellInfo wells={wellsInArea} searchParams={searchParams} />
+            <WellInfo wells={wellsInBasin} searchParams={searchParams} />
+            <PipelineInfo pipelines={pipelinesInBasin} searchParams={searchParams} />
+
         </>
     )
 }
 
-function TypeSepcificInfo({ type, entity, installations, wells }) {
+function TypeSepcificInfo({ type, entity, installations, wells, pipelines }) {
     switch (type) {
-        case "Area": return <AreaInfo installations={installations} wells={wells} area={entity} />;
-        case "Basin": return <BasinInfo installations={installations} wells={wells} basin={entity} />;
+        case "Area": return <AreaInfo installations={installations} wells={wells} pipelines={pipelines} area={entity} />;
+        case "Basin": return <BasinInfo installations={installations} wells={wells} pipelines={pipelines} basin={entity} />;
         default: return null;
     }
 }
 
 
-function DataDriveInfoPanel({ name, type, details, image, epm, entity, installations, wells }) {
+function DataDriveInfoPanel({ name, type, details, image, epm, entity, installations, wells, pipelines }) {
     return (
         <div>
             <TitleBar title={name} subtitle={type} image={image} epm={epm} />
-            <TypeSepcificInfo type={type} installations={installations} entity={entity} wells={wells} />
+            <TypeSepcificInfo type={type} installations={installations} entity={entity} wells={wells} pipelines={pipelines} />
             {details.map((d, i) => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
                 {d.values.map(v => (<Entry key={v.name + i} title={v.name} subtitle={v.values ?? v.value} type={v.type} borderBottom />))}
             </EntryContainer>))}
@@ -194,7 +217,7 @@ function InfoPanel() {
     const etype = search.get("etype");
 
     let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, etype, eid);
-    let panel = choosePanel(installations, wells, areas, etype, entity);
+    let panel = choosePanel(installations, wells, areas, pipelines, etype, entity);
 
     return (
         panel &&

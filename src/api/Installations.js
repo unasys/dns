@@ -57,12 +57,12 @@ export async function fetchPipelines() {
             entity.id = entity.pipeline_id;
         }
 
-        if (!entity.areaId) {
-            entity.areaId = entity.areaid;
+        if (!entity.areaIds) {
+            entity.areaIds = entity.Areaid??[];
         }
 
-        if (!entity.basinId) {
-            entity.basinId = entity.basinid;
+        if (!entity.basinIds) {
+            entity.basinIds = entity.Basinid??[];
         }
         if (!entity.name) {
             entity.name = entity["pipeline_name"];
@@ -149,11 +149,11 @@ export async function fetchWells() {
         }
 
         if (!entity.areaId) {
-            entity.areaId = entity.areaid;
+            entity.areaId = entity.Areaid;
         }
 
         if (!entity.basinId) {
-            entity.basinId = entity.basinid;
+            entity.basinId = entity.Basinid;
         }
 
         if(entity.Geometry.coordinates){

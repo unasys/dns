@@ -11,6 +11,17 @@ function PipelineTable() {
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
+  const areaIdFilter = search.get("areaId");
+  const basinIdFilter = search.get("basinId");
+  const instType = search.get("instType");
+  const localFilters = React.useMemo(() => {
+    const filters = [];
+
+    if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
+    if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (instType) { filters.push({ id: "Inst Type", value: instType }); }
+    return filters;
+  }, [areaIdFilter, basinIdFilter, instType]);
   const columns = React.useMemo(
     () => [{
       Header: 'Pipeline Name',
@@ -49,7 +60,7 @@ function PipelineTable() {
       id: 'Inst Type',
       accessor: "inst_type",
       Filter: SelectColumnFilter,
-      filter: 'includes',
+      filter: 'exact',
       isVisible: isVisible
     }, {
       Header: 'Diameter (mm)',
@@ -91,6 +102,16 @@ function PipelineTable() {
       id: 'to_name',
       isVisible: isVisible,
       minWidth: 200
+    }, {
+      accessor: 'areaId',
+      id: 'areaId',
+      isVisible: false,
+      filter: 'exact',
+    }, {
+      accessor: 'basinId',
+      id: 'basinId',
+      isVisible: false,
+      filter: 'exact',
     }],
     [isVisible]
   )
@@ -112,7 +133,7 @@ function PipelineTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} type="Pipeline" location={location} onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} type="Pipeline" filters={localFilters} location={location} onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
