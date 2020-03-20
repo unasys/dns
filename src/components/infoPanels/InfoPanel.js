@@ -164,6 +164,7 @@ function PipelineInfo({ pipelines, searchParams }) {
 function AreaInfo({ area, installations, wells, pipelines, fields }) {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
+    searchParams.delete("basinId");
     searchParams.set("areaId", area.id);
     const installationsInArea = [...installations.values()].filter(installation => area.id === installation.areaId);
     const wellsInArea = [...wells.values()].filter(well => area.id === well.areaId);
@@ -187,6 +188,7 @@ function BasinInfo({ basin, installations, wells, pipelines, fields }) {
     const pipelinesInBasin = [...pipelines.values()].filter(pipeline => pipeline.basinIds.includes(basin.id));
     const fieldsInBasin = [...fields.values()].filter(field => field.basinId === basin.id);
     searchParams.set("basinId", basin.id);
+    searchParams.delete("areaId");
     return (
         <>
             <InstallationInfo installations={installationsInBasin} searchParams={searchParams} />
