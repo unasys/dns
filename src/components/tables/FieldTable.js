@@ -10,25 +10,38 @@ function FieldTable() {
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
+  const areaIdFilter = search.get("areaId");
+  const basinIdFilter = search.get("basinId");
+  const fieldStatus = search.get("fieldStatus");
+  const localFilters = React.useMemo(() => {
+    const filters = [];
+
+    if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
+    if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (fieldStatus) { filters.push({ id: "Field Status", value: fieldStatus }); }
+    return filters;
+  }, [areaIdFilter, basinIdFilter, fieldStatus]);
+  
   const columns = React.useMemo(
     () => [{
       Header: 'Field Name',
       id: 'Field Name',
       accessor: 'Field Name',
+      footer: "count"
     }, {
       Header: 'Field Type',
       accessor: 'Field Type',
       id: 'Field Type',
       isVisible: isVisible,
       Filter: SelectColumnFilter,
-      filter: 'includes'
+      filter: 'exact'
     }, {
       Header: 'Field Status',
       id: "Field Status",
       accessor: "Field Status",
       isVisible: isVisible,
       Filter: SelectColumnFilter,
-      filter: 'includes'
+      filter: 'exact'
     }, {
       Header: 'Current Operator',
       id: 'Current Operator',
@@ -49,7 +62,7 @@ function FieldTable() {
       accessor: 'Hydrocarbon Type',
       isVisible: isVisible,
       Filter: SelectColumnFilter,
-      filter: 'includes'
+      filter: 'exact'
     }, {
       Header: 'Current Licence',
       id: 'Current Licence',
@@ -77,6 +90,16 @@ function FieldTable() {
       id: 'Determination Status',
       accessor: 'Determination Status',
       isVisible: isVisible
+    }, {
+      accessor: 'areaId',
+      id: 'areaId',
+      isVisible: false,
+      filter: 'exact',
+    }, {
+      accessor: 'basinId',
+      id: 'basinId',
+      isVisible: false,
+      filter: 'exact',
     }],
     [isVisible]
   )
@@ -98,7 +121,7 @@ function FieldTable() {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} location={location} type="Field" onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} filters={localFilters} location={location} type="Field" onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
