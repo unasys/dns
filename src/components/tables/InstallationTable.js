@@ -69,16 +69,16 @@ function InstallationTable() {
         width: 90,
         isVisible: isVisible,
         Filter: SelectColumnFilter,
-        filter: 'includes'
+        filter: 'exact'
       }, {
         Header: 'Field Type',
         id: 'Field Type',
-        accessor: "FieldType",
-        Cell: ({ cell: { value } }) => (<Circle01 size='30px' text={value} />),
+        accessor: "Field Type",
+        Cell: ({ cell: { value } }) => { return (<Circle01 size='30px' text={value ?? "?"} />) },
         width: 110,
         isVisible: isVisible,
         Filter: SelectColumnFilter,
-        filter: 'includes'
+        filter: 'exact'
       }, {
         Header: 'Operator',
         accessor: 'Operator',
