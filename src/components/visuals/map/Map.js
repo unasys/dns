@@ -69,7 +69,7 @@ const defaultTerrainProvider = new window.Cesium.EllipsoidTerrainProvider();
 const setupCesium = (cesiumRef) => {
 
     const simpleImagery = new window.Cesium.UrlTemplateImageryProvider({
-        url: 'https://api.maptiler.com/maps/5a1e1d94-c972-4199-a26d-2f55f9abeb14/{z}/{x}/{y}.png?key=FSzrABzSMJXbH2n6FfZc',
+        url: 'https://api.maptiler.com/maps/9cea32f0-e253-4358-a11f-2520ffc274b8/{z}/{x}/{y}.png?key=FSzrABzSMJXbH2n6FfZc',
         tileWidth: 512,
         tileHeight: 512,
         credit: new window.Cesium.Credit('<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>', true)
