@@ -14,26 +14,26 @@ const MapOptions = () => {
 
                 <div className="layer-container">
                     <div className="layer-content">
-                        <div className="bathymetry-title">Blocks</div>
                         <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBlocks" }) }} on={showBlocks} className={'bathymetry-title'} />
+                        <div className="bathymetry-title">Blocks</div>
                     </div>
                 </div>
                 <div className="layer-container">
                     <div className="layer-content">
-                        <div className="bathymetry-title">Globe Type ({globe3D ? "3D" : "2D"})</div>
                         <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggle3D" }) }} on={globe3D} className={'bathymetry-title'} />
+                        <div className="bathymetry-title">Globe Type ({globe3D ? "3D" : "2D"})</div>
                     </div>
                 </div>
                 <div className="layer-container">
                     <div className="layer-content">
-                        <div className="bathymetry-title">Terrain</div>
                         <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleTerrain" }) }} on={enableTerrain} className={'bathymetry-title'} />
+                        <div className="bathymetry-title">Terrain</div>
                     </div>
                 </div>
                 <div className="layer-container">
                     <div className="layer-content">
-                        <div className="bathymetry-title">Map Style ({mapStyle === "satellite" ? "satellite" : "simple"})</div>
                         <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "changeMapStyle", mapStyle: mapStyle === "satellite" ? "simple" : "satellite" }) }} on={mapStyle === "satellite"} className={'bathymetry-title'} />
+                        <div className="bathymetry-title">Map Style ({mapStyle === "satellite" ? "satellite" : "simple"})</div>
                     </div>
                 </div>
             </div>
