@@ -69,7 +69,7 @@ function AreaInfoPanel(props) {
                 <Entry title={"Decom next 10 years"} subtitle={decomNext10Years}></Entry>
             </EntryContainer>
             <EntryContainer title="Weight" borderBottom>
-                <Entry icon={<i className="fas fa-dumbbell" style={{ fontSize: '20px' }}></i>} title={"Total Weight"} subtitle={weightInArea?.toLocaleString() + " te"}></Entry>
+                <Entry title={"Total Weight"} subtitle={weightInArea?.toLocaleString() + " te"}></Entry>
             </EntryContainer>
             <EntryContainer title="Sea" borderBottom>
                 <Entry title={"Avg Water Depth"} subtitle={Math.round(averageWaterDepth) + "m"}></Entry>

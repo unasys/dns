@@ -9,20 +9,20 @@ const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tile
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
 
-const pipelineColours = {
-    "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
-    "condensate": window.Cesium.Color.fromBytes(132, 0, 168),
-    "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
-    "gas": window.Cesium.Color.fromBytes(255, 51, 0),
-    "hydraulic": window.Cesium.Color.fromBytes(255, 255, 0),
-    "methanol": window.Cesium.Color.fromBytes(223, 155, 255),
-    "mixed hydrocarbons": window.Cesium.Color.fromBytes(155, 0, 76),
-    "oil": window.Cesium.Color.fromBytes(56, 168, 0),
-    "other fluid": window.Cesium.Color.fromBytes(161, 0, 123),
-    "water": window.Cesium.Color.fromBytes(0, 92, 230),
-    "disused": window.Cesium.Color.fromBytes(128, 128, 128),
-    "default": window.Cesium.Color.WHITE
-}
+// const pipelineColours = {
+//     "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
+//     "condensate": window.Cesium.Color.fromBytes(132, 0, 168),
+//     "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
+//     "gas": window.Cesium.Color.fromBytes(255, 51, 0),
+//     "hydraulic": window.Cesium.Color.fromBytes(255, 255, 0),
+//     "methanol": window.Cesium.Color.fromBytes(223, 155, 255),
+//     "mixed hydrocarbons": window.Cesium.Color.fromBytes(155, 0, 76),
+//     "oil": window.Cesium.Color.fromBytes(56, 168, 0),
+//     "other fluid": window.Cesium.Color.fromBytes(161, 0, 123),
+//     "water": window.Cesium.Color.fromBytes(0, 92, 230),
+//     "disused": window.Cesium.Color.fromBytes(128, 128, 128),
+//     "default": window.Cesium.Color.WHITE
+// }
 
 const pipelineColoursSimple = {
     "default": window.Cesium.Color.fromCssColorString("#DCDCDC")
@@ -383,9 +383,9 @@ const setupSubsurfaces = (subsurfaces) => {
 
 const getPipelineColour = (mapStyle, pipeline) => {
     let colours = pipelineColoursSimple;
-    if (mapStyle === "satellite") {
-        colours = pipelineColours;
-    }
+    // if (mapStyle === "satellite") {
+    //     colours = pipelineColours;
+    // }
 
     let pipelineFluid = pipeline.fluid_conveyed;
     if (pipelineFluid) {
