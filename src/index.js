@@ -16,6 +16,11 @@ const initialState = {
     subsurfaces: new Map(),
     wells: new Map(),
     wrecks: new Map(),
+    onshoreGasPipes: new Map(),
+    onshoreGasSites: new Map(),
+    onshoreGridCables: new Map(),
+    onshorePowerlines: new Map(),
+    onshoreWindfarms: new Map(),
     facts: [],
     showInstallations: true,
     showPipelines: false,
@@ -28,6 +33,11 @@ const initialState = {
     showWrecks: false,
     showAreas: false,
     showBasins: false,
+    showOnshoreGasPipes: false,
+    showOnshoreGasSites: false,
+    showOnshoreGridCables: false,
+    showOnshorePowerlines: false,
+    showOnshoreWindfarms: false,
     mapStyle: "simple",
     enableTerrain: false,
     globe3D: true,
@@ -39,12 +49,11 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-
     switch (action.type) {
         case 'changeRadius':
             return {
                 ...state,
-                radius: action.radius*1000
+                radius: action.radius * 1000
             }
         case 'setInstallations':
             return {
@@ -102,6 +111,13 @@ const reducer = (state, action) => {
                 ...state,
                 wrecks: action.wrecks
             };
+
+        case 'setOnshoreGasPipes': return { ...state, onshoreGasPipes: action.onshoreGasPipes };
+        case 'setOnshoreGasSites': return { ...state, onshoreGasSites: action.onshoreGasSites };
+        case 'setOnshoreGridCables':return { ...state, onshoreGridCables: action.onshoreGridCables };
+        case 'setOnshorePowerlines': return { ...state, onshorePowerlines: action.onshorePowerlines };
+        case 'setOnshoreWindfarms': return { ...state, onshoreWindfarms: action.onshoreWindfarms };
+
         case 'changeYear':
             return {
                 ...state,
@@ -172,6 +188,12 @@ const reducer = (state, action) => {
                 ...state,
                 showWrecks: !state.showWrecks
             };
+
+        case 'toggleOnshoreGasPipes': return { ...state, showOnshoreGasPipes: !state.showOnshoreGasPipes };
+        case 'toggleOnshoreGasSites': return { ...state, showOnshoreGasSites: !state.showOnshoreGasSites };
+        case 'toggleOnshoreGridCables': return { ...state, showOnshoreGridCables: !state.showOnshoreGridCables };
+        case 'toggleOnshorePowerlines': return { ...state, showOnshorePowerlines: !state.showOnshorePowerlines };
+        case 'toggleOnshoreWindfarms': return { ...state, showOnshoreWindfarms: !state.showOnshoreWindfarms };
         case "installationsVisible":
             return {
                 ...state,
@@ -222,6 +244,11 @@ const reducer = (state, action) => {
                 ...state,
                 wrecksVisible: action.wrecksVisible
             };
+        case 'onshoreGasPipesVisible': return { ...state, onshoreGasPipesVisible: action.onshoreGasPipes };
+        case 'onshoreGasSitesVisible': return { ...state, onshoreGasSitesVisible: action.onshoreGasSites };
+        case 'onshoreGridCablesVisible': return { ...state, onshoreGridCablesVisible: action.onshoreGridCables };
+        case 'onshorePowerlinesVisible': return { ...state, onshorePowerlinesVisible: action.onshorePowerlines };
+        case 'onshoreWindfarmsVisible': return { ...state, onshoreWindfarmsVisible: action.onshoreWindfarms };
         case "changeMapStyle":
             return {
                 ...state,

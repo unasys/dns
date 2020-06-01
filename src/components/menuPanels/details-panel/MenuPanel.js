@@ -56,7 +56,7 @@ const NavigationHeading = (props) => {
 
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
-    const [{ showInstallations, showPipelines, showFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins }, dispatch] = useStateValue();
+    const [{ showInstallations, showPipelines, showFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
@@ -71,6 +71,11 @@ function MenuPanel() {
                     <NavigationHeading heading='Subsurface' url="subsurfaces" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleSubsurfaces" }) }} on={showSubsurfaces} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Wells' url="wells" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWells" }) }} on={showWells} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Wrecks' url="wrecks" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWrecks" }) }} on={showWrecks} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Onshore Gas Pipes' url="onshoregaspipes" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreGasPipes" }) }} on={showOnshoreGasPipes} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Onshore Gas Sites' url="onshoregassites" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreGasSites" }) }} on={showOnshoreGasSites} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Onshore Grid Cables' url="onshoregridcables" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreGridCables" }) }} on={showOnshoreGridCables} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Onshore Powerlines' url="onshorepowerlines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshorePowerlines" }) }} on={showOnshorePowerlines} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Onshore Windfarms' url="onshorewindfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreWindfarms" }) }} on={showOnshoreWindfarms} className={'bathymetry-title'} />} />
                     <MapOptions />
                 </aside>
             </div>

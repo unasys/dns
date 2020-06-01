@@ -239,3 +239,83 @@ export async function fetchBasins() {
     });
     return data.sort(sortByName);
 }
+
+export async function fetchOnsoreGasPipes() {
+    let url = assetsBaseUrl + `/data/onshorepower/gaspipes.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.Name;
+        }
+
+        if (!entity.name) {
+            entity.name = entity.Name;
+        }
+    });
+    return data.sort(sortByName);
+}
+
+export async function fetchOnsoreWind() {
+    let url = assetsBaseUrl + `/data/onshorepower/onshorewind.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.Name;
+        }
+
+        if (!entity.name) {
+            entity.name = entity.Name;
+        }
+    });
+    return data.sort(sortByName);
+}
+
+export async function fetchOnsoreGasSites() {
+    let url = assetsBaseUrl + `/data/onshorepower/gassites.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.Name;
+        }
+
+        if (!entity.name) {
+            entity.name = entity.Name;
+        }
+    });
+    return data.sort(sortByName);
+}
+
+export async function fetchOnsorePowerlines() {
+    let url = assetsBaseUrl + `/data/onshorepower/powerlines.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.Name;
+        }
+
+        if (!entity.name) {
+            entity.name = entity.Name;
+        }
+    });
+    return data.sort(sortByName);
+}
+
+export async function fetchOnsoreGridCables() {
+    let url = assetsBaseUrl + `/data/onshorepower/gridcables.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.Name;
+        }
+
+        if (!entity.name) {
+            entity.name = entity.Name;
+        }
+    });
+    return data.sort(sortByName);
+}

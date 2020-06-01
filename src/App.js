@@ -4,7 +4,7 @@ import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins } from './api/Installations';
+import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind } from './api/Installations';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
@@ -46,6 +46,11 @@ const App = () => {
     fetchSubsurface().then(subsurfaces => { dispatch({ type: "setSubsurfaces", subsurfaces: unique(subsurfaces, "id") }) });
     fetchWells().then(wells => { dispatch({ type: "setWells", wells: unique(wells, "id") }) });
     fetchWrecks().then(wrecks => { dispatch({ type: "setWrecks", wrecks: unique(wrecks, "id") }) });
+    fetchOnsoreGasPipes().then(pipes => { dispatch({ type: "setOnshoreGasPipes", onshoreGasPipes: unique(pipes, "id") }) });
+    fetchOnsoreGasSites().then(sites => { dispatch({ type: "setOnshoreGasSites", onshoreGasSites: unique(sites, "id") }) });
+    fetchOnsoreGridCables().then(cables => { dispatch({ type: "setOnshoreGridCables", onshoreGridCables: unique(cables, "id") }) });
+    fetchOnsorePowerlines().then(powerlines => { dispatch({ type: "setOnshorePowerlines", onshorePowerlines: unique(powerlines, "id") }) });
+    fetchOnsoreWind().then(windfarms => { dispatch({ type: "setOnshoreWindfarms", onshoreWindfarms: unique(windfarms, "id") }) });
   }, [dispatch]);
 
   return (
