@@ -11,7 +11,7 @@ import TitleBar from './TitleBar';
 import Slider from 'rc-slider';
 import { groupByAndSort } from '../../utils/utils';
 
-function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, collection) {
+function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, collection) {
     switch (collection) {
         case "Installation": return showInstallations
         case "Pipeline": return showPipelines
@@ -23,19 +23,24 @@ function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms,
         case "Subsurface": return showSubsurfaces;
         case "Well": return showWells;
         case "Wreck": return showWrecks;
+        case "OnshoreGasPipes": return showOnshoreGasPipes;
+        case "OnshoreGasSites": return showOnshoreGasSites;
+        case "OnshoreGridCables": return showOnshoreGridCables;
+        case "OnshorePowerlines": return showOnshorePowerlines;
+        case "OnshoreWindfarms": return showOnshoreWindfarms;
         default:
             return false;
     }
 }
 
 function WithInDistance() {
-    const [{ withInDistance, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins },] = useStateValue();
+    const [{ withInDistance, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms },] = useStateValue();
     const output = [];
     for (const p in withInDistance) {
         const entities = withInDistance[p];
         output.push(<EntryContainer open={false} key={`${p}`} title={`${p}  (${entities.length.toLocaleString()})`} borderBottom>
             {entities.map(e => {
-                const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, p);
+                const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, p);
                 if (isClickable) {
                     return (<Link key={`${e.entity.id}`} to={location => ({ ...location, search: `?etype=${p}&eid=${e.entity.id}` })}>
                         <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
@@ -55,7 +60,7 @@ function WithInDistance() {
         </>
     );
 }
-function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, eType, eId) {
+function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, eType, eId) {
     switch (eType) {
         case "Installation": return installations.get(eId);
         case "Pipeline": return pipelines.get(eId);
@@ -65,6 +70,11 @@ function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, ba
         case "Well": return wells.get(eId);
         case "Wreck": return wrecks.get(eId);
         case "Field": return fields.get(eId);
+        case "OnshoreGasPipe": return onshoreGasPipes.get(eId);
+        case "OnshoreGasSite": return onshoreGasSites.get(eId);
+        case "OnshoreGridCable": return onshoreGridCables.get(eId);
+        case "OnshorePowerline": return onshorePowerlines.get(eId);
+        case "OnshoreWindfarm":  return onshoreWindfarms.get(eId);
         case "DecomYard":
         default:
             return null;
@@ -232,14 +242,14 @@ const marks = {
 
 
 function InfoPanel() {
-    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins, fields }, dispatch] = useStateValue();
+    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins, fields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
     const eid = search.get("eid");
     const etype = search.get("etype");
 
-    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, etype, eid);
+    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, etype, eid);
     let panel = choosePanel(installations, wells, areas, pipelines, fields, etype, entity);
 
     return (
