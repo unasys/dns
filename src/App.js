@@ -17,6 +17,7 @@ import WellTable from './components/tables/WellTable';
 import WreckTable from './components/tables/WreckTable';
 import AreaTable from './components/tables/AreaTable';
 import BasinTable from './components/tables/BasinTable';
+import BasicTable from './components/tables/BasicTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -33,7 +34,7 @@ const unique = (arr, prop) => {
 }
 
 const App = () => {
-  const [, dispatch] = useStateValue();
+  const [{onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms}, dispatch] = useStateValue();
 
   useEffect(() => {
     fetchInstallations().then(installations => { dispatch({ type: "setInstallations", installations: unique(installations, "id") }) });
@@ -95,6 +96,11 @@ const App = () => {
               <Route path="/wrecks" exact >
                 <WreckTable />
               </Route>
+              <Route path="/onshoregaspipes" exact><BasicTable data={onshoreGasPipes} type="OnshoreGasPipe" rowVisible="onshoreGasPipeVisible" /></Route>
+              <Route path="/onshoregassites" exact><BasicTable data={onshoreGasSites} type="OnshoreGasSite" rowVisible="onshoreGasSiteVisible" /></Route>
+              <Route path="/onshoregridcables" exact><BasicTable data={onshoreGridCables} type="OnshoreGridCable" rowVisible="onshoreGridCableVisible" /></Route>
+              <Route path="/onshorepowerlines" exact><BasicTable data={onshorePowerlines} type="OnshorePowerline" rowVisible="onshorePowerlineVisible" /></Route>
+              <Route path="/onshorewindfarms" exact><BasicTable data={onshoreWindfarms} type="OnshoreWindfarm" rowVisible="onshoreWindfarmVisible" /></Route>
             </Switch>
             <InfoPanel />
           </div>

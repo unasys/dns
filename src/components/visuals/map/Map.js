@@ -509,11 +509,23 @@ const setupOnshoreWind = async (windfarms) => {
     let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
     dataSource.name = "OnshoreWindfarm";
     var p = dataSource.entities.values;
+
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-        if (entity.polygon) {
-            entity.polygon.zIndex = 40;
+        
+        if (entity.billboard) {
+            entity.billboard = undefined;
+            entity.point = {
+                pixelSize: 4,
+                color: window.Cesium.Color.CADETBLUE,
+                eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                heightReference: dynamicHeightReference,
+                zIndex: 60
+            };
         }
+
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
@@ -531,12 +543,17 @@ const setupOnshoreGridCables = async (gridCables) => {
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-        if (entity.polygon) {
-            entity.polygon.zIndex = 40;
-        }
+
         const rawEntity = gridCables.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
+        }
+
+        if (entity.polyline) {
+            entity.polyline.material = window.Cesium.Color.BLACK;
+            entity.polyline.width = 4;
+            entity.polyline.zIndex = 50;
+            entity.polyline.clampToGround = true;
         }
 
     }
@@ -551,12 +568,17 @@ const setupOnshorePowerlines = async (powerlines) => {
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-        if (entity.polygon) {
-            entity.polygon.zIndex = 40;
-        }
+
         const rawEntity = powerlines.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
+        }
+
+        if (entity.polyline) {
+            entity.polyline.material = window.Cesium.Color.BLACK;
+            entity.polyline.width = 4;
+            entity.polyline.zIndex = 50;
+            entity.polyline.clampToGround = true;
         }
 
     }
@@ -571,12 +593,17 @@ const setupOnshoreGasPipes = async (pipes) => {
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-        if (entity.polygon) {
-            entity.polygon.zIndex = 40;
-        }
+
         const rawEntity = pipes.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
+        }
+
+        if (entity.polyline) {
+            entity.polyline.material = window.Cesium.Color.BLACK;
+            entity.polyline.width = 4;
+            entity.polyline.zIndex = 50;
+            entity.polyline.clampToGround = true;
         }
 
     }
@@ -694,7 +721,7 @@ const setupBlocks = async () => {
             style: window.Cesium.LabelStyle.FILL,
             outlineColor: window.Cesium.Color.WHITE,
             outlineWidth: 1.5,
- 
+
             heightReference: dynamicHeightReference,
             scale: 0.65,
             zIndex: 60
@@ -806,7 +833,7 @@ const setupAreas = async (areas) => {
             heightReference: dynamicHeightReference,
             scale: 0.65,
             zIndex: 60
-            
+
         });
     }
     return dataSource;
@@ -1185,49 +1212,67 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer || windfarms.size === 0) return;
-        const dataSource = setupWindfarms(windfarms);
-        dataSource.show = showWindfarms;
-        viewer.dataSources.add(dataSource);
+        async function load() {
+            const dataSource = setupWindfarms(windfarms);
+            dataSource.show = showWindfarms;
+            viewer.dataSources.add(dataSource);
+        }
+        load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, windfarms]);
 
     useEffect(() => {
         if (!viewer || onshoreGasPipes.size === 0) return;
-        const dataSource = setupOnshoreGasPipes(onshoreGasPipes);
-        dataSource.show = showOnshoreGasPipes;
-        viewer.dataSources.add(dataSource);
+        async function load() {
+            const dataSource = setupOnshoreGasPipes(onshoreGasPipes);
+            dataSource.show = showOnshoreGasPipes;
+            viewer.dataSources.add(dataSource);
+        }
+        load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, onshoreGasPipes]);
 
     useEffect(() => {
         if (!viewer || onshoreGasSites.size === 0) return;
-        const dataSource = setupOnshoreGasSites(onshoreGasSites);
-        dataSource.show = showOnshoreGasSites;
-        viewer.dataSources.add(dataSource);
+        async function load() {
+            const dataSource = setupOnshoreGasSites(onshoreGasSites);
+            dataSource.show = showOnshoreGasSites;
+            viewer.dataSources.add(dataSource);
+        }
+        load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, onshoreGasSites]);
 
     useEffect(() => {
         if (!viewer || onshoreGridCables.size === 0) return;
-        const dataSource = setupOnshoreGridCables(onshoreGridCables);
-        dataSource.show = showOnshoreGridCables;
-        viewer.dataSources.add(dataSource);
+        async function load() {
+            const dataSource = setupOnshoreGridCables(onshoreGridCables);
+            dataSource.show = showOnshoreGridCables;
+            viewer.dataSources.add(dataSource);
+        }
+        load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, onshoreGridCables]);
 
     useEffect(() => {
         if (!viewer || onshorePowerlines.size === 0) return;
-        const dataSource = setupOnshorePowerlines(onshorePowerlines);
-        dataSource.show = showOnshorePowerlines;
-        viewer.dataSources.add(dataSource);
+        async function load() {
+            const dataSource = setupOnshorePowerlines(onshorePowerlines);
+            dataSource.show = showOnshorePowerlines;
+            viewer.dataSources.add(dataSource);
+        }
+        load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, onshorePowerlines]);
 
     useEffect(() => {
         if (!viewer || onshoreWindfarms.size === 0) return;
-        const dataSource = setupOnshoreWind(onshoreWindfarms);
-        dataSource.show = showOnshoreWindfarms;
-        viewer.dataSources.add(dataSource);
+        async function load() {
+            const dataSource = setupOnshoreWind(onshoreWindfarms);
+            dataSource.show = showOnshoreWindfarms;
+            viewer.dataSources.add(dataSource);
+        }
+        load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, onshoreWindfarms]);
 

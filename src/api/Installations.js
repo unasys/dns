@@ -262,14 +262,14 @@ export async function fetchOnsoreWind() {
     const data = await response.json();
     data.forEach(entity => {
         if (!entity.id) {
-            entity.id = entity.Name;
+            entity.id = entity.Name??entity.Description
         }
 
         if (!entity.name) {
-            entity.name = entity.Name;
+            entity.name = entity.Name??entity.Description;
         }
     });
-    return data.sort(sortByName);
+    return data.filter(entity => entity.id !== null).sort(sortByName);
 }
 
 export async function fetchOnsoreGasSites() {
