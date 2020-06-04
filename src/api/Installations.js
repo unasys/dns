@@ -253,7 +253,7 @@ export async function fetchOnsoreGasPipes() {
             entity.name = entity.Name;
         }
     });
-    return data.sort(sortByName);
+    return data.filter(entity => entity.id !== null).sort(sortByName);
 }
 
 export async function fetchOnsoreWind() {
@@ -285,7 +285,7 @@ export async function fetchOnsoreGasSites() {
             entity.name = entity.Name;
         }
     });
-    return data.sort(sortByName);
+    return data.filter(entity => entity.id !== null).sort(sortByName);
 }
 
 export async function fetchOnsorePowerlines() {
@@ -301,7 +301,7 @@ export async function fetchOnsorePowerlines() {
             entity.name = entity.Name;
         }
     });
-    return data.sort(sortByName);
+    return data.filter(entity => entity.id !== null).sort(sortByName);
 }
 
 export async function fetchOnsoreGridCables() {
@@ -317,5 +317,22 @@ export async function fetchOnsoreGridCables() {
             entity.name = entity.Name;
         }
     });
-    return data.sort(sortByName);
+    return data.filter(entity => entity.id !== null).sort(sortByName);
 }
+
+export async function fetchWorkingGroups() {
+    let url = assetsBaseUrl + `/data/workinggroups.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.GID;
+        }
+
+        if (!entity.name) {
+            entity.name = entity["Working group Name"];
+        }
+    });
+    return data.filter(entity => entity.id !== null).sort(sortByName);
+}
+

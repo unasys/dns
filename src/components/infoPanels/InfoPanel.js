@@ -11,7 +11,7 @@ import TitleBar from './TitleBar';
 import Slider from 'rc-slider';
 import { groupByAndSort } from '../../utils/utils';
 
-function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, collection) {
+function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms,showWorkingGroups, collection) {
     switch (collection) {
         case "Installation": return showInstallations
         case "Pipeline": return showPipelines
@@ -23,24 +23,25 @@ function radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms,
         case "Subsurface": return showSubsurfaces;
         case "Well": return showWells;
         case "Wreck": return showWrecks;
-        case "OnshoreGasPipes": return showOnshoreGasPipes;
-        case "OnshoreGasSites": return showOnshoreGasSites;
-        case "OnshoreGridCables": return showOnshoreGridCables;
-        case "OnshorePowerlines": return showOnshorePowerlines;
-        case "OnshoreWindfarms": return showOnshoreWindfarms;
+        case "OnshoreGasPipe": return showOnshoreGasPipes;
+        case "OnshoreGasSite": return showOnshoreGasSites;
+        case "OnshoreGridCable": return showOnshoreGridCables;
+        case "OnshorePowerline": return showOnshorePowerlines;
+        case "OnshoreWindfarm": return showOnshoreWindfarms;
+        case "WorkingGroup": return showWorkingGroups;
         default:
             return false;
     }
 }
 
 function WithInDistance() {
-    const [{ withInDistance, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms },] = useStateValue();
+    const [{ withInDistance, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups },] = useStateValue();
     const output = [];
     for (const p in withInDistance) {
         const entities = withInDistance[p];
         output.push(<EntryContainer open={false} key={`${p}`} title={`${p}  (${entities.length.toLocaleString()})`} borderBottom>
             {entities.map(e => {
-                const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, p);
+                const isClickable = radiusEntryIsClickable(showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms,showWorkingGroups, p);
                 if (isClickable) {
                     return (<Link key={`${e.entity.id}`} to={location => ({ ...location, search: `?etype=${p}&eid=${e.entity.id}` })}>
                         <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
@@ -60,12 +61,14 @@ function WithInDistance() {
         </>
     );
 }
-function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, eType, eId) {
+
+function getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields, onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, eType, eId) {
     switch (eType) {
         case "Installation": return installations.get(eId);
         case "Pipeline": return pipelines.get(eId);
         case "Windfarm": return windfarms.get(eId);
         case "Area": return areas.get(eId);
+        case "WorkingGroup": return workingGroups.get(eId);
         case "Basin": return basins.get(eId);
         case "Well": return wells.get(eId);
         case "Wreck": return wrecks.get(eId);

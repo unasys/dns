@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar } from './Table';
@@ -14,7 +14,7 @@ function BasicTable({ type, rowVisible, data }) {
         () => [{
             Header: 'Name',
             id: 'Name',
-            accessor: 'Name',
+            accessor: 'name',
             width:350,
             footer: "count"
         }],

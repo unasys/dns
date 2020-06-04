@@ -56,7 +56,7 @@ const NavigationHeading = (props) => {
 
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
-    const [{ showInstallations, showPipelines, showFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms }, dispatch] = useStateValue();
+    const [{ showInstallations, showPipelines, showFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
@@ -76,6 +76,7 @@ function MenuPanel() {
                     <NavigationHeading heading='Onshore Grid Cables' url="onshoregridcables" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreGridCables" }) }} on={showOnshoreGridCables} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Onshore Powerlines' url="onshorepowerlines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshorePowerlines" }) }} on={showOnshorePowerlines} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Onshore Windfarms' url="onshorewindfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreWindfarms" }) }} on={showOnshoreWindfarms} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Working Groups' url="workinggroups" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWorkingGroups" }) }} on={showWorkingGroups} className={'bathymetry-title'} />} />
                     <MapOptions />
                 </aside>
             </div>

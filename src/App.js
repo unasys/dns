@@ -4,7 +4,7 @@ import CesiumMap from './components/visuals/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind } from './api/Installations';
+import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind, fetchWorkingGroups } from './api/Installations';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
@@ -34,7 +34,7 @@ const unique = (arr, prop) => {
 }
 
 const App = () => {
-  const [{onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms}, dispatch] = useStateValue();
+  const [{onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups}, dispatch] = useStateValue();
 
   useEffect(() => {
     fetchInstallations().then(installations => { dispatch({ type: "setInstallations", installations: unique(installations, "id") }) });
@@ -52,6 +52,7 @@ const App = () => {
     fetchOnsoreGridCables().then(cables => { dispatch({ type: "setOnshoreGridCables", onshoreGridCables: unique(cables, "id") }) });
     fetchOnsorePowerlines().then(powerlines => { dispatch({ type: "setOnshorePowerlines", onshorePowerlines: unique(powerlines, "id") }) });
     fetchOnsoreWind().then(windfarms => { dispatch({ type: "setOnshoreWindfarms", onshoreWindfarms: unique(windfarms, "id") }) });
+    fetchWorkingGroups().then(workingGroups => { dispatch({ type: "setWorkingGroups", workingGroups: unique(workingGroups, "id") }) });
   }, [dispatch]);
 
   return (
@@ -101,6 +102,7 @@ const App = () => {
               <Route path="/onshoregridcables" exact><BasicTable data={onshoreGridCables} type="OnshoreGridCable" rowVisible="onshoreGridCableVisible" /></Route>
               <Route path="/onshorepowerlines" exact><BasicTable data={onshorePowerlines} type="OnshorePowerline" rowVisible="onshorePowerlineVisible" /></Route>
               <Route path="/onshorewindfarms" exact><BasicTable data={onshoreWindfarms} type="OnshoreWindfarm" rowVisible="onshoreWindfarmVisible" /></Route>
+              <Route path="/workinggroups" exact><BasicTable data={workingGroups} type="WorkingGroup" rowVisible="workingGroupsVisible" /></Route>
             </Switch>
             <InfoPanel />
           </div>

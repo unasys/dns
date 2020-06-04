@@ -12,6 +12,7 @@ const initialState = {
     pipelines: new Map(),
     windfarms: new Map(),
     areas: new Map(),
+    workingGroups: new Map(),
     basins: new Map(),
     subsurfaces: new Map(),
     wells: new Map(),
@@ -32,6 +33,7 @@ const initialState = {
     showWells: false,
     showWrecks: false,
     showAreas: false,
+    showWorkingGroups: false,
     showBasins: false,
     showOnshoreGasPipes: false,
     showOnshoreGasSites: false,
@@ -117,6 +119,7 @@ const reducer = (state, action) => {
         case 'setOnshoreGridCables':return { ...state, onshoreGridCables: action.onshoreGridCables };
         case 'setOnshorePowerlines': return { ...state, onshorePowerlines: action.onshorePowerlines };
         case 'setOnshoreWindfarms': return { ...state, onshoreWindfarms: action.onshoreWindfarms };
+        case 'setWorkingGroups': return { ...state, workingGroups: action.workingGroups };
 
         case 'changeYear':
             return {
@@ -194,6 +197,7 @@ const reducer = (state, action) => {
         case 'toggleOnshoreGridCables': return { ...state, showOnshoreGridCables: !state.showOnshoreGridCables };
         case 'toggleOnshorePowerlines': return { ...state, showOnshorePowerlines: !state.showOnshorePowerlines };
         case 'toggleOnshoreWindfarms': return { ...state, showOnshoreWindfarms: !state.showOnshoreWindfarms };
+        case 'toggleWorkingGroups': return { ...state, showWorkingGroups: !state.showWorkingGroups };
         case "installationsVisible":
             return {
                 ...state,
@@ -244,11 +248,12 @@ const reducer = (state, action) => {
                 ...state,
                 wrecksVisible: action.wrecksVisible
             };
-        case 'onshoreGasPipesVisible': return { ...state, onshoreGasPipesVisible: action.onshoreGasPipes };
-        case 'onshoreGasSitesVisible': return { ...state, onshoreGasSitesVisible: action.onshoreGasSites };
-        case 'onshoreGridCablesVisible': return { ...state, onshoreGridCablesVisible: action.onshoreGridCables };
-        case 'onshorePowerlinesVisible': return { ...state, onshorePowerlinesVisible: action.onshorePowerlines };
-        case 'onshoreWindfarmsVisible': return { ...state, onshoreWindfarmsVisible: action.onshoreWindfarms };
+        case 'onshoreGasPipesVisible': return { ...state, onshoreGasPipesVisible: action.onshoreGasPipesVisible };
+        case 'onshoreGasSitesVisible': return { ...state, onshoreGasSitesVisible: action.onshoreGasSitesVisible };
+        case 'onshoreGridCablesVisible': return { ...state, onshoreGridCablesVisible: action.onshoreGridCablesVisible };
+        case 'onshorePowerlinesVisible': return { ...state, onshorePowerlinesVisible: action.onshorePowerlinesVisible };
+        case 'onshoreWindfarmsVisible': return { ...state, onshoreWindfarmsVisible: action.onshoreWindfarmsVisible };
+        case 'workingGroupsVisible': return { ...state, workingGroupsVisible: action.workingGroupsVisible };
         case "changeMapStyle":
             return {
                 ...state,

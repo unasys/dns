@@ -503,6 +503,26 @@ const setupWindfarms = async (windfarms) => {
     return dataSource;
 }
 
+const setupWorkingGroups = async (workingGroups) => {
+    const features = [...workingGroups.values()].map(workingGroup => ({ type: "Feature", id: workingGroup.id, name: workingGroup.name, geometry: workingGroup.Geometry, properties: { id: workingGroup.id } }));
+    const geoJson = { type: "FeatureCollection", features: features };
+    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    dataSource.name = "WorkingGroup";
+    var p = dataSource.entities.values;
+    for (var i = 0; i < p.length; i++) {
+        const entity = p[i];
+        if (entity.polygon) {
+            entity.polygon.zIndex = 40;
+        }
+        const rawEntity = workingGroups.get(entity.properties.id.getValue().toString());
+        if (rawEntity) {
+            entity.originalData = rawEntity;
+        }
+
+    }
+    return dataSource;
+}
+
 const setupOnshoreWind = async (windfarms) => {
     const features = [...windfarms.values()].map(windfarm => ({ type: "Feature", id: windfarm.id, name: windfarm.name, geometry: windfarm.Geometry, properties: { id: windfarm.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
@@ -551,7 +571,7 @@ const setupOnshoreGridCables = async (gridCables) => {
 
         if (entity.polyline) {
             entity.polyline.material = window.Cesium.Color.BLACK;
-            entity.polyline.width = 4;
+            entity.polyline.width = 2;
             entity.polyline.zIndex = 50;
             entity.polyline.clampToGround = true;
         }
@@ -576,7 +596,7 @@ const setupOnshorePowerlines = async (powerlines) => {
 
         if (entity.polyline) {
             entity.polyline.material = window.Cesium.Color.BLACK;
-            entity.polyline.width = 4;
+            entity.polyline.width = 2;
             entity.polyline.zIndex = 50;
             entity.polyline.clampToGround = true;
         }
@@ -601,7 +621,7 @@ const setupOnshoreGasPipes = async (pipes) => {
 
         if (entity.polyline) {
             entity.polyline.material = window.Cesium.Color.BLACK;
-            entity.polyline.width = 4;
+            entity.polyline.width = 2;
             entity.polyline.zIndex = 50;
             entity.polyline.clampToGround = true;
         }
@@ -970,9 +990,9 @@ const switchStyle = (viewer, mapStyle) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms,
-        showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile,
+    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
+        showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
+        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
         mapStyle, enableTerrain, globe3D, radius }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
@@ -1064,6 +1084,10 @@ const CesiumMap = () => {
         toggleEntityVisibility(viewer, "Area", areasVisible);
     }, [viewer, areasVisible]);
     useEffect(() => {
+        if (!viewer || !workingGroupsVisible) return;
+        toggleEntityVisibility(viewer, "WorkingGroup", workingGroupsVisible);
+    }, [viewer, workingGroupsVisible]);
+    useEffect(() => {
         if (!viewer || !basinsVisible) return;
         toggleEntityVisibility(viewer, "Basin", basinsVisible);
     }, [viewer, basinsVisible]);
@@ -1127,8 +1151,10 @@ const CesiumMap = () => {
         if (onshorePowerlines.length > 0) onshorePowerlines[0].show = showOnshorePowerlines;
         const onshoreWindfarms = viewer.dataSources.getByName("OnshoreWindfarm");
         if (onshoreWindfarms.length > 0) onshoreWindfarms[0].show = showOnshoreWindfarms;
+        const workingGroups = viewer.dataSources.getByName("WorkingGroup");
+        if (workingGroups.length > 0) workingGroups[0].show = showWorkingGroups;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms]);
+    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
 
     useEffect(() => {
         if (viewer) {
@@ -1213,7 +1239,7 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || windfarms.size === 0) return;
         async function load() {
-            const dataSource = setupWindfarms(windfarms);
+            const dataSource = await setupWindfarms(windfarms);
             dataSource.show = showWindfarms;
             viewer.dataSources.add(dataSource);
         }
@@ -1222,9 +1248,20 @@ const CesiumMap = () => {
     }, [viewer, windfarms]);
 
     useEffect(() => {
+        if (!viewer || workingGroups.size === 0) return;
+        async function load() {
+            const dataSource = await setupWorkingGroups(workingGroups);
+            dataSource.show = showWorkingGroups;
+            viewer.dataSources.add(dataSource);
+        }
+        load();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, workingGroups]);
+
+    useEffect(() => {
         if (!viewer || onshoreGasPipes.size === 0) return;
         async function load() {
-            const dataSource = setupOnshoreGasPipes(onshoreGasPipes);
+            const dataSource = await setupOnshoreGasPipes(onshoreGasPipes);
             dataSource.show = showOnshoreGasPipes;
             viewer.dataSources.add(dataSource);
         }
@@ -1235,7 +1272,7 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || onshoreGasSites.size === 0) return;
         async function load() {
-            const dataSource = setupOnshoreGasSites(onshoreGasSites);
+            const dataSource = await setupOnshoreGasSites(onshoreGasSites);
             dataSource.show = showOnshoreGasSites;
             viewer.dataSources.add(dataSource);
         }
@@ -1246,7 +1283,7 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || onshoreGridCables.size === 0) return;
         async function load() {
-            const dataSource = setupOnshoreGridCables(onshoreGridCables);
+            const dataSource = await setupOnshoreGridCables(onshoreGridCables);
             dataSource.show = showOnshoreGridCables;
             viewer.dataSources.add(dataSource);
         }
@@ -1257,7 +1294,7 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || onshorePowerlines.size === 0) return;
         async function load() {
-            const dataSource = setupOnshorePowerlines(onshorePowerlines);
+            const dataSource = await setupOnshorePowerlines(onshorePowerlines);
             dataSource.show = showOnshorePowerlines;
             viewer.dataSources.add(dataSource);
         }
@@ -1268,7 +1305,7 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || onshoreWindfarms.size === 0) return;
         async function load() {
-            const dataSource = setupOnshoreWind(onshoreWindfarms);
+            const dataSource = await setupOnshoreWind(onshoreWindfarms);
             dataSource.show = showOnshoreWindfarms;
             viewer.dataSources.add(dataSource);
         }
