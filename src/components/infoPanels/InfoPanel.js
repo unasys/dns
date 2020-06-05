@@ -178,6 +178,7 @@ function AreaInfo({ area, installations, wells, pipelines, fields }) {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     searchParams.delete("basinId");
+    searchParams.delete("workingGroupId");
     searchParams.set("areaId", area.id);
     const installationsInArea = [...installations.values()].filter(installation => area.id === installation.areaId);
     const wellsInArea = [...wells.values()].filter(well => area.id === well.areaId);
@@ -202,6 +203,27 @@ function BasinInfo({ basin, installations, wells, pipelines, fields }) {
     const fieldsInBasin = [...fields.values()].filter(field => field.basinId === basin.id);
     searchParams.set("basinId", basin.id);
     searchParams.delete("areaId");
+    searchParams.delete("workingGroupId");
+    return (
+        <>
+            <InstallationInfo installations={installationsInBasin} searchParams={searchParams} />
+            <WellInfo wells={wellsInBasin} searchParams={searchParams} />
+            <PipelineInfo pipelines={pipelinesInBasin} searchParams={searchParams} />
+            <FieldInfo fields={fieldsInBasin} searchParams={searchParams} />
+        </>
+    )
+}
+
+function WorkingGroupInfo({ workingGroup, installations, wells, pipelines, fields }) {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const installationsInBasin = [...installations.values()].filter(installation => workingGroup.id === installation.workingroupId);
+    const wellsInBasin = [...wells.values()].filter(well => workingGroup.id === well.workingroupId);
+    const pipelinesInBasin = [...pipelines.values()].filter(pipeline => pipeline.workingroupIds.includes(workingGroup.id));
+    const fieldsInBasin = [...fields.values()].filter(field => field.basinId === workingGroup.id);
+    searchParams.set("workingGroupId", workingGroup.id);
+    searchParams.delete("areaId");
+    searchParams.delete("basinId");
     return (
         <>
             <InstallationInfo installations={installationsInBasin} searchParams={searchParams} />
@@ -216,6 +238,7 @@ function TypeSepcificInfo({ type, entity, installations, wells, pipelines, field
     switch (type) {
         case "Area": return <AreaInfo installations={installations} wells={wells} pipelines={pipelines} fields={fields} area={entity} />;
         case "Basin": return <BasinInfo installations={installations} wells={wells} pipelines={pipelines} fields={fields} basin={entity} />;
+        case "WorkingGroup": return <WorkingGroupInfo installations={installations} wells={wells} pipelines={pipelines} fields={fields} workingGroup={entity} />;
         default: return null;
     }
 }

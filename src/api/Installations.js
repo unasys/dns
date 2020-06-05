@@ -29,6 +29,10 @@ export async function fetchInstallations() {
             entity.basinId = entity.basinid;
         }
 
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
         if (!entity.name) {
             entity.name = entity.Name;
         }
@@ -54,6 +58,10 @@ export async function fetchDecomyards() {
             entity.basinId = entity.basinid;
         }
 
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
         if (!entity.name) {
             entity.name = entity.Name;
         }
@@ -77,6 +85,11 @@ export async function fetchPipelines() {
         if (!entity.basinIds) {
             entity.basinIds = entity.Basinid ?? [];
         }
+
+        if(!entity.workingroupIds){
+            entity.workingroupIds = entity.workingroupids??[];
+        }
+
         if (!entity.name) {
             entity.name = entity["pipeline_name"];
         }
@@ -99,6 +112,10 @@ export async function fetchWindfarms() {
 
         if (!entity.basinId) {
             entity.basinId = entity.basinid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
         }
 
         if (!entity.name) {
@@ -125,6 +142,10 @@ export async function fetchFields() {
             entity.basinId = entity.basinid;
         }
 
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
         if (!entity.name) {
             entity.name = entity["Field Name"];
         }
@@ -143,6 +164,10 @@ export async function fetchSubsurface() {
 
         if (!entity.areaId) {
             entity.areaId = entity.areaid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
         }
 
         if (!entity.basinId) {
@@ -167,6 +192,10 @@ export async function fetchWells() {
 
         if (!entity.basinId) {
             entity.basinId = entity.Basinid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
         }
 
         if (entity.Geometry.coordinates) {
@@ -197,6 +226,10 @@ export async function fetchWrecks() {
             entity.basinId = entity.basinid;
         }
 
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
         if (!entity.name) {
             entity.name = entity.Name;
         }
@@ -217,6 +250,10 @@ export async function fetchAreas() {
             entity.basinId = entity.basinid;
         }
 
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
         if (!entity.name) {
             entity.name = entity["Area Name"];
         }
@@ -231,6 +268,10 @@ export async function fetchBasins() {
     data.forEach(entity => {
         if (!entity.id) {
             entity.id = entity.GID;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
         }
 
         if (!entity.name) {
@@ -252,6 +293,19 @@ export async function fetchOnsoreGasPipes() {
         if (!entity.name) {
             entity.name = entity.Name;
         }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+        
     });
     return data.filter(entity => entity.id !== null).sort(sortByName);
 }
@@ -268,6 +322,19 @@ export async function fetchOnsoreWind() {
         if (!entity.name) {
             entity.name = entity.Name??entity.Description;
         }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
     });
     return data.filter(entity => entity.id !== null).sort(sortByName);
 }
@@ -284,6 +351,19 @@ export async function fetchOnsoreGasSites() {
         if (!entity.name) {
             entity.name = entity.Name;
         }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
     });
     return data.filter(entity => entity.id !== null).sort(sortByName);
 }
@@ -300,6 +380,19 @@ export async function fetchOnsorePowerlines() {
         if (!entity.name) {
             entity.name = entity.Name;
         }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
     });
     return data.filter(entity => entity.id !== null).sort(sortByName);
 }
@@ -316,6 +409,19 @@ export async function fetchOnsoreGridCables() {
         if (!entity.name) {
             entity.name = entity.Name;
         }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
+        if(!entity.workingroupid){
+            entity.workingroupId = entity.workingroupid;
+        }
+
     });
     return data.filter(entity => entity.id !== null).sort(sortByName);
 }
@@ -328,6 +434,7 @@ export async function fetchWorkingGroups() {
         if (!entity.id) {
             entity.id = entity.GID;
         }
+        
 
         if (!entity.name) {
             entity.name = entity["Working group Name"];
