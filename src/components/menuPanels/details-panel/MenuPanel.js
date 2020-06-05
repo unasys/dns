@@ -66,6 +66,7 @@ function MenuPanel() {
                     <NavigationHeading heading='Pipelines' url="pipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "togglePipelines" }) }} on={showPipelines} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Windfarms' url="windfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWindfarms" }) }} on={showWindfarms} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Basins' url="basins" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBasins" }) }} on={showBasins} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Working Groups' url="workinggroups" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWorkingGroups" }) }} on={showWorkingGroups} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Areas' url="areas" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleAreas" }) }} on={showAreas} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Fields' url="fields" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleFields" }) }} on={showFields} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Subsurface' url="subsurfaces" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleSubsurfaces" }) }} on={showSubsurfaces} className={'bathymetry-title'} />} />
@@ -76,7 +77,6 @@ function MenuPanel() {
                     <NavigationHeading heading='Onshore Grid Cables' url="onshoregridcables" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreGridCables" }) }} on={showOnshoreGridCables} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Onshore Powerlines' url="onshorepowerlines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshorePowerlines" }) }} on={showOnshorePowerlines} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Onshore Windfarms' url="onshorewindfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOnshoreWindfarms" }) }} on={showOnshoreWindfarms} className={'bathymetry-title'} />} />
-                    <NavigationHeading heading='Working Groups' url="workinggroups" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWorkingGroups" }) }} on={showWorkingGroups} className={'bathymetry-title'} />} />
                     <MapOptions />
                 </aside>
             </div>

@@ -268,14 +268,14 @@ const marks = {
 
 
 function InfoPanel() {
-    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins, fields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms }, dispatch] = useStateValue();
+    const [{ installations, pipelines, windfarms, areas, wells, wrecks, basins, fields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
     const eid = search.get("eid");
     const etype = search.get("etype");
 
-    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, etype, eid);
+    let entity = getEntity(installations, pipelines, windfarms, areas, wells, wrecks, basins, fields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, etype, eid);
     let panel = choosePanel(installations, wells, areas, pipelines, fields, etype, entity);
 
     return (
