@@ -425,13 +425,13 @@ const updateInstallationStyle = (mapStyle, installations) => {
 }
 
 
-const setupPipelines = async (pipelines) => {
+const setupPipelines = async (pipelines, isCC) => {
     const minDiameter = 0;
     const maxDiameter = 1058;
     const features = [...pipelines.values()].map(pipeline => ({ type: "Feature", id: pipeline.id, name: pipeline.name, geometry: pipeline.Geometry, properties: { id: pipeline.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
     let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
-    dataSource.name = "Pipeline";
+    dataSource.name = isCC?"CCPipeline":"Pipeline";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
@@ -678,11 +678,11 @@ const getFieldColour = (field) => {
     return colour;
 }
 
-const setupFields = async (fields) => {
+const setupFields = async (fields, isCC) => {
     const features = [...fields.values()].map(field => ({ type: "Feature", id: field.id, name: field.name, geometry: field.Geometry, properties: { id: field.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
     let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
-    dataSource.name = "Field";
+    dataSource.name = isCC?"CCField":"Field";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
@@ -1004,9 +1004,9 @@ const switchStyle = (viewer, mapStyle) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, windfarms, decomYards, fields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
-        showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
-        installationsVisible, pipelinesVisible, windfarmsVisible, fieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
+    const [{ installations, pipelines,ccpipelines, windfarms, decomYards, fields,ccfields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
+        showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields,showCCFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
+        installationsVisible, pipelinesVisible,ccpipelinesVisible, windfarmsVisible, fieldsVisible,ccfieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
         mapStyle, enableTerrain, globe3D, radius }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
@@ -1060,10 +1060,13 @@ const CesiumMap = () => {
     }, [viewer, installationsVisible]);
 
     useEffect(() => {
+        if (!viewer || !ccpipelinesVisible) return;
+        toggleEntityVisibility(viewer, "CCPipeline", ccpipelinesVisible);
+    }, [viewer, ccpipelinesVisible]);
+    useEffect(() => {
         if (!viewer || !pipelinesVisible) return;
         toggleEntityVisibility(viewer, "Pipeline", pipelinesVisible);
     }, [viewer, pipelinesVisible]);
-
     useEffect(() => {
         if (!viewer || !windfarmsVisible) return;
         toggleEntityVisibility(viewer, "Windfarm", windfarmsVisible);
@@ -1073,7 +1076,10 @@ const CesiumMap = () => {
         if (!viewer || !fieldsVisible) return;
         toggleEntityVisibility(viewer, "Field", fieldsVisible);
     }, [viewer, fieldsVisible]);
-
+    useEffect(() => {
+        if (!viewer || !ccfieldsVisible) return;
+        toggleEntityVisibility(viewer, "CCField", ccfieldsVisible);
+    }, [viewer, ccfieldsVisible]);
     useEffect(() => {
         if (!viewer || !subsurfacesVisible) return;
         toggleEntityVisibility(viewer, "Subsurface", subsurfacesVisible);
@@ -1137,12 +1143,16 @@ const CesiumMap = () => {
         if (installation.length > 0) installation[0].show = showInstallations;
         const pipeline = viewer.dataSources.getByName("Pipeline");
         if (pipeline.length > 0) pipeline[0].show = showPipelines;
+        const ccpipeline = viewer.dataSources.getByName("CCPipeline");
+        if (ccpipeline.length > 0) ccpipeline[0].show = showCCPipelines;
         const windfarms = viewer.dataSources.getByName("Windfarm");
         if (windfarms.length > 0) windfarms[0].show = showWindfarms;
         const decomYards = viewer.dataSources.getByName("DecomYard");
         if (decomYards.length > 0) decomYards[0].show = showDecomYards;
         const fields = viewer.dataSources.getByName("Field");
         if (fields.length > 0) fields[0].show = showFields;
+        const ccfields = viewer.dataSources.getByName("CCField");
+        if (ccfields.length > 0) ccfields[0].show = showCCFields;
         const subsurfaces = viewer.dataSources.getByName("Subsurface");
         if (subsurfaces.length > 0) subsurfaces[0].show = showSubsurfaces;
         const blocks = viewer.dataSources.getByName("Block");
@@ -1168,7 +1178,7 @@ const CesiumMap = () => {
         const workingGroups = viewer.dataSources.getByName("WorkingGroup");
         if (workingGroups.length > 0) workingGroups[0].show = showWorkingGroups;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showWindfarms, showDecomYards, showFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
+    }, [viewer, showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields,showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
 
     useEffect(() => {
         if (viewer) {
@@ -1242,14 +1252,23 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || pipelines.size === 0) return;
         async function loadPipelines() {
-            const dataSource = await setupPipelines(pipelines);
+            const dataSource = await setupPipelines(pipelines, false);
             dataSource.show = showPipelines;
             viewer.dataSources.add(dataSource);
         }
         loadPipelines();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, pipelines]);
-
+    useEffect(() => {
+        if (!viewer || ccpipelines.size === 0) return;
+        async function loadPipelines() {
+            const dataSource = await setupPipelines(ccpipelines, true);
+            dataSource.show = showCCPipelines;
+            viewer.dataSources.add(dataSource);
+        }
+        loadPipelines();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, ccpipelines]);
     useEffect(() => {
         if (!viewer || windfarms.size === 0) return;
         async function load() {
@@ -1330,13 +1349,23 @@ const CesiumMap = () => {
     useEffect(() => {
         if (!viewer || fields.size === 0) return;
         async function loadFields() {
-            const dataSource = await setupFields(fields);
+            const dataSource = await setupFields(fields, false);
             dataSource.show = showFields;
             viewer.dataSources.add(dataSource);
         }
         loadFields();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, fields]);
+    useEffect(() => {
+        if (!viewer || ccfields.size === 0) return;
+        async function loadFields() {
+            const dataSource = await setupFields(ccfields, true);
+            dataSource.show = showCCFields;
+            viewer.dataSources.add(dataSource);
+        }
+        loadFields();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [viewer, showCCFields]);
 
     useEffect(() => {
         if (!viewer || subsurfaces.size === 0) return;

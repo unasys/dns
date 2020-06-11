@@ -3,10 +3,11 @@ import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, NumberRangeColumnFilter, DateCell, NumberCell, SelectColumnFilter } from './Table';
 
-function FieldTable() {
+function FieldTable({isCC}) {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ fields }, dispatch] = useStateValue();
-  const data = useMemo(() => [...fields.values()], [fields])
+  const [{ fields, ccfields }, dispatch] = useStateValue();
+  const dataToUse = isCC?ccfields:fields;
+  const data = useMemo(() => [...dataToUse.values()], [dataToUse])
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -92,7 +93,12 @@ function FieldTable() {
       id: 'Determination Status',
       accessor: 'Determination Status',
       isVisible: isVisible
-    }, {
+    },    {
+      Header: 'Determination Status',
+      id: 'CO2 Storage_capacity',
+      accessor: 'CO2 Storage_capacity',
+      isVisible: isCC
+    },    {
       accessor: 'areaId',
       id: 'areaId',
       isVisible: false,

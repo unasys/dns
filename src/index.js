@@ -9,7 +9,9 @@ const initialState = {
     installations: new Map(),
     decomYards: new Map(),
     fields: new Map(),
+    ccfields: new Map(),
     pipelines: new Map(),
+    ccpipelines: new Map(),
     windfarms: new Map(),
     areas: new Map(),
     workingGroups: new Map(),
@@ -25,9 +27,11 @@ const initialState = {
     facts: [],
     showInstallations: true,
     showPipelines: false,
+    showCCPipelines: false,
     showWindfarms: true,
     showDecomYards: false,
     showFields: false,
+    showCCFields: false,
     showBlocks: false,
     showSubsurfaces: false,
     showWells: false,
@@ -72,6 +76,11 @@ const reducer = (state, action) => {
                 ...state,
                 fields: action.fields
             };
+        case 'setCCFields':
+            return {
+                ...state,
+                ccfields: action.fields
+            };
         case 'setSubsurfaces': {
             return {
                 ...state,
@@ -82,6 +91,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 pipelines: action.pipelines
+            };
+        case 'setCCPipelines':
+            return {
+                ...state,
+                ccpipelines: action.pipelines
             };
         case 'setWindfarms':
             return {
@@ -116,7 +130,7 @@ const reducer = (state, action) => {
 
         case 'setOnshoreGasPipes': return { ...state, onshoreGasPipes: action.onshoreGasPipes };
         case 'setOnshoreGasSites': return { ...state, onshoreGasSites: action.onshoreGasSites };
-        case 'setOnshoreGridCables':return { ...state, onshoreGridCables: action.onshoreGridCables };
+        case 'setOnshoreGridCables': return { ...state, onshoreGridCables: action.onshoreGridCables };
         case 'setOnshorePowerlines': return { ...state, onshorePowerlines: action.onshorePowerlines };
         case 'setOnshoreWindfarms': return { ...state, onshoreWindfarms: action.onshoreWindfarms };
         case 'setWorkingGroups': return { ...state, workingGroups: action.workingGroups };
@@ -141,6 +155,11 @@ const reducer = (state, action) => {
                 ...state,
                 showPipelines: !state.showPipelines
             };
+        case 'toggleCCPipelines':
+            return {
+                ...state,
+                showCCPipelines: !state.showCCPipelines
+            };
         case 'toggleInstallations':
             return {
                 ...state,
@@ -160,6 +179,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 showFields: !state.showFields
+            };
+        case 'toggleCCFields':
+            return {
+                ...state,
+                showCCFields: !state.showCCFields
             };
         case 'toggleAreas':
             return {
@@ -213,6 +237,11 @@ const reducer = (state, action) => {
                 ...state,
                 fieldsVisible: action.fieldsVisible
             };
+        case "ccfieldsVisible":
+            return {
+                ...state,
+                ccfieldsVisible: action.ccfieldsVisible
+            };
         case "areasVisible":
             return {
                 ...state,
@@ -237,6 +266,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 pipelinesVisible: action.pipelinesVisible
+            };
+        case "ccpipelinesVisible":
+            return {
+                ...state,
+                ccpipelinesVisible: action.ccpipelinesVisible
             };
         case "wellsVisible":
             return {

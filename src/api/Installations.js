@@ -97,6 +97,36 @@ export async function fetchPipelines() {
     return data.sort(sortByName);
 }
 
+export async function fetchCarbonPipelines() {
+    let url = assetsBaseUrl + `/data/CarbonCapture/pipeline_ccus.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+ 
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.pipeline_id;
+        }
+
+        if (!entity.areaIds) {
+            entity.areaIds = entity.Areaid ?? [];
+        }
+
+        if (!entity.basinIds) {
+            entity.basinIds = entity.Basinid ?? [];
+        }
+
+        if(!entity.workingGroupId){
+            entity.workingGroupId = entity.WorkingGroupId;
+        }
+
+        if (!entity.name) {
+            entity.name = entity["pipeline_name"];
+        }
+
+    });
+    return data.sort(sortByName);
+}
+
 export async function fetchWindfarms() {
     let url = assetsBaseUrl + `/data/windfarms/windfarms.json`;
     const response = await fetch(url);
@@ -129,6 +159,7 @@ export async function fetchFields() {
     let url = assetsBaseUrl + `/data/fields/fields.json`;
     const response = await fetch(url);
     const data = await response.json();
+ 
     data.forEach(entity => {
         if (!entity.id) {
             entity.id = entity.GID;
@@ -149,6 +180,37 @@ export async function fetchFields() {
         if (!entity.name) {
             entity.name = entity["Field Name"];
         }
+
+    });
+    return data.sort(sortByName);
+}
+
+export async function fetchCarbonCaptureFields() {
+    let url = assetsBaseUrl + `/data/CarbonCapture/fields_ccus.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+ 
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.GID;
+        }
+
+        if (!entity.areaId) {
+            entity.areaId = entity.areaid;
+        }
+
+        if (!entity.basinId) {
+            entity.basinId = entity.basinid;
+        }
+
+        if(!entity.workingGroupId){
+            entity.workingGroupId = entity.workinggroupid;
+        }
+
+        if (!entity.name) {
+            entity.name = entity["Field Name"];
+        }
+
     });
     return data.sort(sortByName);
 }

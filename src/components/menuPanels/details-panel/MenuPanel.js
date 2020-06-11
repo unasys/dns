@@ -56,7 +56,7 @@ const NavigationHeading = (props) => {
 
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
-    const [{ showInstallations, showPipelines, showFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups }, dispatch] = useStateValue();
+    const [{ showInstallations, showPipelines,showCCPipelines, showFields,showCCFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
@@ -64,11 +64,13 @@ function MenuPanel() {
                     <NavigationHeading heading='Installations' url="installations" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleInstallations" }) }} on={showInstallations} className={'bathymetry-title'} />} />
                     {/* <NavigationHeading heading='Decom Yards' url="decomyards" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleDecomYards" }) }} on={showDecomYards} className={'bathymetry-title'} />} /> */}
                     <NavigationHeading heading='Pipelines' url="pipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "togglePipelines" }) }} on={showPipelines} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Carbon Capture Pipelines' url="ccpipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleCCPipelines" }) }} on={showCCPipelines} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Windfarms' url="windfarms" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWindfarms" }) }} on={showWindfarms} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Basins' url="basins" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBasins" }) }} on={showBasins} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Working Groups' url="workinggroups" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWorkingGroups" }) }} on={showWorkingGroups} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Areas' url="areas" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleAreas" }) }} on={showAreas} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Fields' url="fields" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleFields" }) }} on={showFields} className={'bathymetry-title'} />} />
+                    <NavigationHeading heading='Carbon Capture Fields' url="ccfields" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleCCFields" }) }} on={showCCFields} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Subsurface' url="subsurfaces" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleSubsurfaces" }) }} on={showSubsurfaces} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Wells' url="wells" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWells" }) }} on={showWells} className={'bathymetry-title'} />} />
                     <NavigationHeading heading='Wrecks' url="wrecks" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWrecks" }) }} on={showWrecks} className={'bathymetry-title'} />} />

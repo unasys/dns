@@ -3,11 +3,12 @@ import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
 import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell, SelectColumnFilter } from './Table';
 
-function PipelineTable() {
+function PipelineTable({ isCC }) {
   const [isVisible, setIsVisible] = useState(false);
-  const [{ pipelines }, dispatch] = useStateValue();
-  const data = useMemo(() => [...pipelines.values()], [pipelines]);
-  
+  const [{ pipelines, ccpipelines }, dispatch] = useStateValue();
+  const dataToUse = isCC ? ccpipelines : pipelines;
+  const data = useMemo(() => [...dataToUse.values()], [dataToUse]);
+
   const history = useHistory();
   const location = useLocation();
   const search = new URLSearchParams(location.search);
@@ -23,14 +24,14 @@ function PipelineTable() {
     if (workingGroupIdFilter) { filters.push({ id: "workingGroupId", value: parseInt(workingGroupIdFilter) }); }
     if (instType) { filters.push({ id: "Inst Type", value: instType }); }
     return filters;
-  }, [areaIdFilter, basinIdFilter, instType,workingGroupIdFilter]);
+  }, [areaIdFilter, basinIdFilter, instType, workingGroupIdFilter]);
   const columns = React.useMemo(
     () => [{
       Header: 'Pipeline Name',
       id: 'Pipeline Name',
       accessor: 'pipeline_name',
-      width:300,
-      footer:"count"
+      width: 300,
+      footer: "count"
     }, {
       Header: 'Pipeline DTI No',
       id: 'Pipeline DTI No',
@@ -84,7 +85,7 @@ function PipelineTable() {
       isVisible: isVisible,
       Filter: NumberRangeColumnFilter,
       filter: "between",
-      footer:"sum"
+      footer: "sum"
     }, {
       Header: 'Start Date',
       id: 'Start Date',
