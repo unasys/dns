@@ -14,14 +14,16 @@ function PipelineTable() {
   const areaIdFilter = search.get("areaId");
   const basinIdFilter = search.get("basinId");
   const instType = search.get("instType");
+  const workingGroupIdFilter = search.get("workingGroupId");
   const localFilters = React.useMemo(() => {
     const filters = [];
 
     if (areaIdFilter) { filters.push({ id: "areaIds", value: parseInt(areaIdFilter) }); }
     if (basinIdFilter) { filters.push({ id: "basinIds", value: parseInt(basinIdFilter) }); }
+    if (workingGroupIdFilter) { filters.push({ id: "workingGroupId", value: parseInt(workingGroupIdFilter) }); }
     if (instType) { filters.push({ id: "Inst Type", value: instType }); }
     return filters;
-  }, [areaIdFilter, basinIdFilter, instType]);
+  }, [areaIdFilter, basinIdFilter, instType,workingGroupIdFilter]);
   const columns = React.useMemo(
     () => [{
       Header: 'Pipeline Name',
@@ -112,6 +114,11 @@ function PipelineTable() {
       id: 'basinIds',
       isVisible: false,
       filter: 'includes',
+    }, {
+      accessor: 'workingGroupId',
+      id: 'workingGroupId',
+      isVisible: false,
+      filter: 'exact',
     }],
     [isVisible]
   )

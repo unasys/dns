@@ -217,19 +217,19 @@ function BasinInfo({ basin, installations, wells, pipelines, fields }) {
 function WorkingGroupInfo({ workingGroup, installations, wells, pipelines, fields }) {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const installationsInBasin = [...installations.values()].filter(installation => workingGroup.id === installation.workingroupId);
-    const wellsInBasin = [...wells.values()].filter(well => workingGroup.id === well.workingroupId);
-    const pipelinesInBasin = [...pipelines.values()].filter(pipeline => pipeline.workingroupIds.includes(workingGroup.id));
-    const fieldsInBasin = [...fields.values()].filter(field => field.workingroupId === workingGroup.id);
+    const installationsInWG = [...installations.values()].filter(installation => workingGroup.id === installation.workingGroupId);
+    const wellsInWG = [...wells.values()].filter(well => workingGroup.id === well.workingGroupId);
+    const pipelinesInWG = [...pipelines.values()].filter(pipeline => pipeline.workingGroupId===workingGroup.id);
+    const fieldsInWG = [...fields.values()].filter(field => field.workingGroupId === workingGroup.id);
     searchParams.set("workingGroupId", workingGroup.id);
     searchParams.delete("areaId");
     searchParams.delete("basinId");
     return (
         <>
-            <InstallationInfo installations={installationsInBasin} searchParams={searchParams} />
-            <WellInfo wells={wellsInBasin} searchParams={searchParams} />
-            <PipelineInfo pipelines={pipelinesInBasin} searchParams={searchParams} />
-            <FieldInfo fields={fieldsInBasin} searchParams={searchParams} />
+            <InstallationInfo installations={installationsInWG} searchParams={searchParams} />
+            <WellInfo wells={wellsInWG} searchParams={searchParams} />
+            <PipelineInfo pipelines={pipelinesInWG} searchParams={searchParams} />
+            <FieldInfo fields={fieldsInWG} searchParams={searchParams} />
         </>
     )
 }

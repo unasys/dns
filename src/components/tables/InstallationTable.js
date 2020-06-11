@@ -20,7 +20,7 @@ function InstallationTable() {
 
     if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
     if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
-    if (workingGroupIdFilter) { filters.push({ id: "workingroupId", value: parseInt(workingGroupIdFilter) }); }
+    if (workingGroupIdFilter) { filters.push({ id: "workingGroupId", value: parseInt(workingGroupIdFilter) }); }
     if (typeIdFilter) { filters.push({ id: "Type", value: typeIdFilter }); }
     return filters;
   }, [areaIdFilter, basinIdFilter, typeIdFilter,workingGroupIdFilter]);
@@ -159,10 +159,9 @@ function InstallationTable() {
         id: 'basinId',
         isVisible: false,
         filter: 'exact',
-      },
-      {
-        accessor: 'workingroupId',
-        id: 'workingroupId',
+      }, {
+        accessor: 'workingGroupId',
+        id: 'workingGroupId',
         isVisible: false,
         filter: 'exact',
       }

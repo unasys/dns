@@ -13,14 +13,16 @@ function FieldTable() {
   const areaIdFilter = search.get("areaId");
   const basinIdFilter = search.get("basinId");
   const fieldStatus = search.get("fieldStatus");
+  const workingGroupIdFilter = search.get("workingGroupId");
   const localFilters = React.useMemo(() => {
     const filters = [];
 
     if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
     if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (workingGroupIdFilter) { filters.push({ id: "workingGroupId", value: parseInt(workingGroupIdFilter) }); }
     if (fieldStatus) { filters.push({ id: "Field Status", value: fieldStatus }); }
     return filters;
-  }, [areaIdFilter, basinIdFilter, fieldStatus]);
+  }, [areaIdFilter, basinIdFilter, fieldStatus,workingGroupIdFilter]);
   
   const columns = React.useMemo(
     () => [{
@@ -98,6 +100,11 @@ function FieldTable() {
     }, {
       accessor: 'basinId',
       id: 'basinId',
+      isVisible: false,
+      filter: 'exact',
+    }, {
+      accessor: 'workingGroupId',
+      id: 'workingGroupId',
       isVisible: false,
       filter: 'exact',
     }],

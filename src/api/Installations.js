@@ -29,8 +29,8 @@ export async function fetchInstallations() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupId){
-            entity.workingroupId = entity.workingroupid;
+        if(!entity.workingGroupId){
+            entity.workingGroupId = entity.workingroupid;
         }
 
         if (!entity.name) {
@@ -86,8 +86,8 @@ export async function fetchPipelines() {
             entity.basinIds = entity.Basinid ?? [];
         }
 
-        if(!entity.workingroupIds){
-            entity.workingroupIds = entity.workingroupids??[];
+        if(!entity.workingGroupId){
+            entity.workingGroupId = entity.WorkingGroupId;
         }
 
         if (!entity.name) {
@@ -142,8 +142,8 @@ export async function fetchFields() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupId){
-            entity.workingroupId = entity.workingroupid;
+        if(!entity.workingGroupId){
+            entity.workingGroupId = entity.workinggroupid;
         }
 
         if (!entity.name) {
@@ -194,8 +194,8 @@ export async function fetchWells() {
             entity.basinId = entity.Basinid;
         }
 
-        if(!entity.workingroupId){
-            entity.workingroupId = entity.workingroupid;
+        if(!entity.workingGroupId){
+            entity.workingGroupId = entity.workinggroupid;
         }
 
         if (entity.Geometry.coordinates) {

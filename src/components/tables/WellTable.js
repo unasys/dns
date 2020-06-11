@@ -13,15 +13,17 @@ function WellTable() {
   const search = new URLSearchParams(location.search);
   const areaIdFilter = search.get("areaId");
   const basinIdFilter = search.get("basinId");
+  const workingGroupIdFilter = search.get("workingGroupId");
   const wellStatus = search.get("wellStatus");
   const localFilters = React.useMemo(() => {
     const filters = [];
 
     if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
     if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (workingGroupIdFilter) { filters.push({ id: "workingGroupId", value: parseInt(workingGroupIdFilter) }); }
     if (wellStatus) { filters.push({ id: "Well Status", value: wellStatus }); }
     return filters;
-  }, [areaIdFilter, basinIdFilter, wellStatus]);
+  }, [areaIdFilter, basinIdFilter, wellStatus,workingGroupIdFilter]);
   const columns = React.useMemo(
     () => [{
       Header: 'Well Name',
@@ -114,6 +116,11 @@ function WellTable() {
     }, {
       accessor: 'basinId',
       id: 'basinId',
+      isVisible: false,
+      filter: 'exact',
+    }, {
+      accessor: 'workingGroupId',
+      id: 'workingGroupId',
       isVisible: false,
       filter: 'exact',
     }],
