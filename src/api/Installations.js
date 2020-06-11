@@ -29,7 +29,7 @@ export async function fetchInstallations() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -58,7 +58,7 @@ export async function fetchDecomyards() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -114,7 +114,7 @@ export async function fetchWindfarms() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -142,7 +142,7 @@ export async function fetchFields() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -166,7 +166,7 @@ export async function fetchSubsurface() {
             entity.areaId = entity.areaid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -194,7 +194,7 @@ export async function fetchWells() {
             entity.basinId = entity.Basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -226,7 +226,7 @@ export async function fetchWrecks() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -250,7 +250,7 @@ export async function fetchAreas() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -270,7 +270,7 @@ export async function fetchBasins() {
             entity.id = entity.GID;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -302,7 +302,7 @@ export async function fetchOnsoreGasPipes() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
         
@@ -331,7 +331,7 @@ export async function fetchOnsoreWind() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -360,7 +360,7 @@ export async function fetchOnsoreGasSites() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -389,7 +389,7 @@ export async function fetchOnsorePowerlines() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 
@@ -418,7 +418,7 @@ export async function fetchOnsoreGridCables() {
             entity.basinId = entity.basinid;
         }
 
-        if(!entity.workingroupid){
+        if(!entity.workingroupId){
             entity.workingroupId = entity.workingroupid;
         }
 

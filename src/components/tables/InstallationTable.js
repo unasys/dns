@@ -13,15 +13,17 @@ function InstallationTable() {
   const search = new URLSearchParams(location.search);
   const areaIdFilter = search.get("areaId");
   const basinIdFilter = search.get("basinId");
+  const workingGroupIdFilter = search.get("workingGroupId");
   const typeIdFilter = search.get("type");
   const localFilters = React.useMemo(() => {
     const filters = [];
 
     if (areaIdFilter) { filters.push({ id: "areaId", value: parseInt(areaIdFilter) }); }
     if (basinIdFilter) { filters.push({ id: "basinId", value: parseInt(basinIdFilter) }); }
+    if (workingGroupIdFilter) { filters.push({ id: "workingroupId", value: parseInt(workingGroupIdFilter) }); }
     if (typeIdFilter) { filters.push({ id: "Type", value: typeIdFilter }); }
     return filters;
-  }, [areaIdFilter, basinIdFilter, typeIdFilter]);
+  }, [areaIdFilter, basinIdFilter, typeIdFilter,workingGroupIdFilter]);
 
 
   const columns = React.useMemo(
@@ -155,6 +157,12 @@ function InstallationTable() {
       }, {
         accessor: 'basinId',
         id: 'basinId',
+        isVisible: false,
+        filter: 'exact',
+      },
+      {
+        accessor: 'workingroupId',
+        id: 'workingroupId',
         isVisible: false,
         filter: 'exact',
       }

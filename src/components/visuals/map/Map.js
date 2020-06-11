@@ -493,6 +493,20 @@ const setupWindfarms = async (windfarms) => {
         const entity = p[i];
         if (entity.polygon) {
             entity.polygon.zIndex = 40;
+            entity.polygon.outlineColor = window.Cesium.Color.DARKSEAGREEN;
+            entity.polygon.material = window.Cesium.Color.DARKSEAGREEN.withAlpha(0.75);
+        }
+        if (entity.billboard) {
+            entity.billboard = undefined;
+            entity.point = {
+                pixelSize: 4,
+                color: window.Cesium.Color.IVORY,
+                eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
+                translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                heightReference: dynamicHeightReference,
+                zIndex: 60
+            };
         }
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
@@ -532,7 +546,7 @@ const setupOnshoreWind = async (windfarms) => {
 
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
-        
+
         if (entity.billboard) {
             entity.billboard = undefined;
             entity.point = {
@@ -827,7 +841,7 @@ const setupAreas = async (areas) => {
             if (rawEntity) {
                 try {
                     const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
-                    polygon.material = colour.withAlpha(0.7);
+                    polygon.material = colour.withAlpha(0.4);
                     polygon.outlineColor = colour;
 
                 } catch (e) {

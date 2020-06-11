@@ -220,7 +220,7 @@ function WorkingGroupInfo({ workingGroup, installations, wells, pipelines, field
     const installationsInBasin = [...installations.values()].filter(installation => workingGroup.id === installation.workingroupId);
     const wellsInBasin = [...wells.values()].filter(well => workingGroup.id === well.workingroupId);
     const pipelinesInBasin = [...pipelines.values()].filter(pipeline => pipeline.workingroupIds.includes(workingGroup.id));
-    const fieldsInBasin = [...fields.values()].filter(field => field.basinId === workingGroup.id);
+    const fieldsInBasin = [...fields.values()].filter(field => field.workingroupId === workingGroup.id);
     searchParams.set("workingGroupId", workingGroup.id);
     searchParams.delete("areaId");
     searchParams.delete("basinId");
