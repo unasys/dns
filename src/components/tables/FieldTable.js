@@ -94,10 +94,10 @@ function FieldTable({isCC}) {
       accessor: 'Determination Status',
       isVisible: isVisible
     },    {
-      Header: 'Determination Status',
+      Header: 'CO2 Storage Capacity',
       id: 'CO2 Storage_capacity',
       accessor: 'CO2 Storage_capacity',
-      isVisible: isCC
+      isVisible: isCC && isVisible
     },    {
       accessor: 'areaId',
       id: 'areaId',
@@ -114,7 +114,7 @@ function FieldTable({isCC}) {
       isVisible: false,
       filter: 'exact',
     }],
-    [isVisible]
+    [isVisible, isCC]
   )
   const expand = () => {
     setIsVisible(true);
