@@ -14,6 +14,9 @@
         justify-content: space-between;
         align-items: center;
         margin: 10px 15px;
+        .radius-button{
+            cursor: pointer;
+        }
         #outer-circle {
             width:50px;
             height:50px;

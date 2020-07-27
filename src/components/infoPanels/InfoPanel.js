@@ -272,7 +272,7 @@ const marks = {
 
 
 function InfoPanel() {
-    const [{ installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups }, dispatch] = useStateValue();
+    const [{ installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups, radiusEnabled }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
@@ -295,11 +295,11 @@ function InfoPanel() {
                 <aside className="nearby">
                     <div className="dns-content">
                         <div className="radius">
-                            <svg viewBox="0 0 10 10" width="60px">
+                            <svg className="radius-button" viewBox="0 0 10 10" width="60px" onClick={() => dispatch({ type: "toggleRadius" })}>
                                 <circle cx="5" cy="5" r="4" strokeWidth="1.5" stroke="#fff" fill="#fff" fillOpacity="0.0" />
                                 <circle cx="5" cy="5" r="2" fill="#61626c" />
                             </svg>
-                            <Slider min={0} max={30} marks={marks} defaultValue={10} onChange={e => dispatch({ type: "changeRadius", radius: e })}
+                            {radiusEnabled && <Slider min={0} max={30} marks={marks} defaultValue={10} onChange={e => dispatch({ type: "changeRadius", radius: e })}
                                 railStyle={{ backgroundColor: '#61626c' }}
                                 trackStyle={{ backgroundColor: '#fff' }}
                                 dotStyle={{ display: 'none' }}
@@ -307,9 +307,10 @@ function InfoPanel() {
                                 handleStyle={{
                                     borderColor: '#fff',
                                     backgroundColor: 'green'
-                                }}></Slider>
+                                }}></Slider>}
+                                 {radiusEnabled && <p className="is-size-6">km</p>}
                         </div>
-                        <WithInDistance />
+                        {radiusEnabled && <WithInDistance />}
                     </div>
                 </aside>
             </div>

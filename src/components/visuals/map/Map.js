@@ -431,7 +431,7 @@ const setupPipelines = async (pipelines, isCC) => {
     const features = [...pipelines.values()].map(pipeline => ({ type: "Feature", id: pipeline.id, name: pipeline.name, geometry: pipeline.Geometry, properties: { id: pipeline.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
     let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
-    dataSource.name = isCC?"CCPipeline":"Pipeline";
+    dataSource.name = isCC ? "CCPipeline" : "Pipeline";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
@@ -682,7 +682,7 @@ const setupFields = async (fields, isCC) => {
     const features = [...fields.values()].map(field => ({ type: "Feature", id: field.id, name: field.name, geometry: field.Geometry, properties: { id: field.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
     let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
-    dataSource.name = isCC?"CCField":"Field";
+    dataSource.name = isCC ? "CCField" : "Field";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
@@ -1004,10 +1004,10 @@ const switchStyle = (viewer, mapStyle) => {
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines,ccpipelines, windfarms, decomYards, fields,ccfields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
-        showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields,showCCFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
-        installationsVisible, pipelinesVisible,ccpipelinesVisible, windfarmsVisible, fieldsVisible,ccfieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
-        mapStyle, enableTerrain, globe3D, radius }, dispatch] = useStateValue();
+    const [{ installations, pipelines, ccpipelines, windfarms, decomYards, fields, ccfields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
+        showInstallations, showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
+        installationsVisible, pipelinesVisible, ccpipelinesVisible, windfarmsVisible, fieldsVisible, ccfieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
+        mapStyle, enableTerrain, globe3D, radius, radiusEnabled }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
     const location = useLocation();
@@ -1022,6 +1022,14 @@ const CesiumMap = () => {
         if (!viewer) return;
         switchStyle(viewer, mapStyle);
     }, [viewer, mapStyle]);
+
+    useEffect(() => {
+        if (!viewer) return;
+        const radius = viewer.entities.getById("SOI");
+        if (radius) {
+            radius.show = radiusEnabled;
+        }
+    }, [viewer, radiusEnabled]);
 
     useEffect(() => {
         if (!viewer) return;
@@ -1178,7 +1186,7 @@ const CesiumMap = () => {
         const workingGroups = viewer.dataSources.getByName("WorkingGroup");
         if (workingGroups.length > 0) workingGroups[0].show = showWorkingGroups;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields,showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
+    }, [viewer, showInstallations, showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
 
     useEffect(() => {
         if (viewer) {

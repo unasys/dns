@@ -47,6 +47,7 @@ const initialState = {
     mapStyle: "simple",
     enableTerrain: false,
     globe3D: true,
+    radiusEnabled: true,
     year: 2019,
     radius: 10000,
     withInDistance: {
@@ -60,6 +61,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 radius: action.radius * 1000
+            }
+        case 'toggleRadius':
+            return {
+                ...state,
+                radiusEnabled: !state.radiusEnabled
             }
         case 'setInstallations':
             return {
