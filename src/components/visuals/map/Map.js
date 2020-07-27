@@ -497,16 +497,15 @@ const setupWindfarms = async (windfarms) => {
             entity.polygon.outlineColor = window.Cesium.Color.DARKSEAGREEN;
             entity.polygon.material = window.Cesium.Color.DARKSEAGREEN.withAlpha(0.75);
         }
-        entity.billboard = undefined;
 
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
         }
-        console.log(entity?.originalData?.Type);
+
+
         switch (entity?.originalData?.Type) {
             case "wind turbine": {
-
                 entity.billboard = {
                     image: "/images/windturbine.svg",
                     eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
@@ -516,7 +515,27 @@ const setupWindfarms = async (windfarms) => {
                 };
                 break;
             }
-            case "": {
+            case "Turbine Cable": {
+                console.log(entity);
+                if (entity.polyline) {
+                    entity.polyline.material = window.Cesium.Color.RED
+                }
+                break;
+            }
+            case "Export cable": {
+                if (entity.polyline) {
+                    entity.polyline.material = window.Cesium.Color.DARKGREY;
+                }
+                break;
+            }
+            case "Substation": {
+                entity.billboard = {
+                    image: "/images/offshore-substation.svg",
+                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 35000),
+                    scale: 0.35,
+                    zIndex: 60
+                };
                 break;
             }
             default: break;
