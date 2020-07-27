@@ -491,26 +491,35 @@ const setupWindfarms = async (windfarms) => {
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
+
         if (entity.polygon) {
             entity.polygon.zIndex = 40;
             entity.polygon.outlineColor = window.Cesium.Color.DARKSEAGREEN;
             entity.polygon.material = window.Cesium.Color.DARKSEAGREEN.withAlpha(0.75);
         }
-        if (entity.billboard) {
-            entity.billboard = undefined;
-            entity.point = {
-                pixelSize: 4,
-                color: window.Cesium.Color.IVORY,
-                eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                heightReference: dynamicHeightReference,
-                zIndex: 60
-            };
-        }
+        entity.billboard = undefined;
+
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
+        }
+        console.log(entity?.originalData?.Type);
+        switch (entity?.originalData?.Type) {
+            case "wind turbine": {
+
+                entity.billboard = {
+                    image: "/images/windturbine.svg",
+                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 35000),
+                    scale: 0.35,
+                    zIndex: 60
+                };
+                break;
+            }
+            case "": {
+                break;
+            }
+            default: break;
         }
 
     }
