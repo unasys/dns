@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^5.6.4",
+    "cesium": "^1.71.0",
+    "craco-cesium": "^1.2.0",
     "node-sass": "^4.13.1",
     "rc-slider": "^9.3.1",
     "react": "^16.13.1",
@@ -16,11 +19,11 @@
     "react-window": "^1.8.5"
   },
   "scripts": {
-    "start": "set PORT=81 && react-scripts start",
+    "start": "set PORT=81 && craco start",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -31,8 +34,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "main": "index.js",
-  "repository": "https://gitlab.com/unasys/epm-ui2.git",
-  "author": "Jake Angell <jake@unasys.com>",
-  "license": "MIT"
+  "main": "index.js"
 }

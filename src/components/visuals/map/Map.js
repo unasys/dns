@@ -4,79 +4,80 @@ import { useLocation, useHistory } from 'react-router-dom';
 import './Map.scss';
 import { useStateValue } from '../../../utils/state';
 import HoverCard from './HoverCard';
-
+import { Color, HeightReference, CallbackProperty, CesiumTerrainProvider, EllipsoidTerrainProvider, UrlTemplateImageryProvider, Credit, Viewer, SceneMode, MapboxImageryProvider, Rectangle, Math, Cartographic, EllipsoidGeodesic, GeoJsonDataSource, JulianDate, TimeInterval, TimeIntervalCollection, Cartesian3, DistanceDisplayCondition, NearFarScalar, LabelStyle, Cartesian2, VerticalOrigin, HorizontalOrigin, CustomDataSource, BoundingSphere, Ellipsoid, ConstantPositionProperty, LabelGraphics, PointGraphics, HeadingPitchRange, ScreenSpaceEventType } from 'cesium';
+import "cesium/Build/Cesium/Widgets/widgets.css";
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
 
 // const pipelineColours = {
-//     "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
-//     "condensate": window.Cesium.Color.fromBytes(132, 0, 168),
-//     "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
-//     "gas": window.Cesium.Color.fromBytes(255, 51, 0),
-//     "hydraulic": window.Cesium.Color.fromBytes(255, 255, 0),
-//     "methanol": window.Cesium.Color.fromBytes(223, 155, 255),
-//     "mixed hydrocarbons": window.Cesium.Color.fromBytes(155, 0, 76),
-//     "oil": window.Cesium.Color.fromBytes(56, 168, 0),
-//     "other fluid": window.Cesium.Color.fromBytes(161, 0, 123),
-//     "water": window.Cesium.Color.fromBytes(0, 92, 230),
-//     "disused": window.Cesium.Color.fromBytes(128, 128, 128),
-//     "default": window.Cesium.Color.WHITE
+//     "chemical": Color.fromBytes(255, 165, 0),
+//     "condensate": Color.fromBytes(132, 0, 168),
+//     "fibre": Color.fromBytes(139, 69, 19),
+//     "gas": Color.fromBytes(255, 51, 0),
+//     "hydraulic": Color.fromBytes(255, 255, 0),
+//     "methanol": Color.fromBytes(223, 155, 255),
+//     "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
+//     "oil": Color.fromBytes(56, 168, 0),
+//     "other fluid": Color.fromBytes(161, 0, 123),
+//     "water": Color.fromBytes(0, 92, 230),
+//     "disused": Color.fromBytes(128, 128, 128),
+//     "default": Color.WHITE
 // }
 
 const pipelineColoursSimple = {
-    "default": window.Cesium.Color.fromCssColorString("#DCDCDC")
+    "default": Color.fromCssColorString("#DCDCDC")
 }
 
 const installationColours = {
-    "removed": window.Cesium.Color.GOLDENROD,
-    "default": window.Cesium.Color.GOLD
+    "removed": Color.GOLDENROD,
+    "default": Color.GOLD
 }
 
 const installationColoursSimple = {
-    "removed": window.Cesium.Color.DIMGREY,
-    "default": window.Cesium.Color.DIMGREY
+    "removed": Color.DIMGREY,
+    "default": Color.DIMGREY
 }
 
 const fieldColours = {
-    "chemical": window.Cesium.Color.fromBytes(255, 165, 0),
-    "cond": window.Cesium.Color.fromBytes(154, 159, 167),
-    "fibre": window.Cesium.Color.fromBytes(139, 69, 19),
-    "gas": window.Cesium.Color.fromBytes(133, 30, 7),
-    "hydraulic": window.Cesium.Color.fromBytes(255, 255, 0),
-    "methanol": window.Cesium.Color.fromBytes(223, 155, 255),
-    "mixed hydrocarbons": window.Cesium.Color.fromBytes(155, 0, 76),
-    "oil": window.Cesium.Color.fromBytes(53, 86, 36),
-    "other fluid": window.Cesium.Color.fromBytes(161, 0, 123),
-    "water": window.Cesium.Color.fromBytes(0, 92, 230),
-    "disused": window.Cesium.Color.fromBytes(128, 128, 128),
-    "default": window.Cesium.Color.WHITE
+    "chemical": Color.fromBytes(255, 165, 0),
+    "cond": Color.fromBytes(154, 159, 167),
+    "fibre": Color.fromBytes(139, 69, 19),
+    "gas": Color.fromBytes(133, 30, 7),
+    "hydraulic": Color.fromBytes(255, 255, 0),
+    "methanol": Color.fromBytes(223, 155, 255),
+    "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
+    "oil": Color.fromBytes(53, 86, 36),
+    "other fluid": Color.fromBytes(161, 0, 123),
+    "water": Color.fromBytes(0, 92, 230),
+    "disused": Color.fromBytes(128, 128, 128),
+    "default": Color.WHITE
 }
 
-let heightReference = window.Cesium.HeightReference.NONE;
+let heightReference = HeightReference.NONE;
 
-const dynamicHeightReference = new window.Cesium.CallbackProperty(function () {
+const dynamicHeightReference = new CallbackProperty(function () {
     return heightReference;
 }, false);
 
-const terrainProvider = new window.Cesium.CesiumTerrainProvider({
+const terrainProvider = new CesiumTerrainProvider({
     url: bathymetryBaseUrl,
     credit: "EMODnet Bathymetry Consortium (2018): EMODnet Digital Bathymetry (DTM)"
 });
 
-const defaultTerrainProvider = new window.Cesium.EllipsoidTerrainProvider();
+const defaultTerrainProvider = new EllipsoidTerrainProvider();
 
 const setupCesium = (cesiumRef) => {
 
-    const simpleImagery = new window.Cesium.UrlTemplateImageryProvider({
+    const simpleImagery = new UrlTemplateImageryProvider({
         url: 'https://api.maptiler.com/maps/76ecac98-bde3-41d8-81ab-2b530ba0974b/{z}/{x}/{y}.png?key=FSzrABzSMJXbH2n6FfZc',
         tileWidth: 512,
         tileHeight: 512,
-        credit: new window.Cesium.Credit('<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>', true)
+        credit: new Credit('<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>', true)
     });
 
     const viewer =
-        new window.Cesium.Viewer(cesiumRef.current, {
+        new Viewer(cesiumRef.current, {
             baseLayerPicker: false,
             animation: false,
             fullscreenButton: false,
@@ -91,11 +92,11 @@ const setupCesium = (cesiumRef) => {
             requestRenderMode: true,
             imageryProvider: simpleImagery,
             terrainProvider: defaultTerrainProvider,
-            sceneMode: window.Cesium.SceneMode.SCENE3D
+            sceneMode: SceneMode.SCENE3D
         });
 
 
-    const sateliteImagery = new window.Cesium.MapboxImageryProvider({
+    const sateliteImagery = new MapboxImageryProvider({
         mapId: 'mapbox.satellite',
         accessToken: 'pk.eyJ1IjoidW5hc3lzIiwiYSI6ImNqenR6MnBmMTA5dG4zbm80anEwdXVkaWUifQ.fzndysGAsyLbY8UyAMPMLQ'
     });
@@ -112,14 +113,14 @@ const flyHome = (viewer) => {
     var south = 35.0;
     var east = 10.0;
     var north = 46.0;
-    var rectangle = window.Cesium.Rectangle.fromDegrees(west, south, east, north);
+    var rectangle = Rectangle.fromDegrees(west, south, east, north);
     // fly to the north sea
     viewer.camera.flyTo({
         destination: rectangle,
         duration: 3,
         orientation: {
             heading: 0.0,
-            pitch: window.Cesium.Math.toRadians(-50),
+            pitch: Math.toRadians(-50),
             roll: 0.0
         }
     });
@@ -133,7 +134,7 @@ const setupRadius = (viewer) => {
             semiMinorAxis: 10000,
             semiMajorAxis: 10000,
             fill: true,
-            material: window.Cesium.Color.GREEN.withAlpha(0.3),
+            material: Color.GREEN.withAlpha(0.3),
             zIndex: 99
         }
     });
@@ -178,9 +179,9 @@ const minBy = (arr, iteratee) => {
 const nearestPosition = (entity, position) => {
     if (entity.positions) {
         return minBy(entity.positions, p => {
-            const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(p);
-            const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
-            const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
+            const startCartographicPoint = Cartographic.fromCartesian(p);
+            const endCartographicPoint = Cartographic.fromCartesian(position);
+            const ellipsoidGeodesic = new EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
             return ellipsoidGeodesic.surfaceDistance;
         });
     }
@@ -200,9 +201,9 @@ const findEntitiesInRange = (viewer, radiusDistance, dispatch) => {
                 const dataSource = viewer.dataSources.get(i);
                 dataSource.entities.values.forEach(entity => {
                     if (!entity.position || !entity.originalData) return;
-                    const startCartographicPoint = window.Cesium.Cartographic.fromCartesian(nearestPosition(entity, position));
-                    const endCartographicPoint = window.Cesium.Cartographic.fromCartesian(position);
-                    const ellipsoidGeodesic = new window.Cesium.EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
+                    const startCartographicPoint = Cartographic.fromCartesian(nearestPosition(entity, position));
+                    const endCartographicPoint = Cartographic.fromCartesian(position);
+                    const ellipsoidGeodesic = new EllipsoidGeodesic(startCartographicPoint, endCartographicPoint);
                     const distance = ellipsoidGeodesic.surfaceDistance;
                     const distanceAbs = Math.abs(distance);
                     const entityToAdd = { entity: entity.originalData, distance: distanceAbs, type: dataSource.name };
@@ -243,7 +244,7 @@ const getInstallationColour = (mapStyle, installation) => {
 const setupInstallations = async (installations) => {
     const features = [...installations.values()].map(installation => ({ type: "Feature", id: installation.id, name: installation.name, geometry: installation.Geometry, properties: { id: installation.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "Installation";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -258,35 +259,35 @@ const setupInstallations = async (installations) => {
                 let end = rawEntity.PlannedCOP;
 
                 if (start) {
-                    start = window.Cesium.JulianDate.fromDate(new Date(start));
+                    start = JulianDate.fromDate(new Date(start));
                 }
                 else {
-                    start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+                    start = JulianDate.fromDate(new Date("1901"));
                 }
 
                 if (end) {
-                    end = window.Cesium.JulianDate.fromDate(new Date(end));
+                    end = JulianDate.fromDate(new Date(end));
                 }
                 else {
-                    end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+                    end = JulianDate.fromDate(new Date("2500"));
                 }
 
                 if (start || end) {
-                    const interval = new window.Cesium.TimeInterval({
+                    const interval = new TimeInterval({
                         start: start,
                         stop: end,
                         isStartIncluded: start !== null,
                         isStopIncluded: end !== null
                     });
-                    entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
+                    entity.availability = new TimeIntervalCollection([interval]);
                 }
 
                 entity.point = {
                     pixelSize: 4,
                     color: getInstallationColour("", rawEntity),
-                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                    translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                    eyeOffset: new Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+                    translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
                     heightReference: dynamicHeightReference,
                     zIndex: 60
                 };
@@ -294,14 +295,14 @@ const setupInstallations = async (installations) => {
                 entity.label = {
                     text: rawEntity.name,
                     font: "20px Arial Narrow",
-                    fillColor: window.Cesium.Color.BLACK,
-                    style: window.Cesium.LabelStyle.FILL,
-                    outlineColor: window.Cesium.Color.WHITE,
+                    fillColor: Color.BLACK,
+                    style: LabelStyle.FILL,
+                    outlineColor: Color.WHITE,
                     outlineWidth: 1.5,
-                    pixelOffset: new window.Cesium.Cartesian2(25, 0),
-                    verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-                    horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 300000),
+                    pixelOffset: new Cartesian2(25, 0),
+                    verticalOrigin: VerticalOrigin.CENTER,
+                    horizontalOrigin: HorizontalOrigin.LEFT,
+                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 300000),
                     heightReference: dynamicHeightReference,
                     scale: 0.65,
                     zIndex: 60
@@ -315,26 +316,26 @@ const setupInstallations = async (installations) => {
 }
 
 const mapDecomyard = (decomyard) => {
-    const position = window.Cesium.Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat);
+    const position = Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat);
     const point = {
         pixelSize: 4,
-        color: window.Cesium.Color.STEELBLUE,
-        eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-        translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+        color: Color.STEELBLUE,
+        eyeOffset: new Cartesian3(0, 0, 1),
+        distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+        translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
         heightReference: dynamicHeightReference,
         zIndex: 60
     };
     const label = {
         text: decomyard.name,
-        fillColor: window.Cesium.Color.WHITE,
-        style: window.Cesium.LabelStyle.FILL_AND_OUTLINE,
-        outlineColor: window.Cesium.Color.BLACK,
+        fillColor: Color.WHITE,
+        style: LabelStyle.FILL_AND_OUTLINE,
+        outlineColor: Color.BLACK,
         outlineWidth: 1.5,
-        pixelOffset: new window.Cesium.Cartesian2(25, 0),
-        verticalOrigin: window.Cesium.VerticalOrigin.Bottom,
-        horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 180000),
+        pixelOffset: new Cartesian2(25, 0),
+        verticalOrigin: VerticalOrigin.Bottom,
+        horizontalOrigin: HorizontalOrigin.LEFT,
+        distanceDisplayCondition: new DistanceDisplayCondition(0.0, 180000),
         heightReference: dynamicHeightReference,
         zIndex: 60
     };
@@ -349,19 +350,19 @@ const mapDecomyard = (decomyard) => {
 }
 
 const setupDecomyards = (decomyards) => {
-    const dataSource = new window.Cesium.CustomDataSource("DecomYard");
+    const dataSource = new CustomDataSource("DecomYard");
     decomyards.forEach(i => dataSource.entities.add(mapDecomyard(i)));
     return dataSource;
 }
 
 const mapSubsurface = (subsurface) => {
-    const position = window.Cesium.Cartesian3.fromDegrees(subsurface.coordinates[0], subsurface.coordinates[1]);
+    const position = Cartesian3.fromDegrees(subsurface.coordinates[0], subsurface.coordinates[1]);
     const point = {
         pixelSize: 4,
-        color: window.Cesium.Color.MINTCREAM,
-        eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-        distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-        translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+        color: Color.MINTCREAM,
+        eyeOffset: new Cartesian3(0, 0, 1),
+        distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+        translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
         heightReference: dynamicHeightReference,
         zIndex: 50
     };
@@ -376,7 +377,7 @@ const mapSubsurface = (subsurface) => {
 }
 
 const setupSubsurfaces = (subsurfaces) => {
-    const dataSource = new window.Cesium.CustomDataSource("Subsurface");
+    const dataSource = new CustomDataSource("Subsurface");
     subsurfaces.forEach(i => dataSource.entities.add(mapSubsurface(i)));
     return dataSource;
 }
@@ -403,7 +404,7 @@ const getPipelineColour = (mapStyle, pipeline) => {
 
     //console.log(pipeline, colours, pipelineFluid,mapStyle);
 
-    //colour = colour.darken(0.5, new window.Cesium.Color());
+    //colour = colour.darken(0.5, new Color());
 
     return colour;
 }
@@ -430,7 +431,7 @@ const setupPipelines = async (pipelines, isCC) => {
     const maxDiameter = 1058;
     const features = [...pipelines.values()].map(pipeline => ({ type: "Feature", id: pipeline.id, name: pipeline.name, geometry: pipeline.Geometry, properties: { id: pipeline.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = isCC ? "CCPipeline" : "Pipeline";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -442,27 +443,27 @@ const setupPipelines = async (pipelines, isCC) => {
 
             let start = rawEntity["start_date"];
             if (start) {
-                start = window.Cesium.JulianDate.fromDate(new Date(start));
+                start = JulianDate.fromDate(new Date(start));
             }
             else {
-                start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+                start = JulianDate.fromDate(new Date("1901"));
             }
             let end = rawEntity["end_date"];
             if (end) {
-                end = window.Cesium.JulianDate.fromDate(new Date(end));
+                end = JulianDate.fromDate(new Date(end));
             }
             else {
-                end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+                end = JulianDate.fromDate(new Date("2500"));
             }
 
             if (start || end) {
-                const interval = new window.Cesium.TimeInterval({
+                const interval = new TimeInterval({
                     start: start,
                     stop: end,
                     isStartIncluded: start !== null,
                     isStopIncluded: end !== null
                 });
-                entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
+                entity.availability = new TimeIntervalCollection([interval]);
             }
 
             const pipeDiameter = parseInt(rawEntity.diameter_value) || 0
@@ -473,7 +474,7 @@ const setupPipelines = async (pipelines, isCC) => {
             if (entity.polyline) {
                 entity.polyline.material = getPipelineColour("satellite", rawEntity);
                 entity.polyline.width = 2;
-                entity.polyline.distanceDisplayCondition = new window.Cesium.DistanceDisplayCondition(0, scaledDistance);
+                entity.polyline.distanceDisplayCondition = new DistanceDisplayCondition(0, scaledDistance);
                 entity.polyline.zIndex = 50;
                 entity.polyline.clampToGround = true;
             }
@@ -486,7 +487,7 @@ const setupPipelines = async (pipelines, isCC) => {
 const setupWindfarms = async (windfarms) => {
     const features = [...windfarms.values()].map(windfarm => ({ type: "Feature", id: windfarm.id, name: windfarm.name, geometry: windfarm.Geometry, properties: { id: windfarm.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "Windfarm";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -494,8 +495,8 @@ const setupWindfarms = async (windfarms) => {
 
         if (entity.polygon) {
             entity.polygon.zIndex = 40;
-            entity.polygon.outlineColor = window.Cesium.Color.DARKSEAGREEN;
-            entity.polygon.material = window.Cesium.Color.DARKSEAGREEN.withAlpha(0.75);
+            entity.polygon.outlineColor = Color.DARKSEAGREEN;
+            entity.polygon.material = Color.DARKSEAGREEN.withAlpha(0.75);
         }
 
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
@@ -508,31 +509,30 @@ const setupWindfarms = async (windfarms) => {
             case "wind turbine": {
                 entity.billboard = {
                     image: "/images/windturbine.svg",
-                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 35000),
+                    eyeOffset: new Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 35000),
                     scale: 0.35,
                     zIndex: 60
                 };
                 break;
             }
             case "Turbine Cable": {
-                console.log(entity);
                 if (entity.polyline) {
-                    entity.polyline.material = window.Cesium.Color.RED
+                    entity.polyline.material = Color.RED
                 }
                 break;
             }
             case "Export cable": {
                 if (entity.polyline) {
-                    entity.polyline.material = window.Cesium.Color.DARKGREY;
+                    entity.polyline.material = Color.DARKGREY;
                 }
                 break;
             }
             case "Substation": {
                 entity.billboard = {
                     image: "/images/offshore-substation.svg",
-                    eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 35000),
+                    eyeOffset: new Cartesian3(0, 0, 1),
+                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 35000),
                     scale: 0.35,
                     zIndex: 60
                 };
@@ -548,7 +548,7 @@ const setupWindfarms = async (windfarms) => {
 const setupWorkingGroups = async (workingGroups) => {
     const features = [...workingGroups.values()].map(workingGroup => ({ type: "Feature", id: workingGroup.id, name: workingGroup.name, geometry: workingGroup.Geometry, properties: { id: workingGroup.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "WorkingGroup";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -568,7 +568,7 @@ const setupWorkingGroups = async (workingGroups) => {
 const setupOnshoreWind = async (windfarms) => {
     const features = [...windfarms.values()].map(windfarm => ({ type: "Feature", id: windfarm.id, name: windfarm.name, geometry: windfarm.Geometry, properties: { id: windfarm.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "OnshoreWindfarm";
     var p = dataSource.entities.values;
 
@@ -579,10 +579,10 @@ const setupOnshoreWind = async (windfarms) => {
             entity.billboard = undefined;
             entity.point = {
                 pixelSize: 4,
-                color: window.Cesium.Color.CADETBLUE,
-                eyeOffset: new window.Cesium.Cartesian3(0, 0, 1),
-                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                color: Color.CADETBLUE,
+                eyeOffset: new Cartesian3(0, 0, 1),
+                distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+                translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
                 heightReference: dynamicHeightReference,
                 zIndex: 60
             };
@@ -600,7 +600,7 @@ const setupOnshoreWind = async (windfarms) => {
 const setupOnshoreGridCables = async (gridCables) => {
     const features = [...gridCables.values()].map(cable => ({ type: "Feature", id: cable.id, name: cable.name, geometry: cable.Geometry, properties: { id: cable.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "OnshoreGridCable";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -612,7 +612,7 @@ const setupOnshoreGridCables = async (gridCables) => {
         }
 
         if (entity.polyline) {
-            entity.polyline.material = window.Cesium.Color.BLACK;
+            entity.polyline.material = Color.BLACK;
             entity.polyline.width = 2;
             entity.polyline.zIndex = 50;
             entity.polyline.clampToGround = true;
@@ -625,7 +625,7 @@ const setupOnshoreGridCables = async (gridCables) => {
 const setupOnshorePowerlines = async (powerlines) => {
     const features = [...powerlines.values()].map(powerline => ({ type: "Feature", id: powerline.id, name: powerline.name, geometry: powerline.Geometry, properties: { id: powerline.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "OnshorePowerline";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -637,7 +637,7 @@ const setupOnshorePowerlines = async (powerlines) => {
         }
 
         if (entity.polyline) {
-            entity.polyline.material = window.Cesium.Color.BLACK;
+            entity.polyline.material = Color.BLACK;
             entity.polyline.width = 2;
             entity.polyline.zIndex = 50;
             entity.polyline.clampToGround = true;
@@ -650,7 +650,7 @@ const setupOnshorePowerlines = async (powerlines) => {
 const setupOnshoreGasPipes = async (pipes) => {
     const features = [...pipes.values()].map(pipe => ({ type: "Feature", id: pipe.id, name: pipe.name, geometry: pipe.Geometry, properties: { id: pipe.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "OnshoreGasPipe";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -662,7 +662,7 @@ const setupOnshoreGasPipes = async (pipes) => {
         }
 
         if (entity.polyline) {
-            entity.polyline.material = window.Cesium.Color.BLACK;
+            entity.polyline.material = Color.BLACK;
             entity.polyline.width = 2;
             entity.polyline.zIndex = 50;
             entity.polyline.clampToGround = true;
@@ -675,7 +675,7 @@ const setupOnshoreGasPipes = async (pipes) => {
 const setupOnshoreGasSites = async (sites) => {
     const features = [...sites.values()].map(site => ({ type: "Feature", id: site.id, name: site.name, geometry: site.Geometry, properties: { id: site.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "OnshoreGasSite";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -709,7 +709,7 @@ const getFieldColour = (field) => {
 const setupFields = async (fields, isCC) => {
     const features = [...fields.values()].map(field => ({ type: "Feature", id: field.id, name: field.name, geometry: field.Geometry, properties: { id: field.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = isCC ? "CCField" : "Field";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -725,27 +725,27 @@ const setupFields = async (fields, isCC) => {
                 let end;
 
                 if (start) {
-                    start = window.Cesium.JulianDate.fromDate(new Date(start));
+                    start = JulianDate.fromDate(new Date(start));
                 }
                 else {
-                    start = window.Cesium.JulianDate.fromDate(new Date("1901"));
+                    start = JulianDate.fromDate(new Date("1901"));
                 }
 
                 if (end) {
-                    end = window.Cesium.JulianDate.fromDate(new Date(end));
+                    end = JulianDate.fromDate(new Date(end));
                 }
                 else {
-                    end = window.Cesium.JulianDate.fromDate(new Date("2500"));
+                    end = JulianDate.fromDate(new Date("2500"));
                 }
 
                 if (start || end) {
-                    const interval = new window.Cesium.TimeInterval({
+                    const interval = new TimeInterval({
                         start: start,
                         stop: end,
                         isStartIncluded: start !== null,
                         isStopIncluded: end !== null
                     });
-                    entity.availability = new window.Cesium.TimeIntervalCollection([interval]);
+                    entity.availability = new TimeIntervalCollection([interval]);
                 }
 
                 const material = getFieldColour(rawEntity);
@@ -758,10 +758,10 @@ const setupFields = async (fields, isCC) => {
 }
 
 const setupBlocks = async () => {
-    let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(ukBlocks, {
-        fill: window.Cesium.Color.TRANSPARENT,
-        stroke: window.Cesium.Color.LIGHTCORAL
+    let scale = new NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+    let dataSource = await GeoJsonDataSource.load(ukBlocks, {
+        fill: Color.TRANSPARENT,
+        stroke: Color.LIGHTCORAL
     });
 
     var p = dataSource.entities.values;
@@ -770,18 +770,18 @@ const setupBlocks = async () => {
         let polygon = entity.polygon;
         if (polygon) {
             polygon.zIndex = 30;
-            var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
-            window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
-            entity.position = new window.Cesium.ConstantPositionProperty(center);
+            var center = BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+            Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+            entity.position = new ConstantPositionProperty(center);
         }
-        entity.label = new window.Cesium.LabelGraphics({
+        entity.label = new LabelGraphics({
             text: entity.properties.ALL_LABELS,
-            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+            distanceDisplayCondition: new DistanceDisplayCondition(0.0, 400000),
             font: '20px Arial Narrow"',
             scaleByDistance: scale,
-            fillColor: window.Cesium.Color.BLACK,
-            style: window.Cesium.LabelStyle.FILL,
-            outlineColor: window.Cesium.Color.WHITE,
+            fillColor: Color.BLACK,
+            style: LabelStyle.FILL,
+            outlineColor: Color.WHITE,
             outlineWidth: 1.5,
 
             heightReference: dynamicHeightReference,
@@ -796,18 +796,18 @@ const setupBlocks = async () => {
 const setupWells = async (wells) => {
     const features = [...wells.values()].map(well => ({ type: "Feature", id: well.id, name: well.name, geometry: well.Geometry, properties: { id: well.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "Well";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
         if (entity.billboard) {
             entity.billboard = undefined;
-            entity.point = new window.Cesium.PointGraphics({
+            entity.point = new PointGraphics({
                 pixelSize: 4,
-                color: window.Cesium.Color.BLACK,
-                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                color: Color.BLACK,
+                distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+                translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
                 heightReference: dynamicHeightReference,
                 zIndex: 50
             });
@@ -825,18 +825,18 @@ const setupWells = async (wells) => {
 const setupWrecks = async (wrecks) => {
     const features = [...wrecks.values()].map(wreck => ({ type: "Feature", id: wreck.id, name: wreck.name, geometry: wreck.Geometry, properties: { id: wreck.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "Wreck";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
         const entity = p[i];
         if (entity.billboard) {
             entity.billboard = undefined;
-            entity.point = new window.Cesium.PointGraphics({
+            entity.point = new PointGraphics({
                 pixelSize: 4,
-                color: window.Cesium.Color.SLATEGREY,
-                distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 8500009.5),
-                translucencyByDistance: new window.Cesium.NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                color: Color.SLATEGREY,
+                distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+                translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
                 heightReference: dynamicHeightReference,
                 zIndex: 50
             });
@@ -851,10 +851,10 @@ const setupWrecks = async (wrecks) => {
 }
 
 const setupAreas = async (areas) => {
-    let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+    let scale = new NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
     const features = [...areas.values()].map(area => ({ type: "Feature", id: area.id, name: area.name, geometry: area.Geometry, properties: { id: area.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "Area";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -868,7 +868,7 @@ const setupAreas = async (areas) => {
             polygon.zIndex = 1;
             if (rawEntity) {
                 try {
-                    const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
+                    const colour = Color.fromCssColorString(rawEntity.Colour);
                     polygon.material = colour.withAlpha(0.4);
                     polygon.outlineColor = colour;
 
@@ -876,22 +876,22 @@ const setupAreas = async (areas) => {
                 }
 
             }
-            var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
-            window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
-            entity.position = new window.Cesium.ConstantPositionProperty(center);
+            var center = BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+            Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+            entity.position = new ConstantPositionProperty(center);
         }
-        entity.label = new window.Cesium.LabelGraphics({
+        entity.label = new LabelGraphics({
             text: entity.name,
-            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+            distanceDisplayCondition: new DistanceDisplayCondition(0.0, 400000),
             font: '20px Arial Narrow"',
             scaleByDistance: scale,
-            fillColor: window.Cesium.Color.BLACK,
-            style: window.Cesium.LabelStyle.FILL,
-            outlineColor: window.Cesium.Color.WHITE,
+            fillColor: Color.BLACK,
+            style: LabelStyle.FILL,
+            outlineColor: Color.WHITE,
             outlineWidth: 1.5,
-            pixelOffset: new window.Cesium.Cartesian2(25, 0),
-            verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-            horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+            pixelOffset: new Cartesian2(25, 0),
+            verticalOrigin: VerticalOrigin.CENTER,
+            horizontalOrigin: HorizontalOrigin.LEFT,
             heightReference: dynamicHeightReference,
             scale: 0.65,
             zIndex: 60
@@ -902,10 +902,10 @@ const setupAreas = async (areas) => {
 }
 
 const setupBasins = async (basins) => {
-    let scale = new window.Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+    let scale = new NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
     const features = [...basins.values()].map(basin => ({ type: "Feature", id: basin.id, name: basin.name, geometry: basin.Geometry, properties: { id: basin.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await window.Cesium.GeoJsonDataSource.load(geoJson);
+    let dataSource = await GeoJsonDataSource.load(geoJson);
     dataSource.name = "Basin";
     var p = dataSource.entities.values;
     for (var i = 0; i < p.length; i++) {
@@ -919,29 +919,29 @@ const setupBasins = async (basins) => {
             polygon.zIndex = 20;
             if (rawEntity) {
                 try {
-                    const colour = window.Cesium.Color.fromCssColorString(rawEntity.Colour);
+                    const colour = Color.fromCssColorString(rawEntity.Colour);
                     polygon.material = colour.withAlpha(0.6);
                     polygon.outlineColor = colour;
                 } catch (e) {
                 }
             }
-            var center = window.Cesium.BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
-            window.Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
-            entity.position = new window.Cesium.ConstantPositionProperty(center);
+            var center = BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+            Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
+            entity.position = new ConstantPositionProperty(center);
         }
 
-        entity.label = new window.Cesium.LabelGraphics({
+        entity.label = new LabelGraphics({
             text: entity.name,
-            distanceDisplayCondition: new window.Cesium.DistanceDisplayCondition(0.0, 400000),
+            distanceDisplayCondition: new DistanceDisplayCondition(0.0, 400000),
             font: '20px Arial Narrow"',
             scaleByDistance: scale,
-            fillColor: window.Cesium.Color.BLACK,
-            style: window.Cesium.LabelStyle.FILL,
-            outlineColor: window.Cesium.Color.WHITE,
+            fillColor: Color.BLACK,
+            style: LabelStyle.FILL,
+            outlineColor: Color.WHITE,
             outlineWidth: 1.5,
-            pixelOffset: new window.Cesium.Cartesian2(25, 0),
-            verticalOrigin: window.Cesium.VerticalOrigin.CENTER,
-            horizontalOrigin: window.Cesium.HorizontalOrigin.LEFT,
+            pixelOffset: new Cartesian2(25, 0),
+            verticalOrigin: VerticalOrigin.CENTER,
+            horizontalOrigin: HorizontalOrigin.LEFT,
             heightReference: dynamicHeightReference,
             scale: 0.65,
             zIndex: 60
@@ -952,10 +952,10 @@ const setupBasins = async (basins) => {
 
 const leftClick = (viewer, distance, history, location, search, dispatch, e) => {
     var position = viewer.camera.pickEllipsoid(e.position);
-    var cartographicPosition = window.Cesium.Ellipsoid.WGS84.cartesianToCartographic(position);
+    var cartographicPosition = Ellipsoid.WGS84.cartesianToCartographic(position);
     var y = cartographicPosition.latitude;
     var x = cartographicPosition.longitude;
-    let pos = window.Cesium.Cartesian3.fromRadians(x, y)
+    let pos = Cartesian3.fromRadians(x, y)
     const picked = viewer.scene.pick(e.position);
     const entity = picked ? picked.id || picked.primitive.id : null;
     if (entity && entity.entityCollection && entity.entityCollection.owner && entity.entityCollection.owner.name) {
@@ -1075,13 +1075,15 @@ const CesiumMap = () => {
                 break;
             }
             default: {
-                const dataSources = viewer.dataSources.getByName(etype);
-                if (dataSources.length !== 0) {
-                    const entity = dataSources[0].entities.getById(eid);
-                    if (entity) {
-                        viewer.flyTo(entity, {
-                            offset: new window.Cesium.HeadingPitchRange(0, -window.Cesium.Math.PI_OVER_FOUR, 50000)
-                        });
+                if (etype) {
+                    const dataSources = viewer.dataSources.getByName(etype);
+                    if (dataSources.length !== 0) {
+                        const entity = dataSources[0].entities.getById(eid);
+                        if (entity) {
+                            viewer.flyTo(entity, {
+                                offset: new HeadingPitchRange(0, -Math.PI_OVER_FOUR, 50000)
+                            });
+                        }
                     }
                 }
                 break;
@@ -1218,7 +1220,7 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (viewer) {
-            viewer.clockViewModel.currentTime = new window.Cesium.JulianDate.fromIso8601("" + year);
+            viewer.clockViewModel.currentTime = new JulianDate.fromIso8601("" + year);
         }
     }, [viewer, year]);
 
@@ -1226,10 +1228,10 @@ const CesiumMap = () => {
         if (!viewer) return;
         if (enableTerrain) {
             viewer.terrainProvider = terrainProvider;
-            heightReference = window.Cesium.HeightReference.CLAMP_TO_GROUND;
+            heightReference = HeightReference.CLAMP_TO_GROUND;
         } else {
             viewer.terrainProvider = defaultTerrainProvider;
-            heightReference = window.Cesium.HeightReference.NONE;
+            heightReference = HeightReference.NONE;
         }
     }, [viewer, enableTerrain]);
 
@@ -1253,10 +1255,10 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer) return;
-        viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        viewer.screenSpaceEventHandler.removeInputAction(window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, radius, history, location, search, dispatch, e), window.Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), window.Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        viewer.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
+        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, radius, history, location, search, dispatch, e), ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), ScreenSpaceEventType.MOUSE_MOVE);
     }, [viewer, history, location, search, radius, dispatch]);
 
     useEffect(() => {
