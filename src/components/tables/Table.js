@@ -104,12 +104,12 @@ export function SelectColumnFilter({
 
 const filterTypes = {
     includes: (rows, id, filterValue) => {
-      return rows.filter(row => {
-        const rowValue = row.values[id];
-        return rowValue.includes(filterValue);
-      });
+        return rows.filter(row => {
+            const rowValue = row.values[id];
+            return rowValue?.includes(filterValue);
+        });
     }
-  };
+};
 
 
 export default function Table({ columns, data, history, location, filters, type, onVisibleRowsChange }) {
@@ -136,9 +136,9 @@ export default function Table({ columns, data, history, location, filters, type,
             columns,
             data,
             defaultColumn,
-            filterTypes:filterTypes,
+            filterTypes: filterTypes,
             initialState: {
-                filters: filters??[],
+                filters: filters ?? [],
                 hiddenColumns: columns.filter(column => column.isVisible === false).map(column => column.id)
             },
         },
@@ -159,7 +159,7 @@ export default function Table({ columns, data, history, location, filters, type,
     }, [rows]);
 
     useEffect(() => {
-        setAllFilters(filters??[]);
+        setAllFilters(filters ?? []);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters, setAllFilters]);
 
