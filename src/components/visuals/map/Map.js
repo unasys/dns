@@ -4,7 +4,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 import './Map.scss';
 import { useStateValue } from '../../../utils/state';
 import HoverCard from './HoverCard';
-import { Color, HeightReference, CallbackProperty, CesiumTerrainProvider, EllipsoidTerrainProvider, UrlTemplateImageryProvider, Credit, Viewer, SceneMode, MapboxImageryProvider, Rectangle, Math, Cartographic, EllipsoidGeodesic, GeoJsonDataSource, JulianDate, TimeInterval, TimeIntervalCollection, Cartesian3, DistanceDisplayCondition, NearFarScalar, LabelStyle, Cartesian2, VerticalOrigin, HorizontalOrigin, CustomDataSource, BoundingSphere, Ellipsoid, ConstantPositionProperty, LabelGraphics, PointGraphics, HeadingPitchRange, ScreenSpaceEventType } from 'cesium';
+import { Color, HeightReference, CallbackProperty, CesiumTerrainProvider, EllipsoidTerrainProvider, UrlTemplateImageryProvider, Credit, Viewer, SceneMode, MapboxImageryProvider, Rectangle, Cartographic, EllipsoidGeodesic, GeoJsonDataSource, JulianDate, TimeInterval, TimeIntervalCollection, Cartesian3, DistanceDisplayCondition, NearFarScalar, LabelStyle, Cartesian2, VerticalOrigin, HorizontalOrigin, CustomDataSource, BoundingSphere, Ellipsoid, ConstantPositionProperty, LabelGraphics, PointGraphics, HeadingPitchRange, ScreenSpaceEventType, Math as CesiumMath } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
@@ -120,7 +120,7 @@ const flyHome = (viewer) => {
         duration: 3,
         orientation: {
             heading: 0.0,
-            pitch: Math.toRadians(-50),
+            pitch: CesiumMath.toRadians(-50),
             roll: 0.0
         }
     });
@@ -186,13 +186,14 @@ const nearestPosition = (entity, position) => {
         });
     }
 
-    return entity.position.getValue();
+    return entity.position.getValue(JulianDate.now());
 }
 
 const findEntitiesInRange = (viewer, radiusDistance, dispatch) => {
     const radius = viewer.entities.getById("SOI");
+    const time = JulianDate.now();
     if (radius) {
-        const position = radius.position?.getValue();
+        const position = radius.position?.getValue(time);
         if (radiusDistance === 0 || !position) {
             dispatch({ type: "clearWithIn" });
         } else {
@@ -1081,7 +1082,7 @@ const CesiumMap = () => {
                         const entity = dataSources[0].entities.getById(eid);
                         if (entity) {
                             viewer.flyTo(entity, {
-                                offset: new HeadingPitchRange(0, -Math.PI_OVER_FOUR, 50000)
+                                offset: new HeadingPitchRange(0, -CesiumMath.PI_OVER_FOUR, 50000)
                             });
                         }
                     }
