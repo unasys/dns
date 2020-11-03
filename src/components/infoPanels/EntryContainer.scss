@@ -4,7 +4,6 @@ details {
         color: white;
         text-align: left;
         padding: 10px 20px;
-        padding-left: 30px;
         cursor: pointer;
         outline:none;
         list-style: none;
@@ -26,9 +25,5 @@ details {
                 color: white;
             }
         }
-    }
-    summary::-webkit-details-marker{
-        display: none;
-    }
-
+    }  
 }

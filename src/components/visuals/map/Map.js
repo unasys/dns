@@ -29,11 +29,6 @@ const pipelineColoursSimple = {
     "default": Color.fromCssColorString("#DCDCDC")
 }
 
-const installationColours = {
-    "removed": Color.GOLDENROD,
-    "default": Color.GOLD
-}
-
 const installationColoursSimple = {
     "removed": Color.DIMGREY,
     "default": Color.DIMGREY
@@ -223,13 +218,10 @@ const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
     return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 }
 
-const getInstallationColour = (mapStyle, installation) => {
+const getInstallationColour = (installation) => {
     let colours = installationColoursSimple;
-    if (mapStyle === "satellite") {
-        colours = installationColours;
-    }
 
-    let status = installation.Status;
+    let status = installation?.Status;
     if (status) {
         status = status.toLowerCase();
     }
@@ -383,11 +375,11 @@ const setupSubsurfaces = (subsurfaces) => {
     return dataSource;
 }
 
-const getPipelineColour = (mapStyle, pipeline) => {
+const getPipelineColour = (pipeline) => {
     let colours = pipelineColoursSimple;
-    // if (mapStyle === "satellite") {
-    //     colours = pipelineColours;
-    // }
+
+        colours = pipelineColours;
+    
 
     let pipelineFluid = pipeline.fluid_conveyed;
     if (pipelineFluid) {
@@ -395,6 +387,7 @@ const getPipelineColour = (mapStyle, pipeline) => {
     }
 
     let colour = colours[pipelineFluid];
+
     if (!colour) {
         colour = colours["default"];
     }
@@ -410,18 +403,18 @@ const getPipelineColour = (mapStyle, pipeline) => {
     return colour;
 }
 
-const updatePipelineStyle = (mapStyle, pipelines) => {
+const updatePipelineStyle = (pipelines) => {
     pipelines.forEach(pipeline => {
         if (pipeline.originalData && pipeline.polyline) {
-            pipeline.polyline.material = getPipelineColour(mapStyle, pipeline.originalData);
+            pipeline.polyline.material = getPipelineColour(pipeline.originalData);
         }
     });
 }
 
-const updateInstallationStyle = (mapStyle, installations) => {
+const updateInstallationStyle = (installations) => {
     installations.forEach(installation => {
         if (installation.originalData) {
-            installation.point.color = getInstallationColour(mapStyle, installation.originalData);
+            installation.point.color = getInstallationColour(installation.originalData);
         }
     });
 }
@@ -473,7 +466,7 @@ const setupPipelines = async (pipelines, isCC) => {
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
 
             if (entity.polyline) {
-                entity.polyline.material = getPipelineColour("satellite", rawEntity);
+                entity.polyline.material = getPipelineColour(rawEntity);
                 entity.polyline.width = 2;
                 entity.polyline.distanceDisplayCondition = new DistanceDisplayCondition(0, scaledDistance);
                 entity.polyline.zIndex = 50;
@@ -522,6 +515,7 @@ const setupWindfarms = async (windfarms) => {
                 }
                 break;
             }
+            case "Export cable":
             case "Export Cable": {
                 if (entity.polyline) {
                     entity.polyline.material = Color.fromCssColorString("#A4A9A7");
@@ -1022,12 +1016,12 @@ const switchStyle = (viewer, mapStyle) => {
 
     const pipelines = viewer.dataSources.getByName("Pipeline");
     if (pipelines.length > 0) {
-        updatePipelineStyle(mapStyle, pipelines[0].entities.values);
+        updatePipelineStyle(pipelines[0].entities.values);
     }
 
     const installations = viewer.dataSources.getByName("Installation");
     if (installations.length > 0) {
-        updateInstallationStyle(mapStyle, installations[0].entities.values);
+        updateInstallationStyle(installations[0].entities.values);
     }
 }
 
