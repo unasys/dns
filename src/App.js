@@ -6,7 +6,7 @@ import './App.scss';
 import { useStateValue } from './utils/state';
 import { fetchInstallations, fetchDecomyards, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind, fetchWorkingGroups, fetchCarbonPipelines, fetchCarbonCaptureFields } from './api/Installations';
 import InfoPanel from './components/infoPanels/InfoPanel';
-import MenuPanel from './components/menuPanels/details-panel/MenuPanel';
+import MenuPanel from './components/menuPanels/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
 import DecomYardTable from './components/tables/DecomYardTable';
 import FieldTable from './components/tables/FieldTable';

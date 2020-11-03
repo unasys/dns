@@ -1,8 +1,4 @@
 import React from 'react';
-import InstallationHoverCard from "./InstallationHoverCard";
-import DecomyardHoverCard from "./DecomyardHoverCard";
-import WindfarmHoverCard from "./WindfarmHoverCard";
-import SubsurfaceHoverCard from "./SubsurfaceHoverCard";
 
 const DataDrivenValue = ({ value }) => {
     let hoverValue = value.values ?? value.value;
@@ -43,18 +39,7 @@ const HoverCard = (props) => {
         return <DataDrivenHoverCard position={props.position} type={props.type} hoverDetails={props.entity.Hover} name={props.entity.name} />
     }
 
-    switch (props.type) {
-        case "Installation":
-            return <InstallationHoverCard position={props.position} hoveredInstallation={props.entity} />
-        case "DecomYard":
-            return <DecomyardHoverCard position={props.position} hoveredDecomyard={props.entity} />
-        case "Windfarm":
-            return <WindfarmHoverCard position={props.position} hoveredWindfarm={props.entity} />
-        case "Subsurface":
-            return <SubsurfaceHoverCard position={props.position} hoveredSubsurface={props.entity} />
-        default:
-            return <></>
-    }
+    return <></>;
 }
 
 export default HoverCard;

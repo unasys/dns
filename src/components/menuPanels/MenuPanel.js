@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Handle from '../../handle/Handle';
-import '../../infoPanels/Panels.scss';
-import { useStateValue } from '../../../utils/state';
+import Handle from '../handle/Handle';
+import '../infoPanels/Panels.scss';
+import { useStateValue } from '../../utils/state';
 import Switch from 'react-toggle-switch'
 
 const MapOptions = () => {
