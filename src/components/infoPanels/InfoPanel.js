@@ -248,11 +248,11 @@ function TypeSepcificInfo({ type, entity, installations, wells, pipelines, field
 }
 
 
-function DataDriveInfoPanel({ name, type, details, image, epm, entity, installations, wells, pipelines, ccpipelines, fields,ccfields }) {
+function DataDriveInfoPanel({ name, type, details, image, epm, entity, installations, wells, pipelines, ccpipelines, fields,ccfields, workinGroups }) {
     return (
         <div>
             <TitleBar title={name} subtitle={type} image={image} epm={epm} />
-            <TypeSepcificInfo type={type} installations={installations} entity={entity} wells={wells} pipelines={pipelines} fields={fields} />
+            <TypeSepcificInfo type={type} installations={installations} entity={entity} wells={wells} pipelines={pipelines} fields={fields} workinGroups={workinGroups} />
             {details.map((d) => (<EntryContainer key={d.name} title={d.name} subtitle={d.value} open={d.expaned ?? false} borderBottom>
                 {d.values.map((v, i) => (<Entry key={`${v.name}${i}`} title={v.name} subtitle={v.values ?? v.value} type={v.type} borderBottom />))}
             </EntryContainer>))}
@@ -281,7 +281,6 @@ function InfoPanel() {
 
     let entity = getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, etype, eid);
     let panel = choosePanel(installations, wells, areas, pipelines, ccpipelines, fields,ccfields, etype, entity);
-
     return (
         panel &&
         <div className="dns-panel right">
