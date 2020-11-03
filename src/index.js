@@ -62,11 +62,6 @@ const reducer = (state, action) => {
                 ...state,
                 radius: action.radius * 1000
             }
-        case 'toggleRadius':
-            return {
-                ...state,
-                radiusEnabled: !state.radiusEnabled
-            }
         case 'setInstallations':
             return {
                 ...state,

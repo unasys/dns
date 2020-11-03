@@ -1,12 +1,18 @@
 .sidePanel {
     width: 400px;
-    height:75%;
+    height:60%;
+    &.emptyWithIn{
+        height:90%;
+    }
     background: rgb(220,221,223);
 }
 
 .nearby {
     width: 400px;
-    height:24%;
+    height: 39%;
+    &.empty{
+        height:9%;
+    }
     background: rgb(220,221,223);
     .radius{
         display: flex;

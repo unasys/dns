@@ -272,13 +272,15 @@ const marks = {
 
 
 function InfoPanel() {
-    const [{ installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups, radiusEnabled }, dispatch] = useStateValue();
+    const [{withInDistance, installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups, radiusEnabled }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
     const eid = search.get("eid");
     const etype = search.get("etype");
 
+    const hasWithInDistance =Object.keys(withInDistance).map(key => withInDistance[key]?.length??0).reduce((a, b) => a + b, 0);
+    
     let entity = getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, etype, eid);
     let panel = choosePanel(installations, wells, areas, pipelines, ccpipelines, fields,ccfields, etype, entity);
     return (
@@ -286,15 +288,15 @@ function InfoPanel() {
         <div className="dns-panel right">
             <Handle onHandleClick={() => setIsVisible(!isVisible)} isFacingLeft={false} isOpen={isVisible} />
             <div className={isVisible ? "dns-split" : "dns-split hidden"}>
-                <aside className="sidePanel">
+                <aside className={`sidePanel ${hasWithInDistance?"":"emptyWithIn"}`}>
                     <div className="dns-content">
                         {panel}
                     </div>
                 </aside>
-                <aside className="nearby">
+                <aside className={`nearby ${hasWithInDistance?"":"empty"}`}>
                     <div className="dns-content">
                         <div className="radius">
-                            <svg className="radius-button" viewBox="0 0 10 10" width="60px" onClick={() => dispatch({ type: "toggleRadius" })}>
+                            <svg className="radius-button" viewBox="0 0 10 10" width="60px" onClick={() => dispatch({ type: "clearWithIn" })}>
                                 <circle cx="5" cy="5" r="4" strokeWidth="1.5" stroke="#fff" fill="#fff" fillOpacity="0.0" />
                                 <circle cx="5" cy="5" r="2" fill="#61626c" />
                             </svg>

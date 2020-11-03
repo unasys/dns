@@ -10,20 +10,20 @@ const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tile
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
 
-// const pipelineColours = {
-//     "chemical": Color.fromBytes(255, 165, 0),
-//     "condensate": Color.fromBytes(132, 0, 168),
-//     "fibre": Color.fromBytes(139, 69, 19),
-//     "gas": Color.fromBytes(255, 51, 0),
-//     "hydraulic": Color.fromBytes(255, 255, 0),
-//     "methanol": Color.fromBytes(223, 155, 255),
-//     "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
-//     "oil": Color.fromBytes(56, 168, 0),
-//     "other fluid": Color.fromBytes(161, 0, 123),
-//     "water": Color.fromBytes(0, 92, 230),
-//     "disused": Color.fromBytes(128, 128, 128),
-//     "default": Color.WHITE
-// }
+const pipelineColours = {
+    "chemical": Color.fromBytes(255, 165, 0),
+    "condensate": Color.fromBytes(132, 0, 168),
+    "fibre": Color.fromBytes(139, 69, 19),
+    "gas": Color.fromBytes(255, 51, 0),
+    "hydraulic": Color.fromBytes(255, 255, 0),
+    "methanol": Color.fromBytes(223, 155, 255),
+    "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
+    "oil": Color.fromBytes(56, 168, 0),
+    "other fluid": Color.fromBytes(161, 0, 123),
+    "water": Color.fromBytes(0, 92, 230),
+    "disused": Color.fromBytes(128, 128, 128),
+    "default": Color.WHITE
+}
 
 const pipelineColoursSimple = {
     "default": Color.fromCssColorString("#DCDCDC")
@@ -496,15 +496,14 @@ const setupWindfarms = async (windfarms) => {
 
         if (entity.polygon) {
             entity.polygon.zIndex = 40;
-            entity.polygon.outlineColor = Color.DARKSEAGREEN;
-            entity.polygon.material = Color.DARKSEAGREEN.withAlpha(0.75);
+            entity.polygon.outlineColor = Color.fromCssColorString("#BADBCA");
+            entity.polygon.material = Color.fromCssColorString("#BADBCA").withAlpha(0.75);
         }
 
         const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
         }
-
 
         switch (entity?.originalData?.Type) {
             case "wind turbine": {
@@ -519,13 +518,13 @@ const setupWindfarms = async (windfarms) => {
             }
             case "Turbine Cable": {
                 if (entity.polyline) {
-                    entity.polyline.material = Color.RED
+                    entity.polyline.material = Color.fromCssColorString("#F47C7C")
                 }
                 break;
             }
-            case "Export cable": {
+            case "Export Cable": {
                 if (entity.polyline) {
-                    entity.polyline.material = Color.DARKGREY;
+                    entity.polyline.material = Color.fromCssColorString("#A4A9A7");
                 }
                 break;
             }
