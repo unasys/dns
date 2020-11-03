@@ -6,6 +6,7 @@ import { useStateValue } from '../../utils/state';
 import HoverCard from './HoverCard';
 import { Color, HeightReference, CallbackProperty, CesiumTerrainProvider, EllipsoidTerrainProvider, UrlTemplateImageryProvider, Credit, Viewer, SceneMode, MapboxImageryProvider, Rectangle, Cartographic, EllipsoidGeodesic, GeoJsonDataSource, JulianDate, TimeInterval, TimeIntervalCollection, Cartesian3, DistanceDisplayCondition, NearFarScalar, LabelStyle, Cartesian2, VerticalOrigin, HorizontalOrigin, CustomDataSource, BoundingSphere, Ellipsoid, ConstantPositionProperty, LabelGraphics, PointGraphics, HeadingPitchRange, ScreenSpaceEventType, Math as CesiumMath } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
+import { useInstallations } from './Installations';
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
@@ -29,10 +30,7 @@ const pipelineColoursSimple = {
     "default": Color.fromCssColorString("#DCDCDC")
 }
 
-const installationColoursSimple = {
-    "removed": Color.DIMGREY,
-    "default": Color.DIMGREY
-}
+
 
 const fieldColours = {
     "chemical": Color.fromBytes(255, 165, 0),
@@ -218,96 +216,6 @@ const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
     return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 }
 
-const getInstallationColour = (installation) => {
-    let colours = installationColoursSimple;
-
-    let status = installation?.Status;
-    if (status) {
-        status = status.toLowerCase();
-    }
-
-    let colour = colours[status];
-    if (!colour) {
-        colour = colours["default"];
-    }
-
-    return colour;
-}
-
-const setupInstallations = async (installations) => {
-    const features = [...installations.values()].map(installation => ({ type: "Feature", id: installation.id, name: installation.name, geometry: installation.Geometry, properties: { id: installation.id } }));
-    const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await GeoJsonDataSource.load(geoJson);
-    dataSource.name = "Installation";
-    var p = dataSource.entities.values;
-    for (var i = 0; i < p.length; i++) {
-        const entity = p[i];
-        const rawEntity = installations.get(entity.properties.id.getValue().toString());
-        if (rawEntity) {
-            entity.originalData = rawEntity;
-            if (entity.billboard) {
-                entity.billboard = undefined;
-
-                let start = rawEntity.StartDate;
-                let end = rawEntity.PlannedCOP;
-
-                if (start) {
-                    start = JulianDate.fromDate(new Date(start));
-                }
-                else {
-                    start = JulianDate.fromDate(new Date("1901"));
-                }
-
-                if (end) {
-                    end = JulianDate.fromDate(new Date(end));
-                }
-                else {
-                    end = JulianDate.fromDate(new Date("2500"));
-                }
-
-                if (start || end) {
-                    const interval = new TimeInterval({
-                        start: start,
-                        stop: end,
-                        isStartIncluded: start !== null,
-                        isStopIncluded: end !== null
-                    });
-                    entity.availability = new TimeIntervalCollection([interval]);
-                }
-
-                entity.point = {
-                    pixelSize: 4,
-                    color: getInstallationColour("", rawEntity),
-                    eyeOffset: new Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
-                    translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
-                    heightReference: dynamicHeightReference,
-                    zIndex: 60
-                };
-
-                entity.label = {
-                    text: rawEntity.name,
-                    font: "20px Arial Narrow",
-                    fillColor: Color.BLACK,
-                    style: LabelStyle.FILL,
-                    outlineColor: Color.WHITE,
-                    outlineWidth: 1.5,
-                    pixelOffset: new Cartesian2(25, 0),
-                    verticalOrigin: VerticalOrigin.CENTER,
-                    horizontalOrigin: HorizontalOrigin.LEFT,
-                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 300000),
-                    heightReference: dynamicHeightReference,
-                    scale: 0.65,
-                    zIndex: 60
-                };
-            }
-
-        }
-
-    }
-    return dataSource;
-}
-
 const mapDecomyard = (decomyard) => {
     const position = Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat);
     const point = {
@@ -410,15 +318,6 @@ const updatePipelineStyle = (pipelines) => {
         }
     });
 }
-
-const updateInstallationStyle = (installations) => {
-    installations.forEach(installation => {
-        if (installation.originalData) {
-            installation.point.color = getInstallationColour(installation.originalData);
-        }
-    });
-}
-
 
 const setupPipelines = async (pipelines, isCC) => {
     const minDiameter = 0;
@@ -1018,17 +917,12 @@ const switchStyle = (viewer, mapStyle) => {
     if (pipelines.length > 0) {
         updatePipelineStyle(pipelines[0].entities.values);
     }
-
-    const installations = viewer.dataSources.getByName("Installation");
-    if (installations.length > 0) {
-        updateInstallationStyle(installations[0].entities.values);
-    }
 }
 
 const CesiumMap = () => {
-    const [{ installations, pipelines, ccpipelines, windfarms, decomYards, fields, ccfields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
-        showInstallations, showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
-        installationsVisible, pipelinesVisible, ccpipelinesVisible, windfarmsVisible, fieldsVisible, ccfieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
+    const [{ pipelines, ccpipelines, windfarms, decomYards, fields, ccfields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
+        showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
+        pipelinesVisible, ccpipelinesVisible, windfarmsVisible, fieldsVisible, ccfieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
         mapStyle, enableTerrain, globe3D, radius, radiusEnabled }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
     const [viewer, setViewer] = useState(null);
@@ -1039,6 +933,7 @@ const CesiumMap = () => {
     const etype = search.get("etype");
     const [hover, setHover] = useState(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const installationsDataSource = useInstallations();
 
     useEffect(() => {
         if (!viewer) return;
@@ -1085,11 +980,6 @@ const CesiumMap = () => {
         }
 
     }, [viewer, areas, eid, etype]);
-
-    useEffect(() => {
-        if (!viewer || !installationsVisible) return;
-        toggleEntityVisibility(viewer, "Installation", installationsVisible);
-    }, [viewer, installationsVisible]);
 
     useEffect(() => {
         if (!viewer || !ccpipelinesVisible) return;
@@ -1171,8 +1061,6 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer) return;
-        const installation = viewer.dataSources.getByName("Installation");
-        if (installation.length > 0) installation[0].show = showInstallations;
         const pipeline = viewer.dataSources.getByName("Pipeline");
         if (pipeline.length > 0) pipeline[0].show = showPipelines;
         const ccpipeline = viewer.dataSources.getByName("CCPipeline");
@@ -1210,7 +1098,7 @@ const CesiumMap = () => {
         const workingGroups = viewer.dataSources.getByName("WorkingGroup");
         if (workingGroups.length > 0) workingGroups[0].show = showWorkingGroups;
         viewer.scene.requestRender();
-    }, [viewer, showInstallations, showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
+    }, [viewer, showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
 
     useEffect(() => {
         if (viewer) {
@@ -1241,6 +1129,7 @@ const CesiumMap = () => {
     useEffect(() => {
         const viewer = setupCesium(cesiumRef);
         setViewer(viewer);
+        viewer.dataSources.add(installationsDataSource);
         setupRadius(viewer);
         flyHome(viewer);
         setupBlocks().then(dataSource => { dataSource.show = showBlocks; dataSource.name = "Block"; viewer.dataSources.add(dataSource) });
@@ -1261,17 +1150,6 @@ const CesiumMap = () => {
             findEntitiesInRange(viewer, radius, dispatch)
         }
     }, [viewer, radius, dispatch]);
-
-    useEffect(() => {
-        if (!viewer || installations.size === 0) return;
-        async function loadInstallations() {
-            const dataSource = await setupInstallations(installations);
-            dataSource.show = showInstallations;
-            viewer.dataSources.add(dataSource);
-        }
-        loadInstallations();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [viewer, installations]);
 
     useEffect(() => {
         if (!viewer || decomYards.size === 0) return;

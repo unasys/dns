@@ -38,23 +38,23 @@ const App = () => {
 
   useEffect(() => {
     fetchInstallations().then(installations => { dispatch({ type: "setInstallations", installations: unique(installations, "id") }) });
-    fetchDecomyards().then(decomYards => { dispatch({ type: "setDecomYards", decomYards: unique(decomYards, "id") }) });
-    fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "id") }) });
-    fetchCarbonCaptureFields().then(fields => { dispatch({ type: "setCCFields", fields: unique(fields, "id") }) });
-    fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "id") }) });
-    fetchCarbonPipelines().then(pipelines => { dispatch({ type: "setCCPipelines", pipelines: unique(pipelines, "id") }) });
-    fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "id") }) });
-    fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "id") }) });
-    fetchBasins().then(basins => { dispatch({ type: "setBasins", basins: unique(basins, "id") }) });
-    fetchSubsurface().then(subsurfaces => { dispatch({ type: "setSubsurfaces", subsurfaces: unique(subsurfaces, "id") }) });
-    fetchWells().then(wells => { dispatch({ type: "setWells", wells: unique(wells, "id") }) });
-    fetchWrecks().then(wrecks => { dispatch({ type: "setWrecks", wrecks: unique(wrecks, "id") }) });
-    fetchOnsoreGasPipes().then(pipes => { dispatch({ type: "setOnshoreGasPipes", onshoreGasPipes: unique(pipes, "id") }) });
-    fetchOnsoreGasSites().then(sites => { dispatch({ type: "setOnshoreGasSites", onshoreGasSites: unique(sites, "id") }) });
-    fetchOnsoreGridCables().then(cables => { dispatch({ type: "setOnshoreGridCables", onshoreGridCables: unique(cables, "id") }) });
-    fetchOnsorePowerlines().then(powerlines => { dispatch({ type: "setOnshorePowerlines", onshorePowerlines: unique(powerlines, "id") }) });
-    fetchOnsoreWind().then(windfarms => { dispatch({ type: "setOnshoreWindfarms", onshoreWindfarms: unique(windfarms, "id") }) });
-    fetchWorkingGroups().then(workingGroups => { dispatch({ type: "setWorkingGroups", workingGroups: unique(workingGroups, "id") }) });
+    // fetchDecomyards().then(decomYards => { dispatch({ type: "setDecomYards", decomYards: unique(decomYards, "id") }) });
+    // fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "id") }) });
+    // fetchCarbonCaptureFields().then(fields => { dispatch({ type: "setCCFields", fields: unique(fields, "id") }) });
+    // fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "id") }) });
+    // fetchCarbonPipelines().then(pipelines => { dispatch({ type: "setCCPipelines", pipelines: unique(pipelines, "id") }) });
+    // fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "id") }) });
+    // fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "id") }) });
+    // fetchBasins().then(basins => { dispatch({ type: "setBasins", basins: unique(basins, "id") }) });
+    // fetchSubsurface().then(subsurfaces => { dispatch({ type: "setSubsurfaces", subsurfaces: unique(subsurfaces, "id") }) });
+    // fetchWells().then(wells => { dispatch({ type: "setWells", wells: unique(wells, "id") }) });
+    // fetchWrecks().then(wrecks => { dispatch({ type: "setWrecks", wrecks: unique(wrecks, "id") }) });
+    // fetchOnsoreGasPipes().then(pipes => { dispatch({ type: "setOnshoreGasPipes", onshoreGasPipes: unique(pipes, "id") }) });
+    // fetchOnsoreGasSites().then(sites => { dispatch({ type: "setOnshoreGasSites", onshoreGasSites: unique(sites, "id") }) });
+    // fetchOnsoreGridCables().then(cables => { dispatch({ type: "setOnshoreGridCables", onshoreGridCables: unique(cables, "id") }) });
+    // fetchOnsorePowerlines().then(powerlines => { dispatch({ type: "setOnshorePowerlines", onshorePowerlines: unique(powerlines, "id") }) });
+    // fetchOnsoreWind().then(windfarms => { dispatch({ type: "setOnshoreWindfarms", onshoreWindfarms: unique(windfarms, "id") }) });
+    // fetchWorkingGroups().then(workingGroups => { dispatch({ type: "setWorkingGroups", workingGroups: unique(workingGroups, "id") }) });
   }, [dispatch]);
 
   return (
