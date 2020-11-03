@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 
 import './Map.scss';
-import { useStateValue } from '../../../utils/state';
+import { useStateValue } from '../../utils/state';
 import HoverCard from './HoverCard';
 import { Color, HeightReference, CallbackProperty, CesiumTerrainProvider, EllipsoidTerrainProvider, UrlTemplateImageryProvider, Credit, Viewer, SceneMode, MapboxImageryProvider, Rectangle, Cartographic, EllipsoidGeodesic, GeoJsonDataSource, JulianDate, TimeInterval, TimeIntervalCollection, Cartesian3, DistanceDisplayCondition, NearFarScalar, LabelStyle, Cartesian2, VerticalOrigin, HorizontalOrigin, CustomDataSource, BoundingSphere, Ellipsoid, ConstantPositionProperty, LabelGraphics, PointGraphics, HeadingPitchRange, ScreenSpaceEventType, Math as CesiumMath } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";

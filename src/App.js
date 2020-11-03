@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
-import CesiumMap from './components/visuals/map/Map';
+import CesiumMap from './components/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';

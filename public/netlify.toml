@@ -6,7 +6,7 @@
 for = "/*"
 [headers.values]
 Content-Security-Policy-report-only = "connect-src a.tiles.mapbox.com assets.digitalnorthsea.com b.tiles.mapbox.com emodnet-terrain.azureedge.net c.tiles.mapbox.com unpkg.com; script-src static.sketchfab.com unpkg.com; style-src-elem 'self'; script-src-elem static.sketchfab.com 'unsafe-inline' unpkg.com; worker-src blob; report-uri https://unasys.report-uri.com/r/d/csp/wizard"
-Feature-Policy = "accelerometer 'none'; ambient-light-sensor 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'none'; geolocation 'none'; gyroscope 'none';  magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; speaker 'none'; sync-xhr 'none'; usb 'none'; vr 'none'"
+Feature-Policy = "accelerometer 'none'; autoplay 'none'; camera 'none'; encrypted-media 'none'; fullscreen 'none'; geolocation 'none'; gyroscope 'none';  magnetometer 'none'; microphone 'none'; midi 'none'; payment 'none'; picture-in-picture 'none'; sync-xhr 'none'; usb 'none'"
 Referrer-Policy = "no-referrer-when-downgrade"
 X-Content-Type-Options = "nosniff"
 X-Frame-Options = "SAMEORIGIN"
