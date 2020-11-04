@@ -37,7 +37,7 @@ async function setupInstallations(installations, dataSource, visibleEntities) {
         const rawEntity = installations.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
-            
+
             if (entity.billboard) {
                 entity.billboard = undefined;
 
@@ -98,27 +98,27 @@ async function setupInstallations(installations, dataSource, visibleEntities) {
         }
 
     }
-    return dataSource;
 }
 
-export function useInstallations() {
-    const [{ installations, showInstallations, installationsVisible }, ] = useStateValue();
+export function useInstallations({requestRender}) {
+    const [{ installations, showInstallations, installationsVisible },] = useStateValue();
     const dataSource = useRef(new GeoJsonDataSource("Installation"));
     const visibleEntities = useRef(new Set());
     useEffect(() => {
         setupInstallations(installations, dataSource.current, visibleEntities);
     }, [installations]);
 
-    useEffect(() =>{
-        dataSource.current.show=showInstallations;
-    },[showInstallations]);
+    useEffect(() => {
+        dataSource.current.show = showInstallations;
+        requestRender();
+    }, [showInstallations, requestRender]);
 
-    useEffect(() =>{
+    useEffect(() => {
         visibleEntities.current.clear();
-        if(installationsVisible){
-            installationsVisible.forEach(id => visibleEntities.add(id));
+        if (installationsVisible) {
+            installationsVisible.forEach(id => visibleEntities.current.add(id));
         }
-    },[installationsVisible]);
+    }, [installationsVisible]);
 
 
     return dataSource.current;

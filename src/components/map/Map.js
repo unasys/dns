@@ -1,51 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
-
 import './Map.scss';
 import { useStateValue } from '../../utils/state';
 import HoverCard from './HoverCard';
-import { Color, HeightReference, CallbackProperty, CesiumTerrainProvider, EllipsoidTerrainProvider, UrlTemplateImageryProvider, Credit, Viewer, SceneMode, MapboxImageryProvider, Rectangle, Cartographic, EllipsoidGeodesic, GeoJsonDataSource, JulianDate, TimeInterval, TimeIntervalCollection, Cartesian3, DistanceDisplayCondition, NearFarScalar, LabelStyle, Cartesian2, VerticalOrigin, HorizontalOrigin, CustomDataSource, BoundingSphere, Ellipsoid, ConstantPositionProperty, LabelGraphics, PointGraphics, HeadingPitchRange, ScreenSpaceEventType, Math as CesiumMath } from 'cesium';
+import { Color, HeightReference, CallbackProperty, CesiumTerrainProvider, EllipsoidTerrainProvider, UrlTemplateImageryProvider, Credit, Viewer, SceneMode, MapboxImageryProvider, Rectangle, Cartographic, EllipsoidGeodesic, GeoJsonDataSource, JulianDate, Cartesian3, DistanceDisplayCondition, NearFarScalar, LabelStyle, Cartesian2, VerticalOrigin, HorizontalOrigin, CustomDataSource, BoundingSphere, Ellipsoid, ConstantPositionProperty, LabelGraphics, PointGraphics, HeadingPitchRange, ScreenSpaceEventType, Math as CesiumMath } from 'cesium';
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { useInstallations } from './Installations';
+import { usePipelines } from './Pipelines';
+import { useFields } from './Fields';
+import { useCCPiplines } from './CarbonCapturePipelines';
+import { useCCFields } from './CarbonCaptureFields';
+import { useWindfarms } from './Windfarms';
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 const assetsBaseUrl = process.env.NODE_ENV === 'development' ? 'https://digitalnorthsea.blob.core.windows.net' : 'https://assets.digitalnorthsea.com';
 const ukBlocks = assetsBaseUrl + "/data/uk_blocks.json";
-
-const pipelineColours = {
-    "chemical": Color.fromBytes(255, 165, 0),
-    "condensate": Color.fromBytes(132, 0, 168),
-    "fibre": Color.fromBytes(139, 69, 19),
-    "gas": Color.fromBytes(255, 51, 0),
-    "hydraulic": Color.fromBytes(255, 255, 0),
-    "methanol": Color.fromBytes(223, 155, 255),
-    "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
-    "oil": Color.fromBytes(56, 168, 0),
-    "other fluid": Color.fromBytes(161, 0, 123),
-    "water": Color.fromBytes(0, 92, 230),
-    "disused": Color.fromBytes(128, 128, 128),
-    "default": Color.WHITE
-}
-
-const pipelineColoursSimple = {
-    "default": Color.fromCssColorString("#DCDCDC")
-}
-
-
-
-const fieldColours = {
-    "chemical": Color.fromBytes(255, 165, 0),
-    "cond": Color.fromBytes(154, 159, 167),
-    "fibre": Color.fromBytes(139, 69, 19),
-    "gas": Color.fromBytes(133, 30, 7),
-    "hydraulic": Color.fromBytes(255, 255, 0),
-    "methanol": Color.fromBytes(223, 155, 255),
-    "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
-    "oil": Color.fromBytes(53, 86, 36),
-    "other fluid": Color.fromBytes(161, 0, 123),
-    "water": Color.fromBytes(0, 92, 230),
-    "disused": Color.fromBytes(128, 128, 128),
-    "default": Color.WHITE
-}
 
 let heightReference = HeightReference.NONE;
 
@@ -212,9 +180,7 @@ const findEntitiesInRange = (viewer, radiusDistance, dispatch) => {
     }
 }
 
-const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
-    return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
-}
+
 
 const mapDecomyard = (decomyard) => {
     const position = Cartesian3.fromDegrees(decomyard.Long, decomyard.Lat);
@@ -280,161 +246,6 @@ const mapSubsurface = (subsurface) => {
 const setupSubsurfaces = (subsurfaces) => {
     const dataSource = new CustomDataSource("Subsurface");
     subsurfaces.forEach(i => dataSource.entities.add(mapSubsurface(i)));
-    return dataSource;
-}
-
-const getPipelineColour = (pipeline) => {
-    let colours = pipelineColoursSimple;
-
-        colours = pipelineColours;
-    
-
-    let pipelineFluid = pipeline.fluid_conveyed;
-    if (pipelineFluid) {
-        pipelineFluid = pipelineFluid.toLowerCase();
-    }
-
-    let colour = colours[pipelineFluid];
-
-    if (!colour) {
-        colour = colours["default"];
-    }
-
-    if (pipeline.status !== "ACTIVE") {
-        colour = colour.withAlpha(0.5);
-    }
-
-    //console.log(pipeline, colours, pipelineFluid,mapStyle);
-
-    //colour = colour.darken(0.5, new Color());
-
-    return colour;
-}
-
-const updatePipelineStyle = (pipelines) => {
-    pipelines.forEach(pipeline => {
-        if (pipeline.originalData && pipeline.polyline) {
-            pipeline.polyline.material = getPipelineColour(pipeline.originalData);
-        }
-    });
-}
-
-const setupPipelines = async (pipelines, isCC) => {
-    const minDiameter = 0;
-    const maxDiameter = 1058;
-    const features = [...pipelines.values()].map(pipeline => ({ type: "Feature", id: pipeline.id, name: pipeline.name, geometry: pipeline.Geometry, properties: { id: pipeline.id } }));
-    const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await GeoJsonDataSource.load(geoJson);
-    dataSource.name = isCC ? "CCPipeline" : "Pipeline";
-    var p = dataSource.entities.values;
-    for (var i = 0; i < p.length; i++) {
-        const entity = p[i];
-        const rawEntity = pipelines.get(entity.properties.id?.getValue()?.toString());
-        if (rawEntity) {
-            entity.originalData = rawEntity;
-
-
-            let start = rawEntity["start_date"];
-            if (start) {
-                start = JulianDate.fromDate(new Date(start));
-            }
-            else {
-                start = JulianDate.fromDate(new Date("1901"));
-            }
-            let end = rawEntity["end_date"];
-            if (end) {
-                end = JulianDate.fromDate(new Date(end));
-            }
-            else {
-                end = JulianDate.fromDate(new Date("2500"));
-            }
-
-            if (start || end) {
-                const interval = new TimeInterval({
-                    start: start,
-                    stop: end,
-                    isStartIncluded: start !== null,
-                    isStopIncluded: end !== null
-                });
-                entity.availability = new TimeIntervalCollection([interval]);
-            }
-
-            const pipeDiameter = parseInt(rawEntity.diameter_value) || 0
-
-            //const scaledWidth = scaleBetween(pipeDiameter, 0.5, 1, minDiameter, maxDiameter);
-            const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
-
-            if (entity.polyline) {
-                entity.polyline.material = getPipelineColour(rawEntity);
-                entity.polyline.width = 2;
-                entity.polyline.distanceDisplayCondition = new DistanceDisplayCondition(0, scaledDistance);
-                entity.polyline.zIndex = 50;
-                entity.polyline.clampToGround = true;
-            }
-        }
-
-    }
-    return dataSource;
-}
-
-const setupWindfarms = async (windfarms) => {
-    const features = [...windfarms.values()].map(windfarm => ({ type: "Feature", id: windfarm.id, name: windfarm.name, geometry: windfarm.Geometry, properties: { id: windfarm.id } }));
-    const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await GeoJsonDataSource.load(geoJson);
-    dataSource.name = "Windfarm";
-    var p = dataSource.entities.values;
-    for (var i = 0; i < p.length; i++) {
-        const entity = p[i];
-
-        if (entity.polygon) {
-            entity.polygon.zIndex = 40;
-            entity.polygon.outlineColor = Color.fromCssColorString("#BADBCA");
-            entity.polygon.material = Color.fromCssColorString("#BADBCA").withAlpha(0.75);
-        }
-
-        const rawEntity = windfarms.get(entity.properties.id.getValue().toString());
-        if (rawEntity) {
-            entity.originalData = rawEntity;
-        }
-
-        switch (entity?.originalData?.Type) {
-            case "wind turbine": {
-                entity.billboard = {
-                    image: "/images/windturbine.svg",
-                    eyeOffset: new Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 35000),
-                    scale: 0.35,
-                    zIndex: 60
-                };
-                break;
-            }
-            case "Turbine Cable": {
-                if (entity.polyline) {
-                    entity.polyline.material = Color.fromCssColorString("#F47C7C")
-                }
-                break;
-            }
-            case "Export cable":
-            case "Export Cable": {
-                if (entity.polyline) {
-                    entity.polyline.material = Color.fromCssColorString("#A4A9A7");
-                }
-                break;
-            }
-            case "Substation": {
-                entity.billboard = {
-                    image: "/images/offshore-substation.svg",
-                    eyeOffset: new Cartesian3(0, 0, 1),
-                    distanceDisplayCondition: new DistanceDisplayCondition(0.0, 35000),
-                    scale: 0.35,
-                    zIndex: 60
-                };
-                break;
-            }
-            default: break;
-        }
-
-    }
     return dataSource;
 }
 
@@ -585,70 +396,7 @@ const setupOnshoreGasSites = async (sites) => {
     return dataSource;
 }
 
-const getFieldColour = (field) => {
-    let hcType = field["Hydrocarbon Type"];
-    if (hcType) {
-        hcType = hcType.toLowerCase();
-    }
-    let colour = fieldColours[hcType];
-    if (!colour) {
-        colour = fieldColours["default"];
-    }
-    colour = colour.withAlpha(0.7);
 
-    return colour;
-}
-
-const setupFields = async (fields, isCC) => {
-    const features = [...fields.values()].map(field => ({ type: "Feature", id: field.id, name: field.name, geometry: field.Geometry, properties: { id: field.id } }));
-    const geoJson = { type: "FeatureCollection", features: features };
-    let dataSource = await GeoJsonDataSource.load(geoJson);
-    dataSource.name = isCC ? "CCField" : "Field";
-    var p = dataSource.entities.values;
-    for (var i = 0; i < p.length; i++) {
-        const entity = p[i];
-        if (entity.polygon) {
-            entity.polygon.zIndex = 30;
-        }
-        const rawEntity = fields.get(entity.properties.id.getValue().toString());
-        if (rawEntity) {
-            entity.originalData = rawEntity;
-            if (entity.polygon) {
-                let start = rawEntity["Discovery Date"];
-                let end;
-
-                if (start) {
-                    start = JulianDate.fromDate(new Date(start));
-                }
-                else {
-                    start = JulianDate.fromDate(new Date("1901"));
-                }
-
-                if (end) {
-                    end = JulianDate.fromDate(new Date(end));
-                }
-                else {
-                    end = JulianDate.fromDate(new Date("2500"));
-                }
-
-                if (start || end) {
-                    const interval = new TimeInterval({
-                        start: start,
-                        stop: end,
-                        isStartIncluded: start !== null,
-                        isStopIncluded: end !== null
-                    });
-                    entity.availability = new TimeIntervalCollection([interval]);
-                }
-
-                const material = getFieldColour(rawEntity);
-                entity.polygon.material = material;
-                entity.polygon.outline = false;
-            }
-        }
-    }
-    return dataSource;
-}
 
 const setupBlocks = async () => {
     let scale = new NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
@@ -912,28 +660,28 @@ const switchStyle = (viewer, mapStyle) => {
             break;
         }
     }
-
-    const pipelines = viewer.dataSources.getByName("Pipeline");
-    if (pipelines.length > 0) {
-        updatePipelineStyle(pipelines[0].entities.values);
-    }
 }
 
 const CesiumMap = () => {
-    const [{ pipelines, ccpipelines, windfarms, decomYards, fields, ccfields, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
-        showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
-        pipelinesVisible, ccpipelinesVisible, windfarmsVisible, fieldsVisible, ccfieldsVisible, subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
+    const [{ decomYards, subsurfaces, wells, wrecks, areas, basins, onshoreGasPipes, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups,
+        showDecomYards, showSubsurfaces, showBlocks, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshorePowerlines, showOnshoreGridCables, showOnshoreWindfarms, showWorkingGroups, year,
+        subsurfacesVisible, wellsVisible, decomnYardsVisible, wrecksVisible, areasVisible, basinsVisible, onshoreWindfarmsVisibile, onshoreGasPipesVisible, onshoreGasSitesVisible, onshoreGridCablesVisible, onshorePowerlinesVisibile, workingGroupsVisible,
         mapStyle, enableTerrain, globe3D, radius, radiusEnabled }, dispatch] = useStateValue();
     const cesiumRef = useRef(null);
-    const [viewer, setViewer] = useState(null);
+    const viewer = useMemo(() => setupCesium(cesiumRef), [cesiumRef]);
     const location = useLocation();
     const history = useHistory();
-    const search = new URLSearchParams(location.search);
-    const eid = search.get("eid");
-    const etype = search.get("etype");
+    const searchParams = new URLSearchParams(location.search);
+    const eid = searchParams.get("eid");
+    const etype = searchParams.get("etype");
     const [hover, setHover] = useState(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
-    const installationsDataSource = useInstallations();
+    const installationsDataSource = useInstallations({ requestRender: viewer.scene.requestRender });
+    const pipelinesDataSource = usePipelines({ requestRender: viewer.scene.requestRender });
+    const ccpipelinesDataSource = useCCPiplines({ requestRender: viewer.scene.requestRender });
+    const fieldsDataSource = useFields({ requestRender: viewer.scene.requestRender });
+    const ccfieldsDataSource = useCCFields({ requestRender: viewer.scene.requestRender });
+    const windfarmsDataSource = useWindfarms({ requestRender: viewer.scene.requestRender });
 
     useEffect(() => {
         if (!viewer) return;
@@ -981,27 +729,7 @@ const CesiumMap = () => {
 
     }, [viewer, areas, eid, etype]);
 
-    useEffect(() => {
-        if (!viewer || !ccpipelinesVisible) return;
-        toggleEntityVisibility(viewer, "CCPipeline", ccpipelinesVisible);
-    }, [viewer, ccpipelinesVisible]);
-    useEffect(() => {
-        if (!viewer || !pipelinesVisible) return;
-        toggleEntityVisibility(viewer, "Pipeline", pipelinesVisible);
-    }, [viewer, pipelinesVisible]);
-    useEffect(() => {
-        if (!viewer || !windfarmsVisible) return;
-        toggleEntityVisibility(viewer, "Windfarm", windfarmsVisible);
-    }, [viewer, windfarmsVisible]);
 
-    useEffect(() => {
-        if (!viewer || !fieldsVisible) return;
-        toggleEntityVisibility(viewer, "Field", fieldsVisible);
-    }, [viewer, fieldsVisible]);
-    useEffect(() => {
-        if (!viewer || !ccfieldsVisible) return;
-        toggleEntityVisibility(viewer, "CCField", ccfieldsVisible);
-    }, [viewer, ccfieldsVisible]);
     useEffect(() => {
         if (!viewer || !subsurfacesVisible) return;
         toggleEntityVisibility(viewer, "Subsurface", subsurfacesVisible);
@@ -1061,18 +789,8 @@ const CesiumMap = () => {
 
     useEffect(() => {
         if (!viewer) return;
-        const pipeline = viewer.dataSources.getByName("Pipeline");
-        if (pipeline.length > 0) pipeline[0].show = showPipelines;
-        const ccpipeline = viewer.dataSources.getByName("CCPipeline");
-        if (ccpipeline.length > 0) ccpipeline[0].show = showCCPipelines;
-        const windfarms = viewer.dataSources.getByName("Windfarm");
-        if (windfarms.length > 0) windfarms[0].show = showWindfarms;
         const decomYards = viewer.dataSources.getByName("DecomYard");
         if (decomYards.length > 0) decomYards[0].show = showDecomYards;
-        const fields = viewer.dataSources.getByName("Field");
-        if (fields.length > 0) fields[0].show = showFields;
-        const ccfields = viewer.dataSources.getByName("CCField");
-        if (ccfields.length > 0) ccfields[0].show = showCCFields;
         const subsurfaces = viewer.dataSources.getByName("Subsurface");
         if (subsurfaces.length > 0) subsurfaces[0].show = showSubsurfaces;
         const blocks = viewer.dataSources.getByName("Block");
@@ -1098,7 +816,7 @@ const CesiumMap = () => {
         const workingGroups = viewer.dataSources.getByName("WorkingGroup");
         if (workingGroups.length > 0) workingGroups[0].show = showWorkingGroups;
         viewer.scene.requestRender();
-    }, [viewer, showPipelines, showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
+    }, [viewer, showDecomYards, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups]);
 
     useEffect(() => {
         if (viewer) {
@@ -1127,9 +845,13 @@ const CesiumMap = () => {
     }, [viewer, globe3D]);
 
     useEffect(() => {
-        const viewer = setupCesium(cesiumRef);
-        setViewer(viewer);
         viewer.dataSources.add(installationsDataSource);
+        viewer.dataSources.add(pipelinesDataSource);
+        viewer.dataSources.add(fieldsDataSource);
+        viewer.dataSources.add(ccpipelinesDataSource);
+        viewer.dataSources.add(ccfieldsDataSource);
+        viewer.dataSources.add(windfarmsDataSource);
+        
         setupRadius(viewer);
         flyHome(viewer);
         setupBlocks().then(dataSource => { dataSource.show = showBlocks; dataSource.name = "Block"; viewer.dataSources.add(dataSource) });
@@ -1140,9 +862,9 @@ const CesiumMap = () => {
         if (!viewer) return;
         viewer.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.MOUSE_MOVE);
-        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, radius, history, location, search, dispatch, e), ScreenSpaceEventType.LEFT_CLICK);
+        viewer.screenSpaceEventHandler.setInputAction((e) => leftClick(viewer, radius, history, location, new URLSearchParams(location.search), dispatch, e), ScreenSpaceEventType.LEFT_CLICK);
         viewer.screenSpaceEventHandler.setInputAction((e) => mouseMove(viewer, setHover, e), ScreenSpaceEventType.MOUSE_MOVE);
-    }, [viewer, history, location, search, radius, dispatch]);
+    }, [viewer, history, location, radius, dispatch]);
 
     useEffect(() => {
         if (viewer) {
@@ -1158,37 +880,6 @@ const CesiumMap = () => {
         viewer.dataSources.add(dataSource);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, decomYards]);
-
-    useEffect(() => {
-        if (!viewer || pipelines.size === 0) return;
-        async function loadPipelines() {
-            const dataSource = await setupPipelines(pipelines, false);
-            dataSource.show = showPipelines;
-            viewer.dataSources.add(dataSource);
-        }
-        loadPipelines();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [viewer, pipelines]);
-    useEffect(() => {
-        if (!viewer || ccpipelines.size === 0) return;
-        async function loadPipelines() {
-            const dataSource = await setupPipelines(ccpipelines, true);
-            dataSource.show = showCCPipelines;
-            viewer.dataSources.add(dataSource);
-        }
-        loadPipelines();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [viewer, ccpipelines]);
-    useEffect(() => {
-        if (!viewer || windfarms.size === 0) return;
-        async function load() {
-            const dataSource = await setupWindfarms(windfarms);
-            dataSource.show = showWindfarms;
-            viewer.dataSources.add(dataSource);
-        }
-        load();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [viewer, windfarms]);
 
     useEffect(() => {
         if (!viewer || workingGroups.size === 0) return;
@@ -1255,27 +946,6 @@ const CesiumMap = () => {
         load();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewer, onshoreWindfarms]);
-
-    useEffect(() => {
-        if (!viewer || fields.size === 0) return;
-        async function loadFields() {
-            const dataSource = await setupFields(fields, false);
-            dataSource.show = showFields;
-            viewer.dataSources.add(dataSource);
-        }
-        loadFields();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [viewer, fields]);
-    useEffect(() => {
-        if (!viewer || ccfields.size === 0) return;
-        async function loadFields() {
-            const dataSource = await setupFields(ccfields, true);
-            dataSource.show = showCCFields;
-            viewer.dataSources.add(dataSource);
-        }
-        loadFields();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [viewer, showCCFields]);
 
     useEffect(() => {
         if (!viewer || subsurfaces.size === 0) return;
