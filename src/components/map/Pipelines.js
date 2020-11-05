@@ -2,19 +2,23 @@ import { Color, DistanceDisplayCondition, GeoJsonDataSource, JulianDate, TimeInt
 import { useEffect, useRef } from "react";
 import { useStateValue } from "../../utils/state";
 
+// const colours = {
+//     "chemical": Color.fromBytes(255, 165, 0),
+//     "condensate": Color.fromBytes(132, 0, 168),
+//     "fibre": Color.fromBytes(139, 69, 19),
+//     "gas": Color.fromBytes(255, 51, 0),
+//     "hydraulic": Color.fromBytes(255, 255, 0),
+//     "methanol": Color.fromBytes(223, 155, 255),
+//     "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
+//     "oil": Color.fromBytes(56, 168, 0),
+//     "other fluid": Color.fromBytes(161, 0, 123),
+//     "water": Color.fromBytes(0, 92, 230),
+//     "disused": Color.fromBytes(128, 128, 128),
+//     "default": Color.WHITE
+// }
+
 const colours = {
-    "chemical": Color.fromBytes(255, 165, 0),
-    "condensate": Color.fromBytes(132, 0, 168),
-    "fibre": Color.fromBytes(139, 69, 19),
-    "gas": Color.fromBytes(255, 51, 0),
-    "hydraulic": Color.fromBytes(255, 255, 0),
-    "methanol": Color.fromBytes(223, 155, 255),
-    "mixed hydrocarbons": Color.fromBytes(155, 0, 76),
-    "oil": Color.fromBytes(56, 168, 0),
-    "other fluid": Color.fromBytes(161, 0, 123),
-    "water": Color.fromBytes(0, 92, 230),
-    "disused": Color.fromBytes(128, 128, 128),
-    "default": Color.WHITE
+    "default": Color.fromCssColorString("#DCDCDC")
 }
 
 function getPipelineColour(pipeline) {

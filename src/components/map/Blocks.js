@@ -6,7 +6,7 @@ const dynamicHeightReference = new CallbackProperty(function () {
     return heightReference;
 }, false);
 
-async function setupBlocks(blocks, dataSource, visibleEntities) {
+async function setupBlocks(blocks, dataSource) {
     const scale = new NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
     const features = [...blocks.values()].map(block => ({ type: "Feature", id: block.id, name: block.name, geometry: block.Geometry, properties: { id: block.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
@@ -16,13 +16,20 @@ async function setupBlocks(blocks, dataSource, visibleEntities) {
     });
     const p = dataSource.entities.values;
     for (let i = 0; i < p.length; i++) {
-        let entity = p[i];
-        let polygon = entity.polygon;
+        const entity = p[i];
+        const rawEntity = blocks.get(entity.properties.id?.getValue()?.toString());
+        entity.originalData = rawEntity;
+        const polygon = entity.polygon;
+
         if (polygon) {
             polygon.zIndex = 30;
-            var center = BoundingSphere.fromPoints(entity.polygon.hierarchy.getValue().positions).center;
+            var center = BoundingSphere.fromPoints(polygon.hierarchy.getValue().positions).center;
             Ellipsoid.WGS84.scaleToGeodeticSurface(center, center);
             entity.position = new ConstantPositionProperty(center);
+
+            if(rawEntity["As-Built"]){
+                polygon.material = Color.GOLD.withAlpha(0.35);
+            }
         }
         entity.label = new LabelGraphics({
             text: entity.properties.ALL_LABELS,
