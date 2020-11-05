@@ -19,6 +19,7 @@ const initialState = {
     subsurfaces: new Map(),
     wells: new Map(),
     wrecks: new Map(),
+    blocks: new Map(),
     onshoreGasPipes: new Map(),
     onshoreGasSites: new Map(),
     onshoreGridCables: new Map(),
@@ -107,6 +108,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 areas: action.areas
+            };
+        case 'setBlocks':
+            return {
+                ...state,
+                blocks: action.blocks
             };
         case 'setBasins':
             return {
@@ -237,6 +243,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 fieldsVisible: action.fieldsVisible
+            };
+        case "blocksVisible":
+            return {
+                ...state,
+                blocksVisible: action.blocksVisible
             };
         case "ccfieldsVisible":
             return {

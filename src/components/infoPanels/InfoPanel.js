@@ -64,7 +64,7 @@ function WithInDistance() {
     );
 }
 
-function getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields, onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, eType, eId) {
+function getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields, onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups,blocks, eType, eId) {
     switch (eType) {
         case "Installation": return installations.get(eId);
         case "Pipeline": return pipelines.get(eId);
@@ -82,7 +82,7 @@ function getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells
         case "OnshoreGridCable": return onshoreGridCables.get(eId);
         case "OnshorePowerline": return onshorePowerlines.get(eId);
         case "OnshoreWindfarm":  return onshoreWindfarms.get(eId);
-        case "DecomYard":
+        case "Block": return blocks.get(eId);
         default:
             return null;
     }
@@ -272,7 +272,7 @@ const marks = {
 
 
 function InfoPanel() {
-    const [{withInDistance, installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups, radiusEnabled }, dispatch] = useStateValue();
+    const [{withInDistance, installations, pipelines,ccpipelines, blocks, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups, radiusEnabled }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
@@ -281,7 +281,7 @@ function InfoPanel() {
 
     const hasWithInDistance =Object.keys(withInDistance).map(key => withInDistance[key]?.length??0).reduce((a, b) => a + b, 0);
     
-    let entity = getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, etype, eid);
+    let entity = getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, blocks, etype, eid);
     let panel = choosePanel(installations, wells, areas, pipelines, ccpipelines, fields,ccfields, etype, entity);
     return (
         panel &&

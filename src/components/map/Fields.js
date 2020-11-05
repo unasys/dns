@@ -31,7 +31,6 @@ const getFieldColour = (field) => {
     return colour;
 }
 
-
 async function setupFields(fields, dataSource, visibleEntities) {
     const features = [...fields.values()].map(field => ({ type: "Feature", id: field.id, name: field.name, geometry: field.Geometry, properties: { id: field.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
@@ -86,6 +85,7 @@ export function useFields({requestRender}) {
     const dataSource = useRef(new GeoJsonDataSource("Field"));
     const visibleEntities = useRef(new Set());
     useEffect(() => {
+        dataSource.current.entities.removeAll();
         setupFields(fields, dataSource.current, visibleEntities);
     }, [fields]);
 

@@ -17,19 +17,19 @@ const colours = {
     "default": Color.WHITE
 }
 
-function getCCPiplineColour(ccpipline) {
-    let ccpiplineFluid = ccpipline.fluid_conveyed;
-    if (ccpiplineFluid) {
-        ccpiplineFluid = ccpiplineFluid.toLowerCase();
+function getCCPipelineColour(ccpipeline) {
+    let ccpipelineFluid = ccpipeline.fluid_conveyed;
+    if (ccpipelineFluid) {
+        ccpipelineFluid = ccpipelineFluid.toLowerCase();
     }
 
-    let colour = colours[ccpiplineFluid];
+    let colour = colours[ccpipelineFluid];
 
     if (!colour) {
         colour = colours["default"];
     }
 
-    if (ccpipline.status !== "ACTIVE") {
+    if (ccpipeline.status !== "ACTIVE") {
         colour = colour.withAlpha(0.5);
     }
 
@@ -40,16 +40,16 @@ const scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
     return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 }
 
-async function setupCCPiplines(ccpiplines, dataSource, visibleEntities) {
+async function setupCCPipelines(ccpipelines, dataSource, visibleEntities) {
     const minDiameter = 0;
     const maxDiameter = 1058;
-    const features = [...ccpiplines.values()].map(ccpipline => ({ type: "Feature", id: ccpipline.id, name: ccpipline.name, geometry: ccpipline.Geometry, properties: { id: ccpipline.id } }));
+    const features = [...ccpipelines.values()].map(ccpipeline => ({ type: "Feature", id: ccpipeline.id, name: ccpipeline.name, geometry: ccpipeline.Geometry, properties: { id: ccpipeline.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
     await dataSource.load(geoJson);
     const p = dataSource.entities.values;
     for (let i = 0; i < p.length; i++) {
         const entity = p[i];
-        const rawEntity = ccpiplines.get(entity.properties.id?.getValue()?.toString());
+        const rawEntity = ccpipelines.get(entity.properties.id?.getValue()?.toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
 
@@ -84,7 +84,7 @@ async function setupCCPiplines(ccpiplines, dataSource, visibleEntities) {
             const scaledDistance = scaleBetween(pipeDiameter, 150000, 50000000, minDiameter, maxDiameter);
 
             if (entity.polyline) {
-                entity.polyline.material = getCCPiplineColour(rawEntity);
+                entity.polyline.material = getCCPipelineColour(rawEntity);
                 entity.polyline.width = 2;
                 entity.polyline.distanceDisplayCondition = new DistanceDisplayCondition(0, scaledDistance);
                 entity.polyline.zIndex = 50;
@@ -95,25 +95,26 @@ async function setupCCPiplines(ccpiplines, dataSource, visibleEntities) {
     }
 }
 
-export function useCCPiplines({ requestRender }) {
-    const [{ ccpiplines, showCCPiplines, ccpiplinesVisible },] = useStateValue();
-    const dataSource = useRef(new GeoJsonDataSource("CCPipline"));
+export function useCCPipelines({ requestRender }) {
+    const [{ ccpipelines, showCCPipelines, ccpipelinesVisible },] = useStateValue();
+    const dataSource = useRef(new GeoJsonDataSource("CCPipeline"));
     const visibleEntities = useRef(new Set());
     useEffect(() => {
-        setupCCPiplines(ccpiplines, dataSource.current, visibleEntities);
-    }, [ccpiplines]);
+        dataSource.current.entities.removeAll();
+        setupCCPipelines(ccpipelines, dataSource.current, visibleEntities);
+    }, [ccpipelines]);
 
     useEffect(() => {
-        dataSource.current.show = showCCPiplines;
-        requestRender()
-    }, [showCCPiplines, requestRender]);
+        dataSource.current.show = showCCPipelines;
+        requestRender();
+    }, [showCCPipelines, requestRender]);
 
     useEffect(() => {
         visibleEntities.current.clear();
-        if (ccpiplinesVisible) {
-            ccpiplinesVisible.forEach(id => visibleEntities.current.add(id));
+        if (ccpipelinesVisible) {
+            ccpipelinesVisible.forEach(id => visibleEntities.current.add(id));
         }
-    }, [ccpiplinesVisible]);
+    }, [ccpipelinesVisible]);
 
 
     return dataSource.current;

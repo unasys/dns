@@ -6,18 +6,12 @@ import { useStateValue } from '../../utils/state';
 import Switch from 'react-toggle-switch'
 
 const MapOptions = () => {
-    const [{ showBlocks, mapStyle, enableTerrain, globe3D }, dispatch] = useStateValue();
+    const [{  mapStyle, enableTerrain, globe3D }, dispatch] = useStateValue();
 
     return (
         <div className="menu-container" style={{ display: 'flex' }}>
             <div className="menu-item" style={{ width: '100%' }}>
 
-                <div className="layer-container">
-                    <div className="layer-content">
-                        <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBlocks" }) }} on={showBlocks} className={'bathymetry-title'} />
-                        <div className="bathymetry-title">Blocks</div>
-                    </div>
-                </div>
                 <div className="layer-container">
                     <div className="layer-content">
                         <Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggle3D" }) }} on={globe3D} className={'bathymetry-title'} />
@@ -56,7 +50,7 @@ const NavigationHeading = (props) => {
 
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
-    const [{ showInstallations, showPipelines, showCCPipelines, showFields, showCCFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups }, dispatch] = useStateValue();
+    const [{ showInstallations, showPipelines, showCCPipelines, showFields, showBlocks, showCCFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
@@ -72,6 +66,7 @@ function MenuPanel() {
                         <NavigationHeading heading='Subsurface' url="subsurfaces" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleSubsurfaces" }) }} on={showSubsurfaces} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Wrecks' url="wrecks" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWrecks" }) }} on={showWrecks} className={'bathymetry-title'} />} />
 
+                        <NavigationHeading heading='Blocks' url="blocks" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBlocks" }) }} on={showBlocks} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Areas' url="areas" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleAreas" }) }} on={showAreas} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Basins' url="basins" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBasins" }) }} on={showBasins} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Working Groups' url="workinggroups" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWorkingGroups" }) }} on={showWorkingGroups} className={'bathymetry-title'} />} />

@@ -7,11 +7,10 @@ const colours = {
     "default": Color.DIMGREY
 }
 
-const heightReference = HeightReference.NONE;
-
+let heightReference = HeightReference.NONE;
 const dynamicHeightReference = new CallbackProperty(function () {
     return heightReference;
-}, true);
+}, false);
 
 function getInstallationColour(installation) {
     let status = installation?.Status;
@@ -27,7 +26,7 @@ function getInstallationColour(installation) {
     return colour;
 }
 
-async function setupInstallations(installations, dataSource, visibleEntities) {
+async function setupInstallations(installations, dataSource) {
     const features = [...installations.values()].map(installation => ({ type: "Feature", id: installation.id, name: installation.name, geometry: installation.Geometry, properties: { id: installation.id } }));
     const geoJson = { type: "FeatureCollection", features: features };
     await dataSource.load(geoJson);
@@ -98,15 +97,20 @@ async function setupInstallations(installations, dataSource, visibleEntities) {
         }
 
     }
+
 }
 
-export function useInstallations({requestRender}) {
-    const [{ installations, showInstallations, installationsVisible },] = useStateValue();
+export function useInstallations({ requestRender }) {
+    const [{ installations, showInstallations, installationsVisible, enableTerrain },] = useStateValue();
     const dataSource = useRef(new GeoJsonDataSource("Installation"));
     const visibleEntities = useRef(new Set());
     useEffect(() => {
-        setupInstallations(installations, dataSource.current, visibleEntities);
-    }, [installations]);
+        async function work() {
+            dataSource.current.entities.removeAll();
+            await setupInstallations(installations, dataSource.current, visibleEntities);
+        }
+        work();
+    }, [installations, requestRender]);
 
     useEffect(() => {
         dataSource.current.show = showInstallations;
@@ -120,6 +124,13 @@ export function useInstallations({requestRender}) {
         }
     }, [installationsVisible]);
 
+    useEffect(() => {
+        if (enableTerrain) {
+            heightReference = HeightReference.CLAMP_TO_GROUND;
+        } else {
+            heightReference = HeightReference.NONE;
+        }
+    }, [enableTerrain]);
 
     return dataSource.current;
 }

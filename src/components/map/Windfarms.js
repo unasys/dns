@@ -65,12 +65,13 @@ export function useWindfarms({ requestRender }) {
     const dataSource = useRef(new GeoJsonDataSource("Windfarm"));
     const visibleEntities = useRef(new Set());
     useEffect(() => {
+        dataSource.current.entities.removeAll();
         setupWindfarms(windfarms, dataSource.current, visibleEntities);
     }, [windfarms]);
 
     useEffect(() => {
         dataSource.current.show = showWindfarms;
-        requestRender()
+        requestRender();
     }, [showWindfarms, requestRender]);
 
     useEffect(() => {

@@ -505,3 +505,25 @@ export async function fetchWorkingGroups() {
     return data.filter(entity => entity.id !== null).sort(sortByName);
 }
 
+export async function fetchBlocks() {
+    let url = assetsBaseUrl + `/data/uk_blocks.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+   if(!Array.isArray(data)){
+       return [];
+   }
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.GID;
+        }
+        
+
+        if (!entity.name) {
+            entity.name = entity["Block No."];
+        }
+    });
+    return data.filter(entity => entity.id !== null).sort(sortByName);
+}
+
+
+

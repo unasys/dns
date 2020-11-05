@@ -101,12 +101,13 @@ export function usePipelines({ requestRender }) {
     const dataSource = useRef(new GeoJsonDataSource("Pipeline"));
     const visibleEntities = useRef(new Set());
     useEffect(() => {
+        dataSource.current.entities.removeAll();
         setupPipelines(pipelines, dataSource.current, visibleEntities);
     }, [pipelines]);
 
     useEffect(() => {
         dataSource.current.show = showPipelines;
-        requestRender()
+        requestRender();
     }, [showPipelines, requestRender]);
 
     useEffect(() => {

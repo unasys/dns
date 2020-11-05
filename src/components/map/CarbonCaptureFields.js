@@ -82,12 +82,13 @@ async function setupCCFields(CCfields, dataSource, visibleEntities) {
 }
 
 export function useCCFields({requestRender}) {
-    const [{ CCfields, showCCFields, CCfieldsVisible },] = useStateValue();
+    const [{ ccfields, showCCFields, CCfieldsVisible },] = useStateValue();
     const dataSource = useRef(new GeoJsonDataSource("CCField"));
     const visibleEntities = useRef(new Set());
     useEffect(() => {
-        setupCCFields(CCfields, dataSource.current, visibleEntities);
-    }, [CCfields]);
+        dataSource.current.entities.removeAll();
+        setupCCFields(ccfields, dataSource.current, visibleEntities);
+    }, [ccfields]);
 
     useEffect(() => {
         dataSource.current.show = showCCFields;
