@@ -18,7 +18,7 @@ export async function fetchInstallations() {
     const data = await response.json();
     data.forEach(entity => {
         if (!entity.id) {
-            entity.id = entity.Name;
+            entity.id = entity["installation_id"];
         }
 
         if (!entity.areaId) {
@@ -88,6 +88,10 @@ export async function fetchPipelines() {
 
         if(!entity.workingGroupId){
             entity.workingGroupId = entity.WorkingGroupId;
+        }
+
+        if(!entity.installationId){
+            entity.installationId = entity["installation_id"];
         }
 
         if (!entity.name) {

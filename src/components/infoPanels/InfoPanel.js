@@ -1,7 +1,7 @@
 import React, { useState, } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useStateValue } from '../../utils/state';
-import InstallationInfoPanel from './InstallationInfoPanel';
+//import InstallationInfoPanel from './InstallationInfoPanel';
 import AreaInfoPanel from './AreaInfoPanel';
 import './Panels.scss'
 import Handle from '../handle/Handle';
@@ -96,7 +96,7 @@ function choosePanel(installations, wells, areas, pipelines,ccpipelines, fields,
         return <DataDriveInfoPanel entity={entity} installations={installations} wells={wells} pipelines={pipelines} ccpipelines={ccpipelines} fields={fields} ccfields={ccfields}  name={entity.name} image={entity.ImageID} epm={entity.ePMID} type={eType} details={entity.InfoPanel} />
     } else {
         switch (eType) {
-            case "Installation": return <InstallationInfoPanel installation={entity} />;
+            // case "Installation": return <InstallationInfoPanel installation={entity} />;
             case "Area": return <AreaInfoPanel installations={installations} area={entity} />;
             case "DecomYard":
             default:
@@ -183,6 +183,7 @@ function AreaInfo({ area, installations, wells, pipelines, fields }) {
     const searchParams = new URLSearchParams(location.search);
     searchParams.delete("basinId");
     searchParams.delete("workingGroupId");
+    searchParams.delete("installationId");
     searchParams.set("areaId", area.id);
     const installationsInArea = [...installations.values()].filter(installation => area.id === installation.areaId);
     const wellsInArea = [...wells.values()].filter(well => area.id === well.areaId);
@@ -207,6 +208,7 @@ function BasinInfo({ basin, installations, wells, pipelines, fields }) {
     const fieldsInBasin = [...fields.values()].filter(field => field.basinId === basin.id);
     searchParams.set("basinId", basin.id);
     searchParams.delete("areaId");
+    searchParams.delete("installationId");
     searchParams.delete("workingGroupId");
     return (
         <>
@@ -226,6 +228,7 @@ function WorkingGroupInfo({ workingGroup, installations, wells, pipelines, field
     const pipelinesInWG = [...pipelines.values()].filter(pipeline => pipeline.workingGroupId===workingGroup.id);
     const fieldsInWG = [...fields.values()].filter(field => field.workingGroupId === workingGroup.id);
     searchParams.set("workingGroupId", workingGroup.id);
+    searchParams.delete("installationId");
     searchParams.delete("areaId");
     searchParams.delete("basinId");
     return (
@@ -238,8 +241,24 @@ function WorkingGroupInfo({ workingGroup, installations, wells, pipelines, field
     )
 }
 
+function InstallationPanelInfo({ installation, pipelines, }) {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const pipelinesInWG = [...pipelines.values()].filter(pipeline => pipeline.installationId===installation.id);
+    searchParams.set("installationId", installation.id);
+    searchParams.delete("workingGroupId");
+    searchParams.delete("areaId");
+    searchParams.delete("basinId");
+    return (
+        <>
+            <PipelineInfo pipelines={pipelinesInWG} searchParams={searchParams} />
+        </>
+    )
+}
+
 function TypeSepcificInfo({ type, entity, installations, wells, pipelines, fields }) {
     switch (type) {
+        case "Installation": return <InstallationPanelInfo installations={installations} wells={wells} pipelines={pipelines} fields={fields} installation={entity} />;
         case "Area": return <AreaInfo installations={installations} wells={wells} pipelines={pipelines} fields={fields} area={entity} />;
         case "Basin": return <BasinInfo installations={installations} wells={wells} pipelines={pipelines} fields={fields} basin={entity} />;
         case "WorkingGroup": return <WorkingGroupInfo installations={installations} wells={wells} pipelines={pipelines} fields={fields} workingGroup={entity} />;
