@@ -503,7 +503,7 @@ export async function fetchWorkingGroups() {
         
 
         if (!entity.name) {
-            entity.name = entity["Working group Name"];
+            entity.name = entity["Working group name"];
         }
     });
     return data.filter(entity => entity.id !== null).sort(sortByName);
