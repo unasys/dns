@@ -19,6 +19,7 @@ function Entry(props) {
                 break;
         }
     }
+
     return (
         <div className="entry">
             {props.icon &&

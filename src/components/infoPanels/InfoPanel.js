@@ -113,6 +113,7 @@ function InstallationInfo({ installations, searchParams }) {
     const installationTypeEntries = [];
 
     installationTypes.forEach((value, key) => {
+        console.log(value.length.toLocaleString(), key);
         search.set("type", key);
         installationTypeEntries.push(<Entry key={key} type="link" link={{ pathname: "installations", search: search.toString() }} title={key} subtitle={value.length.toLocaleString()} borderBottom></Entry>);
     });

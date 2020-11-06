@@ -93,6 +93,12 @@ export async function fetchPipelines() {
         if(!entity.installationId){
             entity.installationId = entity["installation_id"];
         }
+        
+        if(entity.asbuilt){
+            entity.asbuilt = "true";
+        } else {
+            entity.asbuilt = "false";
+        }
 
         if (!entity.name) {
             entity.name = entity["pipeline_name"];

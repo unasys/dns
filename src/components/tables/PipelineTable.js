@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useStateValue } from '../../utils/state'
 import { useHistory, useLocation } from 'react-router-dom';
-import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, DateCell, SelectColumnFilter } from './Table';
+import Table, { ButtonBar, NumberRangeColumnFilter, NumberCell, SelectColumnFilter } from './Table';
 
 function PipelineTable({ isCC }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -14,6 +14,7 @@ function PipelineTable({ isCC }) {
   const search = new URLSearchParams(location.search);
   const areaIdFilter = search.get("areaId");
   const basinIdFilter = search.get("basinId");
+  const installationIdFilter = search.get("installationId");
   const instType = search.get("instType");
   const workingGroupIdFilter = search.get("workingGroupId");
   const localFilters = React.useMemo(() => {
@@ -22,9 +23,10 @@ function PipelineTable({ isCC }) {
     if (areaIdFilter) { filters.push({ id: "areaIds", value: parseInt(areaIdFilter) }); }
     if (basinIdFilter) { filters.push({ id: "basinIds", value: parseInt(basinIdFilter) }); }
     if (workingGroupIdFilter) { filters.push({ id: "workingGroupId", value: parseInt(workingGroupIdFilter) }); }
+    if (installationIdFilter) { filters.push({ id: "installationId", value: parseInt(installationIdFilter) }); }
     if (instType) { filters.push({ id: "Inst Type", value: instType }); }
     return filters;
-  }, [areaIdFilter, basinIdFilter, instType, workingGroupIdFilter]);
+  }, [areaIdFilter, basinIdFilter, instType, workingGroupIdFilter, installationIdFilter]);
   const columns = React.useMemo(
     () => [{
       Header: 'Pipeline Name',
@@ -87,12 +89,12 @@ function PipelineTable({ isCC }) {
       filter: "between",
       footer: "sum"
     }, {
-      Header: 'Start Date',
-      id: 'Start Date',
-      accessor: row => (row["start_date"] ? new Date(row["start_date"]) : null),
-      Cell: DateCell,
+      Header: 'As Built Status',
+      accessor: 'asbuilt',
+      id: 'asbuilt',
       isVisible: isVisible,
-      filter: "contains"
+      Filter: SelectColumnFilter,
+      filter: 'includes',
     }, {
       Header: 'From',
       accessor: 'from_name',
@@ -118,6 +120,12 @@ function PipelineTable({ isCC }) {
     }, {
       accessor: 'workingGroupId',
       id: 'workingGroupId',
+      isVisible: false,
+      filter: 'exact',
+    },
+    {
+      accessor: 'installationId',
+      id: 'installationId',
       isVisible: false,
       filter: 'exact',
     }],
