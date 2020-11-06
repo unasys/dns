@@ -40,8 +40,8 @@ async function setupInstallations(installations, dataSource) {
             if (entity.billboard) {
                 entity.billboard = undefined;
 
-                let start = rawEntity.StartDate;
-                let end = rawEntity.PlannedCOP;
+                let start = rawEntity["Start Date"];
+                let end = rawEntity["End Date"];
 
                 if (start) {
                     start = JulianDate.fromDate(new Date(start));

@@ -104,7 +104,23 @@ function InstallationTable() {
         filter: "contains",
         width: 120,
         isVisible: isVisible
-      }, {
+      },
+      {
+        Header: 'Removal Date',
+        id: 'Removal Date',
+        accessor: row => (row["End Date"] ? new Date(row["End Date"] ) : null),
+        Cell: ({ cell: { value }, row: { original } }) => {
+          if (value) {
+            return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
+          } else {
+            return "-"
+          }
+        },
+        filter: "contains",
+        width: 120,
+        isVisible: isVisible
+      },
+      {
         Header: 'Topside Weight (t)',
         id: 'Topside Weight',
         accessor: row => {
@@ -135,14 +151,7 @@ function InstallationTable() {
         isVisible: isVisible,
         Filter: SelectColumnFilter,
         filter: 'exact'
-      }, {
-        Header: 'Area',
-        accessor: 'Area',
-        id: 'Area',
-        filter: 'contains',
-        width: 60,
-        isVisible: isVisible
-      }, {
+      },  {
         Header: 'Block',
         id: 'Block',
         accessor: 'Block',
