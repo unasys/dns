@@ -95,13 +95,13 @@ function PipelineTable({ isCC }) {
       filter: "contains"
     }, {
       Header: 'From',
-      accessor: 'Pipeline From',
+      accessor: 'from_name',
       id: 'from_name',
       isVisible: isVisible,
       minWidth: 200
     }, {
       Header: 'To',
-      accessor: 'Pipeline To',
+      accessor: 'to_name',
       id: 'to_name',
       isVisible: isVisible,
       minWidth: 200
