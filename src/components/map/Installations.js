@@ -41,7 +41,7 @@ async function setupInstallations(installations, dataSource) {
                 entity.billboard = undefined;
 
                 let start = rawEntity["Start Date"];
-                let end = rawEntity["End Date"];
+                let end = rawEntity["Removal Date"];
 
                 if (start) {
                     start = JulianDate.fromDate(new Date(start));

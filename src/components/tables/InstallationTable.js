@@ -91,7 +91,7 @@ function InstallationTable() {
       }, {
         Header: 'Planned COP',
         id: 'PlannedCOP',
-        accessor: row => (row.PlannedCOP ? new Date(row.PlannedCOP) : null),
+        accessor: row => (row["End Date"] ? new Date(row["End Date"] ) : null),
         Cell: ({ cell: { value }, row: { original } }) => {
           if (value && original.ICOP) {
             return (<a href={original.ICOP} alt="ICOP" target="_blank" rel="noopener noreferrer">{value.getFullYear()}-{value.getMonth() + 1}-{value.getDate()} <i className="fas fa-external-link-alt"></i></a>)
@@ -108,7 +108,7 @@ function InstallationTable() {
       {
         Header: 'Removal Date',
         id: 'Removal Date',
-        accessor: row => (row["End Date"] ? new Date(row["End Date"] ) : null),
+        accessor: row => (row["Removal Date"] ? new Date(row["Removal Date"] ) : null),
         Cell: ({ cell: { value }, row: { original } }) => {
           if (value) {
             return `${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`
