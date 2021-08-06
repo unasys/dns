@@ -36,7 +36,7 @@ async function setupCCSites(ccsites, dataSource, visibleEntities) {
             };
 
             entity.label = {
-                text: rawEntity.name,
+                text: rawEntity["Operator"],
                 font: "20px Arial Narrow",
                 fillColor: Color.BLACK,
                 style: LabelStyle.FILL,
