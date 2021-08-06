@@ -86,7 +86,7 @@ function CCSitesTable({isCC}) {
   return (
     <div className="dns-panel">
       <div className="dns-content-table">
-        <Table columns={columns} data={data} history={history} filters={localFilters} location={location} type="Field" onVisibleRowsChange={onVisibleRowsChange} />
+        <Table columns={columns} data={data} history={history} filters={localFilters} location={location} type="CCSite" onVisibleRowsChange={onVisibleRowsChange} />
       </div>
       <ButtonBar expand={expand} collapse={collapse} back={back} />
     </div>
