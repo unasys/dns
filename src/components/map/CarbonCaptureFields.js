@@ -48,40 +48,43 @@ async function setupCCFields(CCfields, dataSource, visibleEntities) {
             if (entity.polygon) {
                 let start = rawEntity["Discovery Date"];
                 let end;
+                try {
 
-                if (start) {
-                    start = JulianDate.fromDate(new Date(start));
-                }
-                else {
-                    start = JulianDate.fromDate(new Date("1901"));
-                }
+                    if (start) {
+                        start = JulianDate.fromDate(new Date(start));
+                    }
+                    else {
+                        start = JulianDate.fromDate(new Date("1901"));
+                    }
 
-                if (end) {
-                    end = JulianDate.fromDate(new Date(end));
-                }
-                else {
-                    end = JulianDate.fromDate(new Date("2500"));
-                }
+                    if (end) {
+                        end = JulianDate.fromDate(new Date(end));
+                    }
+                    else {
+                        end = JulianDate.fromDate(new Date("2500"));
+                    }
 
-                if (start || end) {
-                    const interval = new TimeInterval({
-                        start: start,
-                        stop: end,
-                        isStartIncluded: start !== null,
-                        isStopIncluded: end !== null
-                    });
-                    entity.availability = new TimeIntervalCollection([interval]);
-                }
+                    if (start || end) {
+                        const interval = new TimeInterval({
+                            start: start,
+                            stop: end,
+                            isStartIncluded: start !== null,
+                            isStopIncluded: end !== null
+                        });
+                        entity.availability = new TimeIntervalCollection([interval]);
+                    }
 
-                const material = getCCFieldColour(rawEntity);
-                entity.polygon.material = material;
-                entity.polygon.outline = false;
+                    const material = getCCFieldColour(rawEntity);
+                    entity.polygon.material = material;
+                    entity.polygon.outline = false;
+                } catch (e) {
+                }
             }
         }
     }
 }
 
-export function useCCFields({requestRender}) {
+export function useCCFields({ requestRender }) {
     const [{ ccfields, showCCFields, CCfieldsVisible },] = useStateValue();
     const dataSource = useRef(new GeoJsonDataSource("CCField"));
     const visibleEntities = useRef(new Set());

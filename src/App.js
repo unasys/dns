@@ -4,7 +4,7 @@ import CesiumMap from './components/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind, fetchWorkingGroups, fetchCarbonPipelines, fetchCarbonCaptureFields, fetchBlocks } from './api/Installations';
+import { fetchInstallations, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind, fetchWorkingGroups, fetchCarbonPipelines, fetchCarbonCaptureFields, fetchCarbonCaptureSites, fetchBlocks } from './api/Installations';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
@@ -18,6 +18,7 @@ import WreckTable from './components/tables/WreckTable';
 import AreaTable from './components/tables/AreaTable';
 import BasinTable from './components/tables/BasinTable';
 import BasicTable from './components/tables/BasicTable';
+import CCSitesTable from './components/tables/CCSitesTable';
 
 const unique = (arr, prop) => {
   const map = new Map();
@@ -43,6 +44,7 @@ const App = () => {
         fetchPipelines().then(pipelines => { dispatch({ type: "setPipelines", pipelines: unique(pipelines, "id") }) }),
         fetchFields().then(fields => { dispatch({ type: "setFields", fields: unique(fields, "id") }) }),
         fetchCarbonCaptureFields().then(fields => { dispatch({ type: "setCCFields", fields: unique(fields, "id") }) }),
+        fetchCarbonCaptureSites().then(sites => { dispatch({ type: "setCCSites", sites: unique(sites, "id") }) }),
         fetchCarbonPipelines().then(pipelines => { dispatch({ type: "setCCPipelines", pipelines: unique(pipelines, "id") }) }),
         fetchWindfarms().then(windfarms => { dispatch({ type: "setWindfarms", windfarms: unique(windfarms, "id") }) }),
         fetchAreas().then(areas => { dispatch({ type: "setAreas", areas: unique(areas, "id") }) }),
@@ -91,6 +93,9 @@ const App = () => {
               </Route>
               <Route path="/ccfields" exact >
                 <FieldTable isCC={true} />
+              </Route>
+              <Route path="/ccsites" exact >
+                <CCSitesTable />
               </Route>
               <Route path="/windfarms" exact >
                 <WindfarmTable />

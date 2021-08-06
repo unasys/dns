@@ -50,7 +50,7 @@ const NavigationHeading = (props) => {
 
 function MenuPanel() {
     const [isVisible, setIsVisible] = useState(true);
-    const [{ showInstallations, showPipelines, showCCPipelines, showFields, showBlocks, showCCFields, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups }, dispatch] = useStateValue();
+    const [{ showInstallations, showPipelines, showCCPipelines, showFields, showBlocks, showCCFields, showCCSites, showWindfarms, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups }, dispatch] = useStateValue();
     return (
         <div className="dns-panel left">
             <div className={isVisible ? "dns-content" : "dns-content hidden"}>
@@ -81,6 +81,7 @@ function MenuPanel() {
                         <summary>Carbon Capture</summary>
                         <NavigationHeading heading='Pipelines' url="ccpipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleCCPipelines" }) }} on={showCCPipelines} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Fields' url="ccfields" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleCCFields" }) }} on={showCCFields} className={'bathymetry-title'} />} />
+                        <NavigationHeading heading='Sites' url="ccsites" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleCCSites" }) }} on={showCCSites} className={'bathymetry-title'} />} />
                     </details>
                     <details className="menu-group">
                         <summary>Onshore</summary>

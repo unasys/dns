@@ -225,6 +225,29 @@ export async function fetchCarbonCaptureFields() {
     return data.sort(sortByName);
 }
 
+export async function fetchCarbonCaptureSites() {
+    let url = assetsBaseUrl + `/data/CarbonCapture/sites_ccus.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+ 
+    data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity.gid;
+        }
+
+
+        if (!entity.name) {
+            entity.name = entity["Site Name"];
+        }
+
+        if (!entity.Geometry) {
+            entity.Geometry = entity.geom;
+        }
+
+    });
+    return data.sort(sortByName);
+}
+
 export async function fetchSubsurface() {
     let url = assetsBaseUrl + `/data/subsurface/Subsurface.json`;
     const response = await fetch(url);

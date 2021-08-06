@@ -10,6 +10,7 @@ import { usePipelines } from './Pipelines';
 import { useFields } from './Fields';
 import { useCCPipelines } from './CarbonCapturePipelines';
 import { useCCFields } from './CarbonCaptureFields';
+import { useCCSites } from './CarbonCaptureSites';
 import { useWindfarms } from './Windfarms';
 import { useAreas } from './Areas';
 import { useBasins } from './Basins';
@@ -270,6 +271,7 @@ const CesiumMap = () => {
     const ccpipelinesDataSource = useCCPipelines({ requestRender: requestRender });
     const fieldsDataSource = useFields({ requestRender: requestRender });
     const ccfieldsDataSource = useCCFields({ requestRender: requestRender });
+    const ccsitesDataSource = useCCSites({ requestRender: requestRender });
     const windfarmsDataSource = useWindfarms({ requestRender: requestRender });
     const areasDataSource = useAreas({ requestRender: requestRender });
     const basinsDataSource = useBasins({ requestRender: requestRender });
@@ -290,6 +292,7 @@ const CesiumMap = () => {
             ccpipelinesDataSource,
             fieldsDataSource,
             ccfieldsDataSource,
+            ccsitesDataSource,
             windfarmsDataSource,
             areasDataSource,
             basinsDataSource,

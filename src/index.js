@@ -10,6 +10,7 @@ const initialState = {
     decomYards: new Map(),
     fields: new Map(),
     ccfields: new Map(),
+    ccsites: new Map(),
     pipelines: new Map(),
     ccpipelines: new Map(),
     windfarms: new Map(),
@@ -33,6 +34,7 @@ const initialState = {
     showDecomYards: false,
     showFields: false,
     showCCFields: false,
+    showCCSites: false,
     showBlocks: false,
     showSubsurfaces: false,
     showWells: false,
@@ -83,6 +85,11 @@ const reducer = (state, action) => {
                 ...state,
                 ccfields: action.fields
             };
+            case 'setCCSites':
+                return {
+                    ...state,
+                    ccsites: action.sites
+                };
         case 'setSubsurfaces': {
             return {
                 ...state,
@@ -192,6 +199,11 @@ const reducer = (state, action) => {
                 ...state,
                 showCCFields: !state.showCCFields
             };
+            case 'toggleCCSites':
+                return {
+                    ...state,
+                    showCCSites: !state.showCCSites
+                };
         case 'toggleAreas':
             return {
                 ...state,
@@ -254,6 +266,11 @@ const reducer = (state, action) => {
                 ...state,
                 ccfieldsVisible: action.ccfieldsVisible
             };
+            case "ccsitesVisible":
+                return {
+                    ...state,
+                    ccsitesVisible: action.ccsitesVisible
+                };
         case "areasVisible":
             return {
                 ...state,
