@@ -2,6 +2,9 @@ import { HeightReference, GeoJsonDataSource, Cartesian2, Cartesian3, Color, Dist
 import { useEffect, useRef } from "react";
 import { useStateValue } from "../../utils/state";
 
+
+/* This comment is pointless but I did it to trigger an auto build*/
+
 function getInstallationColour(installation) {
     let status = installation?.Status;
     if (status) {
