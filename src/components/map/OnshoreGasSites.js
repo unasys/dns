@@ -5,6 +5,11 @@ import { useStateValue } from "../../utils/state";
 
 /* This comment is pointless but I did it to trigger an auto build*/
 
+const colours = {
+    "removed": Color.DIMGREY,
+    "default": Color.DIMGREY
+}
+
 function getInstallationColour(installation) {
     let status = installation?.Status;
     if (status) {
