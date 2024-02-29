@@ -16,7 +16,8 @@
     "react-table": "^7.6.1",
     "react-toggle-switch": "^3.0.4",
     "react-virtualized-auto-sizer": "^1.0.2",
-    "react-window": "^1.8.6"
+    "react-window": "^1.8.6",
+    "yarn": "^1.22.21"
   },
   "scripts": {
     "start": "set PORT=81 && craco start",

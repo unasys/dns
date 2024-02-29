@@ -12,6 +12,19 @@ function sortByName(a, b) {
     // names must be equal
     return 0;
 }
+
+export async function fetchOffshoreCables() {
+    let url = assetsBaseUrl + `/data/offshore_cables/offshore_cables.json`;
+    const response = await fetch(url);
+    const data = await response.json();
+    data.forEach(entity => {
+        if (!entity.name) {
+            entity.name = entity["Name"];
+        }
+    });
+    return data.sort(sortByName);
+}
+
 export async function fetchInstallations() {
     let url = assetsBaseUrl + `/data/installations.json`;
     const response = await fetch(url);

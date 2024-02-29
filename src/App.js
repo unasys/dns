@@ -4,7 +4,7 @@ import CesiumMap from './components/map/Map';
 import Header from './components/header/Header';
 import './App.scss';
 import { useStateValue } from './utils/state';
-import { fetchInstallations, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind, fetchWorkingGroups, fetchCarbonPipelines, fetchCarbonCaptureFields, fetchCarbonCaptureSites, fetchBlocks } from './api/Installations';
+import { fetchInstallations, fetchFields, fetchPipelines, fetchWindfarms, fetchAreas, fetchSubsurface, fetchWells, fetchWrecks, fetchBasins, fetchOnsoreGasPipes, fetchOnsoreGasSites, fetchOnsoreGridCables, fetchOnsorePowerlines, fetchOnsoreWind, fetchWorkingGroups, fetchCarbonPipelines, fetchCarbonCaptureFields, fetchCarbonCaptureSites, fetchBlocks, fetchOffshoreCables } from './api/Installations';
 import InfoPanel from './components/infoPanels/InfoPanel';
 import MenuPanel from './components/menuPanels/MenuPanel';
 import InstallationTable from './components/tables/InstallationTable';
@@ -35,7 +35,7 @@ const unique = (arr, prop) => {
 }
 
 const App = () => {
-  const [{ onshoreGasPipes, blocks, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups }, dispatch] = useStateValue();
+  const [{ offshoreCables, onshoreGasPipes, blocks, onshoreGasSites, onshoreGridCables, onshorePowerlines, onshoreWindfarms, workingGroups }, dispatch] = useStateValue();
 
   useEffect(() => {
     async function setupData() {
@@ -58,7 +58,9 @@ const App = () => {
         fetchOnsorePowerlines().then(powerlines => { dispatch({ type: "setOnshorePowerlines", onshorePowerlines: unique(powerlines, "id") }) }),
         fetchOnsoreWind().then(windfarms => { dispatch({ type: "setOnshoreWindfarms", onshoreWindfarms: unique(windfarms, "id") }) }),
         fetchWorkingGroups().then(workingGroups => { dispatch({ type: "setWorkingGroups", workingGroups: unique(workingGroups, "id") }) }),
-        fetchBlocks().then(blocks => { dispatch({ type: "setBlocks", blocks: unique(blocks, "id") }) })];
+        fetchBlocks().then(blocks => { dispatch({ type: "setBlocks", blocks: unique(blocks, "id") }) }),
+        fetchOffshoreCables().then(cables => { dispatch({ type: "setOffshoreCables", offshoreCables: unique(cables, "name")})})
+      ];
       await Promise.all(work);
     }
     setupData();
@@ -115,6 +117,7 @@ const App = () => {
               <Route path="/wrecks" exact >
                 <WreckTable />
               </Route>
+              <Route path="/offshoreCables" exact><BasicTable data={offshoreCables} type="OffshoreCable" rowVisible="offshoreCablesVisible" /></Route>
               <Route path="/onshoregaspipes" exact><BasicTable data={onshoreGasPipes} type="OnshoreGasPipe" rowVisible="onshoreGasPipeVisible" /></Route>
               <Route path="/onshoregassites" exact><BasicTable data={onshoreGasSites} type="OnshoreGasSite" rowVisible="onshoreGasSiteVisible" /></Route>
               <Route path="/onshoregridcables" exact><BasicTable data={onshoreGridCables} type="OnshoreGridCable" rowVisible="onshoreGridCableVisible" /></Route>

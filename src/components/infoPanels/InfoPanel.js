@@ -11,7 +11,7 @@ import TitleBar from './TitleBar';
 import Slider from 'rc-slider';
 import { groupByAndSort } from '../../utils/utils';
 
-function radiusEntryIsClickable(showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields,showCCFields, showCCSites, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms,showWorkingGroups, collection) {
+function radiusEntryIsClickable(showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields,showCCFields, showCCSites, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins, showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms,showWorkingGroups, showOffshoreCables, collection) {
     switch (collection) {
         case "Installation": return showInstallations
         case "Pipeline": return showPipelines
@@ -32,19 +32,20 @@ function radiusEntryIsClickable(showInstallations, showPipelines,showCCPipelines
         case "OnshorePowerline": return showOnshorePowerlines;
         case "OnshoreWindfarm": return showOnshoreWindfarms;
         case "WorkingGroup": return showWorkingGroups;
+        case "OffshoreCable": return showOffshoreCables;
         default:
             return false;
     }
 }
 
 function WithInDistance() {
-    const [{ withInDistance, showInstallations, showPipelines, showCCPipelines,showWindfarms, showDecomYards, showFields,showCCFields, showCCSites, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups },] = useStateValue();
+    const [{ withInDistance, showInstallations, showPipelines, showCCPipelines,showWindfarms, showDecomYards, showFields,showCCFields, showCCSites, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms, showWorkingGroups, showOffshoreCables },] = useStateValue();
     const output = [];
     for (const p in withInDistance) {
         const entities = withInDistance[p];
         output.push(<EntryContainer open={false} key={`${p}`} title={`${p}  (${entities.length.toLocaleString()})`} borderBottom>
             {entities.map(e => {
-                const isClickable = radiusEntryIsClickable(showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showCCSites, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms,showWorkingGroups, p);
+                const isClickable = radiusEntryIsClickable(showInstallations, showPipelines,showCCPipelines, showWindfarms, showDecomYards, showFields, showCCFields, showCCSites, showBlocks, showSubsurfaces, showWells, showWrecks, showAreas, showBasins,showOnshoreGasPipes, showOnshoreGasSites, showOnshoreGridCables, showOnshorePowerlines, showOnshoreWindfarms,showWorkingGroups, showOffshoreCables, p);
                 if (isClickable) {
                     return (<Link key={`${e.entity.id}`} to={location => ({ ...location, search: `?etype=${p}&eid=${e.entity.id}` })}>
                         <Entry key={`${e.entity.id}`} title={`${e.entity.name}`} subtitle={`${(e.distance / 1000).toFixed(2).toLocaleString()}km`} borderBottom />
@@ -65,7 +66,7 @@ function WithInDistance() {
     );
 }
 
-function getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields, ccsites, onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups,blocks, eType, eId) {
+function getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields, ccsites, onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups,blocks, offshoreCables, eType, eId) {
     switch (eType) {
         case "Installation": return installations.get(eId);
         case "Pipeline": return pipelines.get(eId);
@@ -85,17 +86,18 @@ function getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells
         case "OnshorePowerline": return onshorePowerlines.get(eId);
         case "OnshoreWindfarm":  return onshoreWindfarms.get(eId);
         case "Block": return blocks.get(eId);
+        case "OffshoreCable": return offshoreCables.get(eId);
         default:
             return null;
     }
 }
 
-function choosePanel(installations, wells, areas, pipelines,ccpipelines, fields,ccfields, ccsites, eType, entity) {
+function choosePanel(installations, wells, areas, pipelines,ccpipelines, fields,ccfields, ccsites, offshoreCables, eType, entity) {
     if (!entity) {
         const northSea = { name: "North Sea" };
         return <AreaInfoPanel installations={installations} area={northSea} />;
     } else if (entity.InfoPanel) {
-        return <DataDriveInfoPanel entity={entity} installations={installations} wells={wells} pipelines={pipelines} ccpipelines={ccpipelines} fields={fields} ccfields={ccfields} ccsites={ccsites}  name={entity.name} image={entity.ImageID} epm={entity.ePMID} type={eType} details={entity.InfoPanel} />
+        return <DataDriveInfoPanel entity={entity} offshoreCables={offshoreCables} installations={installations} wells={wells} pipelines={pipelines} ccpipelines={ccpipelines} fields={fields} ccfields={ccfields} ccsites={ccsites}  name={entity.name} image={entity.ImageID} epm={entity.ePMID} type={eType} details={entity.InfoPanel} />
     } else {
         switch (eType) {
             // case "Installation": return <InstallationInfoPanel installation={entity} />;
@@ -294,7 +296,7 @@ const marks = {
 
 
 function InfoPanel() {
-    const [{withInDistance, installations, pipelines,ccpipelines, blocks, windfarms, areas, wells, wrecks, basins, fields,ccfields,ccsites,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups, radiusEnabled }, dispatch] = useStateValue();
+    const [{withInDistance, installations, pipelines,ccpipelines, blocks, windfarms, areas, wells, wrecks, basins, fields,ccfields,ccsites,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms, workingGroups, offshoreCables, radiusEnabled }, dispatch] = useStateValue();
     const location = useLocation();
     const [isVisible, setIsVisible] = useState(true);
     const search = new URLSearchParams(location.search);
@@ -303,8 +305,8 @@ function InfoPanel() {
 
     const hasWithInDistance =Object.keys(withInDistance).map(key => withInDistance[key]?.length??0).reduce((a, b) => a + b, 0);
     
-    let entity = getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,ccsites,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, blocks, etype, eid);
-    let panel = choosePanel(installations, wells, areas, pipelines, ccpipelines, fields,ccfields,ccsites, etype, entity);
+    let entity = getEntity(installations, pipelines,ccpipelines, windfarms, areas, wells, wrecks, basins, fields,ccfields,ccsites,onshoreGasPipes,onshoreGasSites,onshoreGridCables,onshorePowerlines,onshoreWindfarms,workingGroups, blocks, offshoreCables, etype, eid);
+    let panel = choosePanel(installations, wells, areas, pipelines, ccpipelines, fields,ccfields,ccsites, offshoreCables, etype, entity);
     return (
         panel &&
         <div className="dns-panel right">

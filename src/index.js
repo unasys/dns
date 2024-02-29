@@ -26,6 +26,7 @@ const initialState = {
     onshoreGridCables: new Map(),
     onshorePowerlines: new Map(),
     onshoreWindfarms: new Map(),
+    offshoreCables: new Map(),
     facts: [],
     showInstallations: true,
     showPipelines: false,
@@ -47,6 +48,7 @@ const initialState = {
     showOnshoreGridCables: false,
     showOnshorePowerlines: false,
     showOnshoreWindfarms: false,
+    showOffshoreCables: false,
     mapStyle: "simple",
     enableTerrain: false,
     globe3D: true,
@@ -148,11 +150,16 @@ const reducer = (state, action) => {
         case 'setOnshorePowerlines': return { ...state, onshorePowerlines: action.onshorePowerlines };
         case 'setOnshoreWindfarms': return { ...state, onshoreWindfarms: action.onshoreWindfarms };
         case 'setWorkingGroups': return { ...state, workingGroups: action.workingGroups };
-
+        case 'setOffshoreCables': return { ...state, offshoreCables: action.offshoreCables };
         case 'changeYear':
             return {
                 ...state,
                 year: action.year
+            };
+        case 'toggleOffshoreCables':
+            return {
+                ...state,
+                showOffshoreCables: !state.showOffshoreCables
             };
         case 'toggle3D':
             return {
@@ -241,6 +248,7 @@ const reducer = (state, action) => {
         case 'toggleOnshorePowerlines': return { ...state, showOnshorePowerlines: !state.showOnshorePowerlines };
         case 'toggleOnshoreWindfarms': return { ...state, showOnshoreWindfarms: !state.showOnshoreWindfarms };
         case 'toggleWorkingGroups': return { ...state, showWorkingGroups: !state.showWorkingGroups };
+        case 'offshoreCablesVisible': return { ...state, showOffshoreCables: !state.showOffshoreCables };
         case "installationsVisible":
             return {
                 ...state,

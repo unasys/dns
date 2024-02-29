@@ -24,6 +24,8 @@ import { useOnshoreWindfarms } from './OnshoreWindfarms';
 import { useOnshoreGridCables } from './OnshoreGridCables';
 import { useOnshorePowerlines } from './OnshorePowerlines';
 import { useBlocks } from './Blocks';
+import { useOffshoreCables } from './OffshoreCables';
+
 const bathymetryBaseUrl = process.env.NODE_ENV === 'development' ? 'https://tiles.emodnet-bathymetry.eu/v9/terrain' : 'https://emodnet-terrain.azureedge.net/v9/terrain';
 
 const terrainProvider = new CesiumTerrainProvider({
@@ -285,6 +287,8 @@ const CesiumMap = () => {
     const onshoreGridCablesDataSource = useOnshoreGridCables({ requestRender: requestRender });
     const onshorePowerlinesDataSource = useOnshorePowerlines({ requestRender: requestRender });
     const blocks = useBlocks({ requestRender: requestRender });
+    const offshoreCablesDataSource = useOffshoreCables({ requestRender: requestRender });
+
     const dataSources = useMemo(() => {
         return [
             installationsDataSource,
@@ -305,7 +309,8 @@ const CesiumMap = () => {
             onshoreWindfarmsDataSource,
             onshoreGridCablesDataSource,
             onshorePowerlinesDataSource,
-            blocks
+            blocks,
+            offshoreCablesDataSource
         ];
     }, []);
     useEffect(() => {
