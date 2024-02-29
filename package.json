@@ -6,7 +6,7 @@
     "@craco/craco": "^5.7.0",
     "cesium": "^1.75.0",
     "craco-cesium": "^1.2.0",
-    "node-sass": "4.14.1",
+    "node-sass": "9.0.0",
     "rc-slider": "^9.6.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
