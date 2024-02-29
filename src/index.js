@@ -248,7 +248,6 @@ const reducer = (state, action) => {
         case 'toggleOnshorePowerlines': return { ...state, showOnshorePowerlines: !state.showOnshorePowerlines };
         case 'toggleOnshoreWindfarms': return { ...state, showOnshoreWindfarms: !state.showOnshoreWindfarms };
         case 'toggleWorkingGroups': return { ...state, showWorkingGroups: !state.showWorkingGroups };
-        case 'offshoreCablesVisible': return { ...state, showOffshoreCables: !state.showOffshoreCables };
         case "installationsVisible":
             return {
                 ...state,

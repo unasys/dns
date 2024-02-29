@@ -61,7 +61,7 @@ function MenuPanel() {
                         <NavigationHeading heading='Pipelines' url="pipelines" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "togglePipelines" }) }} on={showPipelines} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Wells' url="wells" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWells" }) }} on={showWells} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Subsurface' url="subsurfaces" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleSubsurfaces" }) }} on={showSubsurfaces} className={'bathymetry-title'} />} />
-                        <NavigationHeading heading='Cables' url="offshoreCables" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleOffshoreCables" }) }} on={showOffshoreCables} className={'bathymetry-title'} />} />
+                        <NavigationHeading heading='Cables' url="offshoreCables" switch={<Switch onClick={ (e) => { e.preventDefault(); dispatch({ type: "toggleOffshoreCables" }) }} on={showOffshoreCables} className={'bathymetry-title'} />} />
                     </details>
                     <details className="menu-group">
                         <summary>Geo</summary>

@@ -18,6 +18,9 @@ export async function fetchOffshoreCables() {
     const response = await fetch(url);
     const data = await response.json();
     data.forEach(entity => {
+        if (!entity.id) {
+            entity.id = entity["Name"];
+        }
         if (!entity.name) {
             entity.name = entity["Name"];
         }

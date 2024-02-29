@@ -2,12 +2,9 @@ import { Color, GeoJsonDataSource } from "cesium";
 import { useEffect, useRef } from "react";
 import { useStateValue } from "../../utils/state";
 
-const cableColour = {
-    "default": Color.fromCssColorString("#DCDCDC")
-}
 
 async function setupOffshoreCables(cables, dataSource, visibleEntities) {
-    const features = [...cables.values()].map(cable => ({ type: "Feature", name: cable.name, geometry: cable.Geometry, properties: { name: cable.name } }));
+    const features = [...cables.values()].map(cable => ({ type: "Feature", id: cable.name, name: cable.name, geometry: cable.Geometry, properties: { name: cable.name, id: cable.name } }));
     const geoJson = { type: "FeatureCollection", features: features };
     await dataSource.load(geoJson);
     const p = dataSource.entities.values;
@@ -51,7 +48,6 @@ export function useOffshoreCables({ requestRender }) {
             offshoreCablesVisible.forEach(id => visibleEntities.current.add(id));
         }
     }, [offshoreCablesVisible]);
-
 
     return dataSource.current;
 }
