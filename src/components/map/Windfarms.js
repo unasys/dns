@@ -22,7 +22,8 @@ async function setupWindfarms(windfarms, dataSource, visibleEntities) {
         }
 
         switch (entity?.originalData?.Type) {
-            case "wind turbine": {
+            //case "wind turbine": {
+            case "Offshore Wind Farm Turbine": {
                 entity.billboard = {
                     image: "/images/windturbine.svg",
                     eyeOffset: new Cartesian3(0, 0, 1),
@@ -32,19 +33,19 @@ async function setupWindfarms(windfarms, dataSource, visibleEntities) {
                 };
                 break;
             }
-            case "Turbine Cable": {
-                if (entity.polyline) {
-                    entity.polyline.material = Color.fromCssColorString("#F47C7C")
-                }
-                break;
-            }
-            case "Export cable":
-            case "Export Cable": {
-                if (entity.polyline) {
-                    entity.polyline.material = Color.fromCssColorString("#A4A9A7");
-                }
-                break;
-            }
+            // case "Turbine Cable": {
+            //     if (entity.polyline) {
+            //         entity.polyline.material = Color.fromCssColorString("#F47C7C")
+            //     }
+            //     break;
+            // }
+            // case "Export cable":
+            // case "Export Cable": {
+            //     if (entity.polyline) {
+            //         entity.polyline.material = Color.fromCssColorString("#A4A9A7");
+            //     }
+            //     break;
+            // }
             case "Substation": {
                 entity.billboard = {
                     image: "/images/offshore-substation.svg",
