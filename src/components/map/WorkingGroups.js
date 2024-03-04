@@ -1,4 +1,4 @@
-import { GeoJsonDataSource } from "cesium";
+import { Cartesian2, Cartesian3, Color, DistanceDisplayCondition, GeoJsonDataSource, HeightReference, HorizontalOrigin, LabelStyle, NearFarScalar, VerticalOrigin } from "cesium";
 import { useEffect, useRef } from "react";
 import { useStateValue } from "../../utils/state";
 
@@ -7,15 +7,58 @@ async function setupWorkingGroups(workingGroups, dataSource, visibleEntities) {
     const geoJson = { type: "FeatureCollection", features: features };
     await dataSource.load(geoJson);
     const p = dataSource.entities.values;
-    for (let i = 0; i < p.length; i++) {
+    for (let i = 0; i < p.length; i++) 
+    {
         const entity = p[i];
-        if (entity.polygon) {
-            entity.polygon.zIndex = 40;
-        }
+        
         const rawEntity = workingGroups.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
         }
+        
+        if (entity.polygon) {
+            entity.polygon.zIndex = 40;
+        }
+
+        else if(entity.billboard)
+        {
+            entity.billboard = undefined;
+
+            entity.point = {
+                pixelSize: 4,
+                color: Color.BLACK,
+                eyeOffset: new Cartesian3(0, 0, 1),
+                distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+                translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
+                heightReference: HeightReference.NONE,
+                zIndex: 60
+            };
+
+            // entity.label = {
+            //     text: rawEntity.name,
+            //     font: "20px Arial Narrow",
+            //     fillColor: Color.BLACK,
+            //     style: LabelStyle.FILL,
+            //     outlineColor: Color.WHITE,
+            //     outlineWidth: 1.5,
+            //     pixelOffset: new Cartesian2(25, 0),
+            //     verticalOrigin: VerticalOrigin.CENTER,
+            //     horizontalOrigin: HorizontalOrigin.LEFT,
+            //     distanceDisplayCondition: new DistanceDisplayCondition(0.0, 300000),
+            //     heightReference: HeightReference.NONE,
+            //     scale: 0.65,
+            //     zIndex: 60
+            // };
+        }
+
+        else if (entity.polyline) {
+            entity.polyline.material = Color.BLACK;
+            entity.polyline.width = 2;
+            entity.polyline.zIndex = 50;
+            entity.polyline.clampToGround = true;
+        }
+
+        
 
     }
 }
