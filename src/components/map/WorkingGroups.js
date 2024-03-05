@@ -10,14 +10,26 @@ async function setupWorkingGroups(workingGroups, dataSource, visibleEntities) {
     for (let i = 0; i < p.length; i++) 
     {
         const entity = p[i];
-        
+
         const rawEntity = workingGroups.get(entity.properties.id.getValue().toString());
         if (rawEntity) {
             entity.originalData = rawEntity;
         }
+
+
+        let entityColour;
+        if(rawEntity["Colour on DNS"] == null) {
+            entityColour = Color.GREY;
+        }
+        else {
+            entityColour = Color.fromCssColorString(rawEntity["Colour on DNS"]);
+        }
+        
         
         if (entity.polygon) {
             entity.polygon.zIndex = 40;
+            entity.polygon.material = entityColour.withAlpha(0.4);
+            entity.polygon.outlineColor = entityColour;
         }
 
         else if(entity.billboard)
@@ -26,9 +38,9 @@ async function setupWorkingGroups(workingGroups, dataSource, visibleEntities) {
 
             entity.point = {
                 pixelSize: 4,
-                color: Color.BLACK,
+                color: entityColour,
                 eyeOffset: new Cartesian3(0, 0, 1),
-                distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
+                //distanceDisplayCondition: new DistanceDisplayCondition(0.0, 8500009.5),
                 translucencyByDistance: new NearFarScalar(2300009.5, 1, 8500009.5, 0.01),
                 heightReference: HeightReference.NONE,
                 zIndex: 60
@@ -52,7 +64,7 @@ async function setupWorkingGroups(workingGroups, dataSource, visibleEntities) {
         }
 
         else if (entity.polyline) {
-            entity.polyline.material = Color.BLACK;
+            entity.polyline.material = entityColour;
             entity.polyline.width = 2;
             entity.polyline.zIndex = 50;
             entity.polyline.clampToGround = true;

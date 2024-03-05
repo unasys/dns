@@ -550,6 +550,10 @@ export async function fetchWorkingGroups() {
         if (!entity.name) {
             entity.name = entity["Working group name"];
         }
+
+        if(!entity.color) {
+            entity.color = entity["Colour on DNS"];
+        }
     });
     return data.filter(entity => entity.id !== null).sort(sortByName);
 }
