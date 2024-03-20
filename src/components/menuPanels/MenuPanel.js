@@ -70,7 +70,7 @@ function MenuPanel() {
                         <NavigationHeading heading='Blocks' url="blocks" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBlocks" }) }} on={showBlocks} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Areas' url="areas" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleAreas" }) }} on={showAreas} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Basins' url="basins" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleBasins" }) }} on={showBasins} className={'bathymetry-title'} />} />
-                        <NavigationHeading heading='Working Groups' url="workinggroups" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWorkingGroups" }) }} on={showWorkingGroups} className={'bathymetry-title'} />} />
+                        <NavigationHeading heading='Hydrogen' url="workinggroups" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleWorkingGroups" }) }} on={showWorkingGroups} className={'bathymetry-title'} />} />
                         <NavigationHeading heading='Fields' url="fields" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleFields" }) }} on={showFields} className={'bathymetry-title'} />} />
                     </details>
                     {/* <NavigationHeading heading='Decom Yards' url="decomyards" switch={<Switch onClick={(e) => { e.preventDefault(); dispatch({ type: "toggleDecomYards" }) }} on={showDecomYards} className={'bathymetry-title'} />} /> */}
