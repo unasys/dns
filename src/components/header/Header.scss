@@ -1,54 +1,74 @@
 .header-container {
-  background: #000000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  flex: 0 1 60px;
-  border-bottom: 1px solid rgba(243, 201, 201, 0.11);
-  z-index: 4;
-  .selected-installation-box {
+    background: #000000;
     display: flex;
-    justify-content: flex-end;
-    width: 370px;
-
-    &:hover > .close-button {
-      visibility: visible;
-    }
-
-    .close-button {
-      visibility: hidden;
-      padding-left: 5px;
-      color: rgba(255, 255, 255, 0.404);
-      display: flex;
-      align-items: center;
-    }
-  }
-  .installation-thumbnail {
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    border-radius: 50%;
-    height: 50px;
-    width: 50px;
-  }
-  .logo-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 370px;
-    padding-left: 25px;
-    cursor: pointer;
-    svg {
-      width: 100%;
-      color: white;
-      fill: white;
+    width: 100%;
+    flex: 0 1 60px;
+    border-bottom: 1px solid rgba(243, 201, 201, 0.11);
+    z-index: 4;
+
+    .selected-installation-box {
+        display: flex;
+        justify-content: flex-end;
+        width: 370px;
+
+        &:hover > .close-button {
+            visibility: visible;
+        }
+
+        .close-button {
+            visibility: hidden;
+            padding-left: 5px;
+            color: rgba(255, 255, 255, 0.404);
+            display: flex;
+            align-items: center;
+        }
     }
-  }
-  .navigation-tabs {
-    display: flex;
-    justify-content: center;
-  }
-  .spacer {
-    width: 370px;
-  }
+
+    .installation-thumbnail {
+        display: flex;
+        align-items: center;
+        border-radius: 50%;
+        height: 50px;
+        width: 50px;
+    }
+
+    .logo-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 370px;
+        padding-left: 25px;
+        cursor: pointer;
+
+        svg {
+            width: 100%;
+            color: white;
+            fill: white;
+        }
+    }
+
+    .navigation-tabs {
+        display: flex;
+        justify-content: center;
+    }
+
+    .spacer {
+        width: 370px;
+        display: flex;
+        justify-content: center; /* centers horizontally */
+        align-items: center; /* centers vertically */
+        height: 100%; /* optional: ensures vertical centering if parent has height */
+    }
+
+    .logout-btn {
+        background: none;
+        color: #fff;
+        font-weight: bold;
+        font-family: 'Roboto', sans-serif;
+        border: none;
+        cursor: pointer;
+        padding: 0.5em 1em;
+    }
 }
