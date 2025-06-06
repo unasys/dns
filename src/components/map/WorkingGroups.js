@@ -1,4 +1,4 @@
-import { Cartesian2, Cartesian3, Color, DistanceDisplayCondition, GeoJsonDataSource, HeightReference, HorizontalOrigin, LabelStyle, NearFarScalar, VerticalOrigin } from "cesium";
+import { Cartesian3, Color, GeoJsonDataSource, HeightReference, NearFarScalar } from "cesium";
 import { useEffect, useRef } from "react";
 import { useStateValue } from "../../utils/state";
 
