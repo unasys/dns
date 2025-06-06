@@ -17,7 +17,7 @@ function TitleBar(props) {
                         {props.epm && <img className="project-icon" src="/project.svg" alt="epm" onClick={() => window.open(`https://epm.unasys.com/projects/${props.epm}/`, "_blank")} />}
                     </div>
                 </div>
-                {props.image && <a href="https://epm.unasys.com/projects/39660b8f-671b-4116-aea2-72b0b233c7ff/model/e6e77f4a82374c0ea845efa268f69af8" target="_blank"><img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${props.image}`} alt="overview-thumbnail" /></a>}
+                {props.image && <a href="https://epm.unasys.com/projects/39660b8f-671b-4116-aea2-72b0b233c7ff/model/e6e77f4a82374c0ea845efa268f69af8" target="_blank" rel="noreferrer"><img className="installation-image" src={`https://assets.digitalnorthsea.com/images/installations/${props.image}`} alt="overview-thumbnail" /></a>}
             </div>
         )
     }
