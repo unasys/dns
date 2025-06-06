@@ -312,7 +312,29 @@ const CesiumMap = () => {
             blocks,
             offshoreCablesDataSource
         ];
-    }, []);
+    }, [
+        installationsDataSource,
+        pipelinesDataSource,
+        ccpipelinesDataSource,
+        fieldsDataSource,
+        ccfieldsDataSource,
+        ccsitesDataSource,
+        windfarmsDataSource,
+        areasDataSource,
+        basinsDataSource,
+        subsurfacesDataSource,
+        wellsDataSource,
+        workingGroupsDataSource,
+        wrecksDataSource,
+        onshoreGasPipesDataSource,
+        onshoreGasSitesDataSource,
+        onshoreWindfarmsDataSource,
+        onshoreGridCablesDataSource,
+        onshorePowerlinesDataSource,
+        blocks,
+        offshoreCablesDataSource
+    ]);
+
     useEffect(() => {
         async function setup() {
             if (cesiumRef.current) {
