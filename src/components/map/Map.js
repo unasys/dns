@@ -38,7 +38,7 @@ const defaultTerrainProvider = new EllipsoidTerrainProvider();
 async function setupCesium(cesiumRef, dataSources) {
 
     const simpleImagery = new UrlTemplateImageryProvider({
-        url: 'https://api.maptiler.com/maps/76ecac98-bde3-41d8-81ab-2b530ba0974b/{z}/{x}/{y}.png?key=FSzrABzSMJXbH2n6FfZc',
+        url: 'https://api.maptiler.com/maps/dataviz-v4-light/{z}/{x}/{y}.png?key=FSzrABzSMJXbH2n6FfZc',
         tileWidth: 512,
         tileHeight: 512,
         credit: new Credit('<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>', true)
